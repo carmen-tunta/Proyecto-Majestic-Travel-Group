@@ -1,0 +1,8 @@
+# Archivos y carpetas a ignorar en el backend NestJS
+/node_modules/
+/dist/
+.env
+*.log
+.DS_Store
+.idea/
+.vscode/
