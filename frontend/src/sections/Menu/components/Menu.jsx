@@ -5,7 +5,7 @@ const Menu = () => {
     return (
         <div className="menu-app">
             <div className="menu-logo">
-                imagen
+                <img src="logo_mtg.png" alt="Logo" />
             </div>
             <div className="menu-links">
                 <Button label="Principal" text size="small" icon="pi pi-home"/>
