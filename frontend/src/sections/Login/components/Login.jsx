@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { InputText } from 'primereact/inputtext';
+import { Button } from 'primereact/button';
+import { Link } from 'react-router-dom';
 
 function Login() {
   const [showPassword, setShowPassword] = useState(false);
@@ -30,6 +32,12 @@ function Login() {
           >
             <i className={showPassword ? 'pi pi-eye-slash' : 'pi pi-eye'} />
           </span>
+        </div>
+        <Button label="Acceder al sistema" className="p-button" style={{ width: '100%' }} />
+        <div style={{ textAlign: 'center', marginTop: 12 }}>
+          <Link to="/recuperar-contrasena" style={{ textDecoration: 'none' }}>
+            ¿Olvidaste contraseña?
+          </Link>
         </div>
       </div>
     </div>
