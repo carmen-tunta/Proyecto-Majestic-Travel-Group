@@ -1,7 +1,11 @@
 import "../styles/Menu.css"
+
 import { Button } from "primereact/button";
+import { useNavigate } from "react-router-dom";
+
 
 const Menu = () => {
+    const navigate = useNavigate();
     return (
         <div className="menu-app">
             <div className="menu-logo">
@@ -14,7 +18,7 @@ const Menu = () => {
                 <Button label="Itinerario" text size="small" icon="pi pi-file"/>
                 <Button label="Proveedores" text size="small" icon="pi pi-users"/>
                 <Button label="Registro de pagos" text size="small" icon="pi pi-credit-card"/>
-                <Button label="Plantilla itineraria" text size="small" icon="pi pi-list"/>
+                <Button label="Plantilla itineraria" text size="small" icon="pi pi-list" onClick={() => navigate('/itinerario')} />
                 <Button label="Servicios" text size="small" icon="pi pi-flag"/>
                 <Button label="Componentes" text size="small" icon="pi pi-book"/>
                 <Button label="Reportes" text size="small" icon="pi pi-list-check"/>

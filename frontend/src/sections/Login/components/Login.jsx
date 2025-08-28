@@ -7,7 +7,7 @@ function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const toggleShowPassword = () => setShowPassword((prev) => !prev);
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+    <div style={{ minHeight: '100vh', minWidth: '100vw', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <div style={{ width: 360 }}>
         <div style={{ textAlign: 'center', marginBottom: 24 }}>
           <img src={process.env.PUBLIC_URL + '/logo_mtg.png'} alt="MTG" style={{ height: 48 }} />
