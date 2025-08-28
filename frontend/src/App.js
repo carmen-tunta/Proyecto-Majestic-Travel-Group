@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-route
 import RecoverPassword from './sections/Login/components/RecoverPassword';
 import Login from './sections/Login/components/Login';
 import Menu from './sections/Menu/components/Menu';
-
+import Itinerario from './sections/Itinerario/components/Itinerario';
 
 
 function AppContent() {
@@ -15,6 +15,7 @@ function AppContent() {
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/recuperar-contrasena" element={<RecoverPassword />} />
+        <Route path="/itinerario" element={<Itinerario />} />
       </Routes>
     </>
   );
