@@ -6,11 +6,12 @@ import "../styles/RecoverPassword.css"
 
 const RecoverPassword = () => {
   const [email, setEmail] = useState('');
+  const apiUrl = process.env.REACT_APP_API_URL;
   
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch('http://localhost:3080/auth/forgot-password', {
+      const response = await fetch(`${apiUrl}/auth/forgot-password`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),
