@@ -1,8 +1,5 @@
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
-import * as dotenv from 'dotenv';
-
-dotenv.config();
+import { AppModule } from './modules/app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -11,7 +8,7 @@ async function bootstrap() {
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     credentials: true,
   });
-  await app.listen(3080);
+  await app.listen(process.env.BACK_HOST || 3080);
 }
 
 bootstrap();
