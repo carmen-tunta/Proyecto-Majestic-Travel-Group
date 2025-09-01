@@ -1,7 +1,11 @@
+import * as dotenv from 'dotenv';
+dotenv.config();
+
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import * as process from 'process';
 import { User } from '../modules/users/entities/user.entity';
+
 @Module({
   imports: [
     TypeOrmModule.forRoot({
