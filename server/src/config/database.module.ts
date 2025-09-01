@@ -9,6 +9,7 @@ import { User } from '../modules/users/entities/user.entity';
 @Module({
   imports: [
     TypeOrmModule.forRoot({
+      type: 'mysql',
       host: process.env.DB_HOST,
       port: parseInt(process.env.DB_PORT || '3306'),
       username: process.env.DB_USERNAME,
