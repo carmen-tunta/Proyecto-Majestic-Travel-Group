@@ -34,6 +34,12 @@ export class AuthService {
   }
 
   async forgotPassword(email: string) {
+    const user = await this.usersService.findByEmail(email);
+    if (!user) {
+      console.log('Email no registrado:', email);
+      throw new UnauthorizedException('Email no registrado');
+    }
+
     const transporter = nodemailer.createTransport({
       host: 'smtp.gmail.com',
       port: 587,
@@ -48,7 +54,7 @@ export class AuthService {
       from: process.env.SMTP_FROM,
       to: email,
       subject: 'Recuperación de contraseña MTG',
-      text: 'Haz clic en el enlace para recuperar tu contraseña.',
+      text: `Hola ${user.username}, haz clic en el enlace para recuperar tu contraseña.`,
     };
 
     try {
@@ -56,8 +62,7 @@ export class AuthService {
       console.log('Correo enviado:', info.messageId);
       return { message: 'Correo enviado' };
     } catch (error) {
-      console.error('Error enviando correo:', error);
-      return { message: 'Error enviando correo', error };
+      throw new UnauthorizedException('Error enviando el correo, intenta de nuevo.');
     }
   }
   
