@@ -64,7 +64,8 @@ export class AuthService {
       subject: 'Recuperación de contraseña MTG',
       html: `<div>Hola ${user.username},</div>
              <div>Haz clic en el siguiente enlace para recuperar tu contraseña:</div>
-             <div><a href="${resetUrl}">${resetUrl}</a></div>`,
+             <div><a href="${resetUrl}">${resetUrl}</a></div>
+             <div>Este enlace expirará en 10 minutos. (${user.resetPasswordExpires})</div>`,
     };
 
     try {
