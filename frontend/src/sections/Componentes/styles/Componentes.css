@@ -41,3 +41,34 @@
     justify-content: center;
     color: rgb(175, 175, 175);
 }
+
+.componentes-footer .p-paginator {
+    background: transparent;
+    border: none;
+    padding: 0;
+}
+
+.componentes-footer .p-paginator .p-paginator-page,
+.componentes-footer .p-paginator .p-paginator-first,
+.componentes-footer .p-paginator .p-paginator-prev,
+.componentes-footer .p-paginator .p-paginator-next,
+.componentes-footer .p-paginator .p-paginator-last {
+    color: #1976d2;
+    border: 1px solid #1976d2;
+    background: transparent;
+}
+
+.componentes-footer .p-paginator .p-paginator-page:hover,
+.componentes-footer .p-paginator .p-paginator-first:hover,
+.componentes-footer .p-paginator .p-paginator-prev:hover,
+.componentes-footer .p-paginator .p-paginator-next:hover,
+.componentes-footer .p-paginator .p-paginator-last:hover {
+    background: #1976d2;
+    color: white;
+}
+
+.componentes-footer .p-paginator .p-paginator-page.p-highlight {
+    background: #1976d2;
+    color: white;
+    border-color: #1976d2;
+}

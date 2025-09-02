@@ -3,11 +3,14 @@ import { Button } from 'primereact/button';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { InputText } from 'primereact/inputtext';
+import { Paginator } from 'primereact/paginator';
 import "../styles/Componentes.css";
 
 const Componentes = () => {
   const [componentes, setComponentes] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [first, setFirst] = useState(0);
+  const [rows, setRows] = useState(10);
 
   // Función para obtener los componentes del backend
   const fetchComponentes = async () => {
@@ -38,6 +41,12 @@ const Componentes = () => {
     return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
   };
 
+  // Función para manejar el cambio de página
+  const onPageChange = (event) => {
+    setFirst(event.first);
+    setRows(event.rows);
+  };
+
   return (
     <div className="componentes">
       {/* Header con título y botón Nuevo */}
@@ -63,6 +72,9 @@ const Componentes = () => {
           loading={loading}
           emptyMessage="No se encontraron componentes"
           tableStyle={{ minWidth: '60%' }}
+          paginator={false}
+          first={first}
+          rows={rows}
         >
           <Column
             field="componentName"
@@ -92,9 +104,16 @@ const Componentes = () => {
         </DataTable>
       </div>
 
-      {/* Footer */}
+      {/* Footer con paginación */}
       <div className='componentes-footer'>
-        Aquí van los botones
+        <Paginator
+          first={first}
+          rows={rows}
+          totalRecords={componentes.length}
+          rowsPerPageOptions={[5, 10, 20, 50]}
+          onPageChange={onPageChange}
+          template="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown"
+        />
       </div>
     </div>
   );
