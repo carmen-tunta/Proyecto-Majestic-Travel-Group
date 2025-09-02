@@ -62,7 +62,9 @@ export class AuthService {
       from: process.env.SMTP_FROM,
       to: email,
       subject: 'Recuperación de contraseña MTG',
-      text: `Hola ${user.username}, haz clic en el enlace para recuperar tu contraseña. ${resetUrl}`,
+      html: `<div>Hola ${user.username},</div>
+             <div>Haz clic en el siguiente enlace para recuperar tu contraseña:</div>
+             <div><a href="${resetUrl}">${resetUrl}</a></div>`,
     };
 
     try {

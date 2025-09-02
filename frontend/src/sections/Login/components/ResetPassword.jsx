@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import "../styles/ResetPassword.css"
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
 import { useNotification } from '../../Notification/NotificationContext';
@@ -9,9 +10,13 @@ const ResetPassword = () => {
     const token = params.get('token');
     const apiUrl = process.env.REACT_APP_API_URL;
     const { showNotification } = useNotification();
+    const [loading, setLoading] = useState(false);
+
+    
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setLoading(true);
         try {
             const response = await fetch(`${apiUrl}/auth/reset-password`, {
                 method: 'POST',
@@ -26,10 +31,13 @@ const ResetPassword = () => {
             }
         } catch (error) {
             showNotification('Error de conexión, por favor intenta nuevamente más tarde.', 'error');
+        } finally {
+            setLoading(false);
         }
     };
 
-    return ( <div className="reset-password">
+    return ( 
+    <div className="reset-password">
         <form onSubmit={handleSubmit}>
             <h1>Restablecer Contraseña</h1>
             <InputText 
@@ -38,8 +46,13 @@ const ResetPassword = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
+                disabled={loading}
             />
-            <Button type="submit" label="Restablecer" />
+            <Button 
+                type="submit"
+                label={loading ? "Cargando..." : "Restablecer"}
+                loading={loading} 
+            />
         </form>
     </div> );
 }

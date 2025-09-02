@@ -8,9 +8,11 @@ const RecoverPassword = () => {
   const [email, setEmail] = useState('');
   const apiUrl = process.env.REACT_APP_API_URL;
   const { showNotification } = useNotification();
+  const [loading, setLoading] = useState(false);
   
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     try {
       const response = await fetch(`${apiUrl}/auth/forgot-password`, {
         method: 'POST',
@@ -25,6 +27,8 @@ const RecoverPassword = () => {
       }
     } catch (error) {
       showNotification('Error de conexión con el servidor.', 'error');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -40,9 +44,16 @@ const RecoverPassword = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
+              disabled={loading}
             />
         </div>
-        <Button label="Recuperar contraseña" size='small' type='submit'/>
+        <Button 
+          label={loading ? "Cargando..." : "Recuperar contraseña"} 
+          size='small' 
+          type='submit' 
+          disabled={loading}
+          loading={loading}
+        />
       </form>
     </div>
   );
