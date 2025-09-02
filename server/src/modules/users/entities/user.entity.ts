@@ -17,4 +17,10 @@ export class User {
     comment: 'Contraseña hasheada del usuario' 
   })
   password: string;
+
+  @Column({ 
+    length: 150, 
+    comment: 'Email del usuario' 
+  })
+  email: string;
 }
