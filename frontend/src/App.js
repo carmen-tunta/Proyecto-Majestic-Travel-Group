@@ -5,6 +5,7 @@ import Login from './sections/Login/components/Login';
 import Menu from './sections/Menu/components/Menu';
 import Itinerario from './sections/Itinerario/components/Itinerario';
 import ResetPassword from './sections/Login/components/ResetPassword';
+import Componentes from './sections/Componentes/components/Componentes';
 import { NotificationProvider } from './sections/Notification/NotificationContext';
 
 
@@ -19,6 +20,7 @@ function AppContent() {
         <Route path="/forgot-password" element={<RecoverPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/itinerario" element={<Itinerario />} />
+        <Route path="/componentes" element={<Componentes />} />
       </Routes>
     </>
   );
