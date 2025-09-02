@@ -43,7 +43,7 @@ export class AuthService {
 
     const token = crypto.randomBytes(32).toString('hex');
     user.resetPasswordToken = token;
-    user.resetPasswordExpires = new Date(Date.now() + 3600000);
+    user.resetPasswordExpires = new Date(Date.now() + 10 * 60 * 1000); // 10 minutos en milisegundos
     await this.usersService.save(user);
 
     const resetUrl = `${process.env.FRONTEND_URL}/reset-password?token=${token}`;

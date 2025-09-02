@@ -2,11 +2,12 @@ import React, { useState } from 'react';
 import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
 import "../styles/RecoverPassword.css"
-        
+import { useNotification } from '../../Notification/NotificationContext';        
 
 const RecoverPassword = () => {
   const [email, setEmail] = useState('');
   const apiUrl = process.env.REACT_APP_API_URL;
+  const { showNotification } = useNotification();
   
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -17,13 +18,13 @@ const RecoverPassword = () => {
         body: JSON.stringify({ email }),
       });
       if (response.ok) {
-        console.log('¡Correo de recuperación enviado!');
+        showNotification('¡Correo de recuperación enviado!', 'success');
       } else {
         const errorData = await response.json();
-        console.error(errorData.message || 'Surgió un error al enviar el correo');
+        showNotification(errorData.message || 'Surgió un error al enviar el correo', 'error');
       }
     } catch (error) {
-      console.log('Error de conexión con el servidor.');
+      showNotification('Error de conexión con el servidor.', 'error');
     }
   };
 

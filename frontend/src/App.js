@@ -5,6 +5,7 @@ import Login from './sections/Login/components/Login';
 import Menu from './sections/Menu/components/Menu';
 import Itinerario from './sections/Itinerario/components/Itinerario';
 import ResetPassword from './sections/Login/components/ResetPassword';
+import { NotificationProvider } from './sections/Notification/NotificationContext';
 
 
 function AppContent() {
@@ -25,9 +26,11 @@ function AppContent() {
 
 function App() {
   return (
-    <Router>
-      <AppContent />
-    </Router>
+    <NotificationProvider>
+      <Router>
+        <AppContent />
+      </Router>
+    </NotificationProvider>
   );
 }
 

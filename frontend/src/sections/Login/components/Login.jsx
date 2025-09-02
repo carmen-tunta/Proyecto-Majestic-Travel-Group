@@ -3,38 +3,34 @@ import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
 import { Link, useNavigate } from 'react-router-dom';
 import { apiService } from '../../../services/apiService';
+import { useNotification } from '../../Notification/NotificationContext';
 
 function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
   const navigate = useNavigate();
+  const { showNotification } = useNotification();
 
   const handleLogin = async () => {
-    // Validación básica
     if (!username.trim() || !password.trim()) {
-      setError('Por favor, completa todos los campos');
+      showNotification('Por favor, completa todos los campos', 'error');
       return;
     }
 
     setLoading(true);
-    setError('');
 
     try {
-      // Llamar al servicio de API real
       const response = await apiService.login(username, password);
       
-      // Guardar datos en localStorage
       localStorage.setItem('authToken', response.token);
       localStorage.setItem('user', JSON.stringify(response.user));
-      
-      // Redirigir a la página de itinerario
       navigate('/itinerario');
       
     } catch (error) {
-      setError(error.message || 'Error en la autenticación');
+      showNotification(error.message || 'Error en la autenticación', 'error');
+
     } finally {
       setLoading(false);
     }
@@ -48,21 +44,6 @@ function Login() {
         <div style={{ textAlign: 'center', marginBottom: 24 }}>
           <img src={process.env.PUBLIC_URL + '/logo_mtg.png'} alt="MTG" style={{ height: 48 }} />
         </div>
-        
-        {error && (
-          <div style={{ 
-            color: '#dc3545', 
-            textAlign: 'center', 
-            marginBottom: 12, 
-            fontSize: '14px',
-            padding: '8px',
-            backgroundColor: '#f8d7da',
-            borderRadius: '4px',
-            border: '1px solid #f5c6cb'
-          }}>
-            {error}
-          </div>
-        )}
         
         <div className="p-inputgroup" style={{ marginBottom: 12 }}>
           <span className="p-inputgroup-addon">
@@ -110,7 +91,7 @@ function Login() {
         />
         
         <div style={{ textAlign: 'center', marginTop: 12 }}>
-          <Link to="/recuperar-contrasena" style={{ textDecoration: 'none', color: '#007bff' }}>
+          <Link to="/forgot-password" style={{ textDecoration: 'none', color: '#007bff' }}>
             ¿Olvidaste contraseña?
           </Link>
         </div>
