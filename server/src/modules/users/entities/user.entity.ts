@@ -17,4 +17,16 @@ export class User {
     comment: 'Contraseña hasheada del usuario' 
   })
   password: string;
+
+  @Column({ 
+    length: 150, 
+    comment: 'Email del usuario' 
+  })
+  email: string;
+
+  @Column({ nullable: true, type: 'varchar'})
+  resetPasswordToken: string | null;
+
+  @Column({ nullable: true, type: 'datetime' })
+  resetPasswordExpires: Date | null;
 }

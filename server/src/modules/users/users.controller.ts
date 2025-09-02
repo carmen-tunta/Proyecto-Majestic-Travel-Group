@@ -7,8 +7,8 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post()
-  async createUser(@Body() createUserDto: { username: string; password: string }): Promise<User> {
-    return await this.usersService.create(createUserDto.username, createUserDto.password);
+  async createUser(@Body() createUserDto: { username: string; password: string; email: string }): Promise<User> {
+    return await this.usersService.create(createUserDto.username, createUserDto.password, createUserDto.email);
   }
 
   @Get()
@@ -24,5 +24,10 @@ export class UsersController {
   @Get('username/:username')
   async getUserByUsername(@Param('username') username: string): Promise<User | null> {
     return await this.usersService.findByUsername(username);
+  }
+
+  @Get('email/:email')
+  async getUserByEmail(@Param('email') email: string): Promise<User | null> {
+    return await this.usersService.findByEmail(email);
   }
 }

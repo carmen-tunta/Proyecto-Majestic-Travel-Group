@@ -11,7 +11,7 @@ export class UsersService {
     private usersRepository: Repository<User>,
   ) {}
 
-  async create(username: string, password: string): Promise<User> {
+  async create(username: string, password: string, email: string): Promise<User> {
     // Hashear la contraseña
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(password, saltRounds);
@@ -20,6 +20,7 @@ export class UsersService {
     const user = this.usersRepository.create({
       username,
       password: hashedPassword,
+      email: email,
     });
 
     // Guardar en la base de datos
@@ -38,11 +39,23 @@ export class UsersService {
     return await this.usersRepository.findOne({ where: { id } });
   }
 
+  async findByEmail(email: string): Promise<User | null> {
+    return await this.usersRepository.findOne({ where: { email } });
+  }
+
   async validateUser(username: string, password: string): Promise<User | null> {
     const user = await this.findByUsername(username);
     if (user && await bcrypt.compare(password, user.password)) {
       return user;
     }
     return null;
+  }
+
+  async save(user: User): Promise<User> {
+    return this.usersRepository.save(user);
+  }
+
+  async findByResetToken(token: string) {
+    return this.usersRepository.findOne({ where: { resetPasswordToken: token } });
   }
 }
