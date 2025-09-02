@@ -7,13 +7,14 @@ export class Component {
 
   @Column({ 
     length: 100, 
-    comment: 'Nombre del componente' 
+    unique: true,
+    comment: 'Nombre único del componente' 
   })
   componentName: string;
 
   @Column({ 
     length: 50, 
-    comment: 'Tipo de servicio que ofrece el componente' 
+    comment: 'Tipo de servicio al que pertenece el componente' 
   })
   serviceType: string;
 
@@ -23,4 +24,20 @@ export class Component {
     comment: 'Descripción detallada del componente' 
   })
   description: string;
+
+  @CreateDateColumn({ 
+    comment: 'Fecha de creación del registro' 
+  })
+  createdAt: Date;
+
+  @UpdateDateColumn({ 
+    comment: 'Fecha de última actualización del registro' 
+  })
+  updatedAt: Date;
+
+  @Column({ 
+    default: true, 
+    comment: 'Estado activo/inactivo del componente' 
+  })
+  isActive: boolean;
 }
