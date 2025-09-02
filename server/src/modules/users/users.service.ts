@@ -50,4 +50,12 @@ export class UsersService {
     }
     return null;
   }
+
+  async save(user: User): Promise<User> {
+    return this.usersRepository.save(user);
+  }
+
+  async findByResetToken(token: string) {
+    return this.usersRepository.findOne({ where: { resetPasswordToken: token } });
+  }
 }

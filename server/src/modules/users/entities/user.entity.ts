@@ -23,4 +23,10 @@ export class User {
     comment: 'Email del usuario' 
   })
   email: string;
+
+  @Column({ nullable: true, type: 'varchar'})
+  resetPasswordToken: string | null;
+
+  @Column({ nullable: true, type: 'datetime' })
+  resetPasswordExpires: Date | null;
 }

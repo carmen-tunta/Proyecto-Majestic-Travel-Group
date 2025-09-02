@@ -3,6 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../users/users.service';
 import * as bcrypt from 'bcrypt';
 import * as nodemailer from 'nodemailer';
+import * as crypto from 'crypto';
 
 @Injectable()
 export class AuthService {
@@ -40,6 +41,13 @@ export class AuthService {
       throw new UnauthorizedException('Email no registrado');
     }
 
+    const token = crypto.randomBytes(32).toString('hex');
+    user.resetPasswordToken = token;
+    user.resetPasswordExpires = new Date(Date.now() + 3600000);
+    await this.usersService.save(user);
+
+    const resetUrl = `${process.env.FRONTEND_URL}/reset-password?token=${token}`;
+
     const transporter = nodemailer.createTransport({
       host: 'smtp.gmail.com',
       port: 587,
@@ -54,7 +62,7 @@ export class AuthService {
       from: process.env.SMTP_FROM,
       to: email,
       subject: 'Recuperación de contraseña MTG',
-      text: `Hola ${user.username}, haz clic en el enlace para recuperar tu contraseña.`,
+      text: `Hola ${user.username}, haz clic en el enlace para recuperar tu contraseña. ${resetUrl}`,
     };
 
     try {
@@ -64,6 +72,18 @@ export class AuthService {
     } catch (error) {
       throw new UnauthorizedException('Error enviando el correo, intenta de nuevo.');
     }
+  }
+
+  async resetPassword(token: string, newPassword: string) {
+    const user = await this.usersService.findByResetToken(token);
+    if (!user || !user.resetPasswordExpires || user.resetPasswordExpires < new Date()) {
+      throw new UnauthorizedException('Token inválido o expirado');
+    }
+    user.password = await bcrypt.hash(newPassword, 10);
+    user.resetPasswordToken = null;
+    user.resetPasswordExpires = null;
+    await this.usersService.save(user);
+    return { message: 'Contraseña actualizada correctamente' };
   }
   
   

@@ -20,7 +20,7 @@ const RecoverPassword = () => {
         console.log('¡Correo de recuperación enviado!');
       } else {
         const errorData = await response.json();
-        console.error(errorData.message || 'GG');
+        console.error(errorData.message || 'Surgió un error al enviar el correo');
       }
     } catch (error) {
       console.log('Error de conexión con el servidor.');
