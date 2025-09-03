@@ -6,9 +6,10 @@ import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { ItineraryTemplateModule } from './itinerary-template/itinerary-template.module';
 import { ComponentsModule } from './components/components.module';
+import { ServicesModule } from './services/services.module';
 
 @Module({
-  imports: [DatabaseModule, UsersModule, AuthModule, ItineraryTemplateModule, ComponentsModule],
+  imports: [DatabaseModule, UsersModule, AuthModule, ItineraryTemplateModule, ComponentsModule, ServicesModule],
   controllers: [AppController],
   providers: [AppService],
 })
