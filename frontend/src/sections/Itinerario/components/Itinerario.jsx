@@ -2,15 +2,36 @@ import { DataTable } from 'primereact/datatable';
 import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
 import { Column } from 'primereact/column';
+import { ProgressSpinner } from 'primereact/progressspinner';
 import "../styles/Itinerario.css"
+import ItineraryTemplateRepository from '../../../modules/ItineraryTemplate/repository/ItineraryTemplateRepository';
+// import GetItineraryTemplateById from '../../../modules/ItineraryTemplate/application/GetItineraryTemplateById';
+import GetAllItineraryTemplate from '../../../modules/ItineraryTemplate/application/GetAllItineraryTemplate';
+import { useEffect, useState } from 'react';
 
 const Itinerario = () => {
-    
-    const products = [
-        { template: 'RECOMENDACIONES', title: 'RECOMENDACIONES' },
-        { template: 'NO INCLUYE - VISITAS DEL PERU', title: 'NO INCLUYE' },
-        { template: 'POLITICAS DE CANCELACION', title: 'POLITICAS DE CANCELACION' }
-    ];
+    const itineraryTemplate = new ItineraryTemplateRepository();
+    // const getTemplateById = new GetItineraryTemplateById(itineraryTemplate);
+    const getAllTemplates = new GetAllItineraryTemplate(itineraryTemplate);
+
+    const [template, setTemplate] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        async function loadItineraryTemplates(params) {
+            try {
+                setLoading(true);
+                const templateData = await getAllTemplates.execute();
+                setTemplate(templateData);
+                console.log(templateData);
+            } catch (error) {
+                console.error('Error al obtener la plantilla:', error);
+            } finally {
+                setLoading(false);
+            }
+        }
+        loadItineraryTemplates();
+    }, []);
 
     return (
         <div className="itinerario">
@@ -27,14 +48,21 @@ const Itinerario = () => {
             </div>
 
             <div className="card">
-                <DataTable className="itinerario-table" size="small" value={products} tableStyle={{ minWidth: '60%' }}>
+
+                {loading ? (
+                    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 120 }}>
+                        <ProgressSpinner />
+                    </div>
+                ) : (
+
+                <DataTable className="itinerario-table" size="small" value={template} tableStyle={{ minWidth: '60%' }}>
                     <Column 
-                        field="template" 
-                        header="Tipo de plantilla" 
+                        field="itineraryTitle" 
+                        header="Título de plantilla" 
                         style={{ width: '47%' }}>    
                     </Column>
                     <Column 
-                        field="title" 
+                        field="templateTitle" 
                         header="Título para el itinerario" 
                         style={{ width: '47%' }}>
                     </Column>
@@ -49,6 +77,7 @@ const Itinerario = () => {
                         )}
                     />
                 </DataTable>
+                )}
             </div>
 
             <div className='itinerario-footer'>
