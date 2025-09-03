@@ -8,6 +8,7 @@ import ItineraryTemplateRepository from '../../../modules/ItineraryTemplate/repo
 // import GetItineraryTemplateById from '../../../modules/ItineraryTemplate/application/GetItineraryTemplateById';
 import GetAllItineraryTemplate from '../../../modules/ItineraryTemplate/application/GetAllItineraryTemplate';
 import { useEffect, useState } from 'react';
+import ItineraryModal from './ItineraryModal';
 
 const Itinerario = () => {
     const itineraryTemplate = new ItineraryTemplateRepository();
@@ -16,6 +17,7 @@ const Itinerario = () => {
 
     const [template, setTemplate] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [showModal, setShowModal] = useState(false);
 
     useEffect(() => {
         async function loadItineraryTemplates(params) {
@@ -37,7 +39,12 @@ const Itinerario = () => {
         <div className="itinerario">
             <div className='itinerario-header'>
                 <h2>Plantilla Itineraria</h2>
-                <Button icon="pi pi-plus" label="Nuevo" size='small' outlined/>
+                <Button 
+                    icon="pi pi-plus" 
+                    label="Nuevo" 
+                    size='small' 
+                    outlined
+                    onClick={() => setShowModal(true)}/>
             </div>
 
             <div className='itinerario-search'>
@@ -83,6 +90,14 @@ const Itinerario = () => {
             <div className='itinerario-footer'>
                 Aqui van los botones
             </div>
+
+            {showModal && (
+                <ItineraryModal
+                    visible={showModal}
+                    onHide={() => setShowModal(false)}
+                />
+            )}
+    
         </div>
     )
 }
