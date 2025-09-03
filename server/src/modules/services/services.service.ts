@@ -39,6 +39,14 @@ export class ServicesService {
   }
 
   async remove(id: number): Promise<void> {
+    // Desasociar los componentes antes de eliminar el servicio
+    const service = await this.serviceRepository.findOne({ where: { id }, relations: ['components'] });
+    if (service && service.components && service.components.length > 0) {
+      for (const component of service.components) {
+        component.service = null;
+        await this.componentRepository.save(component);
+      }
+    }
     await this.serviceRepository.delete(id);
   }
 }
