@@ -18,6 +18,17 @@ const Itinerario = () => {
     const [template, setTemplate] = useState([]);
     const [loading, setLoading] = useState(true);
     const [showModal, setShowModal] = useState(false);
+    const [selectedTemplate, setSelectedTemplate] = useState(null);
+
+    const handleEdit = (template) => {
+        setSelectedTemplate(template);
+        setShowModal(true);
+    };
+
+    const handleNew = () => {
+        setSelectedTemplate(null);
+        setShowModal(true);
+    }
 
     useEffect(() => {
         async function loadItineraryTemplates(params) {
@@ -25,7 +36,6 @@ const Itinerario = () => {
                 setLoading(true);
                 const templateData = await getAllTemplates.execute();
                 setTemplate(templateData);
-                console.log(templateData);
             } catch (error) {
                 console.error('Error al obtener la plantilla:', error);
             } finally {
@@ -44,7 +54,7 @@ const Itinerario = () => {
                     label="Nuevo" 
                     size='small' 
                     outlined
-                    onClick={() => setShowModal(true)}/>
+                    onClick={() => handleNew()}/>
             </div>
 
             <div className='itinerario-search'>
@@ -74,12 +84,16 @@ const Itinerario = () => {
                         style={{ width: '47%' }}>
                     </Column>
                     <Column
-                        field="action"
                         header="Acción"
                         style={{ width: '6%' }}
-                        body={() => (
+                        body={rowData => (
                             <span style={{ display: 'flex', justifyContent: 'center' }}>
-                                <i className="pi pi-pencil" title="Editar" style={{color:'#1976d2'}}></i>
+                                <i 
+                                    className="pi pi-pencil"    
+                                    title="Editar" 
+                                    style={{color:'#1976d2', cursor:"pointer"}}
+                                    onClick={() => handleEdit(rowData)}    
+                                ></i>
                             </span>
                         )}
                     />
@@ -95,6 +109,7 @@ const Itinerario = () => {
                 <ItineraryModal
                     visible={showModal}
                     onHide={() => setShowModal(false)}
+                    template={selectedTemplate}
                 />
             )}
     
