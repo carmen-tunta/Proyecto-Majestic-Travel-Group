@@ -6,6 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import * as process from 'process';
 import { User } from '../modules/users/entities/user.entity';
 import { ItineraryTemplate } from 'src/modules/itinerary-template/entities/itinerary-template.entity';
+import { Component } from '../modules/components/entities/component.entity';
 
 @Module({
   imports: [
@@ -16,7 +17,7 @@ import { ItineraryTemplate } from 'src/modules/itinerary-template/entities/itine
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      entities: [User, ItineraryTemplate], // Aquí se agregarán las entidades
+      entities: [User, ItineraryTemplate, Component], // Aquí se agregarán las entidades
       synchronize: true, // Cambia a true solo en desarrollo
     }),
   ],
