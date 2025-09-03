@@ -42,6 +42,6 @@ export class Component {
   })
   isActive: boolean;
 
-  @ManyToOne(() => Service, (service) => service.components, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Service, (service) => service.components)
   service: Service;
 }

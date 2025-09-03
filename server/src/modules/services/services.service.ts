@@ -20,10 +20,6 @@ export class ServicesService {
     if (componentIds && componentIds.length > 0) {
       const components = await this.componentRepository.findByIds(componentIds);
       service.components = components;
-      // Actualizar la relación en los componentes
-      for (const component of components) {
-        component.service = service;
-      }
     }
 
     return this.serviceRepository.save(service);

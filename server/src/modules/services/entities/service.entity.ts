@@ -18,6 +18,6 @@ export class Service {
   @Column({ default: true, comment: 'Estado activo/inactivo del servicio' })
   isActive: boolean;
 
-  @OneToMany(() => Component, (component) => component.service, { cascade: true })
+  @OneToMany(() => Component, (component) => component.service)
   components: Component[];
 }
