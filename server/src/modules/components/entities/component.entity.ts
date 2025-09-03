@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne } from 'typeorm';
+import { Service } from '../../services/entities/service.entity';
 
 @Entity('components')
 export class Component {
@@ -40,4 +41,7 @@ export class Component {
     comment: 'Estado activo/inactivo del componente' 
   })
   isActive: boolean;
+
+  @ManyToOne(() => Service, (service) => service.components, { nullable: true })
+  service: Service | null;
 }
