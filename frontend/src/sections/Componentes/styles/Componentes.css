@@ -1,0 +1,74 @@
+.componentes {
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    padding: 0rem 4rem 2rem 2rem;
+}
+
+.componentes-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.componentes-search {
+    margin-bottom: 2rem;
+}
+
+.componentes-table .p-datatable-thead > tr > th {
+  background: #1976d2;
+  color: #ffffff;
+  font-weight: normal;
+  border: none;
+}
+
+.componentes-table .p-datatable-tbody > tr > td {
+  border: none;
+}
+
+.componentes-table .p-datatable-tbody > tr:nth-child(odd) > td {
+  background: #fff;
+}
+
+.componentes-table .p-datatable-tbody > tr:nth-child(even) > td {
+  background: #e3f2fd;
+}
+
+.componentes-footer {
+    margin-top: 1rem;
+    display: flex;
+    justify-content: center;
+    color: rgb(175, 175, 175);
+}
+
+.componentes-footer .p-paginator {
+    background: transparent;
+    border: none;
+    padding: 0;
+}
+
+.componentes-footer .p-paginator .p-paginator-page,
+.componentes-footer .p-paginator .p-paginator-first,
+.componentes-footer .p-paginator .p-paginator-prev,
+.componentes-footer .p-paginator .p-paginator-next,
+.componentes-footer .p-paginator .p-paginator-last {
+    color: #1976d2;
+    border: 1px solid #1976d2;
+    background: transparent;
+}
+
+.componentes-footer .p-paginator .p-paginator-page:hover,
+.componentes-footer .p-paginator .p-paginator-first:hover,
+.componentes-footer .p-paginator .p-paginator-prev:hover,
+.componentes-footer .p-paginator .p-paginator-next:hover,
+.componentes-footer .p-paginator .p-paginator-last:hover {
+    background: #1976d2;
+    color: white;
+}
+
+.componentes-footer .p-paginator .p-paginator-page.p-highlight {
+    background: #1976d2;
+    color: white;
+    border-color: #1976d2;
+}

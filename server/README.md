@@ -1,5 +1,3 @@
-Librerias instaladas 
-npm install @nestjs/jwt @nestjs/passport passport passport-jwt bcrypt @types/bcrypt
 
 
 <p align="center">
