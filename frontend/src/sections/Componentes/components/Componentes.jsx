@@ -4,6 +4,7 @@ import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { InputText } from 'primereact/inputtext';
 import { Paginator } from 'primereact/paginator';
+import ComponentModal from './ComponentModal';
 import "../styles/Componentes.css";
 
 const Componentes = () => {
@@ -11,6 +12,8 @@ const Componentes = () => {
   const [loading, setLoading] = useState(true);
   const [first, setFirst] = useState(0);
   const [rows, setRows] = useState(10);
+  const [showModal, setShowModal] = useState(false);
+  const [editingComponent, setEditingComponent] = useState(null);
 
   // Función para obtener los componentes del backend
   const fetchComponentes = async () => {
@@ -47,12 +50,65 @@ const Componentes = () => {
     setRows(event.rows);
   };
 
+  // Función para abrir modal de nuevo componente
+  const handleNewComponent = () => {
+    setEditingComponent(null);
+    setShowModal(true);
+  };
+
+  // Función para abrir modal de edición
+  const handleEditComponent = (component) => {
+    setEditingComponent(component);
+    setShowModal(true);
+  };
+
+  // Función para cerrar modal
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setEditingComponent(null);
+  };
+
+  // Función para guardar componente
+  const handleSaveComponent = async (componentData) => {
+    try {
+      const url = editingComponent 
+        ? `http://localhost:3080/components/${editingComponent.id}`
+        : 'http://localhost:3080/components';
+      
+      const method = editingComponent ? 'PATCH' : 'POST';
+      
+      const response = await fetch(url, {
+        method: method,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(componentData),
+      });
+
+      if (response.ok) {
+        // Recargar la lista de componentes
+        await fetchComponentes();
+        console.log(editingComponent ? 'Componente actualizado' : 'Componente creado');
+      } else {
+        console.error('Error al guardar componente');
+      }
+    } catch (error) {
+      console.error('Error de conexión:', error);
+    }
+  };
+
   return (
     <div className="componentes">
       {/* Header con título y botón Nuevo */}
       <div className='componentes-header'>
         <h2>Componentes</h2>
-        <Button icon="pi pi-plus" label="Nuevo" size='small' outlined/>
+        <Button 
+          icon="pi pi-plus" 
+          label="Nuevo" 
+          size='small' 
+          outlined
+          onClick={handleNewComponent}
+        />
       </div>
 
       {/* Barra de búsqueda */}
@@ -95,9 +151,14 @@ const Componentes = () => {
           <Column
             header="Acción"
             style={{ width: '6%' }}
-            body={() => (
+            body={(rowData) => (
               <span style={{ display: 'flex', justifyContent: 'center' }}>
-                <i className="pi pi-pencil" title="Editar" style={{color:'#1976d2'}}></i>
+                <i 
+                  className="pi pi-pencil" 
+                  title="Editar" 
+                  style={{color:'#1976d2', cursor: 'pointer'}}
+                  onClick={() => handleEditComponent(rowData)}
+                />
               </span>
             )}
           />
@@ -115,6 +176,15 @@ const Componentes = () => {
           template="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown"
         />
       </div>
+
+      {/* Modal de Componente */}
+      {showModal && (
+        <ComponentModal
+          onHide={handleCloseModal}
+          component={editingComponent}
+          onSave={handleSaveComponent}
+        />
+      )}
     </div>
   );
 };
