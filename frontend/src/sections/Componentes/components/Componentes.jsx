@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Button } from 'primereact/button';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
@@ -21,14 +21,14 @@ const Componentes = () => {
   const [currentPage, setCurrentPage] = useState(0);
 
   // Instancias de los casos de uso
-  const getAllComponents = new GetAllComponentsTemplate();
   const createComponent = new CreateComponentsTemplate();
   const updateComponent = new UpdateComponentsTemplate();
 
   // Función para obtener los componentes del backend
-  const fetchComponentes = async (page = 0, pageSize = 10) => {
+  const fetchComponentes = useCallback(async (page = 0, pageSize = 10) => {
     try {
       setLoading(true);
+      const getAllComponents = new GetAllComponentsTemplate();
       const result = await getAllComponents.execute(page, pageSize);
       setComponentes(result.data);
       setTotalRecords(result.total);
@@ -37,12 +37,12 @@ const Componentes = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   // Cargar componentes al montar el componente
   useEffect(() => {
     fetchComponentes();
-  }, []);
+  }, [fetchComponentes]);
 
   // Función para truncar texto largo
   const truncateText = (text, maxLength = 50) => {

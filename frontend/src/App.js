@@ -7,7 +7,7 @@ import Itinerario from './sections/Itinerario/components/Itinerario';
 import ResetPassword from './sections/Login/components/ResetPassword';
 import Componentes from './sections/Componentes/components/Componentes';
 import { NotificationProvider } from './sections/Notification/NotificationContext';
-import { AuthProvider, useAuth } from './modules/auth/context/AuthContext';
+import { AuthProvider } from './modules/auth/context/AuthContext';
 import ProtectedRoute from './modules/auth/components/ProtectedRoute';
 import PublicRoute from './modules/auth/components/PublicRoute';
 
