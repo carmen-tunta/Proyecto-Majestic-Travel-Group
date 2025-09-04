@@ -30,20 +30,27 @@ const Itinerario = () => {
         setShowModal(true);
     }
 
-    useEffect(() => {
-        async function loadItineraryTemplates(params) {
-            try {
-                setLoading(true);
-                const templateData = await getAllTemplates.execute();
-                setTemplate(templateData);
-            } catch (error) {
-                console.error('Error al obtener la plantilla:', error);
-            } finally {
-                setLoading(false);
-            }
+    const loadItineraryTemplates = async () => {
+        setLoading(true);
+        try {
+            const templateData = await getAllTemplates.execute();
+            setTemplate(templateData);
+        } catch (error) {
+            console.error('Error al obtener la plantilla:', error);
+        } finally {
+            setLoading(false);
         }
+    };
+
+    useEffect(() => {
         loadItineraryTemplates();
     }, []);
+
+    const handleModalClose = () => {
+        setShowModal(false);
+        loadItineraryTemplates();
+    };
+
 
     return (
         <div className="itinerario">
@@ -108,7 +115,7 @@ const Itinerario = () => {
             {showModal && (
                 <ItineraryModal
                     visible={showModal}
-                    onHide={() => setShowModal(false)}
+                    onHide={handleModalClose}
                     template={selectedTemplate}
                 />
             )}
