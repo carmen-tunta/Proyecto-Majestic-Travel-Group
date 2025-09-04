@@ -7,6 +7,7 @@ import Itinerario from './sections/Itinerario/components/Itinerario';
 import ResetPassword from './sections/Login/components/ResetPassword';
 import Componentes from './sections/Componentes/components/Componentes';
 import { NotificationProvider } from './sections/Notification/NotificationContext';
+import { AuthProvider, ProtectedRoute, PublicRoute } from './modules/auth';
 
 
 function AppContent() {
@@ -16,11 +17,34 @@ function AppContent() {
     <>
       {!hideMenu && <Menu />}
       <Routes>
-        <Route path="/" element={<Login />} />
-        <Route path="/forgot-password" element={<RecoverPassword />} />
-        <Route path="/reset-password" element={<ResetPassword />} />
-        <Route path="/itinerario" element={<Itinerario />} />
-        <Route path="/componentes" element={<Componentes />} />
+        {/* Rutas públicas - solo para usuarios NO autenticados */}
+        <Route path="/" element={
+          <PublicRoute>
+            <Login />
+          </PublicRoute>
+        } />
+        <Route path="/forgot-password" element={
+          <PublicRoute>
+            <RecoverPassword />
+          </PublicRoute>
+        } />
+        <Route path="/reset-password" element={
+          <PublicRoute>
+            <ResetPassword />
+          </PublicRoute>
+        } />
+        
+        {/* Rutas protegidas - solo para usuarios autenticados */}
+        <Route path="/itinerario" element={
+          <ProtectedRoute>
+            <Itinerario />
+          </ProtectedRoute>
+        } />
+        <Route path="/componentes" element={
+          <ProtectedRoute>
+            <Componentes />
+          </ProtectedRoute>
+        } />
       </Routes>
     </>
   );
@@ -28,11 +52,13 @@ function AppContent() {
 
 function App() {
   return (
-    <NotificationProvider>
-      <Router>
-        <AppContent />
-      </Router>
-    </NotificationProvider>
+    <AuthProvider>
+      <NotificationProvider>
+        <Router>
+          <AppContent />
+        </Router>
+      </NotificationProvider>
+    </AuthProvider>
   );
 }
 
