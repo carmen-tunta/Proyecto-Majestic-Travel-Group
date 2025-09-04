@@ -11,6 +11,14 @@
   background-color: #f8f9fa;
 }
 
+/* Contenido principal cuando el modal está abierto - menú no fijo */
+.main-content-modal {
+  margin-left: 0;
+  width: 100vw;
+  min-height: 100vh;
+  background-color: #f8f9fa;
+}
+
 .App {
   text-align: center;
 }

@@ -10,15 +10,17 @@ import { NotificationProvider } from './sections/Notification/NotificationContex
 import { AuthProvider } from './modules/auth/context/AuthContext';
 import ProtectedRoute from './modules/auth/components/ProtectedRoute';
 import PublicRoute from './modules/auth/components/PublicRoute';
+import { ModalProvider, useModal } from './contexts/ModalContext';
 
 
 function AppContent() {
   const location = useLocation();
+  const { isModalOpen } = useModal();
   const hideMenu = location.pathname === '/forgot-password' || location.pathname === '/'|| location.pathname === '/reset-password'  ;
   return (
     <>
       {!hideMenu && <Menu />}
-      <div className={hideMenu ? '' : 'main-content'}>
+      <div className={hideMenu ? '' : (isModalOpen ? 'main-content-modal' : 'main-content')}>
         <Routes>
           {/* Rutas públicas - solo para usuarios NO autenticados */}
           <Route path="/" element={
@@ -57,11 +59,13 @@ function AppContent() {
 function App() {
   return (
     <AuthProvider>
-      <NotificationProvider>
-        <Router>
-          <AppContent />
-        </Router>
-      </NotificationProvider>
+      <ModalProvider>
+        <NotificationProvider>
+          <Router>
+            <AppContent />
+          </Router>
+        </NotificationProvider>
+      </ModalProvider>
     </AuthProvider>
   );
 }

@@ -9,6 +9,7 @@ import "../styles/Componentes.css";
 import { GetAllComponentsTemplate } from '../../../modules/ComponentsTemplate/application/GetAllComponentsTemplate';
 import { CreateComponentsTemplate } from '../../../modules/ComponentsTemplate/application/CreateComponentsTemplate';
 import { UpdateComponentsTemplate } from '../../../modules/ComponentsTemplate/application/UpdateComponentsTemplate';
+import { useModal } from '../../../contexts/ModalContext';
 
 const Componentes = () => {
   const [componentes, setComponentes] = useState([]);
@@ -19,6 +20,7 @@ const Componentes = () => {
   const [showModal, setShowModal] = useState(false);
   const [editingComponent, setEditingComponent] = useState(null);
   const [currentPage, setCurrentPage] = useState(0);
+  const { setIsModalOpen } = useModal();
 
   // Instancias de los casos de uso
   const createComponent = new CreateComponentsTemplate();
@@ -62,18 +64,24 @@ const Componentes = () => {
   const handleNewComponent = () => {
     setEditingComponent(null);
     setShowModal(true);
+    setIsModalOpen(true);
+    console.log('Modal abierto - isModalOpen: true');
   };
 
   // Función para abrir modal de edición
   const handleEditComponent = (component) => {
     setEditingComponent(component);
     setShowModal(true);
+    setIsModalOpen(true);
+    console.log('Modal abierto - isModalOpen: true');
   };
 
   // Función para cerrar modal
   const handleCloseModal = () => {
     setShowModal(false);
     setEditingComponent(null);
+    setIsModalOpen(false);
+    console.log('Modal cerrado - isModalOpen: false');
   };
 
   // Función para guardar componente
@@ -92,6 +100,7 @@ const Componentes = () => {
       // Cerrar el modal
       setShowModal(false);
       setEditingComponent(null);
+      setIsModalOpen(false);
       
       // Volver a la página original y recargar
       const pageToReturn = editingComponent ? currentPage : 0; // Si es nuevo, ir a página 1

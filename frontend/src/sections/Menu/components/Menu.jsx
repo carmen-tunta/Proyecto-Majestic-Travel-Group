@@ -3,11 +3,13 @@ import "../styles/Menu.css"
 import { Button } from "primereact/button";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../../modules/auth/context/AuthContext";
+import { useModal } from "../../../contexts/ModalContext";
 
 
 const Menu = () => {
     const navigate = useNavigate();
     const { logout } = useAuth();
+    const { isModalOpen } = useModal();
 
     const handleLogout = () => {
         logout();
@@ -15,7 +17,7 @@ const Menu = () => {
     };
 
     return (
-        <div className="menu-app">
+        <div className={`menu-app ${isModalOpen ? 'menu-app-modal' : ''}`}>
             <div className="menu-logo">
                 <img src="logo_mtg.png" alt="Logo" />
             </div>

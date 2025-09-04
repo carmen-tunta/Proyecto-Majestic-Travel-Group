@@ -10,6 +10,14 @@
     justify-content: space-around;
     background-color: white;
     z-index: 1000;
+}
+
+/* Menú cuando el modal está abierto - no fijo */
+.menu-app-modal {
+    position: static;
+    width: 17vw;
+    height: 100vh;
+    z-index: 1;
 }   
 
 .menu-app .p-button {
