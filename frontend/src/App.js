@@ -7,7 +7,7 @@ import Itinerario from './sections/Itinerario/components/Itinerario';
 import ResetPassword from './sections/Login/components/ResetPassword';
 import Componentes from './sections/Componentes/components/Componentes';
 import { NotificationProvider } from './sections/Notification/NotificationContext';
-
+import Services from './sections/Services/components/Services';
 
 function AppContent() {
   const location = useLocation();
@@ -21,6 +21,7 @@ function AppContent() {
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/itinerario" element={<Itinerario />} />
         <Route path="/componentes" element={<Componentes />} />
+        <Route path="/servicios" element={<Services />} />
       </Routes>
     </>
   );
