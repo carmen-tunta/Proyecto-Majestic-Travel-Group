@@ -6,6 +6,9 @@ import { InputText } from 'primereact/inputtext';
 import { Paginator } from 'primereact/paginator';
 import ComponentModal from './ComponentModal';
 import "../styles/Componentes.css";
+import { GetAllComponentsTemplate } from '../../../modules/ComponentsTemplate/application/GetAllComponentsTemplate';
+import { CreateComponentsTemplate } from '../../../modules/ComponentsTemplate/application/CreateComponentsTemplate';
+import { UpdateComponentsTemplate } from '../../../modules/ComponentsTemplate/application/UpdateComponentsTemplate';
 
 const Componentes = () => {
   const [componentes, setComponentes] = useState([]);
@@ -16,20 +19,20 @@ const Componentes = () => {
   const [showModal, setShowModal] = useState(false);
   const [editingComponent, setEditingComponent] = useState(null);
 
+  // Instancias de los casos de uso
+  const getAllComponents = new GetAllComponentsTemplate();
+  const createComponent = new CreateComponentsTemplate();
+  const updateComponent = new UpdateComponentsTemplate();
+
   // Función para obtener los componentes del backend
   const fetchComponentes = async (page = 0, pageSize = 10) => {
     try {
       setLoading(true);
-      const response = await fetch(`http://localhost:3080/components?page=${page}&limit=${pageSize}`);
-      if (response.ok) {
-        const data = await response.json();
-        setComponentes(data.data || data); // Ajustar según la respuesta del backend
-        setTotalRecords(data.total || data.length);
-      } else {
-        console.error('Error al obtener componentes');
-      }
+      const result = await getAllComponents.execute(page, pageSize);
+      setComponentes(result.data);
+      setTotalRecords(result.total);
     } catch (error) {
-      console.error('Error de conexión:', error);
+      console.error('Error al obtener componentes:', error);
     } finally {
       setLoading(false);
     }
@@ -74,29 +77,20 @@ const Componentes = () => {
   // Función para guardar componente
   const handleSaveComponent = async (componentData) => {
     try {
-      const url = editingComponent 
-        ? `http://localhost:3080/components/${editingComponent.id}`
-        : 'http://localhost:3080/components';
-      
-      const method = editingComponent ? 'PATCH' : 'POST';
-      
-      const response = await fetch(url, {
-        method: method,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(componentData),
-      });
-
-      if (response.ok) {
-        // Recargar la lista de componentes
-        await fetchComponentes();
-        console.log(editingComponent ? 'Componente actualizado' : 'Componente creado');
+      if (editingComponent) {
+        // Actualizar componente existente
+        await updateComponent.execute(editingComponent.id, componentData);
+        console.log('Componente actualizado');
       } else {
-        console.error('Error al guardar componente');
+        // Crear nuevo componente
+        await createComponent.execute(componentData);
+        console.log('Componente creado');
       }
+      
+      // Recargar la lista de componentes
+      await fetchComponentes(first, rows);
     } catch (error) {
-      console.error('Error de conexión:', error);
+      console.error('Error al guardar componente:', error);
     }
   };
 

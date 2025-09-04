@@ -2,7 +2,7 @@ import "../styles/Menu.css"
 
 import { Button } from "primereact/button";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../../modules/auth";
+import { useAuth } from "../../../modules/auth/context/AuthContext";
 
 
 const Menu = () => {

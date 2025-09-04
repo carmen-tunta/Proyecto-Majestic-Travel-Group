@@ -4,7 +4,7 @@ import { Button } from 'primereact/button';
 import { Link, useNavigate } from 'react-router-dom';
 import { apiService } from '../../../services/apiService';
 import { useNotification } from '../../Notification/NotificationContext';
-import { useAuth } from '../../../modules/auth';
+import { useAuth } from '../../../modules/auth/context/AuthContext';
 
 function Login() {
   const [showPassword, setShowPassword] = useState(false);
