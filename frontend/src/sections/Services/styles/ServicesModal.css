@@ -1,0 +1,59 @@
+.service-modal {
+    background-color: white;
+    border-radius: 8px;
+    padding: 0rem 2rem 1rem 2rem;
+    height: 90vh;
+    width: 40vw;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+}
+
+.service-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0,0,0,0.7);
+    z-index: 999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.service-modal input {
+    width: 100%;
+}
+
+.service-modal-buttons {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 10px;
+}
+
+.service-modal-buttons button {
+    padding: 10px 20px;
+    width: 35%;
+    cursor: pointer;
+}
+
+.service-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.service-images .p-button{
+    background-color: rgba(0, 0, 0, 0);
+    width: 5rem;
+    height: 6rem;
+    border: 1px dashed rgba(128, 128, 128, 0.7);
+}
+
+.service-components-search {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}

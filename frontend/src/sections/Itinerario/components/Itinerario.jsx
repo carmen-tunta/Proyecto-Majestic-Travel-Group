@@ -5,14 +5,12 @@ import { Column } from 'primereact/column';
 import { ProgressSpinner } from 'primereact/progressspinner';
 import "../styles/Itinerario.css"
 import ItineraryTemplateRepository from '../../../modules/ItineraryTemplate/repository/ItineraryTemplateRepository';
-// import GetItineraryTemplateById from '../../../modules/ItineraryTemplate/application/GetItineraryTemplateById';
 import GetAllItineraryTemplate from '../../../modules/ItineraryTemplate/application/GetAllItineraryTemplate';
 import { useEffect, useState } from 'react';
 import ItineraryModal from './ItineraryModal';
 
 const Itinerario = () => {
     const itineraryTemplate = new ItineraryTemplateRepository();
-    // const getTemplateById = new GetItineraryTemplateById(itineraryTemplate);
     const getAllTemplates = new GetAllItineraryTemplate(itineraryTemplate);
 
     const [template, setTemplate] = useState([]);
