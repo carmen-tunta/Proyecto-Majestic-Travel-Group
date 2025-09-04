@@ -39,7 +39,7 @@ export class ItineraryTemplateService {
 
     async searchByName(name: string): Promise<ItineraryTemplate[]> {
         return await this.itineraryTemplateRepository.createQueryBuilder('itineraryTemplate')
-            .where('itineraryTemplate.templateTitle LIKE :name OR itineraryTemplate.itineraryTitle LIKE :name', { name: `%${name}%` })
+            .where('itineraryTemplate.templateTitle LIKE :name', { name: `%${name}%` })
             .getMany();
     }
 }
