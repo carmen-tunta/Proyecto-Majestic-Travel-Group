@@ -1,6 +1,7 @@
 # Front
 npm install react-router-dom
 npm install primereact primeicons
+npm install quill
 
 # Back
 npm install nodemailer

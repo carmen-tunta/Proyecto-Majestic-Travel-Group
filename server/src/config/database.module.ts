@@ -18,7 +18,7 @@ import { Service } from '../modules/services/entities/service.entity';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-  entities: [User, ItineraryTemplate, Component, Service], // Aquí se agregarán las entidades
+      entities: [User, ItineraryTemplate, Component, Service], // Aquí se agregarán las entidades
       synchronize: true, // Cambia a true solo en desarrollo
     }),
   ],
