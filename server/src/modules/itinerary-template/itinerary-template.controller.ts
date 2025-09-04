@@ -16,6 +16,14 @@ export class ItineraryTemplateController {
         return await this.itineraryTemplateService.findAll();
     }
 
+    @Get('search')
+    async searchTemplates(@Query('name') name: string): Promise<ItineraryTemplate[]> {
+        if (!name || name.trim() === '') {
+            throw new BadRequestException("El parámetro 'name' es requerido y no puede estar vacío.");
+        }
+        return await this.itineraryTemplateService.searchByName(name);
+    }
+
     @Get(':id')
     async getTemplateById(@Body('id') id: number): Promise<ItineraryTemplate | null> {
         return await this.itineraryTemplateService.findById(id);
@@ -26,11 +34,5 @@ export class ItineraryTemplateController {
         return await this.itineraryTemplateService.update(id, updateTemplateDto.templateTitle, updateTemplateDto.itineraryTitle);
     }
 
-    @Get('search')
-    async searchTemplates(@Query('name') name: string): Promise<ItineraryTemplate[]> {
-        if (!name || name.trim() === '') {
-            throw new BadRequestException("El parámetro 'name' es requerido y no puede estar vacío.");
-        }
-        return await this.itineraryTemplateService.searchByName(name);
-    }
+    
 }
