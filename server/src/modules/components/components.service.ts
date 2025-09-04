@@ -8,7 +8,7 @@ export class ComponentsService {
   constructor(
     @InjectRepository(Component)
     private componentsRepository: Repository<Component>,
-  ) {}
+  ) { }
 
   // CREATE - Crear un nuevo componente
   async create(createComponentDto: {
@@ -85,7 +85,7 @@ export class ComponentsService {
     isActive?: boolean;
   }): Promise<Component> {
     const component = await this.findOne(id);
-    
+
     Object.assign(component, updateComponentDto);
     return await this.componentsRepository.save(component);
   }
@@ -93,19 +93,26 @@ export class ComponentsService {
   // DELETE - Eliminar un componente (soft delete)
   async remove(id: number): Promise<{ message: string }> {
     const component = await this.findOne(id);
-    
+
     component.isActive = false;
     await this.componentsRepository.save(component);
-    
+
     return { message: 'Componente desactivado exitosamente' };
   }
 
   // DELETE - Eliminar permanentemente un componente
   async delete(id: number): Promise<{ message: string }> {
     const component = await this.findOne(id);
-    
+
     await this.componentsRepository.remove(component);
-    
+
     return { message: 'Componente eliminado permanentemente' };
+  }
+
+  // SEARCH - Buscar componentes por nombre
+  async searchByName(name: string): Promise<Component[]> {
+    return await this.componentsRepository.createQueryBuilder('component')
+      .where('component.componentName LIKE :name', { name: `%${name}%` })
+      .getMany();
   }
 }
