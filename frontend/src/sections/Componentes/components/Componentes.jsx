@@ -65,7 +65,6 @@ const Componentes = () => {
     setEditingComponent(null);
     setShowModal(true);
     setIsModalOpen(true);
-    console.log('Modal abierto - isModalOpen: true');
   };
 
   // Función para abrir modal de edición
@@ -73,7 +72,6 @@ const Componentes = () => {
     setEditingComponent(component);
     setShowModal(true);
     setIsModalOpen(true);
-    console.log('Modal abierto - isModalOpen: true');
   };
 
   // Función para cerrar modal
@@ -81,7 +79,6 @@ const Componentes = () => {
     setShowModal(false);
     setEditingComponent(null);
     setIsModalOpen(false);
-    console.log('Modal cerrado - isModalOpen: false');
   };
 
   // Función para guardar componente

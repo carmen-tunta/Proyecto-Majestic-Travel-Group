@@ -26,14 +26,12 @@ const Itinerario = () => {
         setSelectedTemplate(template);
         setShowModal(true);
         setIsModalOpen(true);
-        console.log('Modal de itinerario abierto - isModalOpen: true');
     };
 
     const handleNew = () => {
         setSelectedTemplate(null);
         setShowModal(true);
         setIsModalOpen(true);
-        console.log('Modal de itinerario abierto - isModalOpen: true');
     }
 
     const loadItineraryTemplates = async () => {
@@ -55,7 +53,6 @@ const Itinerario = () => {
     const handleModalClose = () => {
         setShowModal(false);
         setIsModalOpen(false);
-        console.log('Modal de itinerario cerrado - isModalOpen: false');
         loadItineraryTemplates();
     };
 
