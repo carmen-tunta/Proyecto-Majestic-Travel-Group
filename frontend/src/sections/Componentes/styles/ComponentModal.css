@@ -68,3 +68,11 @@
     color: #666;
     font-size: 0.9rem;
 }
+
+/* Estilos específicos para el textarea */
+.component-modal .p-inputtextarea {
+    min-height: 80px !important;
+    max-height: 120px !important;
+    resize: vertical !important;
+    overflow-y: auto !important;
+}

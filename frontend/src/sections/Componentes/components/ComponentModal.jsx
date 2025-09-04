@@ -102,7 +102,7 @@ const ComponentModal = ({ onHide, component, onSave }) => {
             onChange={e => setDescription(e.target.value)}
             rows={4}
             placeholder="Describe el componente..."
-            style={{ width: '100%' }}
+            style={{ width: '100%', minHeight: '80px', maxHeight: '120px', resize: 'vertical' }}
           />
           <label htmlFor="description">Descripción del componente</label>
         </FloatLabel>
