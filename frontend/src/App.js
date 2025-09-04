@@ -18,36 +18,38 @@ function AppContent() {
   return (
     <>
       {!hideMenu && <Menu />}
-      <Routes>
-        {/* Rutas públicas - solo para usuarios NO autenticados */}
-        <Route path="/" element={
-          <PublicRoute>
-            <Login />
-          </PublicRoute>
-        } />
-        <Route path="/forgot-password" element={
-          <PublicRoute>
-            <RecoverPassword />
-          </PublicRoute>
-        } />
-        <Route path="/reset-password" element={
-          <PublicRoute>
-            <ResetPassword />
-          </PublicRoute>
-        } />
-        
-        {/* Rutas protegidas - solo para usuarios autenticados */}
-        <Route path="/itinerario" element={
-          <ProtectedRoute>
-            <Itinerario />
-          </ProtectedRoute>
-        } />
-        <Route path="/componentes" element={
-          <ProtectedRoute>
-            <Componentes />
-          </ProtectedRoute>
-        } />
-      </Routes>
+      <div className={hideMenu ? '' : 'main-content'}>
+        <Routes>
+          {/* Rutas públicas - solo para usuarios NO autenticados */}
+          <Route path="/" element={
+            <PublicRoute>
+              <Login />
+            </PublicRoute>
+          } />
+          <Route path="/forgot-password" element={
+            <PublicRoute>
+              <RecoverPassword />
+            </PublicRoute>
+          } />
+          <Route path="/reset-password" element={
+            <PublicRoute>
+              <ResetPassword />
+            </PublicRoute>
+          } />
+          
+          {/* Rutas protegidas - solo para usuarios autenticados */}
+          <Route path="/itinerario" element={
+            <ProtectedRoute>
+              <Itinerario />
+            </ProtectedRoute>
+          } />
+          <Route path="/componentes" element={
+            <ProtectedRoute>
+              <Componentes />
+            </ProtectedRoute>
+          } />
+        </Routes>
+      </div>
     </>
   );
 }
