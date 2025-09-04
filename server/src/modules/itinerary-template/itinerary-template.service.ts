@@ -8,7 +8,7 @@ export class ItineraryTemplateService {
     constructor(
         @InjectRepository(ItineraryTemplate)
         private itineraryTemplateRepository: Repository<ItineraryTemplate>,
-    ) {}
+    ) { }
 
     async create(templateTitle: string, itineraryTitle: string): Promise<ItineraryTemplate> {
         const template = this.itineraryTemplateRepository.create({
@@ -35,5 +35,11 @@ export class ItineraryTemplateService {
 
         await this.itineraryTemplateRepository.save(template);
         return template;
+    }
+
+    async searchByName(name: string): Promise<ItineraryTemplate[]> {
+        return await this.itineraryTemplateRepository.createQueryBuilder('itineraryTemplate')
+            .where('itineraryTemplate.templateTitle LIKE :name OR itineraryTemplate.itineraryTitle LIKE :name', { name: `%${name}%` })
+            .getMany();
     }
 }

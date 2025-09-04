@@ -11,7 +11,7 @@ export class ServicesService {
     private serviceRepository: Repository<Service>,
     @InjectRepository(Component)
     private componentRepository: Repository<Component>,
-  ) {}
+  ) { }
 
   async create(data: Partial<Service> & { componentIds?: number[] }): Promise<Service> {
     const { componentIds, ...serviceData } = data;
@@ -48,5 +48,13 @@ export class ServicesService {
       }
     }
     await this.serviceRepository.delete(id);
+  }
+
+  // SEARCH - Buscar servicios por nombre
+  async searchByName(name: string): Promise<Service[]> {
+    return await this.serviceRepository.createQueryBuilder('service')
+      .where('service.name LIKE :name', { name: `%${name}%` })
+      .leftJoinAndSelect('service.components', 'component')
+      .getMany();
   }
 }

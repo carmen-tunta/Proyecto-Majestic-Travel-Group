@@ -1,19 +1,20 @@
-import { 
-  Controller, 
-  Get, 
-  Post, 
-  Body, 
-  Patch, 
-  Param, 
-  Delete, 
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
   ParseIntPipe,
-  Query 
+  Query,
+  BadRequestException
 } from '@nestjs/common';
 import { ComponentsService } from './components.service';
 
 @Controller('components')
 export class ComponentsController {
-  constructor(private readonly componentsService: ComponentsService) {}
+  constructor(private readonly componentsService: ComponentsService) { }
 
   // CREATE - Crear un nuevo componente
   @Post()
@@ -32,6 +33,15 @@ export class ComponentsController {
       return await this.componentsService.findActive();
     }
     return await this.componentsService.findAll();
+  }
+
+  // SEARCH - Buscar componentes por nombre
+  @Get('search')
+  async searchComponents(@Query('name') name: string) {
+    if (!name || name.trim() === '') {
+      throw new BadRequestException("El parámetro 'name' es requerido y no puede estar vacío.");
+    }
+    return await this.componentsService.searchByName(name);
   }
 
   // READ - Obtener componente por ID
@@ -71,4 +81,6 @@ export class ComponentsController {
   async delete(@Param('id', ParseIntPipe) id: number) {
     return await this.componentsService.delete(id);
   }
+
+  
 }
