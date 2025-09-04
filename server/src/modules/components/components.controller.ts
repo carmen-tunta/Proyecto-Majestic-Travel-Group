@@ -25,13 +25,28 @@ export class ComponentsController {
     return await this.componentsService.create(createComponentDto);
   }
 
-  // READ - Obtener todos los componentes
+  // READ - Obtener todos los componentes con paginación
   @Get()
-  async findAll(@Query('active') active?: string) {
+  async findAll(
+    @Query('active') active?: string,
+    @Query('page') page?: string,
+    @Query('limit') limit?: string
+  ) {
+    const pageNum = parseInt(page || '0') || 0;
+    const limitNum = parseInt(limit || '10') || 10;
+    
     if (active === 'true') {
-      return await this.componentsService.findActive();
+      const components = await this.componentsService.findActive();
+      return {
+        data: components,
+        total: components.length,
+        page: pageNum,
+        limit: limitNum
+      };
     }
-    return await this.componentsService.findAll();
+    
+    const result = await this.componentsService.findAllPaginated(pageNum, limitNum);
+    return result;
   }
 
   // READ - Obtener componente por ID

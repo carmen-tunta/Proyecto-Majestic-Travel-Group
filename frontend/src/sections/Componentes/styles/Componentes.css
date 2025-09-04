@@ -21,10 +21,20 @@
   color: #ffffff;
   font-weight: normal;
   border: none;
+  text-align: center;
+  padding: 12px 8px;
 }
 
 .componentes-table .p-datatable-tbody > tr > td {
   border: none;
+  text-align: center !important;
+  vertical-align: middle;
+  padding: 12px 8px;
+}
+
+.componentes-table .p-datatable-tbody > tr > td > div {
+  text-align: center !important;
+  width: 100%;
 }
 
 .componentes-table .p-datatable-tbody > tr:nth-child(odd) > td {
@@ -35,6 +45,40 @@
   background: #e3f2fd;
 }
 
+/* Clase específica para centrar celdas */
+.centered-cell {
+  text-align: center !important;
+  padding: 8px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Forzar centrado en todas las celdas */
+.componentes-table .p-datatable-tbody > tr > td {
+  text-align: center !important;
+  vertical-align: middle !important;
+}
+
+.componentes-table .p-datatable-tbody > tr > td * {
+  text-align: center !important;
+}
+
+/* Estilos más específicos para sobrescribir PrimeReact */
+.componentes-table .p-datatable-tbody > tr > td {
+  text-align: center !important;
+  vertical-align: middle !important;
+}
+
+.componentes-table .p-datatable-tbody > tr > td > div {
+  text-align: center !important;
+  width: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
 .componentes-footer {
     margin-top: 1rem;
     display: flex;
@@ -42,33 +86,45 @@
     color: rgb(175, 175, 175);
 }
 
-.componentes-footer .p-paginator {
-    background: transparent;
-    border: none;
-    padding: 0;
+/* Estilos para paginación personalizada */
+.custom-paginator {
+    background: transparent !important;
+    border: none !important;
+    padding: 0 !important;
 }
 
-.componentes-footer .p-paginator .p-paginator-page,
-.componentes-footer .p-paginator .p-paginator-first,
-.componentes-footer .p-paginator .p-paginator-prev,
-.componentes-footer .p-paginator .p-paginator-next,
-.componentes-footer .p-paginator .p-paginator-last {
-    color: #1976d2;
-    border: 1px solid #1976d2;
-    background: transparent;
+.custom-paginator .p-paginator-page,
+.custom-paginator .p-paginator-first,
+.custom-paginator .p-paginator-prev,
+.custom-paginator .p-paginator-next,
+.custom-paginator .p-paginator-last {
+    color: #666 !important;
+    border: none !important;
+    background: transparent !important;
+    margin: 0 4px !important;
+    padding: 8px 12px !important;
+    border-radius: 4px !important;
+    font-size: 14px !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
 }
 
-.componentes-footer .p-paginator .p-paginator-page:hover,
-.componentes-footer .p-paginator .p-paginator-first:hover,
-.componentes-footer .p-paginator .p-paginator-prev:hover,
-.componentes-footer .p-paginator .p-paginator-next:hover,
-.componentes-footer .p-paginator .p-paginator-last:hover {
-    background: #1976d2;
-    color: white;
+.custom-paginator .p-paginator-page:hover,
+.custom-paginator .p-paginator-first:hover,
+.custom-paginator .p-paginator-prev:hover,
+.custom-paginator .p-paginator-next:hover,
+.custom-paginator .p-paginator-last:hover {
+    background: #f5f5f5 !important;
+    color: #333 !important;
 }
 
-.componentes-footer .p-paginator .p-paginator-page.p-highlight {
-    background: #1976d2;
-    color: white;
-    border-color: #1976d2;
+.custom-paginator .p-paginator-page.p-highlight {
+    background: #1976d2 !important;
+    color: white !important;
+    border: none !important;
+}
+
+.custom-paginator .p-paginator-page.p-highlight:hover {
+    background: #1565c0 !important;
+    color: white !important;
 }

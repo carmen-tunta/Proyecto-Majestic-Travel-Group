@@ -4,6 +4,7 @@ import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { InputText } from 'primereact/inputtext';
 import { Paginator } from 'primereact/paginator';
+import ComponentModal from './ComponentModal';
 import "../styles/Componentes.css";
 
 const Componentes = () => {
@@ -11,15 +12,19 @@ const Componentes = () => {
   const [loading, setLoading] = useState(true);
   const [first, setFirst] = useState(0);
   const [rows, setRows] = useState(10);
+  const [totalRecords, setTotalRecords] = useState(0);
+  const [showModal, setShowModal] = useState(false);
+  const [editingComponent, setEditingComponent] = useState(null);
 
   // Función para obtener los componentes del backend
-  const fetchComponentes = async () => {
+  const fetchComponentes = async (page = 0, pageSize = 10) => {
     try {
       setLoading(true);
-      const response = await fetch('http://localhost:3080/components');
+      const response = await fetch(`http://localhost:3080/components?page=${page}&limit=${pageSize}`);
       if (response.ok) {
         const data = await response.json();
-        setComponentes(data);
+        setComponentes(data.data || data); // Ajustar según la respuesta del backend
+        setTotalRecords(data.total || data.length);
       } else {
         console.error('Error al obtener componentes');
       }
@@ -45,6 +50,54 @@ const Componentes = () => {
   const onPageChange = (event) => {
     setFirst(event.first);
     setRows(event.rows);
+    fetchComponentes(event.page, event.rows);
+  };
+
+  // Función para abrir modal de nuevo componente
+  const handleNewComponent = () => {
+    setEditingComponent(null);
+    setShowModal(true);
+  };
+
+  // Función para abrir modal de edición
+  const handleEditComponent = (component) => {
+    setEditingComponent(component);
+    setShowModal(true);
+  };
+
+  // Función para cerrar modal
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setEditingComponent(null);
+  };
+
+  // Función para guardar componente
+  const handleSaveComponent = async (componentData) => {
+    try {
+      const url = editingComponent 
+        ? `http://localhost:3080/components/${editingComponent.id}`
+        : 'http://localhost:3080/components';
+      
+      const method = editingComponent ? 'PATCH' : 'POST';
+      
+      const response = await fetch(url, {
+        method: method,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(componentData),
+      });
+
+      if (response.ok) {
+        // Recargar la lista de componentes
+        await fetchComponentes();
+        console.log(editingComponent ? 'Componente actualizado' : 'Componente creado');
+      } else {
+        console.error('Error al guardar componente');
+      }
+    } catch (error) {
+      console.error('Error de conexión:', error);
+    }
   };
 
   return (
@@ -52,7 +105,13 @@ const Componentes = () => {
       {/* Header con título y botón Nuevo */}
       <div className='componentes-header'>
         <h2>Componentes</h2>
-        <Button icon="pi pi-plus" label="Nuevo" size='small' outlined/>
+        <Button 
+          icon="pi pi-plus" 
+          label="Nuevo" 
+          size='small' 
+          outlined
+          onClick={handleNewComponent}
+        />
       </div>
 
       {/* Barra de búsqueda */}
@@ -79,26 +138,66 @@ const Componentes = () => {
           <Column
             field="componentName"
             header="Nombre del componente"
-            style={{ width: '30%' }}
+            style={{ width: '35%', textAlign: 'center' }}
+            body={(rowData) => (
+              <div style={{ 
+                textAlign: 'center', 
+                padding: '8px', 
+                width: '100%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}>
+                {rowData.componentName}
+              </div>
+            )}
           />
           <Column
             field="serviceType"
             header="Tipo de servicio"
-            style={{ width: '20%' }}
+            style={{ width: '25%', textAlign: 'center' }}
+            body={(rowData) => (
+              <div style={{ 
+                textAlign: 'center', 
+                padding: '8px', 
+                width: '100%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}>
+                {rowData.serviceType}
+              </div>
+            )}
           />
           <Column
             field="description"
             header="Descripción"
-            style={{ width: '44%' }}
-            body={(rowData) => truncateText(rowData.description, 60)}
+            style={{ width: '34%', textAlign: 'center' }}
+            body={(rowData) => (
+              <div style={{ 
+                textAlign: 'center', 
+                padding: '8px', 
+                width: '100%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}>
+                {truncateText(rowData.description, 50)}
+              </div>
+            )}
           />
           <Column
             header="Acción"
-            style={{ width: '6%' }}
-            body={() => (
-              <span style={{ display: 'flex', justifyContent: 'center' }}>
-                <i className="pi pi-pencil" title="Editar" style={{color:'#1976d2'}}></i>
-              </span>
+            style={{ width: '6%', textAlign: 'center' }}
+            body={(rowData) => (
+              <div style={{ display: 'flex', justifyContent: 'center', padding: '8px' }}>
+                <i 
+                  className="pi pi-pencil" 
+                  title="Editar" 
+                  style={{color:'#1976d2', cursor: 'pointer'}}
+                  onClick={() => handleEditComponent(rowData)}
+                />
+              </div>
             )}
           />
         </DataTable>
@@ -109,12 +208,22 @@ const Componentes = () => {
         <Paginator
           first={first}
           rows={rows}
-          totalRecords={componentes.length}
-          rowsPerPageOptions={[5, 10, 20, 50]}
+          totalRecords={totalRecords}
+          rowsPerPageOptions={[10]}
           onPageChange={onPageChange}
-          template="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown"
+          template="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink"
+          className="custom-paginator"
         />
       </div>
+
+      {/* Modal de Componente */}
+      {showModal && (
+        <ComponentModal
+          onHide={handleCloseModal}
+          component={editingComponent}
+          onSave={handleSaveComponent}
+        />
+      )}
     </div>
   );
 };

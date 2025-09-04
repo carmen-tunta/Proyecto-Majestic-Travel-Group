@@ -27,6 +27,27 @@ export class ComponentsService {
     });
   }
 
+  // READ - Obtener componentes con paginación
+  async findAllPaginated(page: number, limit: number): Promise<{
+    data: Component[];
+    total: number;
+    page: number;
+    limit: number;
+  }> {
+    const [data, total] = await this.componentsRepository.findAndCount({
+      order: { id: 'ASC' },
+      skip: page * limit,
+      take: limit
+    });
+
+    return {
+      data,
+      total,
+      page,
+      limit
+    };
+  }
+
   // READ - Obtener componente por ID
   async findOne(id: number): Promise<Component> {
     const component = await this.componentsRepository.findOne({
