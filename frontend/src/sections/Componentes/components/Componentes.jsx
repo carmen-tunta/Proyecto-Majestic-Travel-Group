@@ -18,6 +18,7 @@ const Componentes = () => {
   const [totalRecords, setTotalRecords] = useState(0);
   const [showModal, setShowModal] = useState(false);
   const [editingComponent, setEditingComponent] = useState(null);
+  const [currentPage, setCurrentPage] = useState(0);
 
   // Instancias de los casos de uso
   const getAllComponents = new GetAllComponentsTemplate();
@@ -53,6 +54,7 @@ const Componentes = () => {
   const onPageChange = (event) => {
     setFirst(event.first);
     setRows(event.rows);
+    setCurrentPage(event.page); // Guardar la página actual
     fetchComponentes(event.page, event.rows);
   };
 
@@ -87,8 +89,17 @@ const Componentes = () => {
         console.log('Componente creado');
       }
       
-      // Recargar la lista de componentes
-      await fetchComponentes(first, rows);
+      // Cerrar el modal
+      setShowModal(false);
+      setEditingComponent(null);
+      
+      // Volver a la página original y recargar
+      const pageToReturn = editingComponent ? currentPage : 0; // Si es nuevo, ir a página 1
+      setFirst(pageToReturn * rows);
+      setLoading(true); // Mostrar loading mientras se recarga
+      await fetchComponentes(pageToReturn, rows);
+      
+      console.log(`Volviendo a la página ${pageToReturn + 1}`);
     } catch (error) {
       console.error('Error al guardar componente:', error);
     }
