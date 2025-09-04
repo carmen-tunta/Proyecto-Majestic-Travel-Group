@@ -12,17 +12,19 @@ const Componentes = () => {
   const [loading, setLoading] = useState(true);
   const [first, setFirst] = useState(0);
   const [rows, setRows] = useState(10);
+  const [totalRecords, setTotalRecords] = useState(0);
   const [showModal, setShowModal] = useState(false);
   const [editingComponent, setEditingComponent] = useState(null);
 
   // Función para obtener los componentes del backend
-  const fetchComponentes = async () => {
+  const fetchComponentes = async (page = 0, pageSize = 10) => {
     try {
       setLoading(true);
-      const response = await fetch('http://localhost:3080/components');
+      const response = await fetch(`http://localhost:3080/components?page=${page}&limit=${pageSize}`);
       if (response.ok) {
         const data = await response.json();
-        setComponentes(data);
+        setComponentes(data.data || data); // Ajustar según la respuesta del backend
+        setTotalRecords(data.total || data.length);
       } else {
         console.error('Error al obtener componentes');
       }
@@ -48,6 +50,7 @@ const Componentes = () => {
   const onPageChange = (event) => {
     setFirst(event.first);
     setRows(event.rows);
+    fetchComponentes(event.page, event.rows);
   };
 
   // Función para abrir modal de nuevo componente
@@ -205,10 +208,11 @@ const Componentes = () => {
         <Paginator
           first={first}
           rows={rows}
-          totalRecords={componentes.length}
-          rowsPerPageOptions={[5, 10, 20, 50]}
+          totalRecords={totalRecords}
+          rowsPerPageOptions={[10]}
           onPageChange={onPageChange}
-          template="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown"
+          template="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink"
+          className="custom-paginator"
         />
       </div>
 
