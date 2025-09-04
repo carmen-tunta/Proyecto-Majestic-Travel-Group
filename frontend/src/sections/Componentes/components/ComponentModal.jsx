@@ -15,11 +15,7 @@ const ComponentModal = ({ onHide, component, onSave }) => {
   // Opciones para el dropdown de tipo de servicio
   const serviceTypeOptions = [
     { label: 'Transporte', value: 'Transporte' },
-    { label: 'Trasladista', value: 'Trasladista' },
     { label: 'Alojamiento', value: 'Alojamiento' },
-    { label: 'Alimentación', value: 'Alimentación' },
-    { label: 'Guía', value: 'Guía' },
-    { label: 'Actividad', value: 'Actividad' },
     { label: 'Otro', value: 'Otro' }
   ];
 
@@ -79,6 +75,7 @@ const ComponentModal = ({ onHide, component, onSave }) => {
             value={componentName} 
             onChange={e => setComponentName(e.target.value)}
             required 
+            style={{ width: '100%' }}
           />
           <label htmlFor="componentName">Nombre del componente</label>
         </FloatLabel>
@@ -92,6 +89,7 @@ const ComponentModal = ({ onHide, component, onSave }) => {
             onChange={e => setServiceType(e.value)}
             placeholder="Selecciona un tipo de servicio"
             required 
+            style={{ width: '100%' }}
           />
           <label htmlFor="serviceType">Tipo de servicio</label>
         </FloatLabel>
@@ -104,6 +102,7 @@ const ComponentModal = ({ onHide, component, onSave }) => {
             onChange={e => setDescription(e.target.value)}
             rows={4}
             placeholder="Describe el componente..."
+            style={{ width: '100%' }}
           />
           <label htmlFor="description">Descripción del componente</label>
         </FloatLabel>

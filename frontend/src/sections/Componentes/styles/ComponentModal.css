@@ -26,7 +26,7 @@
 .component-modal input,
 .component-modal .p-dropdown,
 .component-modal .p-inputtextarea {
-    width: 80%;
+    width: 100% !important;
 }
 
 .component-modal-buttons {

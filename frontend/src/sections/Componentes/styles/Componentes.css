@@ -21,10 +21,20 @@
   color: #ffffff;
   font-weight: normal;
   border: none;
+  text-align: center;
+  padding: 12px 8px;
 }
 
 .componentes-table .p-datatable-tbody > tr > td {
   border: none;
+  text-align: center !important;
+  vertical-align: middle;
+  padding: 12px 8px;
+}
+
+.componentes-table .p-datatable-tbody > tr > td > div {
+  text-align: center !important;
+  width: 100%;
 }
 
 .componentes-table .p-datatable-tbody > tr:nth-child(odd) > td {
@@ -33,6 +43,40 @@
 
 .componentes-table .p-datatable-tbody > tr:nth-child(even) > td {
   background: #e3f2fd;
+}
+
+/* Clase específica para centrar celdas */
+.centered-cell {
+  text-align: center !important;
+  padding: 8px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Forzar centrado en todas las celdas */
+.componentes-table .p-datatable-tbody > tr > td {
+  text-align: center !important;
+  vertical-align: middle !important;
+}
+
+.componentes-table .p-datatable-tbody > tr > td * {
+  text-align: center !important;
+}
+
+/* Estilos más específicos para sobrescribir PrimeReact */
+.componentes-table .p-datatable-tbody > tr > td {
+  text-align: center !important;
+  vertical-align: middle !important;
+}
+
+.componentes-table .p-datatable-tbody > tr > td > div {
+  text-align: center !important;
+  width: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
 }
 
 .componentes-footer {

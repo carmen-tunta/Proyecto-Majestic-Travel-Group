@@ -135,31 +135,66 @@ const Componentes = () => {
           <Column
             field="componentName"
             header="Nombre del componente"
-            style={{ width: '30%' }}
+            style={{ width: '35%', textAlign: 'center' }}
+            body={(rowData) => (
+              <div style={{ 
+                textAlign: 'center', 
+                padding: '8px', 
+                width: '100%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}>
+                {rowData.componentName}
+              </div>
+            )}
           />
           <Column
             field="serviceType"
             header="Tipo de servicio"
-            style={{ width: '20%' }}
+            style={{ width: '25%', textAlign: 'center' }}
+            body={(rowData) => (
+              <div style={{ 
+                textAlign: 'center', 
+                padding: '8px', 
+                width: '100%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}>
+                {rowData.serviceType}
+              </div>
+            )}
           />
           <Column
             field="description"
             header="Descripción"
-            style={{ width: '44%' }}
-            body={(rowData) => truncateText(rowData.description, 60)}
+            style={{ width: '34%', textAlign: 'center' }}
+            body={(rowData) => (
+              <div style={{ 
+                textAlign: 'center', 
+                padding: '8px', 
+                width: '100%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}>
+                {truncateText(rowData.description, 50)}
+              </div>
+            )}
           />
           <Column
             header="Acción"
-            style={{ width: '6%' }}
+            style={{ width: '6%', textAlign: 'center' }}
             body={(rowData) => (
-              <span style={{ display: 'flex', justifyContent: 'center' }}>
+              <div style={{ display: 'flex', justifyContent: 'center', padding: '8px' }}>
                 <i 
                   className="pi pi-pencil" 
                   title="Editar" 
                   style={{color:'#1976d2', cursor: 'pointer'}}
                   onClick={() => handleEditComponent(rowData)}
                 />
-              </span>
+              </div>
             )}
           />
         </DataTable>
