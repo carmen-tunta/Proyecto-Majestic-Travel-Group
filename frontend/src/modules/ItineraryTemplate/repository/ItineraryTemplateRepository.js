@@ -19,17 +19,19 @@ class ItineraryTemplateRepository {
             },
             body: JSON.stringify(template),
         });
+        if (!response.ok) throw new Error('Error al crear la plantilla');
         return await response.json();
     }
 
-    async updateTemplate(id, template) {
-        const response = await fetch(`${apiUrl}/${id}`, {
+    async updateTemplate(template) {
+        const response = await fetch(`${apiUrl}/update/${template.id}`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
             },
             body: JSON.stringify(template),
         });
+        if (!response.ok) throw new Error('Error al actualizar');
         return await response.json();
     }
 

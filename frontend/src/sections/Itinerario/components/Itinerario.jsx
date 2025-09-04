@@ -8,6 +8,7 @@ import ItineraryTemplateRepository from '../../../modules/ItineraryTemplate/repo
 // import GetItineraryTemplateById from '../../../modules/ItineraryTemplate/application/GetItineraryTemplateById';
 import GetAllItineraryTemplate from '../../../modules/ItineraryTemplate/application/GetAllItineraryTemplate';
 import { useEffect, useState } from 'react';
+import ItineraryModal from './ItineraryModal';
 
 const Itinerario = () => {
     const itineraryTemplate = new ItineraryTemplateRepository();
@@ -16,28 +17,51 @@ const Itinerario = () => {
 
     const [template, setTemplate] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [showModal, setShowModal] = useState(false);
+    const [selectedTemplate, setSelectedTemplate] = useState(null);
+
+    const handleEdit = (template) => {
+        setSelectedTemplate(template);
+        setShowModal(true);
+    };
+
+    const handleNew = () => {
+        setSelectedTemplate(null);
+        setShowModal(true);
+    }
+
+    const loadItineraryTemplates = async () => {
+        setLoading(true);
+        try {
+            const templateData = await getAllTemplates.execute();
+            setTemplate(templateData);
+        } catch (error) {
+            console.error('Error al obtener la plantilla:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     useEffect(() => {
-        async function loadItineraryTemplates(params) {
-            try {
-                setLoading(true);
-                const templateData = await getAllTemplates.execute();
-                setTemplate(templateData);
-                console.log(templateData);
-            } catch (error) {
-                console.error('Error al obtener la plantilla:', error);
-            } finally {
-                setLoading(false);
-            }
-        }
         loadItineraryTemplates();
     }, []);
+
+    const handleModalClose = () => {
+        setShowModal(false);
+        loadItineraryTemplates();
+    };
+
 
     return (
         <div className="itinerario">
             <div className='itinerario-header'>
                 <h2>Plantilla Itineraria</h2>
-                <Button icon="pi pi-plus" label="Nuevo" size='small' outlined/>
+                <Button 
+                    icon="pi pi-plus" 
+                    label="Nuevo" 
+                    size='small' 
+                    outlined
+                    onClick={() => handleNew()}/>
             </div>
 
             <div className='itinerario-search'>
@@ -67,12 +91,16 @@ const Itinerario = () => {
                         style={{ width: '47%' }}>
                     </Column>
                     <Column
-                        field="action"
                         header="Acción"
                         style={{ width: '6%' }}
-                        body={() => (
+                        body={rowData => (
                             <span style={{ display: 'flex', justifyContent: 'center' }}>
-                                <i className="pi pi-pencil" title="Editar" style={{color:'#1976d2'}}></i>
+                                <i 
+                                    className="pi pi-pencil"    
+                                    title="Editar" 
+                                    style={{color:'#1976d2', cursor:"pointer"}}
+                                    onClick={() => handleEdit(rowData)}    
+                                ></i>
                             </span>
                         )}
                     />
@@ -83,6 +111,15 @@ const Itinerario = () => {
             <div className='itinerario-footer'>
                 Aqui van los botones
             </div>
+
+            {showModal && (
+                <ItineraryModal
+                    visible={showModal}
+                    onHide={handleModalClose}
+                    template={selectedTemplate}
+                />
+            )}
+    
         </div>
     )
 }
