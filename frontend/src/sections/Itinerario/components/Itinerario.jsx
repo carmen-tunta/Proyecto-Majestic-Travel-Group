@@ -98,7 +98,7 @@ const Itinerario = () => {
                     size="small" 
                     value={search ? results : template} 
                     tableStyle={{ minWidth: '60%' }}
-                    emptyMessage="No se encontraron servicios"
+                    emptyMessage="No se encontraron plantillas"
                     paginator
                     first={first}
                     rows={rows}
