@@ -3,8 +3,8 @@ class GetAllItineraryTemplate {
         this.itineraryTemplateRepository = itineraryTemplateRepository;
     }
 
-    async execute() {
-        return await this.itineraryTemplateRepository.getAllTemplates();
+    async execute(limit) {
+        return await this.itineraryTemplateRepository.getAllTemplates(limit);
     }
 }
 

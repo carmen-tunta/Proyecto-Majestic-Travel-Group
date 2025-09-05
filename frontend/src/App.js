@@ -13,6 +13,8 @@ import PublicRoute from './modules/auth/components/PublicRoute';
 import { ModalProvider, useModal } from './contexts/ModalContext';
 
 
+import Services from './sections/Services/components/Services';
+
 function AppContent() {
   const location = useLocation();
   const { isModalOpen } = useModal();
@@ -20,6 +22,7 @@ function AppContent() {
   return (
     <>
       {!hideMenu && <Menu />}
+
       <div className={hideMenu ? '' : (isModalOpen ? 'main-content-modal' : 'main-content')}>
         <Routes>
           {/* Rutas públicas - solo para usuarios NO autenticados */}
@@ -52,6 +55,15 @@ function AppContent() {
           } />
         </Routes>
       </div>
+      <Routes>
+        <Route path="/" element={<Login />} />
+        <Route path="/forgot-password" element={<RecoverPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/itinerario" element={<Itinerario />} />
+        <Route path="/componentes" element={<Componentes />} />
+        <Route path="/servicios" element={<Services />} />
+      </Routes>
+
     </>
   );
 }
