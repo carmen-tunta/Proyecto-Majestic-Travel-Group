@@ -17,6 +17,9 @@ const Itinerario = () => {
     const [loading, setLoading] = useState(true);
     const [showModal, setShowModal] = useState(false);
     const [selectedTemplate, setSelectedTemplate] = useState(null);
+    const [first, setFirst] = useState(0);
+    const [rows, setRows] = useState(10);
+    const [totalRecords, setTotalRecords] = useState(0);
 
     const handleEdit = (template) => {
         setSelectedTemplate(template);
@@ -28,11 +31,19 @@ const Itinerario = () => {
         setShowModal(true);
     }
 
-    const loadItineraryTemplates = async () => {
+    const onPageChange = (event) => {
+        const page = Math.floor(event.first / event.rows);
+        setFirst(event.first);
+        setRows(event.rows);
+        loadItineraryTemplates(page, event.rows);
+    };
+
+    const loadItineraryTemplates = async (page = 0, pageSize = 10) => {
         setLoading(true);
         try {
-            const templateData = await getAllTemplates.execute();
-            setTemplate(templateData);
+            const templateData = await getAllTemplates.execute(`?page=${page}&limit=${pageSize}`);
+            setTemplate(templateData.data || templateData);
+            setTotalRecords(templateData.total || templateData.length);
         } catch (error) {
             console.error('Error al obtener la plantilla:', error);
         } finally {
@@ -77,7 +88,17 @@ const Itinerario = () => {
                     </div>
                 ) : (
 
-                <DataTable className="itinerario-table" size="small" value={template} tableStyle={{ minWidth: '60%' }}>
+                <DataTable 
+                    className="itinerario-table" 
+                    size="small" value={template} 
+                    tableStyle={{ minWidth: '60%' }}
+                    emptyMessage="No se encontraron servicios"
+                    paginator
+                    first={first}
+                    rows={rows}
+                    totalRecords={totalRecords}
+                    onPage={onPageChange}
+                >
                     <Column 
                         field="itineraryTitle" 
                         header="Título de plantilla" 
