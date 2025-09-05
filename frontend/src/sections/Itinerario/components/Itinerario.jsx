@@ -127,10 +127,6 @@ const Itinerario = () => {
                 )}
             </div>
 
-            <div className='itinerario-footer'>
-                Aqui van los botones
-            </div>
-
             {showModal && (
                 <ItineraryModal
                     visible={showModal}
