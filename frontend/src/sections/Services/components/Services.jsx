@@ -1,33 +1,34 @@
-import { DataTable } from 'primereact/datatable';
+import React, { useState, useEffect } from 'react';
 import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
+import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
+import ServiceRepository from '../../../modules/Service/repository/ServiceRepository';
+import GetAllServices from '../../../modules/Service/application/GetAllServices';
 import { ProgressSpinner } from 'primereact/progressspinner';
-import "../styles/Itinerario.css"
-import ItineraryTemplateRepository from '../../../modules/ItineraryTemplate/repository/ItineraryTemplateRepository';
-import GetAllItineraryTemplate from '../../../modules/ItineraryTemplate/application/GetAllItineraryTemplate';
-import { useEffect, useState } from 'react';
-import ItineraryModal from './ItineraryModal';
+import ServiceModal from './ServicesModal';
+import "../styles/Services.css"
 
-const Itinerario = () => {
-    const itineraryTemplate = new ItineraryTemplateRepository();
-    const getAllTemplates = new GetAllItineraryTemplate(itineraryTemplate);
 
-    const [template, setTemplate] = useState([]);
+const Services = () => {
+    const serviceRepository = new ServiceRepository();
+    const getAllServices = new GetAllServices(serviceRepository);
+
+    const [services, setServices] = useState([]);
     const [loading, setLoading] = useState(true);
     const [showModal, setShowModal] = useState(false);
-    const [selectedTemplate, setSelectedTemplate] = useState(null);
+    const [selectedService, setSelectedService] = useState(null);
     const [first, setFirst] = useState(0);
     const [rows, setRows] = useState(10);
     const [totalRecords, setTotalRecords] = useState(0);
 
-    const handleEdit = (template) => {
-        setSelectedTemplate(template);
+    const handleEdit = (service) => {
+        setSelectedService(service);
         setShowModal(true);
     };
 
     const handleNew = () => {
-        setSelectedTemplate(null);
+        setSelectedService(null);
         setShowModal(true);
     }
 
@@ -35,45 +36,46 @@ const Itinerario = () => {
         const page = Math.floor(event.first / event.rows);
         setFirst(event.first);
         setRows(event.rows);
-        loadItineraryTemplates(page, event.rows);
+        loadServices(page, event.rows);
     };
 
-    const loadItineraryTemplates = async (page = 0, pageSize = 10) => {
+    const loadServices = async (page = 0, pageSize = 10) => {
         setLoading(true);
         try {
-            const templateData = await getAllTemplates.execute(`?page=${page}&limit=${pageSize}`);
-            setTemplate(templateData.data || templateData);
-            setTotalRecords(templateData.total || templateData.length);
+            const serviceData = await getAllServices.execute(`?page=${page}&limit=${pageSize}`);
+            setServices(serviceData.data || serviceData);
+            setTotalRecords(serviceData.total || serviceData.length);
         } catch (error) {
-            console.error('Error al obtener la plantilla:', error);
+            console.error('Error al obtener los servicios:', error);
         } finally {
             setLoading(false);
         }
     };
 
     useEffect(() => {
-        loadItineraryTemplates();
+        loadServices();
     }, []);
 
     const handleModalClose = () => {
         setShowModal(false);
-        loadItineraryTemplates();
+        loadServices();
     };
 
 
     return (
-        <div className="itinerario">
-            <div className='itinerario-header'>
-                <h2>Plantilla Itineraria</h2>
+        <div className="service">
+            <div className='service-header'>
+                <h2>Servicios</h2>
                 <Button 
                     icon="pi pi-plus" 
                     label="Nuevo" 
                     size='small' 
                     outlined
-                    onClick={() => handleNew()}/>
+                    onClick={handleNew}
+                    />
             </div>
 
-            <div className='itinerario-search'>
+            <div className='service-search'>
                 <div className="p-input-icon-left">
                     <i className="pi pi-search"/>
                     <InputText type="text" placeholder="Buscar..." className='p-inputtext-sm'/>
@@ -89,8 +91,9 @@ const Itinerario = () => {
                 ) : (
 
                 <DataTable 
-                    className="itinerario-table" 
-                    size="small" value={template} 
+                    className="service-table" 
+                    size="small" 
+                    value={services} 
                     tableStyle={{ minWidth: '60%' }}
                     emptyMessage="No se encontraron servicios"
                     paginator
@@ -100,14 +103,14 @@ const Itinerario = () => {
                     onPage={onPageChange}
                 >
                     <Column 
-                        field="itineraryTitle" 
-                        header="Título de plantilla" 
-                        style={{ width: '47%' }}>    
+                        field="name" 
+                        header="Nombre del servicio" 
+                        style={{ width: '66%' }}>    
                     </Column>
                     <Column 
-                        field="templateTitle" 
-                        header="Título para el itinerario" 
-                        style={{ width: '47%' }}>
+                        field="city" 
+                        header="Ciudad" 
+                        style={{ width: '28%' }}>
                     </Column>
                     <Column
                         header="Acción"
@@ -128,15 +131,14 @@ const Itinerario = () => {
             </div>
 
             {showModal && (
-                <ItineraryModal
+                <ServiceModal
                     visible={showModal}
                     onHide={handleModalClose}
-                    template={selectedTemplate}
+                    service={selectedService}
                 />
             )}
     
         </div>
     )
 }
-
-export default Itinerario;
+export default Services;

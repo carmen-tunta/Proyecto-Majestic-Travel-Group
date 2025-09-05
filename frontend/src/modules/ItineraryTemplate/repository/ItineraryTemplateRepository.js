@@ -1,8 +1,8 @@
 const apiUrl = process.env.REACT_APP_API_URL + "/itinerary-template";
 
 class ItineraryTemplateRepository {
-    async getAllTemplates() {
-        const response = await fetch(apiUrl);
+    async getAllTemplates(limit = '') {
+        const response = await fetch(`${apiUrl}${limit}`);
         return await response.json();
     }
 

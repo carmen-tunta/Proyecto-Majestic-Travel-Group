@@ -1,0 +1,43 @@
+.service {
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    padding: 0rem 4rem 2rem 2rem;
+}
+
+.service-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.service-search {
+    margin-bottom: 2rem;
+}
+
+.service-table .p-datatable-thead > tr > th {
+  background: #1976d2;
+  color: #ffffff;
+  font-weight: normal;
+  border: none;
+}
+
+.service-table .p-datatable-tbody > tr > td {
+  border: none;
+}
+
+.service-table .p-datatable-tbody > tr:nth-child(odd) > td {
+  background: #fff;
+}
+
+.service-table .p-datatable-tbody > tr:nth-child(even) > td {
+  background: #e3f2fd;
+}
+
+.service-footer {
+    margin-top: 1rem;
+    display: flex;
+    justify-content: center;
+    color: rgb(175, 175, 175);
+}

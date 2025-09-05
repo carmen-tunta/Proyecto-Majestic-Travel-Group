@@ -22,9 +22,22 @@ export class ServicesController {
   }
 
   @Get()
-  findAll() {
-    return this.servicesService.findAll();
-  }
+    async findAll(
+      @Query('page') page: string, 
+      @Query('limit') limit: string
+    ) {
+    const pageNum = parseInt(page || '0') || 0;
+    const limitNum = parseInt(limit || '10') || 10;
+
+      const services = await this.servicesService.findAll();
+      return {
+        data: services,
+        total: services.length,
+        page: pageNum,
+        limit: limitNum
+      };
+    }
+
 
   @Get('search')
   async searchServices(@Query('name') name: string) {
@@ -39,7 +52,7 @@ export class ServicesController {
     return this.servicesService.findOne(Number(id));
   }
 
-  @Put(':id')
+  @Put('update/:id')
   update(@Param('id') id: string, @Body() data: Partial<Service>): Promise<Service | null> {
     return this.servicesService.update(Number(id), data);
   }
@@ -49,6 +62,14 @@ export class ServicesController {
     return this.servicesService.remove(Number(id));
   }
 
-  
+  @Delete(':serviceId/component/:componentId')
+    async removeComponentFromService(@Param('serviceId') serviceId: number, @Param('componentId') componentId: number): Promise<void> {
+      await this.servicesService.removeComponentFromService(serviceId, componentId);
+    }
+
+  @Put(':serviceId/component')
+    async addComponentsToService(@Param('serviceId') serviceId: number, @Body('componentIds') componentIds: number[]): Promise<Service | null> {
+      return await this.servicesService.addComponentsToService(serviceId, componentIds);
+    }
 }
 
