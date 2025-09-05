@@ -5,10 +5,9 @@
 
 /* Contenido principal que se ajusta al menú fijo */
 .main-content {
-  margin-left: 17vw;
+  margin-left: 15vw;
   width: 83vw;
   min-height: 100vh;
-  background-color: #f8f9fa;
 }
 
 /* Contenido principal cuando el modal está abierto - menú no fijo */
@@ -16,7 +15,6 @@
   margin-left: 0;
   width: 100vw;
   min-height: 100vh;
-  background-color: #f8f9fa;
 }
 
 .App {

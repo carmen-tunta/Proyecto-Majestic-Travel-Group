@@ -22,14 +22,12 @@
   font-weight: normal;
   border: none;
   text-align: center;
-  padding: 12px 8px;
 }
 
 .componentes-table .p-datatable-tbody > tr > td {
   border: none;
   text-align: center !important;
   vertical-align: middle;
-  padding: 12px 8px;
 }
 
 .componentes-table .p-datatable-tbody > tr > td > div {
@@ -48,7 +46,6 @@
 /* Clase específica para centrar celdas */
 .centered-cell {
   text-align: center !important;
-  padding: 8px;
   width: 100%;
   display: flex;
   align-items: center;

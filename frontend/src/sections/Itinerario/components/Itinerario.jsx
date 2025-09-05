@@ -95,7 +95,8 @@ const Itinerario = () => {
                 ) : (
                 <DataTable 
                     className="itinerario-table" 
-                    size="small" value={search ? results : template} 
+                    size="small" 
+                    value={search ? results : template} 
                     tableStyle={{ minWidth: '60%' }}
                     emptyMessage="No se encontraron servicios"
                     paginator
