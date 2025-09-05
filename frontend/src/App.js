@@ -53,16 +53,13 @@ function AppContent() {
               <Componentes />
             </ProtectedRoute>
           } />
+          <Route path="/servicios" element={
+            <ProtectedRoute>
+              <Services />
+            </ProtectedRoute>
+          } />
         </Routes>
       </div>
-      <Routes>
-        <Route path="/" element={<Login />} />
-        <Route path="/forgot-password" element={<RecoverPassword />} />
-        <Route path="/reset-password" element={<ResetPassword />} />
-        <Route path="/itinerario" element={<Itinerario />} />
-        <Route path="/componentes" element={<Componentes />} />
-        <Route path="/servicios" element={<Services />} />
-      </Routes>
 
     </>
   );

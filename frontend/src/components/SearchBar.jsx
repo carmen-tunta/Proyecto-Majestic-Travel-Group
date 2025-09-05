@@ -1,13 +1,17 @@
 import React from 'react';
+import { InputText } from 'primereact/inputtext';
 
 const SearchBar = ({ value, onChange, placeholder }) => (
-  <input
-    type="text"
-    value={value}
-    onChange={e => onChange(e.target.value)}
-    placeholder={placeholder || "Buscar"}
-    style={{ marginBottom: '1rem', width: '100%', padding: '0.5rem' }}
-  />
+  <div className="p-input-icon-left">
+    <i className="pi pi-search"/>
+    <InputText
+      type="text"
+      value={value}
+      onChange={e => onChange(e.target.value)}
+      placeholder={placeholder || "Buscar"}
+      style={{width: '100%'}}
+    />
+  </div>
 );
 
 export default SearchBar;

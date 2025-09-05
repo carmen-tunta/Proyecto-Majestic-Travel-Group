@@ -158,7 +158,6 @@ const Componentes = () => {
             body={(rowData) => (
               <div style={{ 
                 textAlign: 'center', 
-                padding: '8px', 
                 width: '100%',
                 display: 'flex',
                 alignItems: 'center',
@@ -175,7 +174,6 @@ const Componentes = () => {
             body={(rowData) => (
               <div style={{ 
                 textAlign: 'center', 
-                padding: '8px', 
                 width: '100%',
                 display: 'flex',
                 alignItems: 'center',
@@ -192,7 +190,6 @@ const Componentes = () => {
             body={(rowData) => (
               <div style={{ 
                 textAlign: 'center', 
-                padding: '8px', 
                 width: '100%',
                 display: 'flex',
                 alignItems: 'center',

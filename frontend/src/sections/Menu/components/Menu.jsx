@@ -30,7 +30,7 @@ const Menu = () => {
                 <Button label="Registro de pagos" text size="small" icon="pi pi-credit-card"/>
                 <Button label="Plantilla itineraria" text size="small" icon="pi pi-list" onClick={() => navigate('/itinerario')} />
 
-                <Button label="Servicios" text size="small" icon="pi pi-flag"/>
+                <Button label="Servicios" text size="small" icon="pi pi-flag" onClick={() => navigate('/servicios')} />
 
                 <Button label="Componentes" text size="small" icon="pi pi-book" onClick={() => navigate('/componentes')}/>
                 <Button label="Reportes" text size="small" icon="pi pi-list-check"/>
