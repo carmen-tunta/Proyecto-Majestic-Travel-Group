@@ -7,8 +7,8 @@ import ServiceRepository from '../../../modules/Service/repository/ServiceReposi
 import GetAllServices from '../../../modules/Service/application/GetAllServices';
 import { ProgressSpinner } from 'primereact/progressspinner';
 import ServiceModal from './ServicesModal';
-import { useNotification } from '../../Notification/NotificationContext';
 import "../styles/Services.css"
+
 
 const Services = () => {
     const serviceRepository = new ServiceRepository();
@@ -18,6 +18,9 @@ const Services = () => {
     const [loading, setLoading] = useState(true);
     const [showModal, setShowModal] = useState(false);
     const [selectedService, setSelectedService] = useState(null);
+    const [first, setFirst] = useState(0);
+    const [rows, setRows] = useState(10);
+    const [totalRecords, setTotalRecords] = useState(0);
 
     const handleEdit = (service) => {
         setSelectedService(service);
@@ -29,11 +32,19 @@ const Services = () => {
         setShowModal(true);
     }
 
-    const loadServices = async () => {
+    const onPageChange = (event) => {
+        const page = Math.floor(event.first / event.rows);
+        setFirst(event.first);
+        setRows(event.rows);
+        loadServices(page, event.rows);
+    };
+
+    const loadServices = async (page = 0, pageSize = 10) => {
         setLoading(true);
         try {
-            const serviceData = await getAllServices.execute();
-            setServices(serviceData);
+            const serviceData = await getAllServices.execute(`?page=${page}&limit=${pageSize}`);
+            setServices(serviceData.data || serviceData);
+            setTotalRecords(serviceData.total || serviceData.length);
         } catch (error) {
             console.error('Error al obtener los servicios:', error);
         } finally {
@@ -79,7 +90,18 @@ const Services = () => {
                     </div>
                 ) : (
 
-                <DataTable className="service-table" size="small" value={services} tableStyle={{ minWidth: '60%' }}>
+                <DataTable 
+                    className="service-table" 
+                    size="small" 
+                    value={services} 
+                    tableStyle={{ minWidth: '60%' }}
+                    emptyMessage="No se encontraron servicios"
+                    paginator
+                    first={first}
+                    rows={rows}
+                    totalRecords={totalRecords}
+                    onPage={onPageChange}
+                >
                     <Column 
                         field="name" 
                         header="Nombre del servicio" 
@@ -106,10 +128,6 @@ const Services = () => {
                     />
                 </DataTable>
                 )}
-            </div>
-
-            <div className='service-footer'>
-                Aqui van los botones
             </div>
 
             {showModal && (

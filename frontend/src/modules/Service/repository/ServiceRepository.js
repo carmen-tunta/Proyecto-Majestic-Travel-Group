@@ -1,8 +1,8 @@
 const apiUrl = process.env.REACT_APP_API_URL + "/services";
 
 class ServiceRepository {
-    async getAllServices() {
-        const response = await fetch(apiUrl);
+    async getAllServices(limit) {
+        const response = await fetch(`${apiUrl}${limit}`);
         return await response.json();
     }
 

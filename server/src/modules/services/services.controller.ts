@@ -22,9 +22,22 @@ export class ServicesController {
   }
 
   @Get()
-  findAll() {
-    return this.servicesService.findAll();
-  }
+    async findAll(
+      @Query('page') page: string, 
+      @Query('limit') limit: string
+    ) {
+    const pageNum = parseInt(page || '0') || 0;
+    const limitNum = parseInt(limit || '10') || 10;
+
+      const services = await this.servicesService.findAll();
+      return {
+        data: services,
+        total: services.length,
+        page: pageNum,
+        limit: limitNum
+      };
+    }
+
 
   @Get('search')
   async searchServices(@Query('name') name: string) {

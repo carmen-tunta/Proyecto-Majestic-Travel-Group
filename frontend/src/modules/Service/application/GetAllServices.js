@@ -3,8 +3,8 @@ class getAllServices {
         this.serviceRepository = serviceRepository;
     }
 
-    async execute() {
-        return await this.serviceRepository.getAllServices();
+    async execute(limit) {
+        return await this.serviceRepository.getAllServices(limit);
     }
 }
 
