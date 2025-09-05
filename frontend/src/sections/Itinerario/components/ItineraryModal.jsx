@@ -70,8 +70,8 @@ const ItineraryModal = ({ onHide, template }) => {
                 <InputText 
                     id="plantilla" 
                     className="p-inputtext-sm" 
-                    value={itineraryTitle} 
-                    onChange={e => setItineraryTitle(e.target.value)}
+                    value={templateTitle} 
+                    onChange={e => setTemplateTitle(e.target.value)}
                     required 
                 />
                 <label htmlFor="plantilla">Título de plantilla</label>
@@ -80,8 +80,8 @@ const ItineraryModal = ({ onHide, template }) => {
                 <InputText 
                     id="itinerario" 
                     className="p-inputtext-sm" 
-                    value={templateTitle} 
-                    onChange={e => setTemplateTitle(e.target.value)}
+                    value={itineraryTitle} 
+                    onChange={e => setItineraryTitle(e.target.value)}
                     required 
                 />
                 <label htmlFor="itinerario">Título para itinerario</label>
