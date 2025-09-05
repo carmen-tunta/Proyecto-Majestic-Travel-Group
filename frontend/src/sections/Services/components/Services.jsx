@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { InputText } from 'primereact/inputtext';
+import SearchBar from '../../../components/SearchBar';
+import useSearch from '../../../hooks/useSearch';
+import { apiService } from '../../../services/apiService';
 import { Button } from 'primereact/button';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
@@ -62,71 +64,69 @@ const Services = () => {
     };
 
 
+    // Buscador universal para servicios
+    const { search, setSearch, results, loading: searchLoading } = useSearch((q) => apiService.universalSearch('services', q));
+
     return (
         <div className="service">
             <div className='service-header'>
                 <h2>Servicios</h2>
-                <Button 
-                    icon="pi pi-plus" 
-                    label="Nuevo" 
-                    size='small' 
+                <Button
+                    icon="pi pi-plus"
+                    label="Nuevo"
+                    size='small'
                     outlined
                     onClick={handleNew}
-                    />
+                />
             </div>
 
             <div className='service-search'>
-                <div className="p-input-icon-left">
-                    <i className="pi pi-search"/>
-                    <InputText type="text" placeholder="Buscar..." className='p-inputtext-sm'/>
-                </div>
+                <SearchBar value={search} onChange={setSearch} placeholder="Buscar servicios..." />
             </div>
 
             <div className="card">
-
-                {loading ? (
+                {(loading || searchLoading) ? (
                     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 120 }}>
                         <ProgressSpinner />
                     </div>
                 ) : (
-
-                <DataTable 
-                    className="service-table" 
-                    size="small" 
-                    value={services} 
-                    tableStyle={{ minWidth: '60%' }}
-                    emptyMessage="No se encontraron servicios"
-                    paginator
-                    first={first}
-                    rows={rows}
-                    totalRecords={totalRecords}
-                    onPage={onPageChange}
-                >
-                    <Column 
-                        field="name" 
-                        header="Nombre del servicio" 
-                        style={{ width: '66%' }}>    
-                    </Column>
-                    <Column 
-                        field="city" 
-                        header="Ciudad" 
-                        style={{ width: '28%' }}>
-                    </Column>
-                    <Column
-                        header="Acción"
-                        style={{ width: '6%' }}
-                        body={rowData => (
-                            <span style={{ display: 'flex', justifyContent: 'center' }}>
-                                <i 
-                                    className="pi pi-pencil"    
-                                    title="Editar" 
-                                    style={{color:'#1976d2', cursor:"pointer"}}
-                                    onClick={() => handleEdit(rowData)}    
-                                ></i>
-                            </span>
-                        )}
-                    />
-                </DataTable>
+                    <DataTable
+                        className="service-table"
+                        size="small"
+                        value={search ? results : services}
+                        tableStyle={{ minWidth: '60%' }}
+                        emptyMessage="No se encontraron servicios"
+                        paginator
+                        first={first}
+                        rows={rows}
+                        totalRecords={totalRecords}
+                        onPage={onPageChange}
+                    >
+                        <Column
+                            field="name"
+                            header="Nombre del servicio"
+                            style={{ width: '66%' }}>
+                        </Column>
+                        <Column
+                            field="city"
+                            header="Ciudad"
+                            style={{ width: '28%' }}>
+                        </Column>
+                        <Column
+                            header="Acción"
+                            style={{ width: '6%' }}
+                            body={rowData => (
+                                <span style={{ display: 'flex', justifyContent: 'center' }}>
+                                    <i
+                                        className="pi pi-pencil"
+                                        title="Editar"
+                                        style={{ color: '#1976d2', cursor: "pointer" }}
+                                        onClick={() => handleEdit(rowData)}
+                                    ></i>
+                                </span>
+                            )}
+                        />
+                    </DataTable>
                 )}
             </div>
 
@@ -137,7 +137,7 @@ const Services = () => {
                     service={selectedService}
                 />
             )}
-    
+
         </div>
     )
 }

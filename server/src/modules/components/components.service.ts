@@ -111,8 +111,9 @@ export class ComponentsService {
 
   // SEARCH - Buscar componentes por nombre
   async searchByName(name: string): Promise<Component[]> {
+    const cleanName = name.trim().toLowerCase();
     return await this.componentsRepository.createQueryBuilder('component')
-      .where('component.componentName LIKE :name', { name: `%${name}%` })
+      .where('LOWER(TRIM(component.componentName)) LIKE :name', { name: `%${cleanName}%` })
       .getMany();
   }
 }

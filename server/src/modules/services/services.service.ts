@@ -59,8 +59,9 @@ export class ServicesService {
 
   // SEARCH - Buscar servicios por nombre
   async searchByName(name: string): Promise<Service[]> {
+    const cleanName = name.trim().toLowerCase();
     return await this.serviceRepository.createQueryBuilder('service')
-      .where('service.name LIKE :name', { name: `%${name}%` })
+      .where('LOWER(TRIM(service.name)) LIKE :name', { name: `%${cleanName}%` })
       .leftJoinAndSelect('service.components', 'component')
       .getMany();
   }

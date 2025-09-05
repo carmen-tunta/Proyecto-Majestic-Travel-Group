@@ -2,10 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { Button } from 'primereact/button';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
-import { InputText } from 'primereact/inputtext';
 import { Paginator } from 'primereact/paginator';
 import ComponentModal from './ComponentModal';
 import "../styles/Componentes.css";
+import SearchBar from '../../../components/SearchBar';
+import useSearch from '../../../hooks/useSearch';
+import { apiService } from '../../../services/apiService';
 
 const Componentes = () => {
   const [componentes, setComponentes] = useState([]);
@@ -45,6 +47,9 @@ const Componentes = () => {
     if (!text) return '';
     return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
   };
+
+  // Buscador universal para componentes
+  const { search, setSearch, results, loading: searchLoading } = useSearch((q) => apiService.universalSearch('components', q));
 
   // Función para manejar el cambio de página
   const onPageChange = (event) => {
@@ -114,12 +119,9 @@ const Componentes = () => {
         />
       </div>
 
-      {/* Barra de búsqueda */}
+      {/* Barra de búsqueda universal */}
       <div className='componentes-search'>
-        <div className="p-input-icon-left">
-          <i className="pi pi-search"/>
-          <InputText type="text" placeholder="Buscar..." className='p-inputtext-sm'/>
-        </div>
+        <SearchBar value={search} onChange={setSearch} placeholder="Buscar componentes..." />
       </div>
 
       {/* Tabla de componentes */}
@@ -127,8 +129,8 @@ const Componentes = () => {
         <DataTable 
           className="componentes-table" 
           size="small" 
-          value={componentes} 
-          loading={loading}
+          value={search ? results : componentes} 
+          loading={loading || searchLoading}
           emptyMessage="No se encontraron componentes"
           tableStyle={{ minWidth: '60%' }}
           paginator={false}

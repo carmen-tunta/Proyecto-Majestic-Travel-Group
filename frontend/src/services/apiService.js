@@ -1,6 +1,58 @@
 const API_BASE_URL = process.env.REACT_APP_API_URL;
 
 export const apiService = {
+  // Buscar servicios por nombre o ciudad
+  async searchServices(query) {
+    try {
+      const response = await fetch(`${API_BASE_URL}/services/search?name=${encodeURIComponent(query)}`);
+      if (!response.ok) {
+        throw new Error('Error al buscar servicios');
+      }
+      return await response.json();
+    } catch (error) {
+      throw new Error(error.message || 'Error al buscar servicios');
+    }
+  },
+
+  // Buscar componentes por nombre, tipo o descripción
+  async searchComponents(query) {
+    try {
+      const response = await fetch(`${API_BASE_URL}/components/search?name=${encodeURIComponent(query)}`);
+      if (!response.ok) {
+        throw new Error('Error al buscar componentes');
+      }
+      return await response.json();
+    } catch (error) {
+      throw new Error(error.message || 'Error al buscar componentes');
+    }
+  },
+
+  // Buscar plantillas de itinerario por nombre
+  async searchItineraryTemplates(query) {
+    try {
+      const response = await fetch(`${API_BASE_URL}/itinerary-template/search?name=${encodeURIComponent(query)}`);
+      if (!response.ok) {
+        throw new Error('Error al buscar plantillas');
+      }
+      return await response.json();
+    } catch (error) {
+      throw new Error(error.message || 'Error al buscar plantillas');
+    }
+  },
+
+  // Buscador único para los tres recursos
+  async universalSearch(resource, query) {
+    switch(resource) {
+      case 'services':
+        return this.searchServices(query);
+      case 'components':
+        return this.searchComponents(query);
+      case 'itinerary-templates':
+        return this.searchItineraryTemplates(query);
+      default:
+        throw new Error('Recurso no soportado');
+    }
+  },
   // Login real con el backend
   async login(username, password) {
     try {

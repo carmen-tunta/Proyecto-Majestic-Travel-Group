@@ -1,5 +1,7 @@
 import { DataTable } from 'primereact/datatable';
-import { InputText } from 'primereact/inputtext';
+import SearchBar from '../../../components/SearchBar';
+import useSearch from '../../../hooks/useSearch';
+import { apiService } from '../../../services/apiService';
 import { Button } from 'primereact/button';
 import { Column } from 'primereact/column';
 import { ProgressSpinner } from 'primereact/progressspinner';
@@ -61,6 +63,9 @@ const Itinerario = () => {
     };
 
 
+    // Buscador universal para plantillas
+    const { search, setSearch, results, loading: searchLoading } = useSearch((q) => apiService.universalSearch('itinerary-templates', q));
+
     return (
         <div className="itinerario">
             <div className='itinerario-header'>
@@ -74,23 +79,18 @@ const Itinerario = () => {
             </div>
 
             <div className='itinerario-search'>
-                <div className="p-input-icon-left">
-                    <i className="pi pi-search"/>
-                    <InputText type="text" placeholder="Buscar..." className='p-inputtext-sm'/>
-                </div>
+                <SearchBar value={search} onChange={setSearch} placeholder="Buscar plantillas..." />
             </div>
 
             <div className="card">
-
-                {loading ? (
+                {(loading || searchLoading) ? (
                     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 120 }}>
                         <ProgressSpinner />
                     </div>
                 ) : (
-
                 <DataTable 
                     className="itinerario-table" 
-                    size="small" value={template} 
+                    size="small" value={search ? results : template} 
                     tableStyle={{ minWidth: '60%' }}
                     emptyMessage="No se encontraron servicios"
                     paginator
