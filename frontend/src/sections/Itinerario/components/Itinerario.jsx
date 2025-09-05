@@ -100,12 +100,12 @@ const Itinerario = () => {
                     onPage={onPageChange}
                 >
                     <Column 
-                        field="itineraryTitle" 
+                        field="templateTitle" 
                         header="Título de plantilla" 
                         style={{ width: '47%' }}>    
                     </Column>
                     <Column 
-                        field="templateTitle" 
+                        field="itineraryTitle" 
                         header="Título para el itinerario" 
                         style={{ width: '47%' }}>
                     </Column>
