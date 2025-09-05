@@ -38,8 +38,9 @@ export class ItineraryTemplateService {
     }
 
     async searchByName(name: string): Promise<ItineraryTemplate[]> {
+        const cleanName = name.trim().toLowerCase();
         return await this.itineraryTemplateRepository.createQueryBuilder('itineraryTemplate')
-            .where('itineraryTemplate.templateTitle LIKE :name', { name: `%${name}%` })
+            .where('LOWER(TRIM(itineraryTemplate.templateTitle)) LIKE :name', { name: `%${cleanName}%` })
             .getMany();
     }
 }
