@@ -1,13 +1,20 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Button } from 'primereact/button';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Paginator } from 'primereact/paginator';
 import ComponentModal from './ComponentModal';
 import "../styles/Componentes.css";
+
 import SearchBar from '../../../components/SearchBar';
 import useSearch from '../../../hooks/useSearch';
 import { apiService } from '../../../services/apiService';
+
+import { GetAllComponentsTemplate } from '../../../modules/ComponentsTemplate/application/GetAllComponentsTemplate';
+import { CreateComponentsTemplate } from '../../../modules/ComponentsTemplate/application/CreateComponentsTemplate';
+import { UpdateComponentsTemplate } from '../../../modules/ComponentsTemplate/application/UpdateComponentsTemplate';
+import { useModal } from '../../../contexts/ModalContext';
+
 
 const Componentes = () => {
   const [componentes, setComponentes] = useState([]);
@@ -17,30 +24,32 @@ const Componentes = () => {
   const [totalRecords, setTotalRecords] = useState(0);
   const [showModal, setShowModal] = useState(false);
   const [editingComponent, setEditingComponent] = useState(null);
+  const [currentPage, setCurrentPage] = useState(0);
+  const { setIsModalOpen } = useModal();
+
+  // Instancias de los casos de uso
+  const createComponent = new CreateComponentsTemplate();
+  const updateComponent = new UpdateComponentsTemplate();
 
   // Función para obtener los componentes del backend
-  const fetchComponentes = async (page = 0, pageSize = 10) => {
+  const fetchComponentes = useCallback(async (page = 0, pageSize = 10) => {
     try {
       setLoading(true);
-      const response = await fetch(`http://localhost:3080/components?page=${page}&limit=${pageSize}`);
-      if (response.ok) {
-        const data = await response.json();
-        setComponentes(data.data || data); // Ajustar según la respuesta del backend
-        setTotalRecords(data.total || data.length);
-      } else {
-        console.error('Error al obtener componentes');
-      }
+      const getAllComponents = new GetAllComponentsTemplate();
+      const result = await getAllComponents.execute(page, pageSize);
+      setComponentes(result.data);
+      setTotalRecords(result.total);
     } catch (error) {
-      console.error('Error de conexión:', error);
+      console.error('Error al obtener componentes:', error);
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   // Cargar componentes al montar el componente
   useEffect(() => {
     fetchComponentes();
-  }, []);
+  }, [fetchComponentes]);
 
   // Función para truncar texto largo
   const truncateText = (text, maxLength = 50) => {
@@ -55,6 +64,7 @@ const Componentes = () => {
   const onPageChange = (event) => {
     setFirst(event.first);
     setRows(event.rows);
+    setCurrentPage(event.page); // Guardar la página actual
     fetchComponentes(event.page, event.rows);
   };
 
@@ -62,46 +72,50 @@ const Componentes = () => {
   const handleNewComponent = () => {
     setEditingComponent(null);
     setShowModal(true);
+    setIsModalOpen(true);
   };
 
   // Función para abrir modal de edición
   const handleEditComponent = (component) => {
     setEditingComponent(component);
     setShowModal(true);
+    setIsModalOpen(true);
   };
 
   // Función para cerrar modal
   const handleCloseModal = () => {
     setShowModal(false);
     setEditingComponent(null);
+    setIsModalOpen(false);
   };
 
   // Función para guardar componente
   const handleSaveComponent = async (componentData) => {
     try {
-      const url = editingComponent 
-        ? `http://localhost:3080/components/${editingComponent.id}`
-        : 'http://localhost:3080/components';
-      
-      const method = editingComponent ? 'PATCH' : 'POST';
-      
-      const response = await fetch(url, {
-        method: method,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(componentData),
-      });
-
-      if (response.ok) {
-        // Recargar la lista de componentes
-        await fetchComponentes();
-        console.log(editingComponent ? 'Componente actualizado' : 'Componente creado');
+      if (editingComponent) {
+        // Actualizar componente existente
+        await updateComponent.execute(editingComponent.id, componentData);
+        console.log('Componente actualizado');
       } else {
-        console.error('Error al guardar componente');
+        // Crear nuevo componente
+        await createComponent.execute(componentData);
+        console.log('Componente creado');
       }
+      
+      // Cerrar el modal
+      setShowModal(false);
+      setEditingComponent(null);
+      setIsModalOpen(false);
+      
+      // Volver a la página original y recargar
+      const pageToReturn = editingComponent ? currentPage : 0; // Si es nuevo, ir a página 1
+      setFirst(pageToReturn * rows);
+      setLoading(true); // Mostrar loading mientras se recarga
+      await fetchComponentes(pageToReturn, rows);
+      
+      console.log(`Volviendo a la página ${pageToReturn + 1}`);
     } catch (error) {
-      console.error('Error de conexión:', error);
+      console.error('Error al guardar componente:', error);
     }
   };
 

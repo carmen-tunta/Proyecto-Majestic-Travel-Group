@@ -10,10 +10,12 @@ import ItineraryTemplateRepository from '../../../modules/ItineraryTemplate/repo
 import GetAllItineraryTemplate from '../../../modules/ItineraryTemplate/application/GetAllItineraryTemplate';
 import { useEffect, useState } from 'react';
 import ItineraryModal from './ItineraryModal';
+import { useModal } from '../../../contexts/ModalContext';
 
 const Itinerario = () => {
     const itineraryTemplate = new ItineraryTemplateRepository();
     const getAllTemplates = new GetAllItineraryTemplate(itineraryTemplate);
+    const { setIsModalOpen } = useModal();
 
     const [template, setTemplate] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -26,11 +28,13 @@ const Itinerario = () => {
     const handleEdit = (template) => {
         setSelectedTemplate(template);
         setShowModal(true);
+        setIsModalOpen(true);
     };
 
     const handleNew = () => {
         setSelectedTemplate(null);
         setShowModal(true);
+        setIsModalOpen(true);
     }
 
     const onPageChange = (event) => {
@@ -59,6 +63,7 @@ const Itinerario = () => {
 
     const handleModalClose = () => {
         setShowModal(false);
+        setIsModalOpen(false);
         loadItineraryTemplates();
     };
 

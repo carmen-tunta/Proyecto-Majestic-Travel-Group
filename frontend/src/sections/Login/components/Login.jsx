@@ -4,6 +4,7 @@ import { Button } from 'primereact/button';
 import { Link, useNavigate } from 'react-router-dom';
 import { apiService } from '../../../services/apiService';
 import { useNotification } from '../../Notification/NotificationContext';
+import { useAuth } from '../../../modules/auth/context/AuthContext';
 
 function Login() {
   const [showPassword, setShowPassword] = useState(false);
@@ -12,6 +13,7 @@ function Login() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { showNotification } = useNotification();
+  const { login } = useAuth();
 
   const handleLogin = async () => {
     if (!username.trim() || !password.trim()) {
@@ -24,8 +26,8 @@ function Login() {
     try {
       const response = await apiService.login(username, password);
       
-      localStorage.setItem('authToken', response.token);
-      localStorage.setItem('user', JSON.stringify(response.user));
+      // Usar el contexto de autenticación
+      login(response.user, response.token);
       navigate('/itinerario');
       
     } catch (error) {
