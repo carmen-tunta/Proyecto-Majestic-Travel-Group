@@ -65,7 +65,6 @@ const Services = () => {
     };
 
     const rowExpansionTemplate = (service) => (
-        console.log(service),
         <DataTable value={service.components || []} className='service-components-table' size="small" emptyMessage="Sin componentes">
             <Column field="componentName" header="Nombre del componente" />
             <Column field="serviceType" header="Tipo de servicio" />
