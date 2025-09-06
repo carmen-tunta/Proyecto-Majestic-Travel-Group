@@ -33,14 +33,26 @@ export class ServicesService {
     return this.serviceRepository.findOne({ where: { id }, relations: ['components'] });
   }
 
-  async update(id: number, data: Partial<Service>): Promise<Service | null> {
+  async update(id: number, data: Partial<Service> & { componentIds?: number[] }): Promise<Service | null> {
+    const { componentIds, ...serviceData } = data;
     const metadata = this.serviceRepository.metadata;
-    const columnsOnly = Object.keys(data).reduce((obj, key) => {
+    const columnsOnly = Object.keys(serviceData).reduce((obj, key) => {
       const column = metadata.findColumnWithPropertyName(key);
-      if (column) obj[key] = data[key];
+      if (column) obj[key] = serviceData[key];
       return obj;
     }, {} as Partial<Service>);
     await this.serviceRepository.update(id, columnsOnly);
+
+    // Actualizar componentes si se envía componentIds
+    if (componentIds) {
+      const service = await this.serviceRepository.findOne({ where: { id }, relations: ['components'] });
+      if (service) {
+        const components = await this.componentRepository.findByIds(componentIds);
+        service.components = components;
+        await this.serviceRepository.save(service);
+      }
+    }
+
     return this.findOne(id);
   }
 

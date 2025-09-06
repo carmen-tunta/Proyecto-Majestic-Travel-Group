@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import SearchBar from '../../../components/SearchBar';
 import useSearch from '../../../hooks/useSearch';
 import { apiService } from '../../../services/apiService';
@@ -23,6 +23,7 @@ const Services = () => {
     const [first, setFirst] = useState(0);
     const [rows, setRows] = useState(10);
     const [totalRecords, setTotalRecords] = useState(0);
+    const [expandedRows, setExpandedRows] = useState(null);
 
     const handleEdit = (service) => {
         setSelectedService(service);
@@ -63,6 +64,13 @@ const Services = () => {
         loadServices();
     };
 
+    const rowExpansionTemplate = (service) => (
+        <DataTable value={service.components || []} className='service-components-table' size="small" emptyMessage="Sin componentes">
+            <Column field="componentName" header="Nombre del componente" />
+            <Column field="serviceType" header="Tipo de servicio" />
+        </DataTable>
+    );
+
 
     // Buscador universal para servicios
     const { search, setSearch, results, loading: searchLoading } = useSearch((q) => apiService.universalSearch('services', q));
@@ -101,7 +109,14 @@ const Services = () => {
                         rows={rows}
                         totalRecords={totalRecords}
                         onPage={onPageChange}
+                        expandedRows={expandedRows}
+                        onRowToggle={e => setExpandedRows(e.data)}
+                        rowExpansionTemplate={rowExpansionTemplate}
                     >
+                        <Column
+                            expander
+                            style={{ width: '40px' }}
+                        />   
                         <Column
                             field="name"
                             header="Nombre del servicio"

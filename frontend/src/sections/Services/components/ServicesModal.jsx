@@ -2,16 +2,19 @@ import React, { useEffect, useState } from 'react';
 import { InputText } from 'primereact/inputtext';
 import { FloatLabel } from 'primereact/floatlabel';
 import { Button } from 'primereact/button';
+import SearchBar from '../../../components/SearchBar';
+import useSearch from '../../../hooks/useSearch';
+import { apiService } from '../../../services/apiService';
 import ServiceRepository from '../../../modules/Service/repository/ServiceRepository';
 import UpdateService from '../../../modules/Service/application/UpdateService';
 import CreateService from '../../../modules/Service/application/CreateService';
 import DeleteComponentFromService from '../../../modules/Service/application/DeleteComponentFromService';
 import { useNotification } from '../../Notification/NotificationContext';
 import { Dropdown } from 'primereact/dropdown';
-import "../styles/ServicesModal.css"
 import { FileUpload } from "primereact/fileupload";
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
+import "../styles/ServicesModal.css"
 
 const ServicesModal = ({ onHide, service }) => {
     const peruCities = ["Lima", "Cusco", "Arequipa", "Trujillo", "Iquitos", "Puno", "Chiclayo", "Piura", "Huaraz", "Nazca"];
@@ -25,6 +28,7 @@ const ServicesModal = ({ onHide, service }) => {
     const [serviceName, setServiceName] = useState(service?.name || '');
     const [serviceCity, setServiceCity] = useState(service?.city || '');
     const [serviceComponents, setServiceComponents] = useState(service?.components || []);
+    const [selectedComponent, setSelectedComponent] = useState(null);
 
     useEffect(() => {
         setServiceName(service?.name || '');
@@ -39,17 +43,20 @@ const ServicesModal = ({ onHide, service }) => {
         }
         setLoading(true);
         try {
+            const componentIds = serviceComponents.map(c => c.id);
             if (service && service.id) {
                 await updateService.execute({
                     ...service,
                     name: serviceName.trim(),
-                    city: serviceCity.trim()
+                    city: serviceCity.trim(),
+                    componentIds
                 });
             showNotification('Servicio actualizada con éxito!', 'success');
         } else {
             await createService.execute({
                 name: serviceName.trim(),
-                city: serviceCity.trim()
+                city: serviceCity.trim(),
+                componentIds
             });
             showNotification('Servicio creado con éxito!', 'success');
         }
@@ -61,16 +68,26 @@ const ServicesModal = ({ onHide, service }) => {
         }
     };
 
-    const handleDelete = async (component) => {
-        try {
-            await deleteComponentFromService.execute(service.id, component.id);
-            showNotification('Componente eliminado con éxito!', 'success');
-            setServiceComponents(prevComponents => prevComponents.filter(c => c.id !== component.id));
-        } catch (error) {
-            showNotification('Error al eliminar el componente', 'error');
-            console.error('Error al eliminar el componente:', error);
-        }
+    const handleDeleteComponent = async (component) => {
+        setServiceComponents(prevComponents => prevComponents.filter(c => c.id !== component.id));
     }
+
+    const handleSelectComponent = (c) => {
+        setSelectedComponent(c);
+        setSearch(c.componentName);
+    }
+
+    const handleSaveComponent = () => {
+        if (selectedComponent && !serviceComponents.find(c => c.id === selectedComponent.id)) {
+            setServiceComponents(prevComponents => [...prevComponents, selectedComponent]);
+        }
+        setSearch(''); 
+        setSelectedComponent(null); 
+    }
+
+
+    const { search, setSearch, results, loading: searchLoading } = useSearch((q) => apiService.universalSearch('components', q));
+
 
     return (
         <div className="service-modal-overlay">
@@ -83,7 +100,7 @@ const ServicesModal = ({ onHide, service }) => {
                         onClick={onHide}>
                     </i>
                 </div>
-                <FloatLabel>
+                <FloatLabel style={{ marginTop: '2rem' }}>
                     <InputText 
                         id="name" 
                         className="p-inputtext-sm" 
@@ -93,13 +110,14 @@ const ServicesModal = ({ onHide, service }) => {
                     />
                     <label htmlFor="name">Nombre del servicio</label>
                 </FloatLabel>
-                <FloatLabel>
+                <FloatLabel style={{ marginTop: '2rem' }}>
                     <Dropdown 
                         inputId="city"
                         value={serviceCity} 
                         options={peruCities}
                         onChange={(e) => setServiceCity(e.value)} 
                         style={{ width: '100%' }}
+                        required
                     />
                     <label htmlFor="city">Ciudad</label>
                 </FloatLabel>
@@ -114,21 +132,49 @@ const ServicesModal = ({ onHide, service }) => {
                     />
                 </div>
                 <div className='service-components-search'>
-                    <div className="p-input-icon-left" style={{ width: '70%' }}>
-                        <i className="pi pi-search"/>
-                        <InputText 
-                            type="text" 
-                            placeholder="Buscar..." 
-                            className='p-inputtext-sm'/>
-                    </div>
+                    <SearchBar value={search} onChange={setSearch} placeholder="Buscar componentes..." />
                     <div>
-                        <Button icon="pi pi-plus" outlined label='Agregar' size='small'></Button>
+                        <Button icon="pi pi-plus" outlined label='Agregar' size='small' onClick={() => handleSaveComponent()} disabled={!selectedComponent}></Button>
                     </div>
+                    {search && results.length > 0 && selectedComponent?.componentName !== search && (
+                        <div
+                            style={{
+                                position: 'absolute',
+                                top: '3rem', // ajusta según la altura del input
+                                left: 0,
+                                width: '100%',
+                                background: '#fff',
+                                border: '1px solid #ddd',
+                                borderRadius: 4,
+                                boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+                                zIndex: 10,
+                                maxHeight: '200px',
+                                overflowY: 'auto',
+                            }}
+                        >
+                            {results
+                                .filter(comp => !comp.serviceId && 
+                                    !serviceComponents.some(sc => sc.id === comp.id)) 
+                                .map(comp => (
+                                <div
+                                    key={comp.id}
+                                    style={{
+                                        padding: '8px 12px',
+                                        cursor: 'pointer',
+                                        borderBottom: '1px solid #eee'
+                                    }}
+                                    onClick={() => handleSelectComponent(comp)}
+                                >
+                                    {comp.componentName} <span style={{ color: '#888' }}>({comp.serviceType})</span>
+                                </div>
+                            ))}
+                        </div>
+                    )}
                 </div>
 
 
                 <div className="card">
-                    <DataTable scrollable scrollHeight="100px" className="components-table" size="small" value={serviceComponents} tableStyle={{ minWidth: '60%' }} emptyMessage="Este servicio aun no cuenta con componentes">
+                    <DataTable  className="components-table" size="small" value={serviceComponents} tableStyle={{ minWidth: '60%' }} emptyMessage="Este servicio aun no cuenta con componentes">
                         <Column 
                             field="componentName" 
                             header="Nombre del componente" 
@@ -148,7 +194,7 @@ const ServicesModal = ({ onHide, service }) => {
                                         className="pi pi-trash"    
                                         title="Eliminar" 
                                         style={{color:'#gray', cursor:"pointer"}}
-                                        onClick={() => handleDelete(rowData)}
+                                        onClick={() => handleDeleteComponent(rowData)}
                                     ></i>
                                 </span>
                             )}

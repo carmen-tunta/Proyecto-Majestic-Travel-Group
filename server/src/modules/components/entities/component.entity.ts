@@ -42,6 +42,13 @@ export class Component {
   })
   isActive: boolean;
 
+  @Column({ 
+    type: 'int', 
+    nullable: true,
+    comment: 'ID del servicio asociado, si aplica' 
+  })
+  serviceId: number | null;
+
   @ManyToOne(() => Service, (service) => service.components, { nullable: true })
   service: Service | null;
 }

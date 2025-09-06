@@ -8,6 +8,8 @@
     display: flex;
     flex-direction: column;
     justify-content: space-around;
+    max-height: 90vh;
+    overflow-y: auto;
 }
 
 .service-modal-overlay {
@@ -30,7 +32,8 @@
 .service-modal-buttons {
     display: flex;
     justify-content: space-around;
-    margin-top: 10px;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
 }
 
 .service-modal-buttons button {
@@ -43,6 +46,11 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background-color: white;
+    width: 100%;
 }
 
 .service-images .p-button{
@@ -56,4 +64,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    position: relative;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
 }

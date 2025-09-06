@@ -24,14 +24,14 @@
 }
 
 .service-table .p-datatable-tbody > tr > td {
-  border: none;
+  border: 1px bottom solid #ddd;
 }
 
-.service-table .p-datatable-tbody > tr:nth-child(odd) > td {
+.service-components-table .p-datatable-tbody > tr:nth-child(odd) > td {
   background: #fff;
 }
 
-.service-table .p-datatable-tbody > tr:nth-child(even) > td {
+.service-components-table .p-datatable-tbody > tr:nth-child(even) > td {
   background: #e3f2fd;
 }
 
