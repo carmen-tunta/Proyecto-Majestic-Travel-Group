@@ -8,6 +8,7 @@ import '../styles/ComponentModal.css';
 
 const ComponentModal = ({ onHide, component, onSave }) => {
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
   const [componentName, setComponentName] = useState(component?.componentName || '');
   const [serviceType, setServiceType] = useState(component?.serviceType || '');
   const [description, setDescription] = useState(component?.description || '');
@@ -29,10 +30,12 @@ const ComponentModal = ({ onHide, component, onSave }) => {
 
   const handleSave = async () => {
     if (!componentName.trim() || !serviceType.trim()) {
+      setError('Por favor completa todos los campos requeridos');
       return;
     }
 
     setLoading(true);
+    setError('');
     try {
       const componentData = {
         componentName: componentName.trim(),
@@ -44,6 +47,9 @@ const ComponentModal = ({ onHide, component, onSave }) => {
       onHide();
     } catch (error) {
       console.error('Error al guardar componente:', error);
+      // Extraer el mensaje de error del response
+      const errorMessage = error.message || 'Error al guardar el componente';
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -53,6 +59,7 @@ const ComponentModal = ({ onHide, component, onSave }) => {
     setComponentName('');
     setServiceType('');
     setDescription('');
+    setError('');
     onHide();
   };
 
@@ -106,6 +113,20 @@ const ComponentModal = ({ onHide, component, onSave }) => {
           />
           <label htmlFor="description">Descripción del componente</label>
         </FloatLabel>
+
+        {error && (
+          <div className="error-message" style={{ 
+            color: 'red', 
+            fontSize: '14px', 
+            marginBottom: '1rem',
+            padding: '0.5rem',
+            backgroundColor: '#ffebee',
+            border: '1px solid #f44336',
+            borderRadius: '4px'
+          }}>
+            {error}
+          </div>
+        )}
 
         <div className="component-info-box">
           <i className="pi pi-info-circle" style={{ marginRight: '0.5rem', color: '#1976d2' }}></i>

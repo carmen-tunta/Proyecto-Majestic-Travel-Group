@@ -119,6 +119,8 @@ const Componentes = () => {
       console.log(`Volviendo a la página ${pageToReturn + 1}`);
     } catch (error) {
       console.error('Error al guardar componente:', error);
+      // Re-lanzar el error para que el modal lo maneje
+      throw error;
     }
   };
 
