@@ -9,6 +9,7 @@ import "../styles/Componentes.css";
 import SearchBar from '../../../components/SearchBar';
 import useSearch from '../../../hooks/useSearch';
 import { apiService } from '../../../services/apiService';
+import { useNotification } from '../../Notification/NotificationContext';
 
 import { GetAllComponentsTemplate } from '../../../modules/ComponentsTemplate/application/GetAllComponentsTemplate';
 import { CreateComponentsTemplate } from '../../../modules/ComponentsTemplate/application/CreateComponentsTemplate';
@@ -17,6 +18,7 @@ import { useModal } from '../../../contexts/ModalContext';
 
 
 const Componentes = () => {
+  const { showNotification } = useNotification();
   const [componentes, setComponentes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [first, setFirst] = useState(0);
@@ -37,10 +39,13 @@ const Componentes = () => {
       setLoading(true);
       const getAllComponents = new GetAllComponentsTemplate();
       const result = await getAllComponents.execute(page, pageSize);
-      setComponentes(result.data);
-      setTotalRecords(result.total);
+      // Asegurar que result.data es un array
+      setComponentes(Array.isArray(result.data) ? result.data : []);
+      setTotalRecords(result.total || 0);
     } catch (error) {
       console.error('Error al obtener componentes:', error);
+      setComponentes([]);
+      setTotalRecords(0);
     } finally {
       setLoading(false);
     }
@@ -116,8 +121,11 @@ const Componentes = () => {
       console.log(`Volviendo a la página ${pageToReturn + 1}`);
     } catch (error) {
       console.error('Error al guardar componente:', error);
+      // Re-lanzar el error para que el modal lo maneje
+      throw error;
     }
   };
+
 
   return (
     <div className="componentes">

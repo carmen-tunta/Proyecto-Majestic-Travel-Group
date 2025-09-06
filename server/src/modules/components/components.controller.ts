@@ -8,7 +8,9 @@ import {
   Delete,
   ParseIntPipe,
   Query,
-  BadRequestException
+  BadRequestException,
+  ConflictException,
+  InternalServerErrorException
 } from '@nestjs/common';
 import { ComponentsService } from './components.service';
 
@@ -23,7 +25,14 @@ export class ComponentsController {
     serviceType: string;
     description?: string;
   }) {
-    return await this.componentsService.create(createComponentDto);
+    try {
+      return await this.componentsService.create(createComponentDto);
+    } catch (error) {
+      if (error.message.includes('Ya existe un componente')) {
+        throw new ConflictException(error.message);
+      }
+      throw new InternalServerErrorException('Error interno del servidor');
+    }
   }
 
   // READ - Obtener todos los componentes con paginación

@@ -1,10 +1,21 @@
 const API_BASE_URL = process.env.REACT_APP_API_URL;
 
+// Función helper para obtener headers con autenticación
+const getAuthHeaders = () => {
+  const token = localStorage.getItem('authToken');
+  return {
+    'Content-Type': 'application/json',
+    ...(token && { 'Authorization': `Bearer ${token}` })
+  };
+};
+
 export const apiService = {
   // Buscar servicios por nombre o ciudad
   async searchServices(query) {
     try {
-      const response = await fetch(`${API_BASE_URL}/services/search?name=${encodeURIComponent(query)}`);
+      const response = await fetch(`${API_BASE_URL}/services/search?name=${encodeURIComponent(query)}`, {
+        headers: getAuthHeaders()
+      });
       if (!response.ok) {
         throw new Error('Error al buscar servicios');
       }
@@ -17,7 +28,9 @@ export const apiService = {
   // Buscar componentes por nombre, tipo o descripción
   async searchComponents(query) {
     try {
-      const response = await fetch(`${API_BASE_URL}/components/search?name=${encodeURIComponent(query)}`);
+      const response = await fetch(`${API_BASE_URL}/components/search?name=${encodeURIComponent(query)}`, {
+        headers: getAuthHeaders()
+      });
       if (!response.ok) {
         throw new Error('Error al buscar componentes');
       }
@@ -30,7 +43,9 @@ export const apiService = {
   // Buscar plantillas de itinerario por nombre
   async searchItineraryTemplates(query) {
     try {
-      const response = await fetch(`${API_BASE_URL}/itinerary-template/search?name=${encodeURIComponent(query)}`);
+      const response = await fetch(`${API_BASE_URL}/itinerary-template/search?name=${encodeURIComponent(query)}`, {
+        headers: getAuthHeaders()
+      });
       if (!response.ok) {
         throw new Error('Error al buscar plantillas');
       }
@@ -80,15 +95,15 @@ export const apiService = {
     }
   },
 
-  // Crear usuario (para pruebas)
-  async createUser(username, password) {
+  // Crear usuario (registro público)
+  async createUser(username, password, email) {
     try {
-      const response = await fetch(`${API_BASE_URL}/users`, {
+      const response = await fetch(`${API_BASE_URL}/users/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ username, password }),
+        body: JSON.stringify({ username, password, email }),
       });
 
       if (!response.ok) {
@@ -101,10 +116,12 @@ export const apiService = {
     }
   },
 
-  // Obtener usuarios (para pruebas)
+  // Obtener usuarios (requiere autenticación)
   async getUsers() {
     try {
-      const response = await fetch(`${API_BASE_URL}/users`);
+      const response = await fetch(`${API_BASE_URL}/users`, {
+        headers: getAuthHeaders()
+      });
       if (!response.ok) {
         throw new Error('Error al obtener usuarios');
       }

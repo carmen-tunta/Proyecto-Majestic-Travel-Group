@@ -16,6 +16,15 @@ export class ComponentsService {
     serviceType: string;
     description?: string;
   }): Promise<Component> {
+    // Verificar si ya existe un componente con el mismo nombre
+    const existingComponent = await this.componentsRepository.findOne({
+      where: { componentName: createComponentDto.componentName }
+    });
+
+    if (existingComponent) {
+      throw new Error(`Ya existe un componente con el nombre "${createComponentDto.componentName}"`);
+    }
+
     const component = this.componentsRepository.create(createComponentDto);
     return await this.componentsRepository.save(component);
   }

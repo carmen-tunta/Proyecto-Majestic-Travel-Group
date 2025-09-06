@@ -25,7 +25,8 @@ const useSearch = (searchApiFn, fetchAll) => {
                 setLoading(true);
                 try {
                     const all = await fetchAll();
-                    setResults(all);
+                    // Asegurar que all es un array
+                    setResults(Array.isArray(all) ? all : (all.data || []));
                 } catch (err) {
                     setResults([]);
                 } finally {
@@ -40,9 +41,11 @@ const useSearch = (searchApiFn, fetchAll) => {
         setError(null);
         try {
             const res = await searchApiFn(cleanValue);
-            setResults(res);
+            // Asegurar que res es un array
+            setResults(Array.isArray(res) ? res : []);
         } catch (err) {
             setError(err.message || 'Error al buscar');
+            setResults([]);
         } finally {
             setLoading(false);
         }

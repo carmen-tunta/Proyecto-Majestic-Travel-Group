@@ -1,5 +1,14 @@
 import { ComponentsTemplate } from '../domain/ComponentsTemplate.js';
 
+// Función helper para obtener headers con autenticación
+const getAuthHeaders = () => {
+  const token = localStorage.getItem('authToken');
+  return {
+    'Content-Type': 'application/json',
+    ...(token && { 'Authorization': `Bearer ${token}` })
+  };
+};
+
 export class ComponentsTemplateRepository {
   constructor() {
     this.baseUrl = 'http://localhost:3080/components';
@@ -8,7 +17,9 @@ export class ComponentsTemplateRepository {
   // Obtener todos los componentes con paginación
   async getAll(page = 0, limit = 10) {
     try {
-      const response = await fetch(`${this.baseUrl}?page=${page}&limit=${limit}`);
+      const response = await fetch(`${this.baseUrl}?page=${page}&limit=${limit}`, {
+        headers: getAuthHeaders()
+      });
       if (!response.ok) {
         throw new Error(`Error HTTP: ${response.status}`);
       }
@@ -28,7 +39,9 @@ export class ComponentsTemplateRepository {
   // Obtener un componente por ID
   async getById(id) {
     try {
-      const response = await fetch(`${this.baseUrl}/${id}`);
+      const response = await fetch(`${this.baseUrl}/${id}`, {
+        headers: getAuthHeaders()
+      });
       if (!response.ok) {
         throw new Error(`Error HTTP: ${response.status}`);
       }
@@ -45,9 +58,7 @@ export class ComponentsTemplateRepository {
     try {
       const response = await fetch(this.baseUrl, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: getAuthHeaders(),
         body: JSON.stringify(componentData)
       });
       if (!response.ok) {
@@ -66,9 +77,7 @@ export class ComponentsTemplateRepository {
     try {
       const response = await fetch(`${this.baseUrl}/${id}`, {
         method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: getAuthHeaders(),
         body: JSON.stringify(componentData)
       });
       if (!response.ok) {
@@ -86,7 +95,8 @@ export class ComponentsTemplateRepository {
   async delete(id) {
     try {
       const response = await fetch(`${this.baseUrl}/${id}`, {
-        method: 'DELETE'
+        method: 'DELETE',
+        headers: getAuthHeaders()
       });
       if (!response.ok) {
         throw new Error(`Error HTTP: ${response.status}`);
@@ -102,7 +112,8 @@ export class ComponentsTemplateRepository {
   async deletePermanent(id) {
     try {
       const response = await fetch(`${this.baseUrl}/${id}/permanent`, {
-        method: 'DELETE'
+        method: 'DELETE',
+        headers: getAuthHeaders()
       });
       if (!response.ok) {
         throw new Error(`Error HTTP: ${response.status}`);
