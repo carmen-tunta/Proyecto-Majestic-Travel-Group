@@ -4,9 +4,11 @@ import { FloatLabel } from 'primereact/floatlabel';
 import { Dropdown } from 'primereact/dropdown';
 import { InputTextarea } from 'primereact/inputtextarea';
 import { Button } from 'primereact/button';
+import { useNotification } from '../../Notification/NotificationContext';
 import '../styles/ComponentModal.css';
 
 const ComponentModal = ({ onHide, component, onSave }) => {
+  const { showNotification } = useNotification();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [componentName, setComponentName] = useState(component?.componentName || '');
@@ -44,12 +46,21 @@ const ComponentModal = ({ onHide, component, onSave }) => {
       };
 
       await onSave(componentData);
+      
+      // Mostrar notificación de éxito
+      if (component) {
+        showNotification('¡Componente actualizado con éxito!', 'success');
+      } else {
+        showNotification('¡Componente creado con éxito!', 'success');
+      }
+      
       onHide();
     } catch (error) {
       console.error('Error al guardar componente:', error);
       // Extraer el mensaje de error del response
       const errorMessage = error.message || 'Error al guardar el componente';
       setError(errorMessage);
+      showNotification('Error al guardar el componente', 'error');
     } finally {
       setLoading(false);
     }

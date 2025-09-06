@@ -9,6 +9,7 @@ import "../styles/Componentes.css";
 import SearchBar from '../../../components/SearchBar';
 import useSearch from '../../../hooks/useSearch';
 import { apiService } from '../../../services/apiService';
+import { useNotification } from '../../Notification/NotificationContext';
 
 import { GetAllComponentsTemplate } from '../../../modules/ComponentsTemplate/application/GetAllComponentsTemplate';
 import { CreateComponentsTemplate } from '../../../modules/ComponentsTemplate/application/CreateComponentsTemplate';
@@ -17,6 +18,7 @@ import { useModal } from '../../../contexts/ModalContext';
 
 
 const Componentes = () => {
+  const { showNotification } = useNotification();
   const [componentes, setComponentes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [first, setFirst] = useState(0);
