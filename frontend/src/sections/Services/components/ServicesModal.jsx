@@ -100,7 +100,7 @@ const ServicesModal = ({ onHide, service }) => {
                         onClick={onHide}>
                     </i>
                 </div>
-                <FloatLabel>
+                <FloatLabel style={{ marginTop: '2rem' }}>
                     <InputText 
                         id="name" 
                         className="p-inputtext-sm" 
@@ -110,7 +110,7 @@ const ServicesModal = ({ onHide, service }) => {
                     />
                     <label htmlFor="name">Nombre del servicio</label>
                 </FloatLabel>
-                <FloatLabel>
+                <FloatLabel style={{ marginTop: '2rem' }}>
                     <Dropdown 
                         inputId="city"
                         value={serviceCity} 
@@ -131,7 +131,7 @@ const ServicesModal = ({ onHide, service }) => {
                         className='service-images'
                     />
                 </div>
-                <div className='service-components-search' style={{position: 'relative'}}>
+                <div className='service-components-search'>
                     <SearchBar value={search} onChange={setSearch} placeholder="Buscar componentes..." />
                     <div>
                         <Button icon="pi pi-plus" outlined label='Agregar' size='small' onClick={() => handleSaveComponent()} disabled={!selectedComponent}></Button>
@@ -174,7 +174,7 @@ const ServicesModal = ({ onHide, service }) => {
 
 
                 <div className="card">
-                    <DataTable scrollable scrollHeight="100px" className="components-table" size="small" value={serviceComponents} tableStyle={{ minWidth: '60%' }} emptyMessage="Este servicio aun no cuenta con componentes">
+                    <DataTable  className="components-table" size="small" value={serviceComponents} tableStyle={{ minWidth: '60%' }} emptyMessage="Este servicio aun no cuenta con componentes">
                         <Column 
                             field="componentName" 
                             header="Nombre del componente" 
