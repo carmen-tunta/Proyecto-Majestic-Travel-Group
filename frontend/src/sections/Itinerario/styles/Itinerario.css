@@ -25,6 +25,7 @@
 
 .itinerario-table .p-datatable-tbody > tr > td {
   border: none;
+  padding: 15px;
 }
 
 .itinerario-table .p-datatable-tbody > tr:nth-child(odd) > td {
