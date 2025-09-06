@@ -48,10 +48,13 @@ const Itinerario = () => {
         setLoading(true);
         try {
             const templateData = await getAllTemplates.execute(`?page=${page}&limit=${pageSize}`);
-            setTemplate(templateData.data || templateData);
-            setTotalRecords(templateData.total || templateData.length);
+            // Asegurar que templateData.data es un array
+            setTemplate(Array.isArray(templateData.data) ? templateData.data : (Array.isArray(templateData) ? templateData : []));
+            setTotalRecords(templateData.total || (Array.isArray(templateData) ? templateData.length : 0));
         } catch (error) {
             console.error('Error al obtener la plantilla:', error);
+            setTemplate([]);
+            setTotalRecords(0);
         } finally {
             setLoading(false);
         }
@@ -70,6 +73,7 @@ const Itinerario = () => {
 
     // Buscador universal para plantillas
     const { search, setSearch, results, loading: searchLoading } = useSearch((q) => apiService.universalSearch('itinerary-templates', q));
+
 
     return (
         <div className="itinerario">

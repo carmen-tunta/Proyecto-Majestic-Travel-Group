@@ -37,10 +37,13 @@ const Componentes = () => {
       setLoading(true);
       const getAllComponents = new GetAllComponentsTemplate();
       const result = await getAllComponents.execute(page, pageSize);
-      setComponentes(result.data);
-      setTotalRecords(result.total);
+      // Asegurar que result.data es un array
+      setComponentes(Array.isArray(result.data) ? result.data : []);
+      setTotalRecords(result.total || 0);
     } catch (error) {
       console.error('Error al obtener componentes:', error);
+      setComponentes([]);
+      setTotalRecords(0);
     } finally {
       setLoading(false);
     }
@@ -118,6 +121,7 @@ const Componentes = () => {
       console.error('Error al guardar componente:', error);
     }
   };
+
 
   return (
     <div className="componentes">

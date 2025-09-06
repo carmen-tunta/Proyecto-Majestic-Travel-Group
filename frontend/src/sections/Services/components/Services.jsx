@@ -46,10 +46,13 @@ const Services = () => {
         setLoading(true);
         try {
             const serviceData = await getAllServices.execute(`?page=${page}&limit=${pageSize}`);
-            setServices(serviceData.data || serviceData);
-            setTotalRecords(serviceData.total || serviceData.length);
+            // Asegurar que serviceData.data es un array
+            setServices(Array.isArray(serviceData.data) ? serviceData.data : (Array.isArray(serviceData) ? serviceData : []));
+            setTotalRecords(serviceData.total || (Array.isArray(serviceData) ? serviceData.length : 0));
         } catch (error) {
             console.error('Error al obtener los servicios:', error);
+            setServices([]);
+            setTotalRecords(0);
         } finally {
             setLoading(false);
         }
@@ -74,6 +77,7 @@ const Services = () => {
 
     // Buscador universal para servicios
     const { search, setSearch, results, loading: searchLoading } = useSearch((q) => apiService.universalSearch('services', q));
+
 
     return (
         <div className="service">
