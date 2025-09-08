@@ -16,4 +16,10 @@ export class ItineraryTemplate {
     comment: 'Nombre del itinerario' 
   })
   itineraryTitle: string;
+
+  @Column({ 
+    type: 'longtext', 
+    comment: 'Descripción de la plantilla itineraria' 
+  })
+  description: string;
 }

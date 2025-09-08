@@ -42,3 +42,7 @@
     justify-content: center;
     color: rgb(175, 175, 175);
 }
+
+.ql-toolbar .ql-image {
+    display: none !important;
+}

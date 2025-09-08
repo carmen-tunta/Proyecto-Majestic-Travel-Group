@@ -7,8 +7,8 @@ export class ItineraryTemplateController {
     constructor(private readonly itineraryTemplateService: ItineraryTemplateService) { }
 
     @Post()
-    async createTemplate(@Body() createTemplateDto: { templateTitle: string; itineraryTitle: string }): Promise<ItineraryTemplate> {
-        return await this.itineraryTemplateService.create(createTemplateDto.templateTitle, createTemplateDto.itineraryTitle);
+    async createTemplate(@Body() createTemplateDto: { templateTitle: string; itineraryTitle: string; description: string }): Promise<ItineraryTemplate> {
+        return await this.itineraryTemplateService.create(createTemplateDto.templateTitle, createTemplateDto.itineraryTitle, createTemplateDto.description);
     }
 
     @Get()
@@ -30,8 +30,8 @@ export class ItineraryTemplateController {
     }
 
     @Put('update/:id')
-    async updateTemplate(@Param('id') id: number, @Body() updateTemplateDto: { templateTitle: string; itineraryTitle: string }): Promise<ItineraryTemplate | null> {
-        return await this.itineraryTemplateService.update(id, updateTemplateDto.templateTitle, updateTemplateDto.itineraryTitle);
+    async updateTemplate(@Param('id') id: number, @Body() updateTemplateDto: { templateTitle: string; itineraryTitle: string; description: string }): Promise<ItineraryTemplate | null> {
+        return await this.itineraryTemplateService.update(id, updateTemplateDto.templateTitle, updateTemplateDto.itineraryTitle, updateTemplateDto.description);
     }
 
     

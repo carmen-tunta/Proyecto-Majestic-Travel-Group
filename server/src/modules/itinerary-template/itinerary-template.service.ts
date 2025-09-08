@@ -10,10 +10,11 @@ export class ItineraryTemplateService {
         private itineraryTemplateRepository: Repository<ItineraryTemplate>,
     ) { }
 
-    async create(templateTitle: string, itineraryTitle: string): Promise<ItineraryTemplate> {
+    async create(templateTitle: string, itineraryTitle: string, description: string): Promise<ItineraryTemplate> {
         const template = this.itineraryTemplateRepository.create({
             templateTitle: templateTitle,
             itineraryTitle: itineraryTitle,
+            description: description
         });
         return await this.itineraryTemplateRepository.save(template);
     }
@@ -26,12 +27,13 @@ export class ItineraryTemplateService {
         return await this.itineraryTemplateRepository.findOne({ where: { id } });
     }
 
-    async update(id: number, templateTitle: string, itineraryTitle: string): Promise<ItineraryTemplate | null> {
+    async update(id: number, templateTitle: string, itineraryTitle: string, description: string): Promise<ItineraryTemplate | null> {
         const template = await this.findById(id);
         if (!template) return null;
 
         template.templateTitle = templateTitle;
         template.itineraryTitle = itineraryTitle;
+        template.description = description;
 
         await this.itineraryTemplateRepository.save(template);
         return template;
