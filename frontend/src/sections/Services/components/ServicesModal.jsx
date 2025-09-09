@@ -14,6 +14,7 @@ import { Dropdown } from 'primereact/dropdown';
 import { FileUpload } from "primereact/fileupload";
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
+import { Galleria } from 'primereact/galleria';
 import "../styles/ServicesModal.css"
 
 const ServicesModal = ({ onHide, service }) => {
@@ -27,14 +28,37 @@ const ServicesModal = ({ onHide, service }) => {
 
     const [serviceName, setServiceName] = useState(service?.name || '');
     const [serviceCity, setServiceCity] = useState(service?.city || '');
+    const [imageUrls, setImageUrls] = useState(service?.images || []);
     const [serviceComponents, setServiceComponents] = useState(service?.components || []);
     const [selectedComponent, setSelectedComponent] = useState(null);
+    const galleriaImages = (imageUrls || [])
+        .filter(url => typeof url === 'string' && url.trim() !== '')
+        .map(url => ({
+            itemImageSrc: url,
+            thumbnailImageSrc: url,
+            alt: 'Imagen de servicio',
+            title: 'Imagen'
+        }));
+
 
     useEffect(() => {
         setServiceName(service?.name || '');
         setServiceCity(service?.city || '');
         setServiceComponents(service?.components || []);
     }, [service]);
+
+
+    const handleImageUrlChange = (index, value) => {
+        setImageUrls(urls => urls.map((url, i) => i === index ? value : url));
+    };
+
+    const handleAddImageUrl = () => {
+        setImageUrls(urls => [...urls, '']);
+    };
+
+    const handleRemoveImageUrl = (index) => {
+        setImageUrls(urls => urls.filter((_, i) => i !== index));
+    };
 
     const handleSave = async () => {
         if (!serviceName.trim() || !serviceCity.trim()) {
@@ -49,14 +73,16 @@ const ServicesModal = ({ onHide, service }) => {
                     ...service,
                     name: serviceName.trim(),
                     city: serviceCity.trim(),
-                    componentIds
+                    componentIds,
+                    images: (imageUrls || []).filter(url => typeof url === 'string' && url.trim() !== '')
                 });
             showNotification('Servicio actualizada con éxito!', 'success');
         } else {
             await createService.execute({
                 name: serviceName.trim(),
                 city: serviceCity.trim(),
-                componentIds
+                componentIds,
+                images: (imageUrls || []).filter(url => typeof url === 'string' && url.trim() !== '')
             });
             showNotification('Servicio creado con éxito!', 'success');
         }
@@ -123,13 +149,55 @@ const ServicesModal = ({ onHide, service }) => {
                 </FloatLabel>
                 <div className="p-4">
                     <p>Galería de imágenes</p>
-                    <FileUpload
-                        name="images[]"
-                        mode="basic"
-                        accept="image/*"
-                        chooseLabel="Subir"
-                        className='service-images'
+                    {imageUrls.map((url, idx) => (
+                        <div key={idx} style={{ display: 'flex', alignItems: 'center', marginBottom: 8 }}>
+                            <InputText
+                                value={url}
+                                onChange={e => handleImageUrlChange(idx, e.target.value)}
+                                placeholder={`https://ejemplo.com/imagen${idx + 1}.jpg`}
+                                style={{ width: '60%' }}
+                            />
+                            <Button
+                                icon="pi pi-trash"
+                                className="p-button-text"
+                                style={{ marginLeft: 8 }}
+                                onClick={() => handleRemoveImageUrl(idx)}
+                            />
+                        </div>
+                    ))}
+                    <Button
+                        icon="pi pi-plus"
+                        label="Agregar imagen"
+                        className="p-button-sm"
+                        onClick={handleAddImageUrl}
+                        style={{ marginTop: 8 }}
                     />
+                    {galleriaImages.length > 0 && galleriaImages.every(img => img.itemImageSrc) && (
+                        <div style={{ marginTop: 16 }}>
+                            <Galleria
+                                value={galleriaImages}
+                                style={{ maxWidth: '100%' }}
+                                showThumbnails
+                                showItemNavigators
+                                item={(item) => (
+                                    <img
+                                        src={item.itemImageSrc}
+                                        alt={item.alt}
+                                        style={{ width: '100%', maxHeight: 300, objectFit: 'contain' }}
+                                    />
+                                )}
+                                thumbnail={(item) => (
+                                    <img
+                                        src={item.thumbnailImageSrc}
+                                        alt={item.alt}
+                                        style={{ width: 60, height: 60, objectFit: 'cover', borderRadius: 6, border: '1px solid #eee' }}
+                                    />
+                                )}
+                            />
+                        </div>
+                    )}
+
+
                 </div>
                 <div className='service-components-search'>
                     <SearchBar value={search} onChange={setSearch} placeholder="Buscar componentes..." />

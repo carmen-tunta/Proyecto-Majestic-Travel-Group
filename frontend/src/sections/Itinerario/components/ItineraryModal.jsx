@@ -18,14 +18,16 @@ const ItineraryModal = ({ onHide, template }) => {
 
     const [itineraryTitle, setItineraryTitle] = useState(template?.itineraryTitle || '');
     const [templateTitle, setTemplateTitle] = useState(template?.templateTitle || '');
+    const [editorContent, setEditorContent] = useState('');
 
     useEffect(() => {
         setItineraryTitle(template?.itineraryTitle || '');
         setTemplateTitle(template?.templateTitle || '');
+        setEditorContent(template?.description || '');
     }, [template]);
 
     const handleSave = async () => {
-        if (!itineraryTitle.trim() || !templateTitle.trim()) {
+        if (!itineraryTitle.trim() || !templateTitle.trim() || !editorContent.trim()) {
             showNotification('Completa todos los campos correctamente.', 'error');
             return;
         }
@@ -35,13 +37,15 @@ const ItineraryModal = ({ onHide, template }) => {
                 await updateTemplate.execute({
                     ...template,
                     itineraryTitle: itineraryTitle.trim(),
-                    templateTitle: templateTitle.trim()
+                    templateTitle: templateTitle.trim(),
+                    description: editorContent
                 });
             showNotification('¡Plantilla actualizada con éxito!', 'success');
         } else {
             await createItinerary.execute({
                 itineraryTitle: itineraryTitle.trim(),
-                templateTitle: templateTitle.trim()
+                templateTitle: templateTitle.trim(),
+                description: editorContent
             });
             showNotification('¡Plantilla creada con éxito!', 'success');
         }
@@ -88,6 +92,9 @@ const ItineraryModal = ({ onHide, template }) => {
             </FloatLabel>
             <Editor 
                 style={{ height: '20vh' }} 
+                placeholder="Descripción de la plantilla"
+                value={editorContent}
+                onTextChange={(e) => setEditorContent(e.htmlValue)}
             />
             <div className='itinerary-modal-buttons'>
                 <Button 

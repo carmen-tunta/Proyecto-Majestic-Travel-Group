@@ -80,7 +80,7 @@ export class AuthService {
   async resetPassword(token: string, newPassword: string) {
     const user = await this.usersService.findByResetToken(token);
     if (!user || !user.resetPasswordExpires || user.resetPasswordExpires < new Date()) {
-      throw new UnauthorizedException('Token inválido o expirado');
+      throw new UnauthorizedException('Token inválido o expirado, solicita uno nuevo.');
     }
     user.password = await bcrypt.hash(newPassword, 10);
     user.resetPasswordToken = null;
