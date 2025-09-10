@@ -12,7 +12,8 @@ export class ClientsService {
 
   async create(createClientDto: any): Promise<Client> {
     const client = this.clientsRepository.create(createClientDto);
-    return await this.clientsRepository.save(client);
+    const savedClient = await this.clientsRepository.save(client);
+    return Array.isArray(savedClient) ? savedClient[0] : savedClient;
   }
 
   async findAll(): Promise<Client[]> {
