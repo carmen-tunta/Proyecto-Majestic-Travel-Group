@@ -11,7 +11,7 @@ import { AuthProvider } from './modules/auth/context/AuthContext';
 import ProtectedRoute from './modules/auth/components/ProtectedRoute';
 import PublicRoute from './modules/auth/components/PublicRoute';
 import { ModalProvider, useModal } from './contexts/ModalContext';
-
+import Clientes from './sections/Clientes/components/Clientes';
 
 import Services from './sections/Services/components/Services';
 
@@ -56,6 +56,11 @@ function AppContent() {
           <Route path="/servicios" element={
             <ProtectedRoute>
               <Services />
+            </ProtectedRoute>
+          } />
+          <Route path="/clientes" element={
+            <ProtectedRoute>
+              <Clientes />
             </ProtectedRoute>
           } />
         </Routes>
