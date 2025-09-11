@@ -23,7 +23,7 @@ const Menu = () => {
             </div>
             <div className="menu-links">
                 <Button label="Principal" text size="small" icon="pi pi-home"/>
-                <Button label="Clientes" text size="small" icon="pi pi-users"/>
+                <Button label="Clientes" text size="small" icon="pi pi-users" onClick={() => navigate('/clientes')} />
                 <Button label="Cotización" text size="small" icon="pi pi-money-bill"/>
                 <Button label="Itinerario" text size="small" icon="pi pi-file"/>
                 <Button label="Proveedores" text size="small" icon="pi pi-users"/>
