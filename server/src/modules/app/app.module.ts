@@ -10,9 +10,18 @@ import { ComponentsModule } from '../components/components.module';
 import { ServicesModule } from '../services/services.module';
 import { ClientsModule } from '../clients/clients.module';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { ProveedoresModule } from '../proveedores/proveedores.module';
 
 @Module({
-  imports: [DatabaseModule, UsersModule, AuthModule, ItineraryTemplateModule, ComponentsModule, ServicesModule, ClientsModule],
+  imports: [DatabaseModule, 
+            UsersModule, 
+            AuthModule, 
+            ItineraryTemplateModule, 
+            ComponentsModule, 
+            ServicesModule, 
+            ClientsModule,
+            ProveedoresModule
+          ],
   controllers: [AppController],
   providers: [
     AppService,
