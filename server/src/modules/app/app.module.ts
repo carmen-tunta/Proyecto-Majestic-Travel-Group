@@ -8,10 +8,11 @@ import { AuthModule } from '../auth/auth.module';
 import { ItineraryTemplateModule } from '../itinerary-template/itinerary-template.module';
 import { ComponentsModule } from '../components/components.module';
 import { ServicesModule } from '../services/services.module';
+import { ClientsModule } from '../clients/clients.module';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 @Module({
-  imports: [DatabaseModule, UsersModule, AuthModule, ItineraryTemplateModule, ComponentsModule, ServicesModule],
+  imports: [DatabaseModule, UsersModule, AuthModule, ItineraryTemplateModule, ComponentsModule, ServicesModule, ClientsModule],
   controllers: [AppController],
   providers: [
     AppService,
