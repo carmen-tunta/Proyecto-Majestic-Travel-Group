@@ -4,14 +4,56 @@
   margin: 0 auto;
 }
 
-.clientes h2 {
-  margin: 0 0 1rem 0;
+.clientes-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding: 0 0.5rem;
+}
+
+.clientes-header h2 {
+  margin: 0;
   color: #333;
   font-size: 1.5rem;
   font-weight: 600;
 }
 
-.clientes p {
-  color: #666;
-  font-size: 1rem;
+.clientes-search {
+  margin-bottom: 1.5rem;
+  padding: 0 0.5rem;
+}
+
+.clientes-table {
+  margin-bottom: 1rem;
+}
+
+.clientes-footer {
+  display: flex;
+  justify-content: center;
+  margin-top: 1rem;
+}
+
+.status-badge {
+  background-color: #e8f5e8;
+  color: #2e7d32;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.custom-paginator {
+  background: transparent;
+  border: none;
+}
+
+.custom-paginator .p-paginator-pages .p-paginator-page {
+  min-width: 2rem;
+  height: 2rem;
+}
+
+.custom-paginator .p-paginator-pages .p-paginator-page.p-highlight {
+  background-color: #1976d2;
+  color: white;
 }
