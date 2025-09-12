@@ -1,0 +1,452 @@
+/* Modal principal */
+.client-modal-dialog .p-dialog {
+  border-radius: 0;
+  box-shadow: none;
+  border: none;
+  width: 100vw; /* Default to full width */
+  height: 100vh;
+  max-width: none;
+  max-height: 100vh;
+  margin: 0;
+  top: 0;
+  left: 0;
+  z-index: 1000; /* Ensure it's above page content */
+  overflow: hidden;
+}
+
+/* Adjust for menu */
+.client-modal-dialog .p-dialog {
+  left: 250px; /* Width of the side menu */
+  width: calc(100vw - 250px);
+}
+
+.client-modal-dialog .p-dialog-content {
+  padding: 0;
+  border-radius: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; /* Prevent scrollbars on content */
+  max-height: 100vh;
+  position: relative;
+}
+
+/* Header del modal */
+.client-modal-header {
+  background: #fff;
+  border-bottom: 1px solid #e0e0e0;
+  padding: 0;
+  margin: 0;
+  flex-shrink: 0;
+}
+
+.client-modal-header-content {
+  display: flex;
+  flex-direction: column;
+  padding: 32px 40px 24px 40px;
+  gap: 12px;
+}
+
+.client-modal-header-top {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.client-modal-back-button {
+  color: #666 !important;
+  padding: 8px !important;
+  border-radius: 8px !important;
+  transition: all 0.2s ease !important;
+}
+
+.client-modal-back-button:hover {
+  background: #f5f5f5 !important;
+  color: #1976d2 !important;
+}
+
+.client-modal-breadcrumb {
+  color: #666;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.client-modal-header h2 {
+  margin: 0;
+  color: #333;
+  font-size: 32px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+/* Tabs */
+.client-modal-tabs {
+  display: flex;
+  background: #f8f9fa;
+  border-bottom: 1px solid #e0e0e0;
+  flex-shrink: 0;
+}
+
+.client-modal-tab {
+  flex: 1;
+  padding: 16px 24px;
+  border: none;
+  background: none;
+  color: #666;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-bottom: 3px solid transparent;
+}
+
+.client-modal-tab:hover {
+  background: #e9ecef;
+  color: #333;
+}
+
+.client-modal-tab.active {
+  background: #fff;
+  color: #1976d2;
+  border-bottom-color: #1976d2;
+}
+
+/* Formulario */
+.client-modal-form {
+  padding: 0 40px;
+  background: #f8f9fa;
+  flex: 1;
+  overflow-y: auto; /* Only form content scrolls */
+  min-height: 0;
+  max-height: calc(100vh - 300px); /* Asegurar que tenga altura máxima */
+  scrollbar-width: thin;
+  scrollbar-color: #ccc #f5f5f5;
+  position: relative;
+}
+
+/* Contenedor de la tarjeta del formulario */
+.client-modal-form-card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 40px;
+  margin: 24px 0;
+}
+
+/* Estilos del scrollbar para webkit */
+.client-modal-form::-webkit-scrollbar {
+  width: 8px;
+}
+
+.client-modal-form::-webkit-scrollbar-track {
+  background: #f5f5f5;
+  border-radius: 4px;
+}
+
+.client-modal-form::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 4px;
+}
+
+.client-modal-form::-webkit-scrollbar-thumb:hover {
+  background: #999;
+}
+
+.client-modal-form-section {
+  margin-bottom: 32px;
+}
+
+.client-modal-form-section h3 {
+  margin: 0 0 24px 0;
+  color: #333;
+  font-size: 18px;
+  font-weight: 600;
+  border-bottom: 2px solid #f0f0f0;
+  padding-bottom: 8px;
+}
+
+.client-modal-form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  margin-bottom: 24px;
+}
+
+.client-modal-form-column {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Form fields */
+.client-modal-form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.client-modal-form-field label {
+  font-weight: 500;
+  color: #333;
+  font-size: 14px;
+  margin: 0;
+}
+
+.client-modal-form-field .p-inputtext,
+.client-modal-form-field .p-dropdown,
+.client-modal-form-field .p-calendar {
+  width: 100%;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+  padding: 14px 16px;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.client-modal-form-field .p-inputtext:focus,
+.client-modal-form-field .p-dropdown:focus,
+.client-modal-form-field .p-calendar:focus {
+  border-color: #1976d2;
+  box-shadow: 0 0 0 2px rgba(25, 118, 210, 0.1);
+  outline: none;
+}
+
+.client-modal-form-field .p-inputtext:hover,
+.client-modal-form-field .p-dropdown:hover,
+.client-modal-form-field .p-calendar:hover {
+  border-color: #1976d2;
+}
+
+/* Estilos para el calendario */
+.client-modal-form-field .p-calendar {
+  position: relative;
+  width: 100%;
+}
+
+.client-modal-form-field .p-calendar .p-inputtext {
+  padding-right: 40px !important;
+  width: 100% !important;
+  border: 1px solid #ddd !important;
+  border-radius: 8px !important;
+  padding: 12px 16px !important;
+  font-size: 14px !important;
+  background: #fff !important;
+  transition: all 0.2s ease !important;
+}
+
+.client-modal-form-field .p-calendar .p-inputtext:focus {
+  border-color: #1976d2 !important;
+  box-shadow: 0 0 0 2px rgba(25, 118, 210, 0.1) !important;
+  outline: none !important;
+}
+
+.client-modal-form-field .p-calendar .p-inputtext:hover {
+  border-color: #1976d2 !important;
+}
+
+.client-modal-form-field .p-calendar .p-datepicker-trigger {
+  position: absolute !important;
+  right: 30px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  background: none !important;
+  border: none !important;
+  color: #333 !important;
+  cursor: pointer !important;
+  z-index: 10 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  width: 16px !important;
+  height: 16px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.client-modal-form-field .p-calendar .p-datepicker-trigger:hover {
+  color: #1976d2 !important;
+}
+
+.client-modal-form-field .p-calendar .p-datepicker-trigger .p-button-icon {
+  margin: 0 !important;
+  font-size: 12px !important;
+}
+
+/* Asegurar que el icono esté dentro del input */
+.client-modal-form-field .p-calendar .p-inputwrapper {
+  position: relative !important;
+  width: 100% !important;
+}
+
+.client-modal-form-field .p-calendar .p-inputwrapper .p-inputtext {
+  padding-right: 40px !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+/* Override de estilos de PrimeReact */
+.client-modal-form-field .p-calendar .p-inputwrapper {
+  border: none !important;
+  background: transparent !important;
+}
+
+.client-modal-form-field .p-calendar .p-inputwrapper .p-inputtext {
+  border: 1px solid #ddd !important;
+  border-radius: 8px !important;
+  background: #fff !important;
+}
+
+/* Estilos para dropdowns */
+.client-modal-form-field .p-dropdown .p-dropdown-trigger {
+  background: none;
+  border: none;
+  color: #666;
+  padding: 0 12px;
+}
+
+.client-modal-form-field .p-dropdown .p-dropdown-trigger:hover {
+  color: #1976d2;
+}
+
+/* Estilos para radio buttons */
+.client-modal-form-field .p-radiobutton {
+  margin-right: 8px;
+}
+
+.client-modal-form-field .p-radiobutton .p-radiobutton-box {
+  border: 2px solid #e0e0e0;
+  background: #fff;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.client-modal-form-field .p-radiobutton .p-radiobutton-box.p-highlight {
+  border-color: #1976d2;
+  background: #1976d2;
+}
+
+.client-modal-form-field .p-radiobutton .p-radiobutton-box .p-radiobutton-icon {
+  background: #fff;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+/* Radio button group */
+.client-modal-form-field .p-radiobutton-group {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  margin-top: 8px;
+}
+
+.client-modal-form-field .p-radiobutton-group label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-weight: normal;
+  margin: 0;
+  color: #333;
+  font-size: 14px;
+}
+
+/* Botones de acción */
+.client-modal-form-actions {
+  display: flex !important;
+  justify-content: flex-end !important;
+  gap: 16px !important;
+  padding: 24px 40px 32px 40px !important;
+  background: #f8f9fa !important;
+  border-top: 1px solid #e0e0e0 !important;
+  margin-top: 0 !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  position: relative !important;
+  z-index: 10 !important;
+}
+
+.client-modal-cancel-button {
+  padding: 12px 24px !important;
+  border: 1px solid #e0e0e0 !important;
+  background: #fff !important;
+  color: #666 !important;
+  border-radius: 8px !important;
+  font-weight: 500 !important;
+  transition: all 0.2s ease !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+  min-width: 120px !important;
+  height: 44px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.client-modal-cancel-button:hover {
+  border-color: #1976d2 !important;
+  color: #1976d2 !important;
+  background: #f8f9fa !important;
+}
+
+.client-modal-save-button {
+  padding: 12px 24px !important;
+  background: #1976d2 !important;
+  border: 1px solid #1976d2 !important;
+  color: #fff !important;
+  border-radius: 8px !important;
+  font-weight: 500 !important;
+  transition: all 0.2s ease !important;
+  box-shadow: 0 2px 4px rgba(25, 118, 210, 0.2) !important;
+  min-width: 120px !important;
+  height: 44px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.client-modal-save-button:hover {
+  background: #1565c0 !important;
+  border-color: #1565c0 !important;
+  box-shadow: 0 4px 8px rgba(25, 118, 210, 0.3) !important;
+}
+
+.client-modal-save-button:disabled {
+  background: #ccc !important;
+  border-color: #ccc !important;
+  cursor: not-allowed !important;
+  box-shadow: none !important;
+}
+
+/* Debug styles para asegurar visibilidad */
+.client-modal-form-actions * {
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.client-modal-form-actions button {
+  visibility: visible !important;
+  opacity: 1 !important;
+  display: flex !important;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .client-modal-dialog .p-dialog {
+    left: 0;
+    width: 100vw;
+  }
+  
+  .client-modal-form-row {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  
+  .client-modal-form-column {
+    gap: 16px;
+  }
+}

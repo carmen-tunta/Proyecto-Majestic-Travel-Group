@@ -8,6 +8,7 @@ import useSearch from '../../../hooks/useSearch';
 import { apiService } from '../../../services/apiService';
 import ClientRepository from '../../../modules/Clients/repository/ClientRepository';
 import GetAllClients from '../../../modules/Clients/application/GetAllClients';
+import ClientModal from './ClientModal';
 import "../styles/Clientes.css";
 
 const Clientes = () => {
@@ -19,6 +20,7 @@ const Clientes = () => {
   const [first, setFirst] = useState(0);
   const [rows, setRows] = useState(10);
   const [totalRecords, setTotalRecords] = useState(0);
+  const [showModal, setShowModal] = useState(false);
 
   // Función para obtener los clientes del backend
   const fetchClientes = async () => {
@@ -63,8 +65,19 @@ const Clientes = () => {
 
   // Función para abrir modal de nuevo cliente
   const handleNewClient = () => {
-    console.log('Nuevo cliente');
-    // TODO: Implementar modal
+    setShowModal(true);
+  };
+
+  // Función para cerrar modal
+  const handleCloseModal = () => {
+    setShowModal(false);
+  };
+
+  // Función para manejar cliente creado
+  const handleClientCreated = (newClient) => {
+    // Agregar el nuevo cliente a la lista
+    setClientes(prev => [newClient, ...prev]);
+    setTotalRecords(prev => prev + 1);
   };
 
   // Función para editar cliente
@@ -246,6 +259,13 @@ const Clientes = () => {
           className="custom-paginator"
         />
       </div>
+
+      {/* Modal para nuevo cliente */}
+      <ClientModal
+        visible={showModal}
+        onHide={handleCloseModal}
+        onClientCreated={handleClientCreated}
+      />
     </div>
   );
 };
