@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from 'primereact/button';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
@@ -8,17 +9,15 @@ import useSearch from '../../../hooks/useSearch';
 import { apiService } from '../../../services/apiService';
 import ClientRepository from '../../../modules/Clients/repository/ClientRepository';
 import GetAllClients from '../../../modules/Clients/application/GetAllClients';
-import ClientModal from './ClientModal';
 import "../styles/Clientes.css";
 
 const Clientes = () => {
+  const navigate = useNavigate();
   const [clientes, setClientes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [first, setFirst] = useState(0);
   const [rows, setRows] = useState(10);
   const [totalRecords, setTotalRecords] = useState(0);
-  const [showModal, setShowModal] = useState(false);
-  const [editingClient, setEditingClient] = useState(null);
 
   // Función para obtener los clientes del backend
   const fetchClientes = useCallback(async () => {
@@ -64,39 +63,14 @@ const Clientes = () => {
     // Por ahora no hay paginación en el backend, solo actualizamos el estado local
   };
 
-  // Función para abrir modal de nuevo cliente
+  // Función para abrir página de nuevo cliente
   const handleNewClient = () => {
-    setEditingClient(null);
-    setShowModal(true);
+    navigate('/clientes/nuevo');
   };
 
-  // Función para abrir modal de edición de cliente
+  // Función para abrir página de edición de cliente
   const handleEditClient = (client) => {
-    setEditingClient(client);
-    setShowModal(true);
-  };
-
-  // Función para cerrar modal
-  const handleCloseModal = () => {
-    setShowModal(false);
-    setEditingClient(null);
-  };
-
-  // Función para manejar cliente creado
-  const handleClientCreated = (newClient) => {
-    // Agregar el nuevo cliente a la lista
-    setClientes(prev => [newClient, ...prev]);
-    setTotalRecords(prev => prev + 1);
-  };
-
-  // Función para manejar cliente actualizado
-  const handleClientUpdated = (updatedClient) => {
-    // Actualizar el cliente en la lista
-    setClientes(prev => 
-      prev.map(client => 
-        client.id === updatedClient.id ? updatedClient : client
-      )
-    );
+    navigate(`/clientes/${client.id}`);
   };
 
 
@@ -274,14 +248,6 @@ const Clientes = () => {
         />
       </div>
 
-      {/* Modal para nuevo cliente */}
-      <ClientModal
-        visible={showModal}
-        onHide={handleCloseModal}
-        onClientCreated={handleClientCreated}
-        onClientUpdated={handleClientUpdated}
-        editingClient={editingClient}
-      />
     </div>
   );
 };

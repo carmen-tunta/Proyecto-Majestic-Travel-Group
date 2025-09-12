@@ -1,14 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { Dialog } from 'primereact/dialog';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Button } from 'primereact/button';
 import { InputText } from 'primereact/inputtext';
 import { Dropdown } from 'primereact/dropdown';
 import { RadioButton } from 'primereact/radiobutton';
 import { Calendar } from 'primereact/calendar';
 import { apiService } from '../../../services/apiService';
-import '../styles/ClientModal.css';
+import '../styles/ClientPage.css';
 
-  const ClientModal = ({ visible, onHide, onClientCreated, onClientUpdated, editingClient }) => {
+const ClientPage = () => {
+  const navigate = useNavigate();
+  const { id } = useParams();
+  const isEditing = Boolean(id);
+
   const [formData, setFormData] = useState({
     nombre: '',
     pais: '',
@@ -31,43 +35,38 @@ import '../styles/ClientModal.css';
 
   // Cargar datos del cliente a editar
   useEffect(() => {
-    if (editingClient) {
-      setFormData({
-        nombre: editingClient.nombre || '',
-        pais: editingClient.pais || '',
-        ciudad: editingClient.ciudad || '',
-        direccion: editingClient.direccion || '',
-        whatsapp: editingClient.whatsapp || '',
-        correo: editingClient.correo || '',
-        fechaNacimiento: editingClient.fechaNacimiento ? new Date(editingClient.fechaNacimiento) : null,
-        lenguaNativa: editingClient.lenguaNativa || '',
-        tipoDocumento: editingClient.tipoDocumento || '',
-        numeroDocumento: editingClient.numeroDocumento || '',
-        mercado: editingClient.mercado || '',
-        rubro: editingClient.rubro || '',
-        genero: editingClient.genero || 'Masculino',
-        estado: editingClient.estado || 'Cotización'
-      });
-    } else {
-      // Limpiar formulario para nuevo cliente
-      setFormData({
-        nombre: '',
-        pais: '',
-        ciudad: '',
-        direccion: '',
-        whatsapp: '',
-        correo: '',
-        fechaNacimiento: null,
-        lenguaNativa: '',
-        tipoDocumento: '',
-        numeroDocumento: '',
-        mercado: '',
-        rubro: '',
-        genero: 'Masculino',
-        estado: 'Cotización'
-      });
+    if (isEditing && id) {
+      const loadClient = async () => {
+        try {
+          setLoading(true);
+          const client = await apiService.getClient(id);
+          if (client) {
+            setFormData({
+              nombre: client.nombre || '',
+              pais: client.pais || '',
+              ciudad: client.ciudad || '',
+              direccion: client.direccion || '',
+              whatsapp: client.whatsapp || '',
+              correo: client.correo || '',
+              fechaNacimiento: client.fechaNacimiento ? new Date(client.fechaNacimiento) : null,
+              lenguaNativa: client.lenguaNativa || '',
+              tipoDocumento: client.tipoDocumento || '',
+              numeroDocumento: client.numeroDocumento || '',
+              mercado: client.mercado || '',
+              rubro: client.rubro || '',
+              genero: client.genero || 'Masculino',
+              estado: client.estado || 'Cotización'
+            });
+          }
+        } catch (error) {
+          console.error('Error al cargar cliente:', error);
+        } finally {
+          setLoading(false);
+        }
+      };
+      loadClient();
     }
-  }, [editingClient]);
+  }, [isEditing, id]);
 
   // Opciones para los dropdowns
   const paises = [
@@ -81,11 +80,15 @@ import '../styles/ClientModal.css';
     { label: 'Estados Unidos', value: 'Estados Unidos' },
     { label: 'España', value: 'España' },
     { label: 'Francia', value: 'Francia' },
-    { label: 'Italia', value: 'Italia' },
     { label: 'Alemania', value: 'Alemania' },
+    { label: 'Italia', value: 'Italia' },
     { label: 'Reino Unido', value: 'Reino Unido' },
     { label: 'Canadá', value: 'Canadá' },
-    { label: 'Australia', value: 'Australia' }
+    { label: 'Australia', value: 'Australia' },
+    { label: 'Japón', value: 'Japón' },
+    { label: 'China', value: 'China' },
+    { label: 'India', value: 'India' },
+    { label: 'Otros', value: 'Otros' }
   ];
 
   const lenguasNativas = [
@@ -93,20 +96,22 @@ import '../styles/ClientModal.css';
     { label: 'Inglés', value: 'Inglés' },
     { label: 'Portugués', value: 'Portugués' },
     { label: 'Francés', value: 'Francés' },
-    { label: 'Italiano', value: 'Italiano' },
     { label: 'Alemán', value: 'Alemán' },
+    { label: 'Italiano', value: 'Italiano' },
     { label: 'Chino', value: 'Chino' },
     { label: 'Japonés', value: 'Japonés' },
     { label: 'Coreano', value: 'Coreano' },
-    { label: 'Ruso', value: 'Ruso' }
+    { label: 'Árabe', value: 'Árabe' },
+    { label: 'Ruso', value: 'Ruso' },
+    { label: 'Otros', value: 'Otros' }
   ];
 
   const tiposDocumento = [
     { label: 'DNI', value: 'DNI' },
     { label: 'Pasaporte', value: 'Pasaporte' },
     { label: 'Cédula', value: 'Cédula' },
-    { label: 'RUC', value: 'RUC' },
-    { label: 'Carné de extranjería', value: 'Carné de extranjería' }
+    { label: 'Carné de extranjería', value: 'Carné de extranjería' },
+    { label: 'Otros', value: 'Otros' }
   ];
 
   const mercados = [
@@ -128,7 +133,7 @@ import '../styles/ClientModal.css';
     { label: 'Servicios', value: 'Servicios' },
     { label: 'Otros', value: 'Otros' }
   ];
-  
+
   const handleInputChange = (field, value) => {
     setFormData(prev => ({
       ...prev,
@@ -141,44 +146,21 @@ import '../styles/ClientModal.css';
     setLoading(true);
 
     try {
-      // Preparar datos para enviar
       const clientData = {
         ...formData,
         fechaNacimiento: formData.fechaNacimiento ? formData.fechaNacimiento.toISOString().split('T')[0] : null,
-        fechaRegistro: editingClient?.fechaRegistro || new Date().toISOString().split('T')[0]
+        fechaRegistro: isEditing ? formData.fechaRegistro : new Date().toISOString().split('T')[0]
       };
 
       let response;
-      if (editingClient) {
-        // Actualizar cliente existente
-        response = await apiService.updateClient(editingClient.id, clientData);
-        onClientUpdated(response);
+      if (isEditing) {
+        response = await apiService.updateClient(id, clientData);
       } else {
-        // Crear nuevo cliente
         response = await apiService.createClient(clientData);
-        onClientCreated(response);
       }
       
       if (response) {
-        // Limpiar formulario
-        setFormData({
-          nombre: '',
-          pais: '',
-          ciudad: '',
-          direccion: '',
-          whatsapp: '',
-          correo: '',
-          fechaNacimiento: null,
-          lenguaNativa: '',
-          tipoDocumento: '',
-          numeroDocumento: '',
-          mercado: '',
-          rubro: '',
-          genero: 'Masculino',
-          estado: 'Cotización'
-        });
-        
-        onHide();
+        navigate('/clientes');
       }
     } catch (error) {
       console.error('Error al procesar cliente:', error);
@@ -188,64 +170,64 @@ import '../styles/ClientModal.css';
     }
   };
 
-  const headerTemplate = () => (
-    <div className="client-modal-header">
-      <div className="client-modal-header-content">
-        <div className="client-modal-header-top">
-          <Button
-            icon="pi pi-arrow-left"
-            text
-            className="client-modal-back-button"
-            onClick={onHide}
-          />
-          <span className="client-modal-breadcrumb">Clientes</span>
-        </div>
-        <h2>{formData.nombre || 'Nuevo Cliente'}</h2>
+  const handleBack = () => {
+    navigate('/clientes');
+  };
+
+  if (loading && isEditing) {
+    return (
+      <div className="client-page-loading">
+        <div className="loading-spinner">Cargando...</div>
       </div>
-    </div>
-  );
+    );
+  }
 
   return (
-    <Dialog
-      visible={visible}
-      onHide={onHide}
-      header={headerTemplate}
-      className="client-modal-dialog"
-      modal
-      closable={false}
-      style={{ 
-        width: '90vw', 
-        maxWidth: '1200px',
-        height: '90vh'
-      }}
-    >
-      <div className="client-modal-content">
-        {/* Tabs */}
-        <div className="client-modal-tabs">
-          <button 
-            className={`client-modal-tab ${activeTab === 'detalles' ? 'active' : ''}`}
-            onClick={() => setActiveTab('detalles')}
-          >
-            Detalles
-          </button>
-          <button 
-            className={`client-modal-tab ${activeTab === 'contacto' ? 'active' : ''}`}
-            onClick={() => setActiveTab('contacto')}
-          >
-            Datos de contacto
-          </button>
+    <div className="client-page">
+      {/* Header */}
+      <div className="client-page-header">
+        <div className="client-page-header-content">
+          <div className="client-page-header-top">
+            <Button
+              icon="pi pi-arrow-left"
+              className="p-button-text p-button-plain"
+              onClick={handleBack}
+              tooltip="Volver a clientes"
+            />
+            <span className="client-page-breadcrumb">Clientes</span>
+          </div>
+          <h1 className="client-page-title">
+            {isEditing ? (formData.nombre || 'Editar Cliente') : 'Nuevo Cliente'}
+          </h1>
         </div>
+      </div>
 
-        {/* Form */}
-        <form onSubmit={handleSubmit} className="client-modal-form">
-          <div className="client-modal-form-card">
-            <div className="client-modal-form-section">
-              <h3>Datos principales</h3>
-            
-            <div className="client-modal-form-row">
+      {/* Tabs */}
+      <div className="client-page-tabs">
+        <button
+          className={`client-page-tab ${activeTab === 'detalles' ? 'active' : ''}`}
+          onClick={() => setActiveTab('detalles')}
+        >
+          Detalles
+        </button>
+        <button
+          className={`client-page-tab ${activeTab === 'contacto' ? 'active' : ''}`}
+          onClick={() => setActiveTab('contacto')}
+        >
+          Datos de contacto
+        </button>
+      </div>
+
+      {/* Form */}
+      <form onSubmit={handleSubmit} className="client-page-form">
+        <div className="client-page-form-card">
+          <h3 className="client-page-form-title">Datos principales</h3>
+          
+          <div className="client-page-form-section">
+            <div className="client-page-form-row">
               {/* Columna izquierda */}
-              <div className="client-modal-form-column">
-                <div className="client-modal-form-field">
+              <div className="client-page-form-column">
+                <div className="client-page-form-field">
                   <label htmlFor="nombre">Nombre del cliente *</label>
                   <InputText
                     id="nombre"
@@ -256,7 +238,7 @@ import '../styles/ClientModal.css';
                   />
                 </div>
 
-                <div className="client-modal-form-field">
+                <div className="client-page-form-field">
                   <label htmlFor="pais">País *</label>
                   <Dropdown
                     id="pais"
@@ -268,7 +250,7 @@ import '../styles/ClientModal.css';
                   />
                 </div>
 
-                <div className="client-modal-form-field">
+                <div className="client-page-form-field">
                   <label htmlFor="ciudad">Ciudad *</label>
                   <InputText
                     id="ciudad"
@@ -279,7 +261,7 @@ import '../styles/ClientModal.css';
                   />
                 </div>
 
-                <div className="client-modal-form-field">
+                <div className="client-page-form-field">
                   <label htmlFor="direccion">Dirección</label>
                   <InputText
                     id="direccion"
@@ -289,8 +271,8 @@ import '../styles/ClientModal.css';
                   />
                 </div>
 
-                <div className="client-modal-form-field">
-                  <label htmlFor="whatsapp">Whatsapp</label>
+                <div className="client-page-form-field">
+                  <label htmlFor="whatsapp">WhatsApp</label>
                   <InputText
                     id="whatsapp"
                     value={formData.whatsapp}
@@ -299,7 +281,7 @@ import '../styles/ClientModal.css';
                   />
                 </div>
 
-                <div className="client-modal-form-field">
+                <div className="client-page-form-field">
                   <label htmlFor="correo">Correo *</label>
                   <InputText
                     id="correo"
@@ -311,7 +293,7 @@ import '../styles/ClientModal.css';
                   />
                 </div>
 
-                <div className="client-modal-form-field">
+                <div className="client-page-form-field">
                   <label htmlFor="fechaNacimiento">Fecha de nacimiento</label>
                   <Calendar
                     id="fechaNacimiento"
@@ -325,8 +307,8 @@ import '../styles/ClientModal.css';
               </div>
 
               {/* Columna derecha */}
-              <div className="client-modal-form-column">
-                <div className="client-modal-form-field">
+              <div className="client-page-form-column">
+                <div className="client-page-form-field">
                   <label htmlFor="lenguaNativa">Lengua nativa *</label>
                   <Dropdown
                     id="lenguaNativa"
@@ -338,7 +320,7 @@ import '../styles/ClientModal.css';
                   />
                 </div>
 
-                <div className="client-modal-form-field">
+                <div className="client-page-form-field">
                   <label htmlFor="tipoDocumento">Tipo de documento *</label>
                   <Dropdown
                     id="tipoDocumento"
@@ -350,7 +332,7 @@ import '../styles/ClientModal.css';
                   />
                 </div>
 
-                <div className="client-modal-form-field">
+                <div className="client-page-form-field">
                   <label htmlFor="numeroDocumento">Número de documento *</label>
                   <InputText
                     id="numeroDocumento"
@@ -361,7 +343,7 @@ import '../styles/ClientModal.css';
                   />
                 </div>
 
-                <div className="client-modal-form-field">
+                <div className="client-page-form-field">
                   <label htmlFor="mercado">Mercado *</label>
                   <Dropdown
                     id="mercado"
@@ -373,7 +355,7 @@ import '../styles/ClientModal.css';
                   />
                 </div>
 
-                <div className="client-modal-form-field">
+                <div className="client-page-form-field">
                   <label htmlFor="rubro">Rubro *</label>
                   <Dropdown
                     id="rubro"
@@ -385,10 +367,10 @@ import '../styles/ClientModal.css';
                   />
                 </div>
 
-                <div className="client-modal-form-field">
+                <div className="client-page-form-field">
                   <label>Género *</label>
-                  <div className="client-modal-radio-group">
-                    <div className="client-modal-radio-option">
+                  <div className="client-page-radio-group">
+                    <div className="client-page-radio-option">
                       <RadioButton
                         inputId="masculino"
                         name="genero"
@@ -396,9 +378,9 @@ import '../styles/ClientModal.css';
                         checked={formData.genero === 'Masculino'}
                         onChange={(e) => setFormData(prev => ({ ...prev, genero: e.value }))}
                       />
-                      <label htmlFor="masculino" className="client-modal-radio-label">Masculino</label>
+                      <label htmlFor="masculino" className="client-page-radio-label">Masculino</label>
                     </div>
-                    <div className="client-modal-radio-option">
+                    <div className="client-page-radio-option">
                       <RadioButton
                         inputId="femenino"
                         name="genero"
@@ -406,45 +388,45 @@ import '../styles/ClientModal.css';
                         checked={formData.genero === 'Femenino'}
                         onChange={(e) => setFormData(prev => ({ ...prev, genero: e.value }))}
                       />
-                      <label htmlFor="femenino" className="client-modal-radio-label">Femenino</label>
+                      <label htmlFor="femenino" className="client-page-radio-label">Femenino</label>
                     </div>
                   </div>
                 </div>
 
-                <div className="client-modal-form-field">
+                <div className="client-page-form-field">
                   <label htmlFor="fechaRegistro">Fecha de registro</label>
                   <InputText
                     id="fechaRegistro"
-                    value={editingClient?.fechaRegistro ? new Date(editingClient.fechaRegistro).toLocaleDateString() : new Date().toLocaleDateString()}
+                    value={isEditing && formData.fechaRegistro ? new Date(formData.fechaRegistro).toLocaleDateString() : new Date().toLocaleDateString()}
                     disabled
-                    className="client-modal-disabled-field"
+                    className="client-page-disabled-field"
                   />
                 </div>
               </div>
             </div>
           </div>
-          </div>
+        </div>
 
-          {/* Botones de acción */}
-          <div className="client-modal-form-actions">
-            <Button
-              type="button"
-              label="Cancelar"
-              outlined
-              onClick={onHide}
-              className="client-modal-cancel-button"
-            />
-            <Button
-              type="submit"
-              label="Guardar cambios"
-              loading={loading}
-              className="client-modal-save-button"
-            />
-          </div>
-        </form>
-      </div>
-    </Dialog>
+        {/* Botones de acción */}
+        <div className="client-page-form-actions">
+          <Button
+            type="button"
+            label="Cancelar"
+            icon="pi pi-times"
+            className="p-button-text"
+            onClick={handleBack}
+          />
+          <Button
+            type="submit"
+            label="Guardar cambios"
+            icon="pi pi-check"
+            loading={loading}
+            disabled={loading}
+          />
+        </div>
+      </form>
+    </div>
   );
 };
 
-export default ClientModal;
+export default ClientPage;

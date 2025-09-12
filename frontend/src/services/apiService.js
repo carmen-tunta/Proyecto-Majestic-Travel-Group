@@ -164,6 +164,21 @@ export const apiService = {
     }
   },
 
+  async getClient(clientId) {
+    try {
+      const response = await fetch(`${API_BASE_URL}/clients/${clientId}`, {
+        method: 'GET',
+        headers: getAuthHeaders()
+      });
+      if (!response.ok) {
+        throw new Error('Error al obtener cliente');
+      }
+      return await response.json();
+    } catch (error) {
+      throw new Error(error.message || 'Error al obtener cliente');
+    }
+  },
+
   async updateClient(clientId, clientData) {
     try {
       const response = await fetch(`${API_BASE_URL}/clients/${clientId}`, {
