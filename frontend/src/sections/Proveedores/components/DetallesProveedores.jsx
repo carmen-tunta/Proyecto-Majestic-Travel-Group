@@ -8,6 +8,7 @@ import { Button } from "primereact/button";
 import { Dropdown } from "primereact/dropdown";
 import { Calendar } from "primereact/calendar";
 import { MultiSelect } from "primereact/multiselect";
+import { addLocale } from "primereact/api";
 import ProveedoresRepository from "../../../modules/Proveedores/repository/ProveedoresRepository";
 import CreateProveedor from "../../../modules/Proveedores/application/CreateProveedor";
 import UpdateProveedor from "../../../modules/Proveedores/application/UpdateProveedor";
@@ -19,6 +20,7 @@ const DetallesProveedores = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const proveedor = location.state?.proveedor;
+    const [proveedorState, setProveedorState] = useState(proveedor || null);
     const [activeIndex, setActiveIndex] = useState(0);
 
     const proveedoresRepository = new ProveedoresRepository();
@@ -33,26 +35,35 @@ const DetallesProveedores = () => {
         const [year, month, day] = dateString.split('-');
         return new Date(year, month - 1, day);
     };
+    addLocale('es', {
+        firstDayOfWeek: 1,
+        dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+        dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+        dayNamesMin: ['D', 'L', 'M', 'X', 'J', 'V', 'S'],
+        monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+        monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+        today: 'Hoy',
+        clear: 'Limpiar'
+    });
 
 
-    const [name, setName] = useState(proveedor ? proveedor.name : '');
-    const [legalName, setLegalName] = useState(proveedor ? proveedor.legal : '');
-    const [serviceType, setServiceType] = useState(proveedor ? proveedor.serviceType : '');
-    const [city, setCity] = useState(proveedor ? proveedor.city : '');
-    const [whatsapp, setWhatsapp] = useState(proveedor ? proveedor.whatsapp : '');
-    const [mail, setMail] = useState(proveedor ? proveedor.mail : '');
-    const [language, setLanguage] = useState(proveedor ? proveedor.languages : '');
-    const [documentType, setDocumentType] = useState(proveedor ? proveedor.documentType : '');
-    const [documentNumber, setDocumentNumber] = useState(proveedor ? proveedor.documentNumber : '');
-    const [direction, setDirection] = useState(proveedor ? proveedor.direction : '');
-    const [birthDate, setBirthDate] = useState(proveedor && proveedor.birthdate ? parseLocalDate(proveedor.birthdate) : null);
-    const [gender, setGender] = useState(proveedor ? proveedor.gender : '');
-    const [registrationDate, setRegistrationDate] = useState(proveedor && proveedor.registrationDate ? parseLocalDate(proveedor.registrationDate) : null);
-
+    const [name, setName] = useState(proveedorState ? proveedorState.name : '');
+    const [legalName, setLegalName] = useState(proveedorState ? proveedorState.legal : '');
+    const [serviceType, setServiceType] = useState(proveedorState ? proveedorState.serviceType : '');
+    const [city, setCity] = useState(proveedorState ? proveedorState.city : '');
+    const [whatsapp, setWhatsapp] = useState(proveedorState ? proveedorState.whatsapp : '');
+    const [mail, setMail] = useState(proveedorState ? proveedorState.mail : '');
+    const [language, setLanguage] = useState(proveedorState && typeof proveedorState.languages === 'string' ? proveedorState.languages : '');
+    const [documentType, setDocumentType] = useState(proveedorState ? proveedorState.documentType : '');
+    const [documentNumber, setDocumentNumber] = useState(proveedorState ? proveedorState.documentNumber : '');
+    const [direction, setDirection] = useState(proveedorState ? proveedorState.direction : '');
+    const [birthDate, setBirthDate] = useState(proveedorState && proveedorState.birthdate ? parseLocalDate(proveedorState.birthdate) : null);
+    const [gender, setGender] = useState(proveedorState ? proveedorState.gender : '');
+    const [registrationDate, setRegistrationDate] = useState(proveedorState && proveedorState.registrationDate ? parseLocalDate(proveedorState.registrationDate) : null);
 
     const items = [
         { label: 'Detalles'},
-        { label: 'Medio de contacto', disabled: !proveedor },
+        { label: 'Medio de contacto', disabled: !proveedorState },
     ];
     
     const onClose = () => {
@@ -62,9 +73,9 @@ const DetallesProveedores = () => {
     const handleSave = async () => {
         setLoading(true);
         try {
-            if (proveedor && proveedor.id) {
-                await updateProveedor.execute({
-                    ...proveedor,
+            if (proveedorState && proveedorState.id) {
+                const proveedorActualizado = await updateProveedor.execute({
+                    ...proveedorState,
                     name: name,
                     legal: legalName,
                     serviceType: serviceType,
@@ -79,25 +90,27 @@ const DetallesProveedores = () => {
                     gender: gender,
                     registrationDate: registrationDate
                 });
-            showNotification('Proveedor actualizado con éxito!', 'success');
-        } else {
-            await createProveedor.execute({
-                name: name.trim(),
-                legal: legalName.trim(),
-                serviceType: serviceType.trim(),
-                city: city.trim(),
-                whatsapp: whatsapp.trim(),
-                mail: mail.trim(),
-                languages: language.trim(),
-                documentType: documentType.trim(),
-                documentNumber: documentNumber.trim(),
-                direction: direction.trim(),
-                birthdate: birthDate,
-                gender: gender.trim(),
-                registrationDate: registrationDate
-            });
-            showNotification('Proveedor registrado con éxito!', 'success');
-        }
+                setProveedorState(proveedorActualizado);
+                showNotification('Proveedor actualizado con éxito!', 'success');
+            } else {
+                const nuevoProveedor = await createProveedor.execute({
+                    name: name.trim(),
+                    legal: legalName.trim(),
+                    serviceType: serviceType.trim(),
+                    city: city.trim(),
+                    whatsapp: whatsapp.trim(),
+                    mail: mail.trim(),
+                    languages: language.trim(),
+                    documentType: documentType.trim(),
+                    documentNumber: documentNumber.trim(),
+                    direction: direction.trim(),
+                    birthdate: birthDate,
+                    gender: gender.trim(),
+                    registrationDate: registrationDate
+                });
+                setProveedorState(nuevoProveedor);
+                showNotification('Proveedor registrado con éxito!', 'success');
+            }
         } catch (error) {
             showNotification('Error al guardar el proveedor', 'error');
             console.log(error);
@@ -114,7 +127,7 @@ const DetallesProveedores = () => {
                     <i className="pi pi-arrow-left" onClick={onClose}></i>
                     <div>Proveedores</div>
                 </div>
-                <div className="proveedor-name">{proveedor?.name}</div>
+                <div className="proveedor-name">{proveedorState?.name}</div>
             </div>
             <TabMenu 
                 model={items} 
@@ -233,6 +246,8 @@ const DetallesProveedores = () => {
                                     id="birthdate"
                                     value={birthDate}
                                     onChange={e => setBirthDate(e.value)}
+                                    dateFormat="D dd M y"
+                                    locale="es"
                                     required
                                 />
                                 <label htmlFor="birthdate">Fecha de nacimiento</label>
@@ -262,6 +277,8 @@ const DetallesProveedores = () => {
                                     id="registrationDate"
                                     value={registrationDate}
                                     onChange={e => setRegistrationDate(e.value)}
+                                    dateFormat="D dd M y"
+                                    locale="es"
                                     required
                                 />
                                 <label htmlFor="registrationDate">Fecha de registro</label>
@@ -271,7 +288,7 @@ const DetallesProveedores = () => {
 
                     <div className="details-button">
                         <Button 
-                            label="Guardar cambios" 
+                            label={proveedorState && proveedorState.id ? "Guardar cambios" : "Guardar para continuar"}
                             text 
                             disabled={loading} 
                             onClick={handleSave}
@@ -282,8 +299,8 @@ const DetallesProveedores = () => {
             {activeIndex === 1 && (
                 <div className="contact">
                     {/* Contenido de la pestaña Medio de contacto */}
-                    <p>WhatsApp: {proveedor?.whatsapp}</p>
-                    <p>Correo: {proveedor?.mail}</p>
+                    <p>WhatsApp: {proveedorState?.whatsapp}</p>
+                    <p>Correo: {proveedorState?.mail}</p>
                     {/* ...otros datos de contacto... */}
                 </div>
             )}
