@@ -72,9 +72,6 @@ const Clientes = () => {
 
   // Función para abrir modal de edición de cliente
   const handleEditClient = (client) => {
-    console.log('handleEditClient llamado con:', client);
-    console.log('Rubro del cliente:', client.rubro);
-    console.log('Género del cliente:', client.genero);
     setEditingClient(client);
     setShowModal(true);
   };

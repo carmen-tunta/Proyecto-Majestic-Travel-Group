@@ -9,8 +9,6 @@ import { apiService } from '../../../services/apiService';
 import '../styles/ClientModal.css';
 
   const ClientModal = ({ visible, onHide, onClientCreated, onClientUpdated, editingClient }) => {
-    console.log('ClientModal props:', { visible, editingClient });
-    
   const [formData, setFormData] = useState({
     nombre: '',
     pais: '',
@@ -30,15 +28,10 @@ import '../styles/ClientModal.css';
 
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState('detalles');
-  
-  console.log('FormData inicial:', formData);
 
   // Cargar datos del cliente a editar
   useEffect(() => {
-    console.log('useEffect ejecutándose - editingClient:', editingClient);
     if (editingClient) {
-      console.log('Cargando datos del cliente:', editingClient);
-      console.log('Género del cliente:', editingClient.genero);
       setFormData({
         nombre: editingClient.nombre || '',
         pais: editingClient.pais || '',
@@ -55,15 +48,7 @@ import '../styles/ClientModal.css';
         genero: editingClient.genero || 'Masculino',
         estado: editingClient.estado || 'Cotización'
       });
-      console.log('FormData actualizado:', {
-        nombre: editingClient.nombre || '',
-        rubro: editingClient.rubro || '',
-        genero: editingClient.genero || 'Masculino'
-      });
-      console.log('Género con comillas:', `"${editingClient.genero}"`);
-      console.log('Longitud del género:', editingClient.genero?.length);
     } else {
-      console.log('No hay editingClient - limpiando formulario para nuevo cliente');
       // Limpiar formulario para nuevo cliente
       setFormData({
         nombre: '',
@@ -83,11 +68,6 @@ import '../styles/ClientModal.css';
       });
     }
   }, [editingClient]);
-  
-  // Debug para verificar el estado del formulario
-  useEffect(() => {
-    console.log('FormData después de useEffect:', formData);
-  }, [formData]);
 
   // Opciones para los dropdowns
   const paises = [
@@ -149,18 +129,11 @@ import '../styles/ClientModal.css';
     { label: 'Otros', value: 'Otros' }
   ];
   
-  console.log('Opciones de rubros:', rubros);
-
   const handleInputChange = (field, value) => {
-    console.log(`Cambiando ${field} a:`, value);
-    setFormData(prev => {
-      const newData = {
-        ...prev,
-        [field]: value
-      };
-      console.log('FormData actualizado:', newData);
-      return newData;
-    });
+    setFormData(prev => ({
+      ...prev,
+      [field]: value
+    }));
   };
 
   const handleSubmit = async (e) => {
@@ -175,19 +148,14 @@ import '../styles/ClientModal.css';
         fechaRegistro: editingClient?.fechaRegistro || new Date().toISOString().split('T')[0]
       };
 
-      console.log('Enviando datos:', clientData);
-      console.log('Editando cliente:', editingClient ? 'Sí' : 'No');
-
       let response;
       if (editingClient) {
         // Actualizar cliente existente
         response = await apiService.updateClient(editingClient.id, clientData);
-        console.log('Cliente actualizado:', response);
         onClientUpdated(response);
       } else {
         // Crear nuevo cliente
         response = await apiService.createClient(clientData);
-        console.log('Cliente creado:', response);
         onClientCreated(response);
       }
       
@@ -407,15 +375,11 @@ import '../styles/ClientModal.css';
 
                 <div className="client-modal-form-field">
                   <label htmlFor="rubro">Rubro *</label>
-                  {console.log('Renderizando Dropdown rubro con value:', formData.rubro)}
                   <Dropdown
                     id="rubro"
                     value={formData.rubro}
                     options={rubros}
-                    onChange={(e) => {
-                      console.log('Cambiando rubro a:', e.value);
-                      handleInputChange('rubro', e.value);
-                    }}
+                    onChange={(e) => handleInputChange('rubro', e.value)}
                     placeholder="Seleccione rubro"
                     required
                   />
@@ -423,11 +387,6 @@ import '../styles/ClientModal.css';
 
                 <div className="client-modal-form-field">
                   <label>Género *</label>
-                  {console.log('Renderizando RadioButtons género con value:', formData.genero)}
-                  {console.log('Comparación Masculino:', formData.genero === 'Masculino')}
-                  {console.log('Comparación Femenino:', formData.genero === 'Femenino')}
-                  {console.log('Tipo de género:', typeof formData.genero)}
-                  {console.log('Género exacto:', JSON.stringify(formData.genero))}
                   <div className="client-modal-radio-group">
                     <div className="client-modal-radio-option">
                       <RadioButton
@@ -435,10 +394,7 @@ import '../styles/ClientModal.css';
                         name="genero"
                         value="Masculino"
                         checked={formData.genero === 'Masculino'}
-                        onChange={(e) => {
-                          console.log('Cambiando género a:', e.value);
-                          setFormData(prev => ({ ...prev, genero: e.value }));
-                        }}
+                        onChange={(e) => setFormData(prev => ({ ...prev, genero: e.value }))}
                       />
                       <label htmlFor="masculino" className="client-modal-radio-label">Masculino</label>
                     </div>
@@ -448,10 +404,7 @@ import '../styles/ClientModal.css';
                         name="genero"
                         value="Femenino"
                         checked={formData.genero === 'Femenino'}
-                        onChange={(e) => {
-                          console.log('Cambiando género a:', e.value);
-                          setFormData(prev => ({ ...prev, genero: e.value }));
-                        }}
+                        onChange={(e) => setFormData(prev => ({ ...prev, genero: e.value }))}
                       />
                       <label htmlFor="femenino" className="client-modal-radio-label">Femenino</label>
                     </div>
@@ -460,7 +413,6 @@ import '../styles/ClientModal.css';
 
                 <div className="client-modal-form-field">
                   <label htmlFor="fechaRegistro">Fecha de registro</label>
-                  {console.log('Renderizando fechaRegistro con value:', editingClient?.fechaRegistro)}
                   <InputText
                     id="fechaRegistro"
                     value={editingClient?.fechaRegistro ? new Date(editingClient.fechaRegistro).toLocaleDateString() : new Date().toLocaleDateString()}
