@@ -7,6 +7,7 @@ import { RadioButton } from "primereact/radiobutton";
 import { Button } from "primereact/button";
 import { Dropdown } from "primereact/dropdown";
 import { Calendar } from "primereact/calendar";
+import { MultiSelect } from "primereact/multiselect";
 import ProveedoresRepository from "../../../modules/Proveedores/repository/ProveedoresRepository";
 import CreateProveedor from "../../../modules/Proveedores/application/CreateProveedor";
 import UpdateProveedor from "../../../modules/Proveedores/application/UpdateProveedor";
@@ -27,6 +28,11 @@ const DetallesProveedores = () => {
     const [loading, setLoading] = useState(false);
 
     const peruCities = ["Lima", "Cusco", "Arequipa", "Trujillo", "Iquitos", "Puno", "Chiclayo", "Piura", "Huaraz", "Nazca"];
+    const parseLocalDate = (dateString) => {
+        if (!dateString) return null;
+        const [year, month, day] = dateString.split('-');
+        return new Date(year, month - 1, day);
+    };
 
 
     const [name, setName] = useState(proveedor ? proveedor.name : '');
@@ -39,9 +45,9 @@ const DetallesProveedores = () => {
     const [documentType, setDocumentType] = useState(proveedor ? proveedor.documentType : '');
     const [documentNumber, setDocumentNumber] = useState(proveedor ? proveedor.documentNumber : '');
     const [direction, setDirection] = useState(proveedor ? proveedor.direction : '');
-    const [birthDate, setBirthDate] = useState(proveedor && proveedor.birthdate ? new Date(proveedor.birthdate) : null);
+    const [birthDate, setBirthDate] = useState(proveedor && proveedor.birthdate ? parseLocalDate(proveedor.birthdate) : null);
     const [gender, setGender] = useState(proveedor ? proveedor.gender : '');
-    const [registrationDate, setRegistrationDate] = useState(proveedor && proveedor.registrationDate ? new Date(proveedor.registrationDate) : null);
+    const [registrationDate, setRegistrationDate] = useState(proveedor && proveedor.registrationDate ? parseLocalDate(proveedor.registrationDate) : null);
 
 
     const items = [
@@ -69,7 +75,7 @@ const DetallesProveedores = () => {
                     documentType: documentType,
                     documentNumber: documentNumber,
                     direction: direction,
-                    birthDate: birthDate,
+                    birthdate: birthDate,
                     gender: gender,
                     registrationDate: registrationDate
                 });
@@ -86,7 +92,7 @@ const DetallesProveedores = () => {
                 documentType: documentType.trim(),
                 documentNumber: documentNumber.trim(),
                 direction: direction.trim(),
-                birthDate: birthDate,
+                birthdate: birthDate,
                 gender: gender.trim(),
                 registrationDate: registrationDate
             });
@@ -127,7 +133,6 @@ const DetallesProveedores = () => {
                             <FloatLabel>
                                 <InputText 
                                     id="name" 
-                                    className="p-inputtext-sm" 
                                     value={name}
                                     onChange={e => setName(e.target.value)}
                                     required 
@@ -137,7 +142,6 @@ const DetallesProveedores = () => {
                             <FloatLabel>
                                 <InputText 
                                     id="legal" 
-                                    className="p-inputtext-sm" 
                                     value={legalName}
                                     onChange={e => setLegalName(e.target.value)}
                                     required 
@@ -167,7 +171,6 @@ const DetallesProveedores = () => {
                             <FloatLabel>
                                 <InputText 
                                     id="whatsapp" 
-                                    className="p-inputtext-sm" 
                                     value={whatsapp}
                                     onChange={e => setWhatsapp(e.target.value)}
                                     required 
@@ -177,7 +180,6 @@ const DetallesProveedores = () => {
                             <FloatLabel>
                                 <InputText 
                                     id="mail" 
-                                    className="p-inputtext-sm" 
                                     value={mail}
                                     onChange={e => setMail(e.target.value)}
                                     required 
@@ -185,12 +187,13 @@ const DetallesProveedores = () => {
                                 <label htmlFor="mail">Correo</label>
                             </FloatLabel>
                             <FloatLabel>
-                                <InputText 
-                                    id="language" 
-                                    className="p-inputtext-sm" 
-                                    value={language}
-                                    onChange={e => setLanguage(e.target.value)}
-                                    required 
+                                <MultiSelect
+                                    id="language"
+                                    value={language ? language.split(',') : []}
+                                    onChange={e => setLanguage(e.value.join(','))}
+                                    options={["Español", "Inglés", "Francés", "Alemán", "Italiano", "Chino", "Japonés", "Ruso", "Portugués"]}
+                                    display="chip"
+                                    required
                                 />
                                 <label htmlFor="language">Idioma</label>
                             </FloatLabel>
@@ -210,7 +213,6 @@ const DetallesProveedores = () => {
                             <FloatLabel>
                                 <InputText 
                                     id="documentNumber" 
-                                    className="p-inputtext-sm" 
                                     value={documentNumber}
                                     onChange={e => setDocumentNumber(e.target.value)}
                                     required 
@@ -220,7 +222,6 @@ const DetallesProveedores = () => {
                             <FloatLabel>
                                 <InputText 
                                     id="direction" 
-                                    className="p-inputtext-sm" 
                                     value={direction}
                                     onChange={e => setDirection(e.target.value)}
                                     required 

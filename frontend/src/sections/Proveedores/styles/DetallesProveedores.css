@@ -1,6 +1,6 @@
 .menu-edition {
     display: flex;
-    width: 85%;
+    width: 90%;
     height: 100%;
     flex-direction: column;
     padding: 0rem 4rem 2rem 2rem;
@@ -59,29 +59,23 @@
     height: 80%;
 }
 
-.details-form span {
-    margin-bottom: 1.5rem;
+.details-form .p-inputtext,
+.details-form .p-dropdown,
+.details-form .p-calendar,
+.details-form .p-multiselect {
+    width: 87%;
 }
 
-.details-form .p-inputtext {
-    width: 85%;
-}
-
-.p-float-label:has(input.p-filled) label {
-    top: -0.37rem;
-}
-
-.p-float-label:has(input:focus) label {
-    top: -0.37rem;
+.p-float-label {
+    margin-bottom: 2rem;
 }
 
 .gender { 
     display: flex;
     gap: 1rem;
     align-items: center;
-    margin-bottom: 2rem;
+    margin-bottom: 2.25rem;
     padding: 0.5rem 0.5rem;
-    font-size: 0.875rem;
 }
 
 .details-button {
@@ -90,7 +84,5 @@
     margin-top: 2rem;
 }
 
-.p.button.label {
-    font-weight: normal;
-}
+
 
