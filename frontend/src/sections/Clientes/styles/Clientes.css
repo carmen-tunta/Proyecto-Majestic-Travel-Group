@@ -1,0 +1,51 @@
+.clientes {
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    padding: 0rem 4rem 2rem 2rem;
+}
+
+.clientes-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.clientes-search {
+    margin-bottom: 2rem;
+}
+
+.clientes-table .p-datatable-thead > tr > th {
+  background: #1976d2;
+  color: #ffffff;
+  font-weight: normal;
+  border: none;
+}
+
+.clientes-table .p-datatable-tbody > tr > td {
+  border: 1px bottom solid #ddd;
+}
+
+.clientes-footer {
+    margin-top: 1rem;
+    display: flex;
+    justify-content: center;
+    color: rgb(175, 175, 175);
+}
+
+
+.custom-paginator {
+  background: transparent;
+  border: none;
+}
+
+.custom-paginator .p-paginator-pages .p-paginator-page {
+  min-width: 2rem;
+  height: 2rem;
+}
+
+.custom-paginator .p-paginator-pages .p-paginator-page.p-highlight {
+  background-color: #1976d2;
+  color: white;
+}
