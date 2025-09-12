@@ -5,13 +5,29 @@ import { InputText } from "primereact/inputtext";
 import { FloatLabel } from "primereact/floatlabel";
 import { RadioButton } from "primereact/radiobutton";
 import { Button } from "primereact/button";
+import { Dropdown } from "primereact/dropdown";
+import { Calendar } from "primereact/calendar";
+import ProveedoresRepository from "../../../modules/Proveedores/repository/ProveedoresRepository";
+import CreateProveedor from "../../../modules/Proveedores/application/CreateProveedor";
+import UpdateProveedor from "../../../modules/Proveedores/application/UpdateProveedor";
+import { useNotification } from "../../Notification/NotificationContext";
 import "../styles/DetallesProveedores.css"
+
 
 const DetallesProveedores = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const proveedor = location.state?.proveedor;
     const [activeIndex, setActiveIndex] = useState(0);
+
+    const proveedoresRepository = new ProveedoresRepository();
+    const createProveedor = new CreateProveedor(proveedoresRepository);
+    const updateProveedor = new UpdateProveedor(proveedoresRepository);
+    const { showNotification } = useNotification();
+    const [loading, setLoading] = useState(false);
+
+    const peruCities = ["Lima", "Cusco", "Arequipa", "Trujillo", "Iquitos", "Puno", "Chiclayo", "Piura", "Huaraz", "Nazca"];
+
 
     const [name, setName] = useState(proveedor ? proveedor.name : '');
     const [legalName, setLegalName] = useState(proveedor ? proveedor.legalName : '');
@@ -37,13 +53,62 @@ const DetallesProveedores = () => {
         navigate(-1);
     };
 
+    const handleSave = async () => {
+        setLoading(true);
+        try {
+            if (proveedor && proveedor.id) {
+                await updateProveedor.execute({
+                    ...proveedor,
+                    name: name,
+                    legal: legalName,
+                    serviceType: serviceType,
+                    city: city,
+                    whatsapp: whatsapp,
+                    mail: mail,
+                    languages: language,
+                    documentType: documentType,
+                    documentNumber: documentNumber,
+                    direction: direction,
+                    birthDate: birthDate,
+                    gender: gender,
+                    registrationDate: registrationDate
+                });
+            showNotification('Proveedor actualizado con éxito!', 'success');
+        } else {
+            await createProveedor.execute({
+                name: name.trim(),
+                legal: legalName.trim(),
+                serviceType: serviceType.trim(),
+                city: city.trim(),
+                whatsapp: whatsapp.trim(),
+                mail: mail.trim(),
+                languages: language.trim(),
+                documentType: documentType.trim(),
+                documentNumber: documentNumber.trim(),
+                direction: direction.trim(),
+                birthDate: birthDate,
+                gender: gender.trim(),
+                registrationDate: registrationDate
+            });
+            showNotification('Proveedor registrado con éxito!', 'success');
+        }
+        } catch (error) {
+            showNotification('Error al guardar el proveedor', 'error');
+            console.log(error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
 
     return (
         <div className="menu-edition">
             <div className="header">
-                <i className="pi pi-arrow-left" onClick={onClose}></i>
-                <h3>Proveedores</h3>
-                <div>{proveedor?.name}</div>
+                <div className="header-icon">
+                    <i className="pi pi-arrow-left" onClick={onClose}></i>
+                    <div>Proveedores</div>
+                </div>
+                <div className="proveedor-name">{proveedor?.name}</div>
             </div>
             <TabMenu 
                 model={items} 
@@ -80,22 +145,22 @@ const DetallesProveedores = () => {
                                 <label htmlFor="legal">Representante legal</label>
                             </FloatLabel>
                             <FloatLabel>
-                                <InputText 
-                                    id="serviceType" 
-                                    className="p-inputtext-sm" 
+                                <Dropdown
+                                    inputId="serviceType"
                                     value={serviceType}
-                                    onChange={e => setServiceType(e.target.value)}
-                                    required 
+                                    options={["Alojamiento", "Transporte", "Tours", "Guías turísticos", "Restaurantes", "Agencias de viajes", "Otros"]}
+                                    onChange={e => setServiceType(e.value)}
+                                    required
                                 />
                                 <label htmlFor="serviceType">Tipo de servicio</label>
                             </FloatLabel>
                             <FloatLabel>
-                                <InputText 
-                                    id="city" 
-                                    className="p-inputtext-sm" 
+                                <Dropdown
+                                    inputId="city"
                                     value={city}
-                                    onChange={e => setCity(e.target.value)}
-                                    required 
+                                    options={peruCities}
+                                    onChange={e => setCity(e.value)}
+                                    required
                                 />
                                 <label htmlFor="city">Ciudad</label>
                             </FloatLabel>
@@ -133,12 +198,12 @@ const DetallesProveedores = () => {
 
                         <div className="right">
                             <FloatLabel>
-                                <InputText 
-                                    id="documentType" 
-                                    className="p-inputtext-sm" 
+                                <Dropdown
+                                    inputId="documentType"
                                     value={documentType}
-                                    onChange={e => setDocumentType(e.target.value)}
-                                    required 
+                                    options={["CI", "Pasaporte", "RUC", "Otros"]}
+                                    onChange={e => setDocumentType(e.value)}
+                                    required
                                 />
                                 <label htmlFor="documentType">Tipo de documento</label>
                             </FloatLabel>
@@ -163,12 +228,11 @@ const DetallesProveedores = () => {
                                 <label htmlFor="direction">Dirección</label>
                             </FloatLabel>
                             <FloatLabel>
-                                <InputText 
-                                    id="birthdate" 
-                                    className="p-inputtext-sm" 
+                                <Calendar
+                                    id="birthdate"
                                     value={birthDate}
-                                    onChange={e => setBirthDate(e.target.value)}
-                                    required 
+                                    onChange={e => setBirthDate(e.value)}
+                                    required
                                 />
                                 <label htmlFor="birthdate">Fecha de nacimiento</label>
                             </FloatLabel>
@@ -193,12 +257,11 @@ const DetallesProveedores = () => {
                             </div>
 
                             <FloatLabel>
-                                <InputText 
-                                    id="registrationDate" 
-                                    className="p-inputtext-sm" 
+                                <Calendar
+                                    id="registrationDate"
                                     value={registrationDate}
-                                    onChange={e => setRegistrationDate(e.target.value)}
-                                    required 
+                                    onChange={e => setRegistrationDate(e.value)}
+                                    required
                                 />
                                 <label htmlFor="registrationDate">Fecha de registro</label>
                             </FloatLabel>
@@ -206,7 +269,12 @@ const DetallesProveedores = () => {
                     </div>
 
                     <div className="details-button">
-                        <Button label="Guardar cambios" text/>
+                        <Button 
+                            label="Guardar cambios" 
+                            text 
+                            disabled={loading} 
+                            onClick={handleSave}
+                        />
                     </div>
                 </div>
             )}
