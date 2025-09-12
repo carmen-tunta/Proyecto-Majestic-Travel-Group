@@ -18,7 +18,7 @@ export class Proveedores {
   city: string;
 
   @Column({ length: 30, comment: 'WhatsApp' })
-  whatssapp: string;
+  whatsapp: string;
 
   @Column({ length: 50, comment: 'Correo electrónico' })
   mail: string;
