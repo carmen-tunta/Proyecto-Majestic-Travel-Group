@@ -9,6 +9,8 @@ import { Dropdown } from "primereact/dropdown";
 import { Calendar } from "primereact/calendar";
 import { MultiSelect } from "primereact/multiselect";
 import { addLocale } from "primereact/api";
+import { DataTable } from "primereact/datatable";
+import { Column } from "primereact/column";
 import ProveedoresRepository from "../../../modules/Proveedores/repository/ProveedoresRepository";
 import CreateProveedor from "../../../modules/Proveedores/application/CreateProveedor";
 import UpdateProveedor from "../../../modules/Proveedores/application/UpdateProveedor";
@@ -298,10 +300,41 @@ const DetallesProveedores = () => {
             )}
             {activeIndex === 1 && (
                 <div className="contact">
-                    {/* Contenido de la pestaña Medio de contacto */}
-                    <p>WhatsApp: {proveedorState?.whatsapp}</p>
-                    <p>Correo: {proveedorState?.mail}</p>
-                    {/* ...otros datos de contacto... */}
+                    <div className="contact-header">
+                        <h3>Datos de contacto</h3>
+                        <Button 
+                            icon="pi pi-plus" 
+                            label="Nuevo" 
+                            size='small' 
+                            outlined
+                            onClick={() => console.log("TODO")}
+                        />
+                    </div>
+                    <DataTable
+                        className="contact-table"
+                        size="small"
+                    >
+                        <Column field="medium" header="Medio" />
+                        <Column field="description" header="Descripción" />
+                        <Column field="note" header="Nota" />
+                        <Column field="actions"  
+                            body={rowData => (
+                                <span style={{ display: 'flex', justifyContent: 'center' }}>
+                                    <i
+                                        className="pi pi-pencil"
+                                        title="Editar"
+                                        style={{ cursor: "pointer" }}
+                                        onClick={() => console.log("TODO")}
+                                    ></i>
+                                    <i
+                                        className="pi pi-trash"
+                                        title="Borrar"
+                                        style={{ cursor: "pointer" }}
+                                        onClick={() => console.log("TODO")}
+                                    ></i>
+                                </span>
+                            )} />
+                    </DataTable>
                 </div>
             )}
 
