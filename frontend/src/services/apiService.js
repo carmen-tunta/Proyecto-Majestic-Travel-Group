@@ -55,7 +55,22 @@ export const apiService = {
     }
   },
 
-  // Buscador único para los tres recursos
+  // Buscar clientes por nombre
+  async searchClients(query) {
+    try {
+      const response = await fetch(`${API_BASE_URL}/clients/search?nombre=${encodeURIComponent(query)}`, {
+        headers: getAuthHeaders()
+      });
+      if (!response.ok) {
+        throw new Error('Error al buscar clientes');
+      }
+      return await response.json();
+    } catch (error) {
+      throw new Error(error.message || 'Error al buscar clientes');
+    }
+  },
+
+  // Buscador único para los recursos
   async universalSearch(resource, query) {
     switch(resource) {
       case 'services':
@@ -64,6 +79,8 @@ export const apiService = {
         return this.searchComponents(query);
       case 'itinerary-templates':
         return this.searchItineraryTemplates(query);
+      case 'clients':
+        return this.searchClients(query);
       default:
         throw new Error('Recurso no soportado');
     }

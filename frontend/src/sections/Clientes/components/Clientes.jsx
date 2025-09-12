@@ -6,9 +6,14 @@ import { Paginator } from 'primereact/paginator';
 import SearchBar from '../../../components/SearchBar';
 import useSearch from '../../../hooks/useSearch';
 import { apiService } from '../../../services/apiService';
+import ClientRepository from '../../../modules/Clients/repository/ClientRepository';
+import GetAllClients from '../../../modules/Clients/application/GetAllClients';
 import "../styles/Clientes.css";
 
 const Clientes = () => {
+  const clientRepository = new ClientRepository();
+  const getAllClients = new GetAllClients(clientRepository);
+
   const [clientes, setClientes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [first, setFirst] = useState(0);
@@ -16,12 +21,13 @@ const Clientes = () => {
   const [totalRecords, setTotalRecords] = useState(0);
 
   // Función para obtener los clientes del backend
-  const fetchClientes = async (page = 0, pageSize = 10) => {
+  const fetchClientes = async () => {
     try {
       setLoading(true);
-      const response = await apiService.get(`/clients?page=${page}&limit=${pageSize}`);
-      setClientes(response.data || []);
-      setTotalRecords(response.total || 0);
+      const response = await getAllClients.execute();
+      // El backend devuelve un array directo
+      setClientes(Array.isArray(response) ? response : []);
+      setTotalRecords(Array.isArray(response) ? response.length : 0);
     } catch (error) {
       console.error('Error al obtener clientes:', error);
       setClientes([]);
@@ -45,14 +51,14 @@ const Clientes = () => {
   // Buscador universal para clientes
   const { search, setSearch, results, loading: searchLoading } = useSearch(
     (q) => apiService.universalSearch('clients', q),
-    () => fetchClientes(0, 10)
+    () => fetchClientes()
   );
 
   // Función para manejar el cambio de página
   const onPageChange = (event) => {
     setFirst(event.first);
     setRows(event.rows);
-    fetchClientes(event.page, event.rows);
+    // Por ahora no hay paginación en el backend, solo actualizamos el estado local
   };
 
   // Función para abrir modal de nuevo cliente
@@ -196,6 +202,7 @@ const Clientes = () => {
             )}
           />
           <Column
+            field="estado"
             header="Estado"
             style={{ width: '10%', textAlign: 'center' }}
             body={(rowData) => (
@@ -206,7 +213,7 @@ const Clientes = () => {
                 alignItems: 'center',
                 justifyContent: 'center'
               }}>
-                <span className="status-badge">Activo</span>
+                {rowData.estado || 'Cotización'}
               </div>
             )}
           />

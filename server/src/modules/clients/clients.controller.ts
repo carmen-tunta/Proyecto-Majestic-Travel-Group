@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Put, Delete, Body, Param } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Body, Param, Query } from '@nestjs/common';
 import { ClientsService } from './clients.service';
 import { Client } from './entities/client.entity';
 
@@ -14,6 +14,11 @@ export class ClientsController {
   @Get()
   findAll(): Promise<Client[]> {
     return this.clientsService.findAll();
+  }
+
+  @Get('search')
+  searchByNombre(@Query('nombre') nombre: string): Promise<Client[]> {
+    return this.clientsService.searchByNombre(nombre);
   }
 
   @Get(':id')

@@ -33,4 +33,11 @@ export class ClientsService {
     const result = await this.clientsRepository.delete(id);
     return (result.affected ?? 0) > 0;
   }
+
+  async searchByNombre(nombre: string): Promise<Client[]> {
+    return await this.clientsRepository
+      .createQueryBuilder('client')
+      .where('client.nombre LIKE :nombre', { nombre: `%${nombre}%` })
+      .getMany();
+  }
 }

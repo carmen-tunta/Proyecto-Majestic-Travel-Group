@@ -91,4 +91,12 @@ export class Client {
     comment: 'Fecha de registro del cliente',
   })
   fechaRegistro: Date;
+
+  @Column({
+    type: 'varchar',
+    length: 50,
+    default: 'Cotización',
+    comment: 'Estado del cliente',
+  })
+  estado: string;
 }
