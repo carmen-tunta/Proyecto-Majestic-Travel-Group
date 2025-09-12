@@ -11,6 +11,7 @@ import { ServicesModule } from '../services/services.module';
 import { ClientsModule } from '../clients/clients.module';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { ProveedoresModule } from '../proveedores/proveedores.module';
+import { ProveedorContactModule } from '../proveedor-contact/proveedor-contact.module';
 
 @Module({
   imports: [DatabaseModule, 
@@ -20,7 +21,8 @@ import { ProveedoresModule } from '../proveedores/proveedores.module';
             ComponentsModule, 
             ServicesModule, 
             ClientsModule,
-            ProveedoresModule
+            ProveedoresModule,
+            ProveedorContactModule
           ],
   controllers: [AppController],
   providers: [

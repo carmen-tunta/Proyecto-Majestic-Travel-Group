@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { ProveedorContact } from 'src/modules/proveedor-contact/entities/proveedor-contact.entity';
 
 @Entity('proveedores')
 export class Proveedores {
@@ -43,4 +44,7 @@ export class Proveedores {
 
   @Column({ type: 'date', comment: 'Fecha de registro' })
   registrationDate: Date;
+
+  @OneToMany(() => ProveedorContact, contact => contact.proveedor)
+  contacts: ProveedorContact[];
 }
