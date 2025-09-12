@@ -326,34 +326,142 @@
 }
 
 .client-modal-form-field .p-radiobutton .p-radiobutton-box.p-highlight {
-  border-color: #1976d2;
-  background: #1976d2;
+  border-color: #1976d2 !important;
+  background: #1976d2 !important;
+}
+
+.client-modal-form-field .p-radiobutton .p-radiobutton-box.p-highlight .p-radiobutton-icon {
+  background: #fff !important;
+  width: 8px !important;
+  height: 8px !important;
+  border-radius: 50% !important;
+  display: block !important;
 }
 
 .client-modal-form-field .p-radiobutton .p-radiobutton-box .p-radiobutton-icon {
-  background: #fff;
+  background: transparent;
   width: 8px;
   height: 8px;
   border-radius: 50%;
+  display: none;
+}
+
+/* Estado marcado cuando está checked */
+.client-modal-form-field .p-radiobutton .p-radiobutton-box:not(.p-highlight) {
+  border-color: #e0e0e0;
+  background: #fff;
+}
+
+.client-modal-form-field .p-radiobutton .p-radiobutton-box:not(.p-highlight) .p-radiobutton-icon {
+  display: none;
+}
+
+/* Estados hover y focus */
+.client-modal-form-field .p-radiobutton .p-radiobutton-box:hover {
+  border-color: #1976d2;
+  box-shadow: 0 2px 4px rgba(25, 118, 210, 0.2);
+}
+
+.client-modal-form-field .p-radiobutton .p-radiobutton-box:focus {
+  outline: none;
+  border-color: #1976d2;
+  box-shadow: 0 0 0 2px rgba(25, 118, 210, 0.2);
+}
+
+/* Forzar visibilidad del icono cuando está marcado */
+.client-modal-form-field .p-radiobutton.p-radiobutton-checked .p-radiobutton-box {
+  border-color: #1976d2 !important;
+  background: #1976d2 !important;
+}
+
+.client-modal-form-field .p-radiobutton.p-radiobutton-checked .p-radiobutton-box .p-radiobutton-icon {
+  background: #fff !important;
+  display: block !important;
+}
+
+/* Estilos específicos para PrimeReact RadioButton */
+.client-modal-form-field .p-radiobutton input[type="radio"]:checked + .p-radiobutton-box {
+  border-color: #1976d2 !important;
+  background: #1976d2 !important;
+}
+
+.client-modal-form-field .p-radiobutton input[type="radio"]:checked + .p-radiobutton-box .p-radiobutton-icon {
+  background: #fff !important;
+  display: block !important;
+  width: 8px !important;
+  height: 8px !important;
+  border-radius: 50% !important;
+}
+
+/* Estado checked usando la clase p-radiobutton-checked */
+.client-modal-form-field .p-radiobutton.p-radiobutton-checked .p-radiobutton-box,
+.client-modal-form-field .p-radiobutton.p-radiobutton-checked .p-radiobutton-box.p-highlight {
+  border-color: #1976d2 !important;
+  background: #1976d2 !important;
+}
+
+.client-modal-form-field .p-radiobutton.p-radiobutton-checked .p-radiobutton-box .p-radiobutton-icon,
+.client-modal-form-field .p-radiobutton.p-radiobutton-checked .p-radiobutton-box.p-highlight .p-radiobutton-icon {
+  background: #fff !important;
+  display: block !important;
+  width: 8px !important;
+  height: 8px !important;
+  border-radius: 50% !important;
 }
 
 /* Radio button group */
-.client-modal-form-field .p-radiobutton-group {
+.client-modal-form-field .client-modal-radio-group {
   display: flex;
   gap: 24px;
   align-items: center;
   margin-top: 8px;
 }
 
-.client-modal-form-field .p-radiobutton-group label {
+.client-modal-form-field .client-modal-radio-group .client-modal-radio-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.client-modal-form-field .client-modal-radio-group .client-modal-radio-option label {
   display: flex;
   align-items: center;
   gap: 8px;
   cursor: pointer;
   font-weight: normal;
   margin: 0;
+  padding: 0;
   color: #333;
   font-size: 14px;
+}
+
+/* Forzar estado visual cuando está checked */
+.client-modal-form-field .p-radiobutton input[type="radio"]:checked ~ .p-radiobutton-box {
+  border-color: #1976d2 !important;
+  background: #1976d2 !important;
+}
+
+.client-modal-form-field .p-radiobutton input[type="radio"]:checked ~ .p-radiobutton-box .p-radiobutton-icon {
+  background: #fff !important;
+  display: block !important;
+  width: 8px !important;
+  height: 8px !important;
+  border-radius: 50% !important;
+}
+
+/* Estilos adicionales para asegurar que se vea marcado */
+.client-modal-form-field .p-radiobutton .p-radiobutton-box.p-radiobutton-box-highlight {
+  border-color: #1976d2 !important;
+  background: #1976d2 !important;
+}
+
+.client-modal-form-field .p-radiobutton .p-radiobutton-box.p-radiobutton-box-highlight .p-radiobutton-icon {
+  background: #fff !important;
+  display: block !important;
+  width: 8px !important;
+  height: 8px !important;
+  border-radius: 50% !important;
 }
 
 /* Botones de acción */

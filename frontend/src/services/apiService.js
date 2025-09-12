@@ -147,4 +147,36 @@ export const apiService = {
       throw new Error(error.message || 'Error al obtener usuarios');
     }
   },
+
+  async createClient(clientData) {
+    try {
+      const response = await fetch(`${API_BASE_URL}/clients`, {
+        method: 'POST',
+        headers: getAuthHeaders(),
+        body: JSON.stringify(clientData)
+      });
+      if (!response.ok) {
+        throw new Error('Error al crear cliente');
+      }
+      return await response.json();
+    } catch (error) {
+      throw new Error(error.message || 'Error al crear cliente');
+    }
+  },
+
+  async updateClient(clientId, clientData) {
+    try {
+      const response = await fetch(`${API_BASE_URL}/clients/${clientId}`, {
+        method: 'PUT',
+        headers: getAuthHeaders(),
+        body: JSON.stringify(clientData)
+      });
+      if (!response.ok) {
+        throw new Error('Error al actualizar cliente');
+      }
+      return await response.json();
+    } catch (error) {
+      throw new Error(error.message || 'Error al actualizar cliente');
+    }
+  },
 };

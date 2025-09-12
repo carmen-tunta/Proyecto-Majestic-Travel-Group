@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Button } from 'primereact/button';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
@@ -12,20 +12,21 @@ import ClientModal from './ClientModal';
 import "../styles/Clientes.css";
 
 const Clientes = () => {
-  const clientRepository = new ClientRepository();
-  const getAllClients = new GetAllClients(clientRepository);
-
   const [clientes, setClientes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [first, setFirst] = useState(0);
   const [rows, setRows] = useState(10);
   const [totalRecords, setTotalRecords] = useState(0);
   const [showModal, setShowModal] = useState(false);
+  const [editingClient, setEditingClient] = useState(null);
 
   // Función para obtener los clientes del backend
-  const fetchClientes = async () => {
+  const fetchClientes = useCallback(async () => {
     try {
       setLoading(true);
+      // Instancia del caso de uso dentro del callback
+      const clientRepository = new ClientRepository();
+      const getAllClients = new GetAllClients(clientRepository);
       const response = await getAllClients.execute();
       // El backend devuelve un array directo
       setClientes(Array.isArray(response) ? response : []);
@@ -37,12 +38,12 @@ const Clientes = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   // Cargar clientes al montar el componente
   useEffect(() => {
     fetchClientes();
-  }, []);
+  }, [fetchClientes]);
 
   // Función para truncar texto largo
   const truncateText = (text, maxLength = 50) => {
@@ -65,12 +66,23 @@ const Clientes = () => {
 
   // Función para abrir modal de nuevo cliente
   const handleNewClient = () => {
+    setEditingClient(null);
+    setShowModal(true);
+  };
+
+  // Función para abrir modal de edición de cliente
+  const handleEditClient = (client) => {
+    console.log('handleEditClient llamado con:', client);
+    console.log('Rubro del cliente:', client.rubro);
+    console.log('Género del cliente:', client.genero);
+    setEditingClient(client);
     setShowModal(true);
   };
 
   // Función para cerrar modal
   const handleCloseModal = () => {
     setShowModal(false);
+    setEditingClient(null);
   };
 
   // Función para manejar cliente creado
@@ -80,11 +92,16 @@ const Clientes = () => {
     setTotalRecords(prev => prev + 1);
   };
 
-  // Función para editar cliente
-  const handleEditClient = (cliente) => {
-    console.log('Editar cliente:', cliente);
-    // TODO: Implementar modal de edición
+  // Función para manejar cliente actualizado
+  const handleClientUpdated = (updatedClient) => {
+    // Actualizar el cliente en la lista
+    setClientes(prev => 
+      prev.map(client => 
+        client.id === updatedClient.id ? updatedClient : client
+      )
+    );
   };
+
 
   return (
     <div className="clientes">
@@ -265,6 +282,8 @@ const Clientes = () => {
         visible={showModal}
         onHide={handleCloseModal}
         onClientCreated={handleClientCreated}
+        onClientUpdated={handleClientUpdated}
+        editingClient={editingClient}
       />
     </div>
   );
