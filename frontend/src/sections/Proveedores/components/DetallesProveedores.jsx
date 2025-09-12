@@ -30,18 +30,18 @@ const DetallesProveedores = () => {
 
 
     const [name, setName] = useState(proveedor ? proveedor.name : '');
-    const [legalName, setLegalName] = useState(proveedor ? proveedor.legalName : '');
+    const [legalName, setLegalName] = useState(proveedor ? proveedor.legal : '');
     const [serviceType, setServiceType] = useState(proveedor ? proveedor.serviceType : '');
     const [city, setCity] = useState(proveedor ? proveedor.city : '');
     const [whatsapp, setWhatsapp] = useState(proveedor ? proveedor.whatsapp : '');
     const [mail, setMail] = useState(proveedor ? proveedor.mail : '');
-    const [language, setLanguage] = useState(proveedor ? proveedor.language : '');
+    const [language, setLanguage] = useState(proveedor ? proveedor.languages : '');
     const [documentType, setDocumentType] = useState(proveedor ? proveedor.documentType : '');
     const [documentNumber, setDocumentNumber] = useState(proveedor ? proveedor.documentNumber : '');
     const [direction, setDirection] = useState(proveedor ? proveedor.direction : '');
-    const [birthDate, setBirthDate] = useState(proveedor ? proveedor.birthDate : '');
+    const [birthDate, setBirthDate] = useState(proveedor && proveedor.birthdate ? new Date(proveedor.birthdate) : null);
     const [gender, setGender] = useState(proveedor ? proveedor.gender : '');
-    const [registrationDate, setRegistrationDate] = useState(proveedor ? proveedor.registrationDate : '');
+    const [registrationDate, setRegistrationDate] = useState(proveedor && proveedor.registrationDate ? new Date(proveedor.registrationDate) : null);
 
 
     const items = [

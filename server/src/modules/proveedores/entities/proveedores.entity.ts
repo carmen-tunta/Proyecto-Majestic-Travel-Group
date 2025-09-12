@@ -32,6 +32,9 @@ export class Proveedores {
   @Column({ comment: 'Número de documento' })
   documentNumber: number;
 
+  @Column({ length: 100, comment: 'Dirección' })
+  direction: string;
+
   @Column({ type: 'date', comment: 'Fecha de nacimiento' })
   birthdate: Date;
 
