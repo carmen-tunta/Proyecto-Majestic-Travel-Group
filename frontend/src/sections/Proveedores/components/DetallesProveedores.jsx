@@ -14,6 +14,8 @@ import { Column } from "primereact/column";
 import ProveedoresRepository from "../../../modules/Proveedores/repository/ProveedoresRepository";
 import CreateProveedor from "../../../modules/Proveedores/application/CreateProveedor";
 import UpdateProveedor from "../../../modules/Proveedores/application/UpdateProveedor";
+import ProveedorContactRepository from "../../../modules/ProveedorContact/repository/ProveedorContactRepository";
+import GetContactByIdProveedor from "../../../modules/ProveedorContact/application/GetContactByIdProveedor";
 import { useNotification } from "../../Notification/NotificationContext";
 import "../styles/DetallesProveedores.css"
 
@@ -28,8 +30,14 @@ const DetallesProveedores = () => {
     const proveedoresRepository = new ProveedoresRepository();
     const createProveedor = new CreateProveedor(proveedoresRepository);
     const updateProveedor = new UpdateProveedor(proveedoresRepository);
+
+    const contactRepository = new ProveedorContactRepository();
+    const getContactByIdProveedor = new GetContactByIdProveedor(contactRepository);
+    const [contacts, setContacts] = useState([]);
+
     const { showNotification } = useNotification();
     const [loading, setLoading] = useState(false);
+    const [loadContactsing, setLoadContacts] = useState(false);
 
     const peruCities = ["Lima", "Cusco", "Arequipa", "Trujillo", "Iquitos", "Puno", "Chiclayo", "Piura", "Huaraz", "Nazca"];
     const parseLocalDate = (dateString) => {
@@ -67,6 +75,20 @@ const DetallesProveedores = () => {
         { label: 'Detalles'},
         { label: 'Medio de contacto', disabled: !proveedorState },
     ];
+
+    const loadContacts = async () => {
+        setLoadContacts(true);
+        try {
+            const contactData = await getContactByIdProveedor.execute(proveedorState.id);
+            setContacts(Array.isArray(contactData) ? contactData : []);
+            console.log(contactData);
+        } catch (error) {
+            console.error('Error al obtener los contactos:', error);
+            setContacts([]);
+        } finally {
+            setLoadContacts(false);
+        }
+    };
     
     const onClose = () => {
         navigate(-1);
@@ -134,7 +156,12 @@ const DetallesProveedores = () => {
             <TabMenu 
                 model={items} 
                 activeIndex={activeIndex} 
-                onTabChange={(e) => setActiveIndex(e.index)} 
+                onTabChange={(e) => {
+                    setActiveIndex(e.index);
+                    if (e.index === 1 && proveedorState && proveedorState.id) {
+                        loadContacts();
+                    }
+                }} 
             />
 
             {activeIndex === 0 && (
@@ -313,6 +340,9 @@ const DetallesProveedores = () => {
                     <DataTable
                         className="contact-table"
                         size="small"
+                        loading={loadContactsing}
+                        value={contacts}
+                        emptyMessage="No se encontraron medios de contacto"
                     >
                         <Column field="medium" header="Medio" />
                         <Column field="description" header="Descripción" />
@@ -323,7 +353,7 @@ const DetallesProveedores = () => {
                                     <i
                                         className="pi pi-pencil"
                                         title="Editar"
-                                        style={{ cursor: "pointer" }}
+                                        style={{ cursor: "pointer", marginRight: '10px' }}
                                         onClick={() => console.log("TODO")}
                                     ></i>
                                     <i
