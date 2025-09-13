@@ -205,14 +205,17 @@ const Clientes = () => {
           <Column
             field="fechaRegistro"
             header="F. registro"
-            style={{ width: '10%', textAlign: 'center' }}
+            style={{ width: '12%', textAlign: 'center', minWidth: '100px' }}
             body={(rowData) => (
               <div style={{ 
                 textAlign: 'center', 
                 width: '100%',
                 display: 'flex',
                 alignItems: 'center',
-                justifyContent: 'center'
+                justifyContent: 'center',
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis'
               }}>
                 {formatDate(rowData.fechaRegistro)}
               </div>
