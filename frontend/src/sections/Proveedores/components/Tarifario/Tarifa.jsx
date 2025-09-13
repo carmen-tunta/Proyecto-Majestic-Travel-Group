@@ -65,22 +65,32 @@ const TarifaMenu = ({ proveedor }) => {
 
 
     const handleSelectComponent = (comp) => {
-        // Evita duplicados
+        setSearch('');
         if (!selectedComponents.some(c => c.id === comp.id)) {
-            setSelectedComponents([...selectedComponents, comp]);
+            const newComp = { ...comp };
+            columns.forEach(col => {
+                newComp[col.field] = 0;
+            });
+            setSelectedComponents([...selectedComponents, newComp]);
         }
     };
 
     const handleAddColumn = () => {
+        const newField = `col_${columns.length + 1}`;
         setColumns([
             ...columns,
-            {   field: "0", 
+            {   
+                field: newField,
                 header: <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                             <div>{columnDescription}</div>
                             <div>{paxMin}-{paxMax}</div>
                         </div>
             }
         ]);
+        setSelectedComponents(selectedComponents.map(comp => ({
+            ...comp,
+            [newField]: 0
+        })));
         setModalColumn(false);
         setColumnDescription('');
         setPaxMin('');
@@ -149,6 +159,26 @@ const TarifaMenu = ({ proveedor }) => {
         }
     };
 
+    const onCellEditComplete = (e) => {
+        const { rowData, newValue, field } = e;
+        const updated = selectedComponents.map(comp =>
+            comp.id === rowData.id ? { ...comp, [field]: newValue } : comp
+        );
+        setSelectedComponents(updated);
+    };
+
+    // Editor para celdas numéricas
+    const cellEditor = (options) => {
+        return (
+            <InputText
+                type="number"
+                value={options.value}
+                onChange={(e) => options.editorCallback(e.target.value)}
+                style={{ width: '100%', margin: 0, alignContent: 'center', textAlign: 'center' }}
+            />
+        );
+    };
+
 
     return (
         <>
@@ -204,6 +234,8 @@ const TarifaMenu = ({ proveedor }) => {
                             value={selectedComponents}
                             scrollable
                             scrollHeight="flex" 
+                            editMode="cell"
+                            
                         >
                             <Column 
                                 style={{ minWidth: '25vw', backgroundColor: '#ffffff', border: 'none' }}
@@ -254,7 +286,9 @@ const TarifaMenu = ({ proveedor }) => {
                                     key={col.field}
                                     field={col.field}
                                     header={col.header}
-                                    style={{ minWidth: '11vw' }}
+                                    editor={cellEditor}
+                                    bodyClassName="tarifa-dynamic-cell"
+                                    onCellEditComplete={onCellEditComplete}
                                 />
                             ))}
                         </DataTable>

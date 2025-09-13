@@ -114,3 +114,18 @@
 .modal-column-body div .p-inputtext {
     width: 7rem;
 }
+
+.p-editable-column, .p-cell-editing {
+    padding: 0 !important;
+    width: 10vw;
+}
+
+.tarifa-dynamic-cell {
+    min-width: 11vw;
+    text-align: center !important;
+    vertical-align: middle !important;
+}
+
+.p-datatable-tbody > tr > td {
+    border-bottom: 1px solid #eee !important;
+}
