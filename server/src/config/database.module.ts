@@ -11,6 +11,7 @@ import { Service } from '../modules/services/entities/service.entity';
 import { Client } from '../modules/clients/entities/client.entity';
 import { Proveedores } from 'src/modules/proveedores/entities/proveedores.entity';
 import { ProveedorContact } from 'src/modules/proveedor-contact/entities/proveedor-contact.entity';
+import { Tarifario } from 'src/modules/tarifario/entities/tarifario.entity';
 
 @Module({
   imports: [
@@ -21,7 +22,15 @@ import { ProveedorContact } from 'src/modules/proveedor-contact/entities/proveed
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      entities: [User, ItineraryTemplate, Component, Service, Client, Proveedores, ProveedorContact], // Aquí se agregarán las entidades
+      entities: [User, 
+                  ItineraryTemplate, 
+                  Component, 
+                  Service, 
+                  Client, 
+                  Proveedores, 
+                  ProveedorContact,
+                  Tarifario
+                ], // Aquí se agregarán las entidades
       synchronize: true, // Cambia a true solo en desarrollo
     }),
   ],

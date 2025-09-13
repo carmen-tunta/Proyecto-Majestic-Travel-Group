@@ -1,5 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, OneToOne } from 'typeorm';
 import { ProveedorContact } from 'src/modules/proveedor-contact/entities/proveedor-contact.entity';
+import { Tarifario } from 'src/modules/tarifario/entities/tarifario.entity';
 
 @Entity('proveedores')
 export class Proveedores {
@@ -47,4 +48,7 @@ export class Proveedores {
 
   @OneToMany(() => ProveedorContact, contact => contact.proveedor)
   contacts: ProveedorContact[];
+
+  @OneToOne(() => Tarifario, tarifario => tarifario.proveedor)
+  tarifario: Tarifario;
 }

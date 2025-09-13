@@ -12,6 +12,7 @@ import { ClientsModule } from '../clients/clients.module';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { ProveedoresModule } from '../proveedores/proveedores.module';
 import { ProveedorContactModule } from '../proveedor-contact/proveedor-contact.module';
+import { TarifarioModule } from '../tarifario/tarifario.module';
 
 @Module({
   imports: [DatabaseModule, 
@@ -22,7 +23,8 @@ import { ProveedorContactModule } from '../proveedor-contact/proveedor-contact.m
             ServicesModule, 
             ClientsModule,
             ProveedoresModule,
-            ProveedorContactModule
+            ProveedorContactModule,
+            TarifarioModule
           ],
   controllers: [AppController],
   providers: [
