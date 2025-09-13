@@ -96,7 +96,7 @@ export class Client {
   @Column({
     type: 'varchar',
     length: 50,
-    default: 'Cotización', //Eliminar
+    default: 'Registrado',
     comment: 'Estado del cliente',
   })
   estado: string;
