@@ -13,8 +13,8 @@ import { AuthProvider } from './modules/auth/context/AuthContext';
 import ProtectedRoute from './modules/auth/components/ProtectedRoute';
 import PublicRoute from './modules/auth/components/PublicRoute';
 import { ModalProvider, useModal } from './contexts/ModalContext';
-
-
+import Clientes from './sections/Clientes/components/Clientes';
+import ClientPage from './sections/Clientes/components/ClientPage';
 import Services from './sections/Services/components/Services';
 
 function AppContent() {
@@ -68,6 +68,21 @@ function AppContent() {
           <Route path="/proveedores/detalles" element={
             <ProtectedRoute>
               <DetallesProveedores />
+            </ProtectedRoute>
+          } />
+          <Route path="/clientes" element={
+            <ProtectedRoute>
+              <Clientes />
+            </ProtectedRoute>
+          } />
+          <Route path="/clientes/nuevo" element={
+            <ProtectedRoute>
+              <ClientPage />
+            </ProtectedRoute>
+          } />
+          <Route path="/clientes/:id" element={
+            <ProtectedRoute>
+              <ClientPage />
             </ProtectedRoute>
           } />
         </Routes>

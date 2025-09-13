@@ -1,0 +1,382 @@
+/* Página de cliente */
+.client-page {
+  min-height: 100vh;
+  background: #f8f9fa;
+  padding: 0;
+  margin: 0;
+}
+
+/* Loading */
+.client-page-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: #f8f9fa;
+}
+
+.loading-spinner {
+  font-size: 18px;
+  color: #1976d2;
+}
+
+/* Header */
+.client-page-header {
+  background: #fff;
+  padding: 24px 40px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.client-page-header-content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.client-page-header-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.client-page-breadcrumb {
+  font-size: 14px;
+  color: #666;
+  font-weight: 500;
+}
+
+.client-page-title {
+  font-size: 28px;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+}
+
+/* Tabs */
+.client-page-tabs {
+  background: #fff;
+  padding: 0 40px;
+  border-bottom: 1px solid #e0e0e0;
+  display: flex;
+  gap: 0;
+}
+
+.client-page-tab {
+  background: none;
+  border: none;
+  padding: 16px 24px;
+  font-size: 16px;
+  font-weight: 500;
+  color: #666;
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.client-page-tab:hover {
+  color: #1976d2;
+  background: #f8f9fa;
+}
+
+.client-page-tab.active {
+  color: #1976d2;
+  border-bottom-color: #1976d2;
+  background: #fff;
+}
+
+/* Form */
+.client-page-form {
+  padding: 40px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.client-page-form-card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 40px;
+  margin-bottom: 24px;
+}
+
+.client-page-form-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 32px 0;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.client-page-form-section {
+  margin-bottom: 0;
+}
+
+.client-page-form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+}
+
+.client-page-form-column {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Form fields */
+.client-page-form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.client-page-form-field label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+  margin: 0;
+}
+
+.client-page-form-field .p-inputtext,
+.client-page-form-field .p-dropdown,
+.client-page-form-field .p-calendar {
+  width: 100%;
+  padding: 14px 16px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.client-page-form-field .p-inputtext:focus,
+.client-page-form-field .p-dropdown:focus,
+.client-page-form-field .p-calendar:focus {
+  outline: none;
+  border-color: #1976d2;
+  box-shadow: 0 0 0 2px rgba(25, 118, 210, 0.2);
+}
+
+.client-page-form-field .p-inputtext:hover,
+.client-page-form-field .p-dropdown:hover,
+.client-page-form-field .p-calendar:hover {
+  border-color: #1976d2;
+}
+
+/* Radio buttons */
+.client-page-radio-group {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  margin-top: 8px;
+}
+
+.client-page-radio-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.client-page-radio-option label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-weight: normal;
+  margin: 0;
+  padding: 0;
+  color: #333;
+  font-size: 14px;
+}
+
+/* Estilos para radio buttons */
+.client-page-form-field .p-radiobutton {
+  margin-right: 8px;
+}
+
+.client-page-form-field .p-radiobutton .p-radiobutton-box {
+  border: 2px solid #e0e0e0;
+  background: #fff;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.client-page-form-field .p-radiobutton .p-radiobutton-box.p-highlight {
+  border-color: #1976d2 !important;
+  background: #1976d2 !important;
+}
+
+.client-page-form-field .p-radiobutton .p-radiobutton-box.p-highlight .p-radiobutton-icon {
+  background: #fff !important;
+  width: 8px !important;
+  height: 8px !important;
+  border-radius: 50% !important;
+  display: block !important;
+}
+
+.client-page-form-field .p-radiobutton .p-radiobutton-box .p-radiobutton-icon {
+  background: transparent;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: none;
+}
+
+/* Estado marcado cuando está checked */
+.client-page-form-field .p-radiobutton .p-radiobutton-box:not(.p-highlight) {
+  border-color: #e0e0e0;
+  background: #fff;
+}
+
+.client-page-form-field .p-radiobutton .p-radiobutton-box:not(.p-highlight) .p-radiobutton-icon {
+  display: none;
+}
+
+/* Estados hover y focus */
+.client-page-form-field .p-radiobutton .p-radiobutton-box:hover {
+  border-color: #1976d2;
+  box-shadow: 0 2px 4px rgba(25, 118, 210, 0.2);
+}
+
+.client-page-form-field .p-radiobutton .p-radiobutton-box:focus {
+  outline: none;
+  border-color: #1976d2;
+  box-shadow: 0 0 0 2px rgba(25, 118, 210, 0.2);
+}
+
+/* Forzar visibilidad del icono cuando está marcado */
+.client-page-form-field .p-radiobutton.p-radiobutton-checked .p-radiobutton-box {
+  border-color: #1976d2 !important;
+  background: #1976d2 !important;
+}
+
+.client-page-form-field .p-radiobutton.p-radiobutton-checked .p-radiobutton-box .p-radiobutton-icon {
+  background: #fff !important;
+  display: block !important;
+}
+
+/* Estilos específicos para PrimeReact RadioButton */
+.client-page-form-field .p-radiobutton input[type="radio"]:checked + .p-radiobutton-box {
+  border-color: #1976d2 !important;
+  background: #1976d2 !important;
+}
+
+.client-page-form-field .p-radiobutton input[type="radio"]:checked + .p-radiobutton-box .p-radiobutton-icon {
+  background: #fff !important;
+  display: block !important;
+  width: 8px !important;
+  height: 8px !important;
+  border-radius: 50% !important;
+}
+
+/* Estado checked usando la clase p-radiobutton-checked */
+.client-page-form-field .p-radiobutton.p-radiobutton-checked .p-radiobutton-box,
+.client-page-form-field .p-radiobutton.p-radiobutton-checked .p-radiobutton-box.p-highlight {
+  border-color: #1976d2 !important;
+  background: #1976d2 !important;
+}
+
+.client-page-form-field .p-radiobutton.p-radiobutton-checked .p-radiobutton-box .p-radiobutton-icon,
+.client-page-form-field .p-radiobutton.p-radiobutton-checked .p-radiobutton-box.p-highlight .p-radiobutton-icon {
+  background: #fff !important;
+  display: block !important;
+  width: 8px !important;
+  height: 8px !important;
+  border-radius: 50% !important;
+}
+
+/* Forzar estado visual cuando está checked */
+.client-page-form-field .p-radiobutton input[type="radio"]:checked ~ .p-radiobutton-box {
+  border-color: #1976d2 !important;
+  background: #1976d2 !important;
+}
+
+.client-page-form-field .p-radiobutton input[type="radio"]:checked ~ .p-radiobutton-box .p-radiobutton-icon {
+  background: #fff !important;
+  display: block !important;
+  width: 8px !important;
+  height: 8px !important;
+  border-radius: 50% !important;
+}
+
+/* Estilos adicionales para asegurar que se vea marcado */
+.client-page-form-field .p-radiobutton .p-radiobutton-box.p-radiobutton-box-highlight {
+  border-color: #1976d2 !important;
+  background: #1976d2 !important;
+}
+
+.client-page-form-field .p-radiobutton .p-radiobutton-box.p-radiobutton-box-highlight .p-radiobutton-icon {
+  background: #fff !important;
+  display: block !important;
+  width: 8px !important;
+  height: 8px !important;
+  border-radius: 50% !important;
+}
+
+/* Campo deshabilitado */
+.client-page-disabled-field {
+  background: #f5f5f5 !important;
+  color: #666 !important;
+  cursor: not-allowed !important;
+}
+
+/* Botones de acción */
+.client-page-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 16px;
+  padding: 24px 0;
+  background: #f8f9fa;
+  margin: 0 -40px -40px -40px;
+  padding: 24px 40px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.client-page-form-actions .p-button {
+  min-width: 120px;
+  padding: 12px 24px;
+  font-weight: 500;
+}
+
+.client-page-form-actions .p-button.p-button-text {
+  color: #666;
+}
+
+.client-page-form-actions .p-button.p-button-text:hover {
+  background: #f0f0f0;
+  color: #333;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .client-page-form-row {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+  
+  .client-page-header {
+    padding: 16px 20px;
+  }
+  
+  .client-page-tabs {
+    padding: 0 20px;
+  }
+  
+  .client-page-form {
+    padding: 20px;
+  }
+  
+  .client-page-form-card {
+    padding: 24px;
+  }
+  
+  .client-page-form-actions {
+    margin: 0 -20px -20px -20px;
+    padding: 20px;
+  }
+}
