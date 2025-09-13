@@ -172,9 +172,11 @@ const TarifaMenu = ({ proveedor }) => {
         return (
             <InputText
                 type="number"
+                min={0}
                 value={options.value}
                 onChange={(e) => options.editorCallback(e.target.value)}
                 style={{ width: '100%', margin: 0, alignContent: 'center', textAlign: 'center' }}
+                onWheel={e => e.target.blur()}
             />
         );
     };
@@ -260,8 +262,7 @@ const TarifaMenu = ({ proveedor }) => {
                                                 }}
                                             >
                                                 {results
-                                                    // .filter(comp => !comp.serviceId && 
-                                                        // !serviceComponents.some(sc => sc.id === comp.id)) 
+                                                    .filter(comp => !selectedComponents.some(sc => sc.id === comp.id)) 
                                                     .map(comp => (
                                                     <div
                                                         key={comp.id}
