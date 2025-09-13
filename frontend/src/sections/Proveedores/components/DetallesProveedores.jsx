@@ -11,13 +11,20 @@ import { MultiSelect } from "primereact/multiselect";
 import { addLocale } from "primereact/api";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
+import { Toast } from "primereact/toast";
+import { ConfirmDialog } from "primereact/confirmdialog";
+import { useNotification } from "../../Notification/NotificationContext";
+import { useModal } from "../../../contexts/ModalContext";
+import { useRef } from "react";
 import ProveedoresRepository from "../../../modules/Proveedores/repository/ProveedoresRepository";
 import CreateProveedor from "../../../modules/Proveedores/application/CreateProveedor";
 import UpdateProveedor from "../../../modules/Proveedores/application/UpdateProveedor";
 import ProveedorContactRepository from "../../../modules/ProveedorContact/repository/ProveedorContactRepository";
 import GetContactByIdProveedor from "../../../modules/ProveedorContact/application/GetContactByIdProveedor";
-import { useNotification } from "../../Notification/NotificationContext";
+import ContactModal from "./ContactModal";
+import DeleteProveedorContact from "../../../modules/ProveedorContact/application/DeleteProveedorContact";
 import "../styles/DetallesProveedores.css"
+
 
 
 const DetallesProveedores = () => {
@@ -33,11 +40,59 @@ const DetallesProveedores = () => {
 
     const contactRepository = new ProveedorContactRepository();
     const getContactByIdProveedor = new GetContactByIdProveedor(contactRepository);
+    const deleteContact = new DeleteProveedorContact(contactRepository);
     const [contacts, setContacts] = useState([]);
 
     const { showNotification } = useNotification();
     const [loading, setLoading] = useState(false);
     const [loadContactsing, setLoadContacts] = useState(false);
+    const [showModal, setShowModal] = useState(false);
+    const [selectedContact, setSelectedContact] = useState(null);
+    const { setIsModalOpen } = useModal();
+
+    const handleEditContact = (contact) => {
+        setSelectedContact(contact);
+        setShowModal(true);
+        setIsModalOpen(true);
+    };
+
+    const handleNewContact = () => {
+        setSelectedContact(null);
+        setShowModal(true);
+        setIsModalOpen(true);
+    }   
+
+    const handleDeleteIconClick = (contact) => {
+        setContactToDelete(contact);
+        setVisible(true);
+    };
+
+    const reject = () => {
+        setContactToDelete(null);
+        setVisible(false);
+    };
+
+    const handleDeleteContact = async () => {
+        if (contactToDelete && contactToDelete.id) {
+            try {
+                await deleteContact.execute(contactToDelete.id);
+                showNotification('Medio de contacto eliminado con éxito!', 'success');
+                loadContacts();
+            } catch (error) {
+                console.error('Error al eliminar el contacto:', error);
+                showNotification('Error al eliminar el medio de contacto', 'error');
+            } finally {
+                setContactToDelete(null);
+                setVisible(false);
+            }
+        }
+    }
+
+    const handleModalClose = () => {
+        setShowModal(false);
+        setIsModalOpen(false);
+        loadContacts();
+    };
 
     const peruCities = ["Lima", "Cusco", "Arequipa", "Trujillo", "Iquitos", "Puno", "Chiclayo", "Piura", "Huaraz", "Nazca"];
     const parseLocalDate = (dateString) => {
@@ -71,6 +126,9 @@ const DetallesProveedores = () => {
     const [gender, setGender] = useState(proveedorState ? proveedorState.gender : '');
     const [registrationDate, setRegistrationDate] = useState(proveedorState && proveedorState.registrationDate ? parseLocalDate(proveedorState.registrationDate) : null);
 
+    const [visible, setVisible] = useState(false);
+    const [contactToDelete, setContactToDelete] = useState(null);
+
     const items = [
         { label: 'Detalles'},
         { label: 'Medio de contacto', disabled: !proveedorState },
@@ -81,7 +139,6 @@ const DetallesProveedores = () => {
         try {
             const contactData = await getContactByIdProveedor.execute(proveedorState.id);
             setContacts(Array.isArray(contactData) ? contactData : []);
-            console.log(contactData);
         } catch (error) {
             console.error('Error al obtener los contactos:', error);
             setContacts([]);
@@ -142,6 +199,7 @@ const DetallesProveedores = () => {
             setLoading(false);
         }
     };
+
 
 
     return (
@@ -334,7 +392,7 @@ const DetallesProveedores = () => {
                             label="Nuevo" 
                             size='small' 
                             outlined
-                            onClick={() => console.log("TODO")}
+                            onClick={() => handleNewContact()}
                         />
                     </div>
                     <DataTable
@@ -354,18 +412,37 @@ const DetallesProveedores = () => {
                                         className="pi pi-pencil"
                                         title="Editar"
                                         style={{ cursor: "pointer", marginRight: '10px' }}
-                                        onClick={() => console.log("TODO")}
+                                        onClick={() => handleEditContact(rowData)}
                                     ></i>
                                     <i
                                         className="pi pi-trash"
                                         title="Borrar"
                                         style={{ cursor: "pointer" }}
-                                        onClick={() => console.log("TODO")}
+                                        onClick={() => handleDeleteIconClick(rowData)}
                                     ></i>
                                 </span>
                             )} />
                     </DataTable>
+                        <ConfirmDialog 
+                            group="declarative"  
+                            visible={visible} 
+                            onHide={() => setVisible(false)} 
+                            message="¿Seguro que  deseas eliminar este medio de contacto?" 
+                            header="Confirmación" 
+                            icon="pi pi-exclamation-triangle" 
+                            accept={() => handleDeleteContact()}
+                            reject={() => reject()} 
+                        />
                 </div>
+            )}
+
+            {showModal && (
+                <ContactModal
+                    visible={showModal}
+                    onHide={handleModalClose}
+                    contact={selectedContact}
+                    proveedor={proveedorState}
+                />
             )}
 
         </div>

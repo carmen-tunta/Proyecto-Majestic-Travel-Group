@@ -11,7 +11,7 @@ const getAuthHeaders = () => {
 
 class ProveedorContactRepository {
 
-    async createContact(contact) {
+    async create(contact) {
         const response = await fetch(apiUrl, {
             method: "POST",
             headers: getAuthHeaders(),
@@ -35,7 +35,7 @@ class ProveedorContactRepository {
         return await response.json();
     }
 
-    async updateContact(contact) {
+    async update(contact) {
         const response = await fetch(`${apiUrl}/update/${contact.id}`, {
             method: "PUT",
             headers: getAuthHeaders(),
@@ -45,7 +45,7 @@ class ProveedorContactRepository {
         return await response.json();
     }
 
-    async deleteContact(id) {
+    async delete(id) {
         await fetch(`${apiUrl}/${id}`, {
             method: "DELETE",
             headers: getAuthHeaders()
