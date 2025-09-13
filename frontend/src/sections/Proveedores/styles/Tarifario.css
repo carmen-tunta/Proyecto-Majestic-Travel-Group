@@ -37,8 +37,32 @@
 
 .tarifa-header {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
+    gap: 1rem;
+}
+
+.tarifa-validity {
+  width: 20%;
+}
+
+.tarifa-validity .p-calendar {
+  width: 100%;
+}
+
+.tarifa-observation {
+  width: 40%;
+}
+
+.tarifa-observation input {
+  width: 100%;
+}
+
+.tarifa-save-button {
+  width: 20%; 
+}
+
+.tarifa-save-button .p-button-label {
+    font-weight: normal;
 }
 
 

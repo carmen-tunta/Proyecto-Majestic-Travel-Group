@@ -31,6 +31,21 @@ const Tarifario = () => {
         { label: 'Incremento', disabled: !proveedor },
         { label: 'Documentos', disabled: !proveedor }
     ];
+    const parseLocalDate = (dateString) => {
+        if (!dateString) return null;
+        const [year, month, day] = dateString.split('-');
+        return new Date(year, month - 1, day);
+    };
+    addLocale('es', {
+        firstDayOfWeek: 1,
+        dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+        dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+        dayNamesMin: ['D', 'L', 'M', 'X', 'J', 'V', 'S'],
+        monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+        monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+        today: 'Hoy',
+        clear: 'Limpiar'
+    });
 
     const tarifarioRepo = new TarifarioRepository();
     const getTarifarioByIdProveedor = new GetTarifarioByIdProveedor(tarifarioRepo);
@@ -72,8 +87,8 @@ const Tarifario = () => {
 
     useEffect(() => {
         if (tarifa) {
-            setValidityFrom(tarifa.validityFrom || '');
-            setValidityTo(tarifa.validityTo || '');
+            setValidityFrom(parseLocalDate(tarifa.validityFrom) || null);
+            setValidityTo( parseLocalDate(tarifa.validityTo) || null);
             setObservation(tarifa.observation || '');
         } else {
             setValidityFrom('');
@@ -140,23 +155,29 @@ const Tarifario = () => {
                 <div>Cargando...</div>
             ) : (
             <div className="tarifa-header">
-                <FloatLabel >
-                    <InputText 
-                        id="validityFrom"
-                        value={validityFrom}
-                        onChange={(e) => setValidityFrom(e.target.value)}
+                <FloatLabel className="tarifa-validity">
+                    <Calendar
+                        id="validityFrom" 
+                        value={validityFrom} 
+                        onChange={(e) => setValidityFrom(e.value)} 
+                        dateFormat="D dd M y"
+                        locale="es"
+                        required
                     />
                     <label htmlFor="validityFrom">Vigencia desde</label>
                 </FloatLabel>
-                <FloatLabel>
-                    <InputText 
+                <FloatLabel className="tarifa-validity">
+                    <Calendar
                         id="validityTo"
                         value={validityTo}
                         onChange={(e) => setValidityTo(e.target.value)}
+                        dateFormat="D dd M y"
+                        locale="es"
+                        required
                     />
                     <label htmlFor="validityTo">Vigencia hasta</label>
                 </FloatLabel>
-                <FloatLabel>
+                <FloatLabel className="tarifa-observation">
                     <InputText 
                         id="observation"
                         value={observation}
@@ -165,12 +186,20 @@ const Tarifario = () => {
                     <label htmlFor="observation">Observación</label>
                 </FloatLabel>
                 <Button
+                    className="tarifa-save-button"
                     label= {tarifa ? "Guardar cambios" : "Guardar para continuar"}
                     text
                     onClick={handleSaveTarifario}
                 />
             </div>
             )}
+
+            {tarifa && (
+                <div>
+                    Tarifa
+                </div>
+            )}
+
             </>
         )}
         {activeIndex === 1 && (
