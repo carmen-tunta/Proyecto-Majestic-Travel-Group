@@ -6,6 +6,8 @@ import Menu from './sections/Menu/components/Menu';
 import Itinerario from './sections/Itinerario/components/Itinerario';
 import ResetPassword from './sections/Login/components/ResetPassword';
 import Componentes from './sections/Componentes/components/Componentes';
+import Proveedores from './sections/Proveedores/components/Proveedores';
+import DetallesProveedores from './sections/Proveedores/components/DetallesProveedores';
 import { NotificationProvider } from './sections/Notification/NotificationContext';
 import { AuthProvider } from './modules/auth/context/AuthContext';
 import ProtectedRoute from './modules/auth/components/ProtectedRoute';
@@ -56,6 +58,16 @@ function AppContent() {
           <Route path="/servicios" element={
             <ProtectedRoute>
               <Services />
+            </ProtectedRoute>
+          } />
+          <Route path="/proveedores" element={
+            <ProtectedRoute>
+              <Proveedores />
+            </ProtectedRoute>
+          } />
+          <Route path="/proveedores/detalles" element={
+            <ProtectedRoute>
+              <DetallesProveedores />
             </ProtectedRoute>
           } />
           <Route path="/clientes" element={
