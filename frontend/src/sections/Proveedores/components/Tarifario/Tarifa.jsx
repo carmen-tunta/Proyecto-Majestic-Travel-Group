@@ -14,12 +14,14 @@ import { Column } from "primereact/column";
 import { ConfirmDialog } from "primereact/confirmdialog";
 import { useNotification } from "../../../Notification/NotificationContext";
 import { useModal } from "../../../../contexts/ModalContext";
-import "../../styles/Tarifario.css"
+import "../../styles/Tarifario/Tarifa.css"
 import TarifarioRepository from "../../../../modules/Tarifario/repository/TarifarioRepository";
 import GetTarifarioByIdProveedor from "../../../../modules/Tarifario/application/GetTarifarioByIdProveedor";
 import CreateTarifario from "../../../../modules/Tarifario/application/CreateTarifario";
 import UpdateTarifario from "../../../../modules/Tarifario/application/UpdateTarifario";
-import Tarifa from "./Tarifa";
+import useSearch from "../../../../hooks/useSearch";
+import { apiService } from "../../../../services/apiService";
+import SearchBar from "../../../../components/SearchBar";
 
 const TarifaMenu = ({ proveedor }) => {
     const [loading, setLoading] = useState(false);
@@ -28,6 +30,15 @@ const TarifaMenu = ({ proveedor }) => {
     const [validityTo, setValidityTo] = useState('');
     const [observation, setObservation] = useState('');
     const { showNotification } = useNotification();
+    const [selectedComponents, setSelectedComponents] = useState([]);
+    
+    const [columns, setColumns] = useState([]);
+    const [modalColumn, setModalColumn] = useState(false);
+    const [columnDescription, setColumnDescription] = useState('');
+    const [paxMin, setPaxMin] = useState('');
+    const [paxMax, setPaxMax] = useState('');
+
+
 
     const tarifarioRepo = new TarifarioRepository();
     const getTarifarioByIdProveedor = new GetTarifarioByIdProveedor(tarifarioRepo);
@@ -50,7 +61,31 @@ const TarifaMenu = ({ proveedor }) => {
         today: 'Hoy',
         clear: 'Limpiar'
     });
+    const { search, setSearch, results, loading: searchLoading } = useSearch((q) => apiService.universalSearch('components', q));
 
+
+    const handleSelectComponent = (comp) => {
+        // Evita duplicados
+        if (!selectedComponents.some(c => c.id === comp.id)) {
+            setSelectedComponents([...selectedComponents, comp]);
+        }
+    };
+
+    const handleAddColumn = () => {
+        setColumns([
+            ...columns,
+            {   field: "0", 
+                header: <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                            <div>{columnDescription}</div>
+                            <div>{paxMin}-{paxMax}</div>
+                        </div>
+            }
+        ]);
+        setModalColumn(false);
+        setColumnDescription('');
+        setPaxMin('');
+        setPaxMax('');
+    };
 
     const fetchTarifa = async (proveedorId) => {
         setLoading(true);
@@ -114,6 +149,7 @@ const TarifaMenu = ({ proveedor }) => {
         }
     };
 
+
     return (
         <>
             {loading ? (
@@ -160,8 +196,112 @@ const TarifaMenu = ({ proveedor }) => {
             )}
 
             {tarifa && (
-                <div>
+                <div className="tarifa-body">
                     Tarifa
+                    <div className="tarifa-content">
+                        <div className="scrolling-table">
+                        <DataTable 
+                            value={selectedComponents}
+                            scrollable
+                            scrollHeight="flex" 
+                        >
+                            <Column 
+                                style={{ minWidth: '25vw', backgroundColor: '#ffffff', border: 'none' }}
+                                field="componentName"
+                                header={
+                                    <div>
+                                        <SearchBar value={search} onChange={setSearch} placeholder="Buscar componentes..." />
+                                        {search && results.length > 0 && (
+                                            <div
+                                                style={{
+                                                    position: 'absolute',
+                                                    top: '4rem', // ajusta según la altura del input
+                                                    left: '1.25rem',
+                                                    width: '22vw',
+                                                    background: '#fff',
+                                                    border: '1px solid #ddd',
+                                                    borderRadius: 4,
+                                                    boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+                                                    zIndex: 10,
+                                                    maxHeight: '200px',
+                                                    overflowY: 'auto',
+                                                }}
+                                            >
+                                                {results
+                                                    // .filter(comp => !comp.serviceId && 
+                                                        // !serviceComponents.some(sc => sc.id === comp.id)) 
+                                                    .map(comp => (
+                                                    <div
+                                                        key={comp.id}
+                                                        style={{
+                                                            padding: '8px 12px',
+                                                            cursor: 'pointer',
+                                                            borderBottom: '1px solid #eee'
+                                                        }}
+                                                        onClick={() => handleSelectComponent(comp)}
+                                                    >
+                                                        {comp.componentName} <span style={{ color: '#888' }}>({comp.serviceType})</span>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        )}
+                                    </div>
+                                }
+                            />
+
+                            {columns.map(col => (
+                                <Column
+                                    key={col.field}
+                                    field={col.field}
+                                    header={col.header}
+                                    style={{ minWidth: '11vw' }}
+                                />
+                            ))}
+                        </DataTable>
+                        </div>
+                        <i className="pi pi-plus-circle tarifa-add-column-button" onClick={() => setModalColumn(true)}></i>
+                    </div>
+                </div>
+            )}
+
+            {modalColumn && (
+                <div className="modal-add-column">
+                    <div className="modal-column-header">
+                        <h2>Agregar columna</h2>
+                        <i className="pi pi-times" onClick={() => setModalColumn(false)}></i>
+                    </div>
+                    <div className="modal-column-body">
+                        <FloatLabel>
+                            <InputText 
+                                id="columnDescription"
+                                value={columnDescription}
+                                onChange={(e) => setColumnDescription(e.target.value)}
+                            />
+                            <label htmlFor="columnDescription">Descripción de la columna</label>
+                        </FloatLabel>
+                        <div>
+                            <FloatLabel className="pax">
+                                <InputText 
+                                    id="paxMin"
+                                    value={paxMin}
+                                    onChange={(e) => setPaxMin(e.target.value)}
+                                />
+                                <label htmlFor="paxMin">Pax mínimo</label>
+                            </FloatLabel>
+
+                            <FloatLabel className="pax">
+                                <InputText 
+                                    id="paxMax"
+                                    value={paxMax}
+                                    onChange={(e) => setPaxMax(e.target.value)}
+                                />
+                                <label htmlFor="paxMax">Pax máximo</label>
+                            </FloatLabel>
+                        </div>
+                    </div>
+                    <div>
+                        <Button label="Agregar" onClick={handleAddColumn} />
+                    </div>
                 </div>
             )}
 

@@ -14,7 +14,7 @@ import { Column } from "primereact/column";
 import { ConfirmDialog } from "primereact/confirmdialog";
 import { useNotification } from "../../../Notification/NotificationContext";
 import { useModal } from "../../../../contexts/ModalContext";
-import "../../styles/Tarifario.css"
+import "../../styles/Tarifario/Tarifario.css"
 import TarifarioRepository from "../../../../modules/Tarifario/repository/TarifarioRepository";
 import GetTarifarioByIdProveedor from "../../../../modules/Tarifario/application/GetTarifarioByIdProveedor";
 import CreateTarifario from "../../../../modules/Tarifario/application/CreateTarifario";
@@ -65,7 +65,9 @@ const Tarifario = () => {
             </div>
         )}
         {activeIndex === 1 && (
-            <div></div>
+            <div>
+
+            </div>
         )}
         {activeIndex === 2 && (
             <div></div>
