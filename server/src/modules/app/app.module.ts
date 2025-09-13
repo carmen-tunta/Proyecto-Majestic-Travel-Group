@@ -9,10 +9,11 @@ import { ItineraryTemplateModule } from '../itinerary-template/itinerary-templat
 import { ComponentsModule } from '../components/components.module';
 import { ServicesModule } from '../services/services.module';
 import { ClientsModule } from '../clients/clients.module';
+import { ContactClientsModule } from '../contact-clients/contact-clients.module';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 @Module({
-  imports: [DatabaseModule, UsersModule, AuthModule, ItineraryTemplateModule, ComponentsModule, ServicesModule, ClientsModule],
+  imports: [DatabaseModule, UsersModule, AuthModule, ItineraryTemplateModule, ComponentsModule, ServicesModule, ClientsModule, ContactClientsModule],
   controllers: [AppController],
   providers: [
     AppService,

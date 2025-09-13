@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { clientesContact } from '../../contact-clients/entities/contact.entity';
 
 @Entity('clients')
 export class Client {
@@ -99,4 +100,7 @@ export class Client {
     comment: 'Estado del cliente',
   })
   estado: string;
+
+  @OneToMany(() => clientesContact, contact => contact.client)
+  contacts: clientesContact[];
 }
