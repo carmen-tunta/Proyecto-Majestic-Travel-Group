@@ -13,6 +13,7 @@ const ClientPage = () => {
   const { id } = useParams();
   const isEditing = Boolean(id);
 
+
   const [formData, setFormData] = useState({
     nombre: '',
     pais: '',
@@ -27,11 +28,27 @@ const ClientPage = () => {
     mercado: '',
     rubro: '',
     genero: 'Masculino',
-    estado: 'Cotización'
+    estado: 'Registrado'
   });
 
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState('detalles');
+
+  // Función para formatear fechas en formato "Lun 01 Dic 25"
+  const formatDate = (dateString) => {
+    if (!dateString) return '';
+    
+    const date = new Date(dateString);
+    const days = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
+    const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+    
+    const dayName = days[date.getDay()];
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = months[date.getMonth()];
+    const year = String(date.getFullYear()).slice(-2);
+    
+    return `${dayName} ${day} ${month} ${year}`;
+  };
 
   // Cargar datos del cliente a editar
   useEffect(() => {
@@ -55,7 +72,7 @@ const ClientPage = () => {
               mercado: client.mercado || '',
               rubro: client.rubro || '',
               genero: client.genero || 'Masculino',
-              estado: client.estado || 'Cotización'
+              estado: client.estado || 'Registrado'
             });
           }
         } catch (error) {
@@ -302,6 +319,9 @@ const ClientPage = () => {
                     dateFormat="dd/mm/yy"
                     placeholder="Seleccione fecha"
                     showIcon
+                    icon="pi pi-calendar"
+                    inputStyle={{ width: '100%' }}
+                    panelStyle={{ zIndex: 1000 }}
                   />
                 </div>
               </div>
@@ -397,7 +417,7 @@ const ClientPage = () => {
                   <label htmlFor="fechaRegistro">Fecha de registro</label>
                   <InputText
                     id="fechaRegistro"
-                    value={isEditing && formData.fechaRegistro ? new Date(formData.fechaRegistro).toLocaleDateString() : new Date().toLocaleDateString()}
+                    value={isEditing && formData.fechaRegistro ? formatDate(formData.fechaRegistro) : formatDate(new Date().toISOString())}
                     disabled
                     className="client-page-disabled-field"
                   />
