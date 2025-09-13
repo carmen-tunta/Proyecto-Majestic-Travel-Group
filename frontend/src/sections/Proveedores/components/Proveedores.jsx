@@ -27,6 +27,10 @@ const Proveedores = () => {
         navigate('/proveedores/detalles', { state: { proveedor } });
     };
 
+    const handleTarifario = (proveedor) => {
+        navigate('/proveedores/tarifario', { state: { proveedor } });
+    }
+
     const handleNew = () => {
         setProveedores(null);
         navigate('/proveedores/detalles');
@@ -131,7 +135,8 @@ const Proveedores = () => {
                                 <i 
                                     className="pi pi-file"    
                                     title="Editar" 
-                                    style={{color:'#1976d2', marginRight: '10px'}}
+                                    style={{color:'#1976d2', marginRight: '10px', cursor:"pointer"}}
+                                    onClick={() => handleTarifario(rowData)}
                                 ></i>
                                 <i 
                                     className="pi pi-arrow-right"    

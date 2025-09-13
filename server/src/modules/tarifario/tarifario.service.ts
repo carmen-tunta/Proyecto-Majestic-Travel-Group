@@ -28,4 +28,10 @@ export class TarifarioService {
         return this.findById(id);
     }
 
+    async findByProveedorId(proveedorId: number): Promise<Tarifario[]> {
+        return this.tarifarioRepository.find({
+            where: { proveedorId },
+        });
+    }
+
 }

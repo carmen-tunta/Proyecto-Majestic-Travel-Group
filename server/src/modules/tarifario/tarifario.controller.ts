@@ -26,6 +26,15 @@ export class TarifarioController {
     updateTarifa(@Param('id') id: string, @Body() data: Partial<Tarifario>) {
         return this.tarifarioService.update(id, data);
     }
+
+    @Get('proveedor/:proveedorId')
+    async getByProveedorId(@Param('proveedorId') proveedorId: string) {
+        const idNum = Number(proveedorId);
+        if (isNaN(idNum)) {
+            throw new BadRequestException('El id recibido no es válido');
+        }
+        return this.tarifarioService.findByProveedorId(idNum);
+    }
 }
 
 
