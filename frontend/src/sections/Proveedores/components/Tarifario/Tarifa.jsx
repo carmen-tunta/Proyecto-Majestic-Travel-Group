@@ -26,6 +26,10 @@ import TarifaComponentRepository from "../../../../modules/TarifaComponent/repos
 import GetTarifaComponentByIdTarifa from "../../../../modules/TarifaComponent/application/GetTarifaComponentByIdTarifa";
 import CreateTarifaComponent from "../../../../modules/TarifaComponent/application/CreateTarifaComponent";
 import DeleteTarifaComponent from "../../../../modules/TarifaComponent/application/DeleteTarifaComponent";
+import TarifaColumnRepository from "../../../../modules/TarifaColumn/repository/TarifaColumnRepository";
+import CreateTarifaColumn from "../../../../modules/TarifaColumn/application/CreateTarifaColumn";
+import GetTarifaColumnByIdTarifa from "../../../../modules/TarifaColumn/application/GetTarifaColumnByIdTarifa";
+import UpdateTarifaColumn from "../../../../modules/TarifaColumn/application/UpdateTarifaColumn";
 
 const TarifaMenu = ({ proveedor }) => {
     const [loading, setLoading] = useState(false);
@@ -35,6 +39,7 @@ const TarifaMenu = ({ proveedor }) => {
     const [observation, setObservation] = useState('');
     const { showNotification } = useNotification();
     const [selectedComponents, setSelectedComponents] = useState([]);
+    const [tarifaComponents, setTarifaComponents] = useState([]);
     
     const [columns, setColumns] = useState([]);
     const [modalColumn, setModalColumn] = useState(false);
@@ -57,6 +62,11 @@ const TarifaMenu = ({ proveedor }) => {
     const createTarifaComponent = new CreateTarifaComponent(tarifaComponentRepo);
     const deleteTarifaComponent = new DeleteTarifaComponent(tarifaComponentRepo);
 
+    const tarifaColumnRepo = new TarifaColumnRepository();
+    const createTarifaColumn = new CreateTarifaColumn(tarifaColumnRepo);
+    const getTarifaColumnByTarifaId = new GetTarifaColumnByIdTarifa(tarifaColumnRepo);
+    const updateTarifaColumn = new UpdateTarifaColumn(tarifaColumnRepo);
+
     const parseLocalDate = (dateString) => {
         if (!dateString) return null;
         const [year, month, day] = dateString.split('-');
@@ -78,47 +88,102 @@ const TarifaMenu = ({ proveedor }) => {
     const handleAddComponent = async (comp) => {
         setSearch('');
         if (!selectedComponents.some(c => c.id === comp.id)) {
-            const newComp = { ...comp };
-            
             try {
-                await createTarifaComponent.execute(
-                    {
-                        tarifa_id: tarifa.id,
-                        componente_id: newComp.id
-                    }
+                const newTarifaComponent = await createTarifaComponent.execute({
+                    tarifa_id: tarifa.id,
+                    componente_id: comp.id
+                });
+                await Promise.all(
+                    columns.map(col =>
+                        createTarifaColumn.execute({
+                            tarifa_component_id: newTarifaComponent.id,
+                            description: col.description,
+                            paxMin: col.paxMin,
+                            paxMax: col.paxMax,
+                            price: 0
+                        })
+                    )
                 );
-                columns.forEach(col => {
-                newComp[col.field] = 0;
-            });
-                setSelectedComponents([...selectedComponents, newComp]);
-                console.log('Componente agregado:', selectedComponents);
+                await fetchTarifa(proveedor.id);
             } catch (error) {
-                console.error('Error al crear el componente:', error);
+                console.error('Error al crear el componente o sus celdas:', error);
                 showNotification('Error al agregar el componente', 'error');
             }
         }
     };
 
-    const handleAddColumn = () => {
-        const newField = `col_${columns.length + 1}`;
-        setColumns([
-            ...columns,
-            {   
-                field: newField,
-                header: <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                            <div>{columnDescription}</div>
-                            <div>{paxMin}-{paxMax}</div>
-                        </div>
+    const handleAddColumn = async () => {
+        for (const tcmp of tarifaComponents) {
+            try {
+                await createTarifaColumn.execute({
+                    tarifa_component_id: tcmp.id,
+                    description: columnDescription,
+                    paxMin: paxMin,
+                    paxMax: paxMax,
+                    price: 0
+                });
+            } catch (error) {
+                console.error('Error al crear columna en BD:', error);
+                showNotification('Error al guardar la columna en la BD', 'error');
             }
-        ]);
-        setSelectedComponents(selectedComponents.map(comp => ({
-            ...comp,
-            [newField]: 0
-        })));
+        }
+
+        try {
+            const tarifaColumnData = await getTarifaColumnByTarifaId.execute(tarifa.id);
+            const columns = buildColumns(tarifaColumnData);
+            const rows = buildRows(tarifaComponents, tarifaColumnData, columns);
+            setColumns(columns);
+            setSelectedComponents(rows);
+        } catch (error) {
+            showNotification('Error al refrescar las columnas', 'error');
+        }
+
         setModalColumn(false);
         setColumnDescription('');
         setPaxMin('');
         setPaxMax('');
+    };
+
+    const buildColumns = (tarifaColumnData) => {
+        const uniqueCols = [];
+        tarifaColumnData.forEach(col => {
+            const key = `${col.description}_${col.paxMin}_${col.paxMax}`;
+            if (!uniqueCols.some(c => c.key === key)) {
+                uniqueCols.push({
+                    key,
+                    field: key,
+                    header: (
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                            <div>{col.description}</div>
+                            <div>{col.paxMin}-{col.paxMax}</div>
+                        </div>
+                    ),
+                    description: col.description,
+                    paxMin: col.paxMin,
+                    paxMax: col.paxMax
+                });
+            }
+        });
+        return uniqueCols;
+    };
+
+    // 2. Construir filas con los valores de cada columna
+    const buildRows = (tarifaComponents, tarifaColumnData, columns) => {
+        return tarifaComponents.map(tc => {
+            const comp = { ...tc.component }; // tc.component es el objeto del componente
+            columns.forEach(col => {
+                // Busca la celda para este componente y columna
+                const cell = tarifaColumnData.find(
+                    c =>
+                        c.tarifa_component_id === tc.id &&
+                        c.description === col.description &&
+                        c.paxMin === col.paxMin &&
+                        c.paxMax === col.paxMax
+                );
+                comp[col.field] = cell ? Number(cell.price) : 0;
+            });
+            return comp;
+        });
     };
 
     const fetchTarifa = async (proveedorId) => {
@@ -127,9 +192,15 @@ const TarifaMenu = ({ proveedor }) => {
             const tarifaData = await getTarifarioByIdProveedor.execute(proveedorId);
             const tarifaObj = Array.isArray(tarifaData) ? tarifaData[0] : tarifaData;
             setTarifa(tarifaObj);
+
             const tarifaComponentData = await getTarifaComponentByIdTarifa.execute(tarifaObj.id);
-            const tarifaComponentArray = tarifaComponentData.map(item => item.component);
-            setSelectedComponents(tarifaComponentArray);
+            setTarifaComponents(tarifaComponentData);
+
+            const tarifaColumnData = await getTarifaColumnByTarifaId.execute(tarifaObj.id);
+            const columns = buildColumns(tarifaColumnData);
+            const rows = buildRows(tarifaComponentData, tarifaColumnData, columns);
+            setColumns(columns);
+            setSelectedComponents(rows);
         } catch (error) {
             console.error('Error al obtener el tarifario:', error);
             setTarifa(null);
@@ -186,8 +257,38 @@ const TarifaMenu = ({ proveedor }) => {
         }
     };
 
-    const onCellEditComplete = (e) => {
+    const onCellEditComplete = async (e) => {
         const { rowData, newValue, field } = e;
+
+        // Encuentra la columna correspondiente
+        const col = columns.find(c => c.field === field);
+        if (!col) return;
+
+        // Encuentra el componente correspondiente
+        const tc = tarifaComponents.find(tc => tc.component.id === rowData.id);
+        if (!tc) return;
+
+        // Encuentra el id de la celda en la BD
+        const tarifaColumnData = await getTarifaColumnByTarifaId.execute(tarifa.id);
+        const cell = tarifaColumnData.find(
+            c =>
+                c.tarifa_component_id === tc.id &&
+                c.description === col.description &&
+                c.paxMin === col.paxMin &&
+                c.paxMax === col.paxMax
+        );
+        if (!cell) return;
+
+        // Actualiza en la BD
+        try {
+            await updateTarifaColumn.execute({
+                ...cell,
+                price: newValue
+            });
+        } catch (error) {
+            showNotification('Error al actualizar el valor en la BD', 'error');
+            console.error(error);
+        }
         const updated = selectedComponents.map(comp =>
             comp.id === rowData.id ? { ...comp, [field]: newValue } : comp
         );
@@ -390,6 +491,7 @@ const TarifaMenu = ({ proveedor }) => {
                                 id="columnDescription"
                                 value={columnDescription}
                                 onChange={(e) => setColumnDescription(e.target.value)}
+                                required
                             />
                             <label htmlFor="columnDescription">Descripción de la columna</label>
                         </FloatLabel>
@@ -399,6 +501,7 @@ const TarifaMenu = ({ proveedor }) => {
                                     id="paxMin"
                                     value={paxMin}
                                     onChange={(e) => setPaxMin(e.target.value)}
+                                    required
                                 />
                                 <label htmlFor="paxMin">Pax mínimo</label>
                             </FloatLabel>
@@ -408,6 +511,7 @@ const TarifaMenu = ({ proveedor }) => {
                                     id="paxMax"
                                     value={paxMax}
                                     onChange={(e) => setPaxMax(e.target.value)}
+                                    required
                                 />
                                 <label htmlFor="paxMax">Pax máximo</label>
                             </FloatLabel>
