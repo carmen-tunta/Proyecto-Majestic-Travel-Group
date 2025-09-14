@@ -44,14 +44,15 @@ class TarifaColumnRepository {
         return await response.json();
     }
 
-    // async delete(tarifaId, componenteId) {
-    //     const response = await fetch(`${apiUrl}/tarifa/${tarifaId}/component/${componenteId}`, {
-    //         method: "DELETE",
-    //         headers: getAuthHeaders()
-    //     });
-    //     if (!response.ok) throw new Error('Error al eliminar el componente de la tarifa');
-    //     return await response.json();
-    // }
+    async deleteByDescription(tarifaId, description, paxMin, paxMax) {
+        const response = await fetch(`${apiUrl}/delete-column/${tarifaId}/${description}/${paxMin}/${paxMax}`, {
+            method: "DELETE",
+            headers: getAuthHeaders()
+        });
+        if (!response.ok) throw new Error('Error al eliminar la columna');
+        return await response.json();
+    }
+    
 }
 
 export default TarifaColumnRepository;

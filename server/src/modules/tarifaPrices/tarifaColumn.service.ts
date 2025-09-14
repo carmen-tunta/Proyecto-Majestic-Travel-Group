@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { TarifaColumn } from "./entities/tarifaColumn.entity";
-import { Repository } from "typeorm";
+import { In, Repository } from "typeorm";
 
 @Injectable()
 export class TarifaColumnService { 
@@ -29,5 +29,23 @@ export class TarifaColumnService {
         await this.tarifaColumnRepository.update(id, data);
         return this.tarifaColumnRepository.findOneBy({ id: Number(id) });
     }
+
+    async deleteColumnByDescription(tarifaId: number, description: string, paxMin: string, paxMax: string) {
+        // 1. Buscar los TarifaColumn que cumplen el filtro
+        const columns = await this.tarifaColumnRepository.find({
+            where: {
+                description,
+                paxMin: Number(paxMin),
+                paxMax: Number(paxMax),
+                tarifaComponent: { tarifa_id: tarifaId }
+            },
+            relations: ['tarifaComponent']
+        });
+        // 2. Eliminar por los IDs encontrados
+        const ids = columns.map(col => col.id);
+        if (ids.length === 0) return { affected: 0 };
+        return this.tarifaColumnRepository.delete({ id: In(ids) });
+    }
+    
 
 }

@@ -26,9 +26,14 @@ export class TarifaColumnController {
         return this.tarifaColumnService.update(id, data);
     }
 
-    // @Delete('tarifa/:tarifaId/component/:componentId')
-    // removeTarifaColumn(@Param('tarifaId') tarifaId: string, @Param('componentId') componentId: string) {
-    //     return this.tarifaColumnService.remove(tarifaId, componentId);
-    // }
+    @Delete('delete-column/:tarifaId/:description/:paxMin/:paxMax')
+    async deleteColumn(
+        @Param('tarifaId') tarifaId: number,
+        @Param('description') description: string,
+        @Param('paxMin') paxMin: string,
+        @Param('paxMax') paxMax: string
+    ) {
+        return this.tarifaColumnService.deleteColumnByDescription(tarifaId, description, paxMin, paxMax);
+    }
 
 }
