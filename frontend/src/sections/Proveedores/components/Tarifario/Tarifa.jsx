@@ -22,6 +22,10 @@ import UpdateTarifario from "../../../../modules/Tarifario/application/UpdateTar
 import useSearch from "../../../../hooks/useSearch";
 import { apiService } from "../../../../services/apiService";
 import SearchBar from "../../../../components/SearchBar";
+import TarifaComponentRepository from "../../../../modules/TarifaComponent/repository/TarifaComponentRepository";
+import GetTarifaComponentByIdTarifa from "../../../../modules/TarifaComponent/application/GetTarifaComponentByIdTarifa";
+import CreateTarifaComponent from "../../../../modules/TarifaComponent/application/CreateTarifaComponent";
+import DeleteTarifaComponent from "../../../../modules/TarifaComponent/application/DeleteTarifaComponent";
 
 const TarifaMenu = ({ proveedor }) => {
     const [loading, setLoading] = useState(false);
@@ -38,6 +42,9 @@ const TarifaMenu = ({ proveedor }) => {
     const [paxMin, setPaxMin] = useState('');
     const [paxMax, setPaxMax] = useState('');
 
+    
+    const [visibleDialog, setVisibleDialog] = useState(false);
+    const [componentToDelete, setComponentToDelete] = useState(null);
 
 
     const tarifarioRepo = new TarifarioRepository();
@@ -45,6 +52,10 @@ const TarifaMenu = ({ proveedor }) => {
     const createTarifario = new CreateTarifario(tarifarioRepo);
     const updateTarifario = new UpdateTarifario(tarifarioRepo);
 
+    const tarifaComponentRepo = new TarifaComponentRepository();
+    const getTarifaComponentByIdTarifa = new GetTarifaComponentByIdTarifa(tarifaComponentRepo);
+    const createTarifaComponent = new CreateTarifaComponent(tarifaComponentRepo);
+    const deleteTarifaComponent = new DeleteTarifaComponent(tarifaComponentRepo);
 
     const parseLocalDate = (dateString) => {
         if (!dateString) return null;
@@ -64,14 +75,27 @@ const TarifaMenu = ({ proveedor }) => {
     const { search, setSearch, results, loading: searchLoading } = useSearch((q) => apiService.universalSearch('components', q));
 
 
-    const handleSelectComponent = (comp) => {
+    const handleAddComponent = async (comp) => {
         setSearch('');
         if (!selectedComponents.some(c => c.id === comp.id)) {
             const newComp = { ...comp };
-            columns.forEach(col => {
+            
+            try {
+                await createTarifaComponent.execute(
+                    {
+                        tarifa_id: tarifa.id,
+                        componente_id: newComp.id
+                    }
+                );
+                columns.forEach(col => {
                 newComp[col.field] = 0;
             });
-            setSelectedComponents([...selectedComponents, newComp]);
+                setSelectedComponents([...selectedComponents, newComp]);
+                console.log('Componente agregado:', selectedComponents);
+            } catch (error) {
+                console.error('Error al crear el componente:', error);
+                showNotification('Error al agregar el componente', 'error');
+            }
         }
     };
 
@@ -103,6 +127,9 @@ const TarifaMenu = ({ proveedor }) => {
             const tarifaData = await getTarifarioByIdProveedor.execute(proveedorId);
             const tarifaObj = Array.isArray(tarifaData) ? tarifaData[0] : tarifaData;
             setTarifa(tarifaObj);
+            const tarifaComponentData = await getTarifaComponentByIdTarifa.execute(tarifaObj.id);
+            const tarifaComponentArray = tarifaComponentData.map(item => item.component);
+            setSelectedComponents(tarifaComponentArray);
         } catch (error) {
             console.error('Error al obtener el tarifario:', error);
             setTarifa(null);
@@ -181,6 +208,46 @@ const TarifaMenu = ({ proveedor }) => {
         );
     };
 
+    const handleDeleteIconComponentClick = (component) => {
+        setComponentToDelete(component);
+        setVisibleDialog(true);
+    };
+
+    const reject = () => {
+        setComponentToDelete(null);
+        setVisibleDialog(false);
+    };
+
+    const handleDeleteComponent = async () => {
+        if (!tarifa || !tarifa.id) {
+            showNotification('No hay tarifa guardada para eliminar componentes.', 'error');
+            return;
+        }
+
+        try {
+            await deleteTarifaComponent.execute(tarifa.id, componentToDelete.id);
+            setSelectedComponents((prev) => prev.filter((comp) => comp.id !== componentToDelete.id));
+            setComponentToDelete(null);
+            setVisibleDialog(false);
+            showNotification('Componente eliminado con éxito.', 'success');
+        } catch (error) {
+            showNotification('Error al eliminar el componente.', 'error');
+            console.error(error);
+        }
+    };
+
+    const componentBodyTemplate = (rowData) => (
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+            <i
+                className="pi pi-trash"
+                style={{ cursor: 'pointer', marginRight: 8 }}
+                title="Eliminar componente"
+                onClick={() => handleDeleteIconComponentClick(rowData)}
+            />
+            <span>{rowData.componentName}</span>
+        </div>
+    );
+
 
     return (
         <>
@@ -237,11 +304,12 @@ const TarifaMenu = ({ proveedor }) => {
                             scrollable
                             scrollHeight="flex" 
                             editMode="cell"
-                            
+                            loading={loading}
                         >
                             <Column 
                                 style={{ minWidth: '25vw', backgroundColor: '#ffffff', border: 'none' }}
                                 field="componentName"
+                                body={componentBodyTemplate}
                                 header={
                                     <div>
                                         <SearchBar value={search} onChange={setSearch} placeholder="Buscar componentes..." />
@@ -271,7 +339,7 @@ const TarifaMenu = ({ proveedor }) => {
                                                             cursor: 'pointer',
                                                             borderBottom: '1px solid #eee'
                                                         }}
-                                                        onClick={() => handleSelectComponent(comp)}
+                                                        onClick={() => handleAddComponent(comp)}
                                                     >
                                                         {comp.componentName} <span style={{ color: '#888' }}>({comp.serviceType})</span>
                                                     </div>
@@ -298,6 +366,17 @@ const TarifaMenu = ({ proveedor }) => {
                     </div>
                 </div>
             )}
+
+            <ConfirmDialog 
+                group="declarative"  
+                visible={visibleDialog} 
+                onHide={() => setVisibleDialog(false)} 
+                message="¿Seguro que  deseas eliminar este medio de contacto?" 
+                header="Confirmación" 
+                icon="pi pi-exclamation-triangle" 
+                accept={() => handleDeleteComponent()}
+                reject={() => reject()} 
+            />
 
             {modalColumn && (
                 <div className="modal-add-column">

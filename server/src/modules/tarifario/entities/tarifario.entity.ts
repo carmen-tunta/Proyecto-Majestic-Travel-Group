@@ -1,5 +1,6 @@
 import { Proveedores } from 'src/modules/proveedores/entities/proveedores.entity';
-import { Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn } from 'typeorm';
+import { TarifaComponent } from 'src/modules/tarifaComponent/entities/tarifaComponent.entity';
+import { Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn, OneToMany } from 'typeorm';
 
 @Entity('tarifario')
 export class Tarifario {
@@ -28,4 +29,7 @@ export class Tarifario {
   @OneToOne(() => Proveedores, { nullable: false, onDelete: 'CASCADE' })
   @JoinColumn({ name: 'proveedorId' })
   proveedor: Proveedores;
+
+  @OneToMany(() => TarifaComponent, tc => tc.tarifa, { cascade: true })
+  components: TarifaComponent[];
 }
