@@ -1,5 +1,5 @@
 import { useNavigate, useLocation } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { TabMenu } from "primereact/tabmenu";
 import { InputText } from "primereact/inputtext";
 import { FloatLabel } from "primereact/floatlabel";
@@ -40,6 +40,7 @@ const TarifaMenu = ({ proveedor }) => {
     const { showNotification } = useNotification();
     const [selectedComponents, setSelectedComponents] = useState([]);
     const [tarifaComponents, setTarifaComponents] = useState([]);
+    const [tarifaId, setTarifaId] = useState('');
     
     const [columns, setColumns] = useState([]);
     const [modalColumn, setModalColumn] = useState(false);
@@ -50,6 +51,8 @@ const TarifaMenu = ({ proveedor }) => {
     
     const [visibleDialog, setVisibleDialog] = useState(false);
     const [componentToDelete, setComponentToDelete] = useState(null);
+    const [columnToDelete, setColumnToDelete] = useState(null);
+    const [dialogType, setDialogType] = useState('');
 
 
     const tarifarioRepo = new TarifarioRepository();
@@ -144,6 +147,27 @@ const TarifaMenu = ({ proveedor }) => {
         setPaxMax('');
     };
 
+    const handleDeleteColumn = async () => {
+        console.log('Eliminar columna:', columnToDelete);
+        console.log('Tarifa actual en ref:', tarifa);
+        try {
+            await tarifaColumnRepo.deleteByDescription(
+                tarifa.id,
+                columnToDelete.description,
+                columnToDelete.paxMin,
+                columnToDelete.paxMax
+            );
+            await fetchTarifa(proveedor.id);
+            showNotification('Columna eliminada correctamente', 'success');
+            setColumnToDelete(null);
+            setVisibleDialog(false);
+        } catch (error) {
+            showNotification('Error al eliminar la columna', 'error');
+            console.error(error);
+        }
+    };
+
+
     const buildColumns = (tarifaColumnData) => {
         const uniqueCols = [];
         tarifaColumnData.forEach(col => {
@@ -153,9 +177,56 @@ const TarifaMenu = ({ proveedor }) => {
                     key,
                     field: key,
                     header: (
-                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                            <div>{col.description}</div>
-                            <div>{col.paxMin}-{col.paxMax}</div>
+                        <div
+                            style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'space-between',
+                                width: '100%',
+                                minWidth: 120,
+                                position: 'relative'
+                            }}
+                        >
+                            <div style={{
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                flex: 1
+                            }}>
+                                <div style={{ fontWeight: 500 }}>{col.description}</div>
+                                <div style={{ fontSize: '0.95em', color: '#555' }}>{col.paxMin}-{col.paxMax}</div>
+                            </div>
+                            <div style={{
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'flex-end',
+                                gap: "1rem",
+                                marginLeft: 8
+                            }}>
+                                <i
+                                    className="pi pi-pencil"
+                                    style={{
+                                        cursor: 'pointer',
+                                        fontSize: '0.85rem',
+                                        transition: 'color 0.2s',
+                                        color: '#00000075'
+                                    }}
+                                    title="Editar columna"
+                                    onClick={() => {/* tu lógica de edición aquí */}}
+                                />
+                                <i
+                                    className="pi pi-trash"
+                                    style={{
+                                        cursor: 'pointer',
+                                        fontSize: '0.85rem',
+                                        transition: 'color 0.2s',
+                                        color: '#00000075'
+                                    }}
+                                    title="Eliminar columna"
+                                    onClick={() => {handleDeleteIconColumnClick(col)}}
+                                />
+                            </div>
                         </div>
                     ),
                     description: col.description,
@@ -166,6 +237,7 @@ const TarifaMenu = ({ proveedor }) => {
         });
         return uniqueCols;
     };
+
 
     // 2. Construir filas con los valores de cada columna
     const buildRows = (tarifaComponents, tarifaColumnData, columns) => {
@@ -192,6 +264,7 @@ const TarifaMenu = ({ proveedor }) => {
             const tarifaData = await getTarifarioByIdProveedor.execute(proveedorId);
             const tarifaObj = Array.isArray(tarifaData) ? tarifaData[0] : tarifaData;
             setTarifa(tarifaObj);
+            setTarifaId(tarifaObj ? tarifaObj.id : '');
 
             const tarifaComponentData = await getTarifaComponentByIdTarifa.execute(tarifaObj.id);
             setTarifaComponents(tarifaComponentData);
@@ -203,7 +276,7 @@ const TarifaMenu = ({ proveedor }) => {
             setSelectedComponents(rows);
         } catch (error) {
             console.error('Error al obtener el tarifario:', error);
-            setTarifa(null);
+            // setTarifa(null);
         } finally {
             setLoading(false);
         }
@@ -311,11 +384,20 @@ const TarifaMenu = ({ proveedor }) => {
 
     const handleDeleteIconComponentClick = (component) => {
         setComponentToDelete(component);
+        setDialogType('component');
+        setVisibleDialog(true);
+    };
+
+    const handleDeleteIconColumnClick = (column) => {
+        setColumnToDelete(column);
+        setDialogType('column');
         setVisibleDialog(true);
     };
 
     const reject = () => {
         setComponentToDelete(null);
+        setColumnToDelete(null);
+        setDialogType('');
         setVisibleDialog(false);
     };
 
@@ -350,9 +432,10 @@ const TarifaMenu = ({ proveedor }) => {
     );
 
 
+
     return (
         <>
-            {loading ? (
+            {loading && tarifa ? (
                 <div>Cargando...</div>
             ) : (
                 <div className="tarifa-header">
@@ -472,10 +555,14 @@ const TarifaMenu = ({ proveedor }) => {
                 group="declarative"  
                 visible={visibleDialog} 
                 onHide={() => setVisibleDialog(false)} 
-                message="¿Seguro que  deseas eliminar este medio de contacto?" 
+                message={dialogType === 'component' ? "¿Estás seguro de que deseas eliminar este componente de la tarifa?" 
+                    : dialogType === 'column' ? "¿Estás seguro de que deseas eliminar esta columna de la tarifa?" : ''}
                 header="Confirmación" 
                 icon="pi pi-exclamation-triangle" 
-                accept={() => handleDeleteComponent()}
+                accept={() => {
+                    if (dialogType === 'component') handleDeleteComponent();
+                    else if (dialogType === 'column' && columnToDelete) handleDeleteColumn();
+                }}
                 reject={() => reject()} 
             />
 
@@ -522,8 +609,8 @@ const TarifaMenu = ({ proveedor }) => {
                     </div>
                 </div>
             )}
-
         </>
+        
     );
 };
 
