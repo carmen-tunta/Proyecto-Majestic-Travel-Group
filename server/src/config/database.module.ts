@@ -13,6 +13,7 @@ import { Proveedores } from 'src/modules/proveedores/entities/proveedores.entity
 import { ProveedorContact } from 'src/modules/proveedor-contact/entities/proveedor-contact.entity';
 import { Tarifario } from 'src/modules/tarifario/entities/tarifario.entity';
 import { TarifaComponent } from 'src/modules/tarifaComponent/entities/tarifaComponent.entity';
+import { TarifaColumn } from 'src/modules/tarifaPrices/entities/tarifaColumn.entity';
 
 @Module({
   imports: [
@@ -31,7 +32,8 @@ import { TarifaComponent } from 'src/modules/tarifaComponent/entities/tarifaComp
                   Proveedores, 
                   ProveedorContact,
                   Tarifario,
-                  TarifaComponent
+                  TarifaComponent,
+                  TarifaColumn
                 ], // Aquí se agregarán las entidades
       synchronize: true, // Cambia a true solo en desarrollo
     }),
