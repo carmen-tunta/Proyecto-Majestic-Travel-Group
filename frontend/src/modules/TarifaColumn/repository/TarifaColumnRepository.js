@@ -27,16 +27,6 @@ class TarifaColumnRepository {
         return await response.json();
     }
 
-    async update(tc) {
-        const response = await fetch(`${apiUrl}/update/${tc.id}`, {
-            method: "PUT",
-            headers: getAuthHeaders(),
-            body: JSON.stringify(tc),
-        });
-        if (!response.ok) throw new Error('Error al actualizar');
-        return await response.json();
-    }
-
     async getTarifaColumnByIdTarifa(tarifaId) {
         const response = await fetch(`${apiUrl}/tarifa/${tarifaId}`, {
             headers: getAuthHeaders()
@@ -44,8 +34,8 @@ class TarifaColumnRepository {
         return await response.json();
     }
 
-    async deleteByDescription(tarifaId, description, paxMin, paxMax) {
-        const response = await fetch(`${apiUrl}/delete-column/${tarifaId}/${description}/${paxMin}/${paxMax}`, {
+    async delete(id) {
+        const response = await fetch(`${apiUrl}/${id}`, {
             method: "DELETE",
             headers: getAuthHeaders()
         });
@@ -53,19 +43,11 @@ class TarifaColumnRepository {
         return await response.json();
     }
 
-    async updateByDescription(tarifa_id, oldDescription, oldPaxMin, oldPaxMax, newDescription, newPaxMin, newPaxMax) {
-        const response = await fetch(`${apiUrl}/update-by-description`, {
+    async update(column) {
+        const response = await fetch(`${apiUrl}/update/${column.id}`, {
             method: "PUT",
             headers: getAuthHeaders(),
-            body: JSON.stringify({
-                tarifa_id,
-                oldDescription,
-                oldPaxMin,
-                oldPaxMax,
-                newDescription,
-                newPaxMin,
-                newPaxMax
-            })
+            body: JSON.stringify(column)
         });
         if (!response.ok) throw new Error('Error al actualizar la columna');
         return await response.json();

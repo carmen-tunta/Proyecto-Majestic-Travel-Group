@@ -26,14 +26,9 @@ export class TarifaColumnController {
         return this.tarifaColumnService.update(id, data);
     }
 
-    @Delete('delete-column/:tarifaId/:description/:paxMin/:paxMax')
-    async deleteColumn(
-        @Param('tarifaId') tarifaId: number,
-        @Param('description') description: string,
-        @Param('paxMin') paxMin: string,
-        @Param('paxMax') paxMax: string
-    ) {
-        return this.tarifaColumnService.deleteColumnByDescription(tarifaId, description, paxMin, paxMax);
+    @Delete(':id')
+    async deleteColumn(@Param('id') id: string) {
+        return this.tarifaColumnService.delete(id);
     }
 
 }

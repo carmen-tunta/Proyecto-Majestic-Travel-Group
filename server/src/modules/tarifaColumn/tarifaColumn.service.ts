@@ -30,21 +30,9 @@ export class TarifaColumnService {
         return this.tarifaColumnRepository.findOneBy({ id: Number(id) });
     }
 
-    async deleteColumnByDescription(tarifaId: number, description: string, paxMin: string, paxMax: string) {
-        // 1. Buscar los TarifaColumn que cumplen el filtro
-        const columns = await this.tarifaColumnRepository.find({
-            where: {
-                description,
-                paxMin: Number(paxMin),
-                paxMax: Number(paxMax),
-                tarifa_id: tarifaId
-            },
-            relations: ['tarifa']
-        });
-        // 2. Eliminar por los IDs encontrados
-        const ids = columns.map(col => col.id);
-        if (ids.length === 0) return { affected: 0 };
-        return this.tarifaColumnRepository.delete({ id: In(ids) });
+    async delete(id: string): Promise<{ deleted: boolean }> {
+        const result = await this.tarifaColumnRepository.delete(id);
+        return { deleted: !!result.affected };
     }
     
 

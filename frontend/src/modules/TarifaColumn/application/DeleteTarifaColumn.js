@@ -3,8 +3,8 @@ class DeleteTarifaColumnByDescription {
         this.repo = repo;
     }
 
-    async execute(tarifaId, description, paxMin, paxMax) {
-        return await this.repo.deleteByDescription(tarifaId, description, paxMin, paxMax);
+    async execute(id) {
+        return await this.repo.delete(id);
     }
 }
 
