@@ -21,7 +21,7 @@ export class TarifaColumnService {
 
     async findByTarifaId(tarifaId: string): Promise<TarifaColumn[]> {
         return this.tarifaColumnRepository.find({
-            where: { tarifaComponent: { tarifa_id: Number(tarifaId) } },
+            where: { tarifa_id: Number(tarifaId) },
         });
     }
 
@@ -37,9 +37,9 @@ export class TarifaColumnService {
                 description,
                 paxMin: Number(paxMin),
                 paxMax: Number(paxMax),
-                tarifaComponent: { tarifa_id: tarifaId }
+                tarifa_id: tarifaId
             },
-            relations: ['tarifaComponent']
+            relations: ['tarifa']
         });
         // 2. Eliminar por los IDs encontrados
         const ids = columns.map(col => col.id);

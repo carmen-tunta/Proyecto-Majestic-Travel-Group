@@ -167,6 +167,52 @@ const TarifaMenu = ({ proveedor }) => {
         }
     };
 
+    const [editingColumn, setEditingColumn] = useState(null);
+
+    // 2. Modifica handleEditColumn para preparar el modal de edición
+    const handleEditColumn = (col) => {
+        setEditingColumn(col); // guarda la columna original
+        setColumnDescription(col.description);
+        setPaxMin(col.paxMin);
+        setPaxMax(col.paxMax);
+        setModalColumn(true);
+    };
+
+    const handleSaveColumnEdit = async () => {
+        if (!editingColumn) return;
+        await handleUpdateColumnHeader(
+            editingColumn,
+            columnDescription,
+            paxMin,
+            paxMax
+        );
+        setEditingColumn(null);
+        setColumnDescription('');
+        setPaxMin('');
+        setPaxMax('');
+    };
+
+    const handleUpdateColumnHeader = async (oldCol, newDescription, newPaxMin, newPaxMax) => {
+        try {
+            // 1. Actualiza todas las celdas con la cabecera antigua
+            await updateTarifaColumn.execute({
+                tarifa_id: tarifa.id,
+                oldDescription: oldCol.description,
+                oldPaxMin: oldCol.paxMin,
+                oldPaxMax: oldCol.paxMax,
+                newDescription,
+                newPaxMin,
+                newPaxMax
+            });
+            // 2. Refresca la tabla
+            await fetchTarifa(proveedor.id);
+            showNotification('Cabecera de columna actualizada correctamente', 'success');
+            setModalColumn(false);
+        } catch (error) {
+            showNotification('Error al actualizar la cabecera de la columna', 'error');
+            console.error(error);
+        }
+    };
 
     const buildColumns = (tarifaColumnData) => {
         const uniqueCols = [];
@@ -213,7 +259,7 @@ const TarifaMenu = ({ proveedor }) => {
                                         color: '#00000075'
                                     }}
                                     title="Editar columna"
-                                    onClick={() => {/* tu lógica de edición aquí */}}
+                                    onClick={() => {handleEditColumn(col)}}
                                 />
                                 <i
                                     className="pi pi-trash"
@@ -569,8 +615,14 @@ const TarifaMenu = ({ proveedor }) => {
             {modalColumn && (
                 <div className="modal-add-column">
                     <div className="modal-column-header">
-                        <h2>Agregar columna</h2>
-                        <i className="pi pi-times" onClick={() => setModalColumn(false)}></i>
+                        <h2>{editingColumn ? 'Editar columna' : 'Agregar columna'}</h2>
+                        <i className="pi pi-times" onClick={() => {
+                            setModalColumn(false);
+                            setEditingColumn(null);
+                            setColumnDescription('');
+                            setPaxMin('');
+                            setPaxMax('');
+                        }}></i>
                     </div>
                     <div className="modal-column-body">
                         <FloatLabel>
@@ -605,7 +657,11 @@ const TarifaMenu = ({ proveedor }) => {
                         </div>
                     </div>
                     <div>
-                        <Button label="Agregar" onClick={handleAddColumn} />
+                        {editingColumn ? (
+                            <Button label="Guardar cambios" onClick={handleSaveColumnEdit} />
+                        ) : (
+                            <Button label="Agregar" onClick={handleAddColumn} />
+                        )}
                     </div>
                 </div>
             )}

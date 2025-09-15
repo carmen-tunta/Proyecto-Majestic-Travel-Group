@@ -52,7 +52,25 @@ class TarifaColumnRepository {
         if (!response.ok) throw new Error('Error al eliminar la columna');
         return await response.json();
     }
-    
+
+    async updateByDescription(tarifa_id, oldDescription, oldPaxMin, oldPaxMax, newDescription, newPaxMin, newPaxMax) {
+        const response = await fetch(`${apiUrl}/update-by-description`, {
+            method: "PUT",
+            headers: getAuthHeaders(),
+            body: JSON.stringify({
+                tarifa_id,
+                oldDescription,
+                oldPaxMin,
+                oldPaxMax,
+                newDescription,
+                newPaxMin,
+                newPaxMax
+            })
+        });
+        if (!response.ok) throw new Error('Error al actualizar la columna');
+        return await response.json();
+    }
+
 }
 
 export default TarifaColumnRepository;

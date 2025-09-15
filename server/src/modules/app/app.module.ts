@@ -14,7 +14,8 @@ import { ProveedoresModule } from '../proveedores/proveedores.module';
 import { ProveedorContactModule } from '../proveedor-contact/proveedor-contact.module';
 import { TarifarioModule } from '../tarifario/tarifario.module';
 import { TarifaComponentModule } from '../tarifaComponent/tarifaComponent.module';
-import { TarifaColumnModule } from '../tarifaPrices/tarifaColumn.module';
+import { TarifaColumnModule } from '../tarifaColumn/tarifaColumn.module';
+import { TarifaPricesModule } from '../tarifaPrices/tarifaPrices.module';
 
 @Module({
   imports: [DatabaseModule, 
@@ -28,7 +29,8 @@ import { TarifaColumnModule } from '../tarifaPrices/tarifaColumn.module';
             ProveedorContactModule,
             TarifarioModule,
             TarifaComponentModule,
-            TarifaColumnModule
+            TarifaColumnModule,
+            TarifaPricesModule
           ],
   controllers: [AppController],
   providers: [

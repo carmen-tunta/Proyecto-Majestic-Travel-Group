@@ -1,5 +1,5 @@
 import { Component } from "src/modules/components/entities/component.entity";
-import { TarifaColumn } from "src/modules/tarifaPrices/entities/tarifaColumn.entity";
+import { TarifaPrices } from "src/modules/tarifaPrices/entities/tarifaPrices.entity";
 import { Tarifario } from "src/modules/tarifario/entities/tarifario.entity";
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
@@ -22,6 +22,7 @@ export class TarifaComponent {
   @JoinColumn({ name: 'componente_id' })
   component: Component;
 
-  @OneToMany(() => TarifaColumn, tc => tc.tarifaComponent, { cascade: true })
-  prices: TarifaColumn[];
+  @OneToMany(() => TarifaPrices, tp => tp.component, { cascade: true })
+  prices: TarifaPrices[];
+
 }
