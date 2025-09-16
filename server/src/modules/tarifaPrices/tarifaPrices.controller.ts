@@ -18,7 +18,12 @@ export class TarifaPricesController {
 
     @Get('component/:componentId/column/:columnId')
     findComponentColumnId(@Param('componentId') componentId: number, @Param('columnId') columnId: number) {
-        return this.tarifaPricesService.findComponentColumnId(componentId, columnId);
+        return this.tarifaPricesService.findByComponentColumnId(componentId, columnId);
+    }
+
+    @Get('tarifa/:id')
+    findPriceByTarifaId(@Param('id') id: string) {
+        return this.tarifaPricesService.findByTarifaId(id);
     }
 
     @Put('update/:id')

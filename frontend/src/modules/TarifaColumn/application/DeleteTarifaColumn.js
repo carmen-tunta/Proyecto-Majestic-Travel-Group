@@ -1,4 +1,4 @@
-class DeleteTarifaColumnByDescription {
+class DeleteTarifaColumn {
     constructor(repo) {
         this.repo = repo;
     }
@@ -8,4 +8,4 @@ class DeleteTarifaColumnByDescription {
     }
 }
 
-export default DeleteTarifaColumnByDescription;
+export default DeleteTarifaColumn;

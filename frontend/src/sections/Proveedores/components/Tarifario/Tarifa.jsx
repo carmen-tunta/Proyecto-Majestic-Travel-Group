@@ -30,6 +30,10 @@ import TarifaColumnRepository from "../../../../modules/TarifaColumn/repository/
 import CreateTarifaColumn from "../../../../modules/TarifaColumn/application/CreateTarifaColumn";
 import GetTarifaColumnByIdTarifa from "../../../../modules/TarifaColumn/application/GetTarifaColumnByIdTarifa";
 import UpdateTarifaColumn from "../../../../modules/TarifaColumn/application/UpdateTarifaColumn";
+import DeleteTarifaColumn from "../../../../modules/TarifaColumn/application/DeleteTarifaColumn";
+import TarifaPriceRepository from "../../../../modules/TarifaPrice/repository/TarifaPriceRepository";
+import FindPriceByComponentColumnId from "../../../../modules/TarifaPrice/application/FindPriceByComponentColumnId";
+import GetTarifaPriceByTarifaId from "../../../../modules/TarifaPrice/application/GetTarifaPriceByTarifaId";
 
 const TarifaMenu = ({ proveedor }) => {
     const [loading, setLoading] = useState(false);
@@ -47,6 +51,8 @@ const TarifaMenu = ({ proveedor }) => {
     const [columnDescription, setColumnDescription] = useState('');
     const [paxMin, setPaxMin] = useState('');
     const [paxMax, setPaxMax] = useState('');
+
+    const [prices, setPrices] = useState([]);
 
     
     const [visibleDialog, setVisibleDialog] = useState(false);
@@ -69,6 +75,11 @@ const TarifaMenu = ({ proveedor }) => {
     const createTarifaColumn = new CreateTarifaColumn(tarifaColumnRepo);
     const getTarifaColumnByTarifaId = new GetTarifaColumnByIdTarifa(tarifaColumnRepo);
     const updateTarifaColumn = new UpdateTarifaColumn(tarifaColumnRepo);
+    const deleteTarifaColumn = new DeleteTarifaColumn(tarifaColumnRepo);
+
+    const tarifaPricesRepo = new TarifaPriceRepository();
+    const getTarifaPriceByIdTarifa = new GetTarifaPriceByTarifaId(tarifaPricesRepo);
+
 
     const parseLocalDate = (dateString) => {
         if (!dateString) return null;
@@ -92,22 +103,34 @@ const TarifaMenu = ({ proveedor }) => {
         setSearch('');
         if (!selectedComponents.some(c => c.id === comp.id)) {
             try {
+                // 1. Crear el componente en el backend
                 const newTarifaComponent = await createTarifaComponent.execute({
                     tarifa_id: tarifa.id,
                     componente_id: comp.id
                 });
+
+                // 2. Crear las celdas (precios) para cada columna existente
                 await Promise.all(
                     columns.map(col =>
-                        createTarifaColumn.execute({
+                        tarifaPricesRepo.create({
                             tarifa_component_id: newTarifaComponent.id,
-                            description: col.description,
-                            paxMin: col.paxMin,
-                            paxMax: col.paxMax,
-                            price: 0
+                            tarifa_column_id: col.id,
+                            price: 0 // o el valor inicial que desees
                         })
                     )
                 );
-                await fetchTarifa(proveedor.id);
+
+                // 3. Refresca la tabla
+                const tarifaComponentData = await getTarifaComponentByIdTarifa.execute(tarifa.id);
+                setTarifaComponents(tarifaComponentData);
+                setSelectedComponents(tarifaComponentData);
+
+                const tarifaPricesData = await getTarifaPriceByIdTarifa.execute(tarifa.id);
+                setPrices(tarifaPricesData);
+
+                setSelectedComponents(buildRows(tarifaComponentData, columns, tarifaPricesData));
+
+                showNotification('Componente y celdas creados correctamente', 'success');
             } catch (error) {
                 console.error('Error al crear el componente o sus celdas:', error);
                 showNotification('Error al agregar el componente', 'error');
@@ -116,60 +139,79 @@ const TarifaMenu = ({ proveedor }) => {
     };
 
     const handleAddColumn = async () => {
-        for (const tcmp of tarifaComponents) {
-            try {
-                await createTarifaColumn.execute({
-                    tarifa_component_id: tcmp.id,
-                    description: columnDescription,
-                    paxMin: paxMin,
-                    paxMax: paxMax,
-                    price: 0
-                });
-            } catch (error) {
-                console.error('Error al crear columna en BD:', error);
-                showNotification('Error al guardar la columna en la BD', 'error');
-            }
-        }
-
+        setLoading(true);
         try {
-            const tarifaColumnData = await getTarifaColumnByTarifaId.execute(tarifa.id);
-            const columns = buildColumns(tarifaColumnData);
-            const rows = buildRows(tarifaComponents, tarifaColumnData, columns);
-            setColumns(columns);
-            setSelectedComponents(rows);
-        } catch (error) {
-            showNotification('Error al refrescar las columnas', 'error');
-        }
+            // 1. Crear la columna en el backend
+            const newColumn = await createTarifaColumn.execute({
+                tarifa_id: tarifa.id,
+                description: columnDescription,
+                paxMin: paxMin,
+                paxMax: paxMax
+            });
 
-        setModalColumn(false);
-        setColumnDescription('');
-        setPaxMin('');
-        setPaxMax('');
+            // 2. Crear las celdas (precios) para cada componente existente
+            await Promise.all(
+                tarifaComponents.map(tc =>
+                    tarifaPricesRepo.create({
+                        tarifa_component_id: tc.id,
+                        tarifa_column_id: newColumn.id,
+                        price: 0 // o el valor inicial que desees
+                    })
+                )
+            );
+
+            // 3. Refresca la tabla
+            const tarifaColumnData = await getTarifaColumnByTarifaId.execute(tarifa.id);
+            setColumns(tarifaColumnData);
+
+            const tarifaPricesData = await getTarifaPriceByIdTarifa.execute(tarifa.id);
+            setPrices(tarifaPricesData);
+
+            setSelectedComponents(buildRows(tarifaComponents, tarifaColumnData, tarifaPricesData));
+
+            showNotification('Columna y celdas creadas correctamente', 'success');
+        } catch (error) {
+            showNotification('Error al agregar la columna', 'error');
+            console.error(error);
+        } finally {
+            setLoading(false);
+            setModalColumn(false);
+            setColumnDescription('');
+            setPaxMin('');
+            setPaxMax('');
+        }
     };
 
     const handleDeleteColumn = async () => {
-        console.log('Eliminar columna:', columnToDelete);
-        console.log('Tarifa actual en ref:', tarifa);
+        setLoading(true);
         try {
-            await tarifaColumnRepo.deleteByDescription(
-                tarifa.id,
-                columnToDelete.description,
-                columnToDelete.paxMin,
-                columnToDelete.paxMax
-            );
-            await fetchTarifa(proveedor.id);
+            await deleteTarifaColumn.execute(columnToDelete.id);
+
+            // 3. Refresca la tabla
+            const tarifaColumnData = await getTarifaColumnByTarifaId.execute(tarifa.id);
+            setColumns(tarifaColumnData);
+
+            const tarifaPricesData = await getTarifaPriceByIdTarifa.execute(tarifa.id);
+            setPrices(tarifaPricesData);
+
+            const tarifaComponentsData = await getTarifaComponentByIdTarifa.execute(tarifa.id);
+            setTarifaComponents(tarifaComponentsData);
+
+            setSelectedComponents(buildRows(tarifaComponentsData, tarifaColumnData, tarifaPricesData));
+
             showNotification('Columna eliminada correctamente', 'success');
             setColumnToDelete(null);
             setVisibleDialog(false);
         } catch (error) {
             showNotification('Error al eliminar la columna', 'error');
             console.error(error);
+        } finally {
+            setLoading(false);
         }
     };
 
     const [editingColumn, setEditingColumn] = useState(null);
 
-    // 2. Modifica handleEditColumn para preparar el modal de edición
     const handleEditColumn = (col) => {
         setEditingColumn(col); // guarda la columna original
         setColumnDescription(col.description);
@@ -179,128 +221,92 @@ const TarifaMenu = ({ proveedor }) => {
     };
 
     const handleSaveColumnEdit = async () => {
-        if (!editingColumn) return;
-        await handleUpdateColumnHeader(
-            editingColumn,
-            columnDescription,
-            paxMin,
-            paxMax
-        );
+        console.log("Guardar edición de columna")
         setEditingColumn(null);
         setColumnDescription('');
         setPaxMin('');
         setPaxMax('');
     };
 
-    const handleUpdateColumnHeader = async (oldCol, newDescription, newPaxMin, newPaxMax) => {
-        try {
-            // 1. Actualiza todas las celdas con la cabecera antigua
-            await updateTarifaColumn.execute({
-                tarifa_id: tarifa.id,
-                oldDescription: oldCol.description,
-                oldPaxMin: oldCol.paxMin,
-                oldPaxMax: oldCol.paxMax,
-                newDescription,
-                newPaxMin,
-                newPaxMax
-            });
-            // 2. Refresca la tabla
-            await fetchTarifa(proveedor.id);
-            showNotification('Cabecera de columna actualizada correctamente', 'success');
-            setModalColumn(false);
-        } catch (error) {
-            showNotification('Error al actualizar la cabecera de la columna', 'error');
-            console.error(error);
-        }
-    };
 
-    const buildColumns = (tarifaColumnData) => {
-        const uniqueCols = [];
-        tarifaColumnData.forEach(col => {
-            const key = `${col.description}_${col.paxMin}_${col.paxMax}`;
-            if (!uniqueCols.some(c => c.key === key)) {
-                uniqueCols.push({
-                    key,
-                    field: key,
-                    header: (
-                        <div
+    const buildColumnHeaders = (columns) => {
+        return columns.map(col => ({
+            key: String(col.id),
+            field: String(col.id),
+            header: (
+                            <div
+                    style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        width: '100%',
+                        minWidth: 120,
+                        position: 'relative'
+                    }}
+                >
+                    <div style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        flex: 1
+                    }}>
+                        <div style={{ fontWeight: 500 }}>{col.description}</div>
+                        <div style={{ fontSize: '0.95em', color: '#555' }}>{col.paxMin}-{col.paxMax}</div>
+                    </div>
+                    <div style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'flex-end',
+                        gap: "1rem",
+                        marginLeft: 8
+                    }}>
+                        <i
+                            className="pi pi-pencil"
                             style={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'space-between',
-                                width: '100%',
-                                minWidth: 120,
-                                position: 'relative'
+                                cursor: 'pointer',
+                                fontSize: '0.85rem',
+                                transition: 'color 0.2s',
+                                color: '#00000075'
                             }}
-                        >
-                            <div style={{
-                                display: 'flex',
-                                flexDirection: 'column',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                flex: 1
-                            }}>
-                                <div style={{ fontWeight: 500 }}>{col.description}</div>
-                                <div style={{ fontSize: '0.95em', color: '#555' }}>{col.paxMin}-{col.paxMax}</div>
-                            </div>
-                            <div style={{
-                                display: 'flex',
-                                flexDirection: 'column',
-                                alignItems: 'flex-end',
-                                gap: "1rem",
-                                marginLeft: 8
-                            }}>
-                                <i
-                                    className="pi pi-pencil"
-                                    style={{
-                                        cursor: 'pointer',
-                                        fontSize: '0.85rem',
-                                        transition: 'color 0.2s',
-                                        color: '#00000075'
-                                    }}
-                                    title="Editar columna"
-                                    onClick={() => {handleEditColumn(col)}}
-                                />
-                                <i
-                                    className="pi pi-trash"
-                                    style={{
-                                        cursor: 'pointer',
-                                        fontSize: '0.85rem',
-                                        transition: 'color 0.2s',
-                                        color: '#00000075'
-                                    }}
-                                    title="Eliminar columna"
-                                    onClick={() => {handleDeleteIconColumnClick(col)}}
-                                />
-                            </div>
-                        </div>
-                    ),
-                    description: col.description,
-                    paxMin: col.paxMin,
-                    paxMax: col.paxMax
-                });
-            }
-        });
-        return uniqueCols;
+                            title="Editar columna"
+                            onClick={() => {handleEditColumn(col)}}
+                        />
+                        <i
+                            className="pi pi-trash"
+                            style={{
+                                cursor: 'pointer',
+                                fontSize: '0.85rem',
+                                transition: 'color 0.2s',
+                                color: '#00000075'
+                            }}
+                            title="Eliminar columna"
+                            onClick={() => {handleDeleteIconColumnClick(col)}}
+                        />
+                    </div>
+                </div>
+            ),
+            description: col.description,
+            paxMin: col.paxMin,
+            paxMax: col.paxMax
+        }));
     };
 
 
-    // 2. Construir filas con los valores de cada columna
-    const buildRows = (tarifaComponents, tarifaColumnData, columns) => {
+    
+    
+                
+
+    const buildRows = (tarifaComponents, columns, prices) => {
         return tarifaComponents.map(tc => {
-            const comp = { ...tc.component }; // tc.component es el objeto del componente
+            const row = { ...tc.component, id: tc.id };
             columns.forEach(col => {
-                // Busca la celda para este componente y columna
-                const cell = tarifaColumnData.find(
-                    c =>
-                        c.tarifa_component_id === tc.id &&
-                        c.description === col.description &&
-                        c.paxMin === col.paxMin &&
-                        c.paxMax === col.paxMax
+                const cell = prices.find(
+                    p => p.tarifa_component_id === tc.id && p.tarifa_column_id === col.id
                 );
-                comp[col.field] = cell ? Number(cell.price) : 0;
+                row[col.id] = cell ? Number(cell.price) : 0;
             });
-            return comp;
+            return row;
         });
     };
 
@@ -310,16 +316,20 @@ const TarifaMenu = ({ proveedor }) => {
             const tarifaData = await getTarifarioByIdProveedor.execute(proveedorId);
             const tarifaObj = Array.isArray(tarifaData) ? tarifaData[0] : tarifaData;
             setTarifa(tarifaObj);
-            setTarifaId(tarifaObj ? tarifaObj.id : '');
 
             const tarifaComponentData = await getTarifaComponentByIdTarifa.execute(tarifaObj.id);
             setTarifaComponents(tarifaComponentData);
 
             const tarifaColumnData = await getTarifaColumnByTarifaId.execute(tarifaObj.id);
-            const columns = buildColumns(tarifaColumnData);
-            const rows = buildRows(tarifaComponentData, tarifaColumnData, columns);
-            setColumns(columns);
-            setSelectedComponents(rows);
+            setColumns(tarifaColumnData);
+
+            const tarifaPricesData = await getTarifaPriceByIdTarifa.execute(tarifaObj.id);
+            setPrices(tarifaPricesData);
+
+            setSelectedComponents(buildRows(tarifaComponentData, tarifaColumnData, tarifaPricesData));
+
+            console.log(tarifaComponentData, tarifaColumnData, tarifaPricesData);
+
         } catch (error) {
             console.error('Error al obtener el tarifario:', error);
             // setTarifa(null);
@@ -377,41 +387,27 @@ const TarifaMenu = ({ proveedor }) => {
     };
 
     const onCellEditComplete = async (e) => {
-        const { rowData, newValue, field } = e;
+        // const { rowData, newValue, field } = e;
+        // const tarifa_component_id = rowData.id;
+        // const tarifa_column_id = field; // field ahora es el id de la columna
 
-        // Encuentra la columna correspondiente
-        const col = columns.find(c => c.field === field);
-        if (!col) return;
+        // // Busca si ya existe la celda
+        // const cell = tarifaPrices.find(
+        //     p => p.tarifa_component_id === tarifa_component_id && p.tarifa_column_id === tarifa_column_id
+        // );
 
-        // Encuentra el componente correspondiente
-        const tc = tarifaComponents.find(tc => tc.component.id === rowData.id);
-        if (!tc) return;
-
-        // Encuentra el id de la celda en la BD
-        const tarifaColumnData = await getTarifaColumnByTarifaId.execute(tarifa.id);
-        const cell = tarifaColumnData.find(
-            c =>
-                c.tarifa_component_id === tc.id &&
-                c.description === col.description &&
-                c.paxMin === col.paxMin &&
-                c.paxMax === col.paxMax
-        );
-        if (!cell) return;
-
-        // Actualiza en la BD
-        try {
-            await updateTarifaColumn.execute({
-                ...cell,
-                price: newValue
-            });
-        } catch (error) {
-            showNotification('Error al actualizar el valor en la BD', 'error');
-            console.error(error);
-        }
-        const updated = selectedComponents.map(comp =>
-            comp.id === rowData.id ? { ...comp, [field]: newValue } : comp
-        );
-        setSelectedComponents(updated);
+        // if (cell) {
+        //     // Actualiza el precio
+        //     await tarifaPricesRepo.update(cell.id, { price: newValue });
+        // } else {
+        //     // Crea la celda
+        //     await tarifaPricesRepo.create({
+        //         tarifa_component_id,
+        //         tarifa_column_id,
+        //         price: newValue
+        //     });
+        // }
+        // await fetchTarifa(proveedor.id);
     };
 
     // Editor para celdas numéricas
@@ -455,6 +451,7 @@ const TarifaMenu = ({ proveedor }) => {
 
         try {
             await deleteTarifaComponent.execute(tarifa.id, componentToDelete.id);
+            console.log('Componente eliminado:', componentToDelete.id, tarifa.id);
             setSelectedComponents((prev) => prev.filter((comp) => comp.id !== componentToDelete.id));
             setComponentToDelete(null);
             setVisibleDialog(false);
@@ -580,7 +577,7 @@ const TarifaMenu = ({ proveedor }) => {
                                 }
                             />
 
-                            {columns.map(col => (
+                            {buildColumnHeaders(columns).map(col => (
                                 <Column
                                     key={col.field}
                                     field={col.field}

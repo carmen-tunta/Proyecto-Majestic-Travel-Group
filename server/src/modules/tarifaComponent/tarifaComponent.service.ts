@@ -37,8 +37,8 @@ export class TarifaComponentService {
     async remove(tarifaId: string, componentId: string): Promise<{ deleted: boolean }> {
         const result = await this.tarifaComponentRepository.delete({
             tarifa_id: Number(tarifaId),
-            componente_id: Number(componentId)
+            id: Number(componentId)
         });
-        return { deleted: !!result && !!result.affected && result.affected > 0 };
+        return { deleted: !!result?.affected };
     }
 }

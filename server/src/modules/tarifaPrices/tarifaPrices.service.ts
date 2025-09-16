@@ -19,9 +19,15 @@ export class TarifaPricesService {
         return this.tarifaPricesRepository.find();
     }
 
-    async findComponentColumnId(componentId: number, columnId: number): Promise<TarifaPrices[]> {
+    async findByComponentColumnId(componentId: number, columnId: number): Promise<TarifaPrices[]> {
         return this.tarifaPricesRepository.find({
             where: { tarifa_component_id: componentId, tarifa_column_id: columnId },
+        });
+    }
+
+    async findByTarifaId(tarifaId: string): Promise<TarifaPrices[]> {
+        return this.tarifaPricesRepository.find({
+            where: { component: { tarifa_id: Number(tarifaId) } },
         });
     }
 
