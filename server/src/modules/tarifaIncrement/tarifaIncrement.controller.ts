@@ -20,7 +20,7 @@ export class TarifaIncrementController {
         return this.tarifaIncrementService.findByTarifaId(idNum);
     }
 
-    @Delete('id')
+    @Delete(':id')
     delete(@Param('id') id: string) {
         return this.tarifaIncrementService.delete(id);
     }

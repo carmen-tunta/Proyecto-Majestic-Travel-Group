@@ -1,20 +1,70 @@
 import { Button } from "primereact/button";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
+import { ConfirmDialog } from "primereact/confirmdialog";
+import { useState, useEffect } from "react";
+import TarifaIncrementRepository from "../../../../modules/TarifaIncrement/repository/TarifaIncrementRepository";
+import GetTarifaIncrementByTarifaId from "../../../../modules/TarifaIncrement/application/GetTarifaIncrementByTarifaId";
+import DeleteTarifaIncrement from "../../../../modules/TarifaIncrement/application/DeleteTarifaIncrement";
+import { useNotification } from "../../../Notification/NotificationContext";
+
 
 import "../../styles/Tarifario/Incremento.css"
 
 
 const Incremento = ({ tarifa }) => {
 
-    const increments = [
-        { id: 1, incrementDate: '2023-01-01', porcentage: 'Si', incrementValue: '10' },
-        { id: 2, incrementDate: '2023-06-01', porcentage: 'No', incrementValue: '20' },
-        { id: 3, incrementDate: '2024-01-01', porcentage: 'No', incrementValue: '10' }
-    ];
-    
+    const [increments, setIncrements] = useState([]);
+    const [selectedIncrement, setSelectedIncrement] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [visibleDialog, setVisibleDialog] = useState(false);
+    const {showNotification} = useNotification();
 
-    
+    const tarifaIncrementRepo = new TarifaIncrementRepository();
+    const getTarifaIncrements = new GetTarifaIncrementByTarifaId(tarifaIncrementRepo);
+    const deleteTarifaIncrement = new DeleteTarifaIncrement(tarifaIncrementRepo);
+
+
+    const fetchIncrements = async () => {
+        try {
+            setLoading(true);
+            const data = await getTarifaIncrements.execute(tarifa.id);
+            console.log(data);
+            setIncrements(Array.isArray(data) ? data : []);
+        } catch (error) {
+            console.error("Error fetching increments:", error);
+        } finally {
+            setLoading(false);
+        }
+        
+    };
+
+    useEffect(() => {
+        fetchIncrements();
+    }, []);
+
+    const handleDelete = async () => {
+        console.log("Deleting increment:", selectedIncrement);
+        try {
+            if (selectedIncrement) {
+                await deleteTarifaIncrement.execute(selectedIncrement.id);
+                setVisibleDialog(false);
+                setSelectedIncrement(null);
+                showNotification("¡Incremento eliminado!", "success");
+                fetchIncrements();
+            }
+        } catch (error) {
+            console.error("Error deleting increment:", error);
+            showNotification("Error al eliminar el incremento", "error");
+        }
+    };
+
+    const reject = () => {
+        setSelectedIncrement(null);
+        setVisibleDialog(false);
+    };
+
+
     return (    
         <div className="incremento-body">
             <div className="incremento-header">
@@ -30,9 +80,9 @@ const Incremento = ({ tarifa }) => {
             <div>
                 <DataTable
                     className="incremento-table"
-                    size="small"
                     value={increments || []}
                     emptyMessage="No se registraron incrementos"
+                    loading={loading}
                 >
                     <Column 
                         field="incrementDate" 
@@ -42,11 +92,18 @@ const Incremento = ({ tarifa }) => {
                     <Column 
                         field="porcentage"  
                         header="Porcentaje" 
+                        body={rowData => {
+                            if(rowData.porcentage) return "Si"; else return "No";
+                        }}
                         style={{ width: '20%' }} 
                     />
                     <Column 
                         field="incrementValue" 
                         header="Valor de incremento" 
+                        body={rowData => {
+                            const value = Number(rowData.incrementValue);
+                            return Number.isInteger(value) ? value : value.toFixed(2).replace(/\.00$/, '');
+                        }}
                         style={{ width: '50%' }} 
                     />
                     <Column
@@ -61,15 +118,25 @@ const Incremento = ({ tarifa }) => {
                                 ></i>
                                 <i 
                                     className="pi pi-trash"    
-                                    title="Editar" 
-                                    style={{ cursor:"pointer", marginRight: '10px' }}
-                                    onClick={() => {}}    
+                                    title="Eliminar" 
+                                    style={{ cursor:"pointer" }}
+                                    onClick={() => {setSelectedIncrement(rowData); setVisibleDialog(true);}}    
                                 ></i>
                             </span>
                         )}
                     />
                 </DataTable>
             </div>
+            <ConfirmDialog 
+                group="declarative"  
+                visible={visibleDialog} 
+                onHide={() => setVisibleDialog(false)} 
+                message="¿Está seguro de que desea eliminar este registro?"
+                header="Confirmación" 
+                icon="pi pi-exclamation-triangle" 
+                accept={() => {handleDelete();}}
+                reject={() => reject()} 
+            />
         </div>
     );
 }

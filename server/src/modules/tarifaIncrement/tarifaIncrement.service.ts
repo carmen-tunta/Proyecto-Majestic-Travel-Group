@@ -22,12 +22,12 @@ export class TarifaIncrementService {
     }
 
     async delete(id: string): Promise<{ deleted: boolean }> {
-        const result = await this.incrementRepository.delete(id);
+        const result = await this.incrementRepository.delete(Number(id));
         return { deleted: !!result.affected };
     }
 
     async update(id: string, data: Partial<TarifaIncrement>): Promise<TarifaIncrement | null> {
-        await this.incrementRepository.update(id, data);
+        await this.incrementRepository.update(Number(id), data);
         return this.incrementRepository.findOneBy({ id: Number(id) });
     }
 
