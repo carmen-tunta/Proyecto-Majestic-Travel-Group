@@ -11,11 +11,9 @@ import { MultiSelect } from "primereact/multiselect";
 import { addLocale } from "primereact/api";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
-import { Toast } from "primereact/toast";
 import { ConfirmDialog } from "primereact/confirmdialog";
 import { useNotification } from "../../Notification/NotificationContext";
 import { useModal } from "../../../contexts/ModalContext";
-import { useRef } from "react";
 import ProveedoresRepository from "../../../modules/Proveedores/repository/ProveedoresRepository";
 import CreateProveedor from "../../../modules/Proveedores/application/CreateProveedor";
 import UpdateProveedor from "../../../modules/Proveedores/application/UpdateProveedor";
@@ -124,7 +122,9 @@ const DetallesProveedores = () => {
     const [direction, setDirection] = useState(proveedorState ? proveedorState.direction : '');
     const [birthDate, setBirthDate] = useState(proveedorState && proveedorState.birthdate ? parseLocalDate(proveedorState.birthdate) : null);
     const [gender, setGender] = useState(proveedorState ? proveedorState.gender : '');
-    const [registrationDate, setRegistrationDate] = useState(proveedorState && proveedorState.registrationDate ? parseLocalDate(proveedorState.registrationDate) : null);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const [registrationDate, setRegistrationDate] = useState(proveedorState && proveedorState.registrationDate ? parseLocalDate(proveedorState.registrationDate) : today);
 
     const [visible, setVisible] = useState(false);
     const [contactToDelete, setContactToDelete] = useState(null);
@@ -366,7 +366,7 @@ const DetallesProveedores = () => {
                                     onChange={e => setRegistrationDate(e.value)}
                                     dateFormat="D dd M y"
                                     locale="es"
-                                    required
+                                    disabled
                                 />
                                 <label htmlFor="registrationDate">Fecha de registro</label>
                             </FloatLabel>

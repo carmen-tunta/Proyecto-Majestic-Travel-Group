@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
 import { ProveedoresService } from './proveedores.service';
 import { Proveedores } from './entities/proveedores.entity';
 
@@ -18,6 +18,10 @@ export class ProveedoresController {
 
    @Get(':id')
    getProveedorById(@Param('id') id: string) {
+    const idNum = Number(id);
+    if (isNaN(idNum)) {
+        throw new BadRequestException('El id recibido no es válido');
+    }
        return this.proveedoresService.findById(id);
    }
 

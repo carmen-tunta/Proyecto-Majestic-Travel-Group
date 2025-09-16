@@ -12,6 +12,10 @@ import { ClientsModule } from '../clients/clients.module';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { ProveedoresModule } from '../proveedores/proveedores.module';
 import { ProveedorContactModule } from '../proveedor-contact/proveedor-contact.module';
+import { TarifarioModule } from '../tarifario/tarifario.module';
+import { TarifaComponentModule } from '../tarifaComponent/tarifaComponent.module';
+import { TarifaColumnModule } from '../tarifaColumn/tarifaColumn.module';
+import { TarifaPricesModule } from '../tarifaPrices/tarifaPrices.module';
 
 @Module({
   imports: [DatabaseModule, 
@@ -22,7 +26,11 @@ import { ProveedorContactModule } from '../proveedor-contact/proveedor-contact.m
             ServicesModule, 
             ClientsModule,
             ProveedoresModule,
-            ProveedorContactModule
+            ProveedorContactModule,
+            TarifarioModule,
+            TarifaComponentModule,
+            TarifaColumnModule,
+            TarifaPricesModule
           ],
   controllers: [AppController],
   providers: [

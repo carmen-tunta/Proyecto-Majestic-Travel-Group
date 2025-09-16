@@ -1,0 +1,141 @@
+.tarifa-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+}
+
+.tarifa-validity {
+  width: 20%;
+}
+
+.tarifa-validity .p-calendar {
+  width: 100%;
+}
+
+.tarifa-observation {
+  width: 40%;
+}
+
+.tarifa-observation input {
+  width: 100%;
+}
+
+.tarifa-save-button {
+  width: 20%; 
+}
+
+.tarifa-save-button .p-button-label {
+    font-weight: normal;
+}
+
+.tarifa-content {
+    width: 100%;
+    height: 75vh;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    padding: 2rem 1rem 2rem 1rem;
+    gap: 2rem;
+}
+
+.scrolling-table {
+  overflow-x: auto;
+  max-width: 100%;
+}
+.scrolling-table .p-datatable-table {
+    min-width: 30%;
+}
+
+.p-column-title, .p-input-icon-left {
+    width: 100%;
+}
+
+.tarifa-add-column-button {
+    font-size: 1.5rem;
+    max-height: 1.5rem;
+    max-width: 1.5rem;
+    cursor: pointer;
+    margin-top: 1.5rem;
+}
+
+.modal-add-column {
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    background-color: white;
+    border-radius: 10px;
+    position: absolute;
+    top: 60vh;
+    left: 55vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    width: 27vw;
+    height: auto;
+    padding: 1rem 2rem 2rem 2rem;
+
+}
+
+.modal-column-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    
+}
+
+.modal-column-header i{
+    cursor: pointer;
+    
+}
+
+.modal-column-header h2 {
+    padding: 0;
+    margin: 0 0 1rem 0;
+}
+
+.modal-column-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    width: 100%;
+    padding: 1rem;
+}
+
+.modal-column-body div {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    gap: 1rem
+}
+
+.modal-column-body div .p-inputtext {
+    width: 7rem;
+}
+
+.p-editable-column, .p-cell-editing {
+    padding: 0 !important;
+    width: 10vw;
+}
+
+.tarifa-dynamic-cell {
+    min-width: 11vw;
+    text-align: center !important;
+    vertical-align: middle !important;
+}
+
+.p-datatable-tbody > tr > td {
+    border-bottom: 1px solid #eee !important;
+}
+
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type="number"] {
+    -moz-appearance: textfield;
+}
