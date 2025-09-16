@@ -19,6 +19,7 @@ const ClientPage = () => {
   const isEditing = Boolean(id);
 
 
+
   const [formData, setFormData] = useState({
     nombre: '',
     pais: '',
@@ -410,17 +411,24 @@ const ClientPage = () => {
 
                 <div className="client-page-form-field">
                   <label htmlFor="fechaNacimiento">Fecha de nacimiento</label>
-                  <Calendar
-                    id="fechaNacimiento"
-                    value={formData.fechaNacimiento}
-                    onChange={(e) => handleInputChange('fechaNacimiento', e.value)}
-                    dateFormat="dd/mm/yy"
-                    placeholder="Seleccione fecha"
-                    showIcon
-                    icon="pi pi-calendar"
-                    inputStyle={{ width: '100%' }}
-                    panelStyle={{ zIndex: 1000 }}
-                  />
+                  <div className="client-page-calendar-container">
+                    <InputText
+                      id="fechaNacimiento"
+                      value={formData.fechaNacimiento ? formatDate(formData.fechaNacimiento) : ''}
+                      placeholder="Seleccione fecha"
+                      readOnly
+                      className="client-page-calendar-input"
+                    />
+                    <Calendar
+                      value={formData.fechaNacimiento}
+                      onChange={(e) => handleInputChange('fechaNacimiento', e.value)}
+                      showIcon
+                      icon="pi pi-calendar"
+                      inputStyle={{ width: '100%' }}
+                      panelStyle={{ zIndex: 1000 }}
+                      className="client-page-calendar-overlay"
+                    />
+                  </div>
                 </div>
               </div>
 
