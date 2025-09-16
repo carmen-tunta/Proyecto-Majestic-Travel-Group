@@ -35,9 +35,8 @@ import TarifaPriceRepository from "../../../../modules/TarifaPrice/repository/Ta
 import FindPriceByComponentColumnId from "../../../../modules/TarifaPrice/application/FindPriceByComponentColumnId";
 import GetTarifaPriceByTarifaId from "../../../../modules/TarifaPrice/application/GetTarifaPriceByTarifaId";
 
-const TarifaMenu = ({ proveedor }) => {
+const TarifaMenu = ({ proveedor, tarifa, setTarifa }) => {
     const [loading, setLoading] = useState(false);
-    const [tarifa, setTarifa] = useState(null);
     const [validityFrom, setValidityFrom] = useState('');
     const [validityTo, setValidityTo] = useState('');
     const [observation, setObservation] = useState('');
@@ -129,7 +128,7 @@ const TarifaMenu = ({ proveedor }) => {
                 setPrices(tarifaPricesData);
 
                 setSelectedComponents(buildRows(tarifaComponentData, columns, tarifaPricesData));
-                showNotification('Componente y celdas creados correctamente', 'success');
+                showNotification('Componente agregado correctamente', 'success');
             } catch (error) {
                 console.error('Error al crear el componente o sus celdas:', error);
                 showNotification('Error al agregar el componente', 'error');
@@ -171,7 +170,7 @@ const TarifaMenu = ({ proveedor }) => {
 
             setSelectedComponents(buildRows(tarifaComponents, tarifaColumnData, tarifaPricesData));
 
-            showNotification('Columna y celdas creadas correctamente', 'success');
+            showNotification('Columna agregada correctamente', 'success');
         } catch (error) {
             showNotification('Error al agregar la columna', 'error');
             console.error(error);
@@ -383,6 +382,7 @@ const TarifaMenu = ({ proveedor }) => {
                     validityTo,
                     observation
                 });
+                console.log(tarifarioActualizado);
                 setTarifa(tarifarioActualizado);
                 showNotification('Cabecera actualizada con éxito!', 'success');
             } else {
@@ -393,6 +393,10 @@ const TarifaMenu = ({ proveedor }) => {
                     proveedorId: proveedor.id
                 });
                 setTarifa(nuevoTarifario);
+                console.log(nuevoTarifario);
+                setValidityFrom(parseLocalDate(nuevoTarifario.validityFrom) || null);
+                setValidityTo(parseLocalDate(nuevoTarifario.validityTo) || null);
+                setObservation(nuevoTarifario.observation || '');
                 showNotification('Cabecera registrada con éxito!', 'success');
             }
         } catch (error) {
@@ -528,6 +532,7 @@ const TarifaMenu = ({ proveedor }) => {
                             dateFormat="D dd M y"
                             locale="es"
                             required
+                            disabled={loading}
                         />
                         <label htmlFor="validityFrom">Vigencia desde</label>
                     </FloatLabel>
@@ -539,6 +544,7 @@ const TarifaMenu = ({ proveedor }) => {
                             dateFormat="D dd M y"
                             locale="es"
                             required
+                            disabled={loading}
                         />
                         <label htmlFor="validityTo">Vigencia hasta</label>
                     </FloatLabel>
@@ -547,6 +553,7 @@ const TarifaMenu = ({ proveedor }) => {
                             id="observation"
                             value={observation}
                             onChange={(e) => setObservation(e.target.value)}
+                            disabled={loading}
                         />
                         <label htmlFor="observation">Observación</label>
                     </FloatLabel>
@@ -554,6 +561,7 @@ const TarifaMenu = ({ proveedor }) => {
                         className="tarifa-save-button"
                         label= {tarifa ? "Guardar cambios" : "Guardar para continuar"}
                         text
+                        disabled={loading}
                         onClick={handleSaveTarifario}
                     />
                 </div>
@@ -561,7 +569,7 @@ const TarifaMenu = ({ proveedor }) => {
 
             {tarifa && (
                 <div className="tarifa-body">
-                    Tarifa
+                    <h3>Tarifa</h3>
                     <div className="tarifa-content">
                         <div className="scrolling-table">
                         <DataTable 
@@ -570,6 +578,7 @@ const TarifaMenu = ({ proveedor }) => {
                             scrollHeight="flex" 
                             editMode="cell"
                             loading={loading}
+                            emptyMessage="Sin datos todavía"
                         >
                             <Column 
                                 style={{ minWidth: '25vw', backgroundColor: '#ffffff', border: 'none' }}

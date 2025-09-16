@@ -26,10 +26,13 @@ const Tarifario = () => {
     const location = useLocation();
     const proveedor = location.state?.proveedor;
     const [activeIndex, setActiveIndex] = useState(0);
+    const [tarifa, setTarifa] = useState(null);
+
+
     const items = [
         { label: 'Tarifa'},
-        { label: 'Incremento', disabled: !proveedor },
-        { label: 'Documentos', disabled: !proveedor }
+        { label: 'Incremento', disabled: !tarifa },
+        { label: 'Documentos', disabled: !tarifa }
     ];
 
     const onClose = () => {
@@ -61,6 +64,8 @@ const Tarifario = () => {
             <div>
                 <TarifaMenu
                     proveedor={proveedor}
+                    tarifa={tarifa}
+                    setTarifa={setTarifa}
                 />
             </div>
         )}

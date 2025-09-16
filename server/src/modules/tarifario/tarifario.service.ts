@@ -14,9 +14,18 @@ export class TarifarioService {
         return this.tarifarioRepository.find();
     }
 
-    async create(data: Partial<Tarifario>): Promise<Tarifario> {
+    async create(data: Partial<Tarifario>): Promise<any> {
         const newTarifa = this.tarifarioRepository.create(data);
-        return this.tarifarioRepository.save(newTarifa);
+        const saved = await this.tarifarioRepository.save(newTarifa);
+        return {
+            ...saved,
+            validityFrom: saved.validityFrom
+                ? new Date(saved.validityFrom).toISOString().slice(0, 10)
+                : null,
+            validityTo: saved.validityTo
+                ? new Date(saved.validityTo).toISOString().slice(0, 10)
+                : null,
+        };
     }
 
     async findById(id: string): Promise<Tarifario | null> {
