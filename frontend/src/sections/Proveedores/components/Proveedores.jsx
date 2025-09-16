@@ -10,11 +10,15 @@ import { useEffect, useState } from 'react';
 import ProveedoresRepository from '../../../modules/Proveedores/repository/ProveedoresRepository';
 import "../styles/Proveedores.css"
 import { useNavigate } from 'react-router-dom';
-
+import TarifarioRepository from '../../../modules/Tarifario/repository/TarifarioRepository';
+import getTarifarioByIdProveedor from '../../../modules/Tarifario/application/GetTarifarioByIdProveedor';
 
 const Proveedores = () => {
     const proveedoresRepository = new ProveedoresRepository();
     const getAllProveedores = new GetAllProveedores(proveedoresRepository);
+
+    const tarifarioRepository = new TarifarioRepository();
+    const getTarifarioById = new getTarifarioByIdProveedor(tarifarioRepository);
 
     const [proveedores, setProveedores] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -47,7 +51,19 @@ const Proveedores = () => {
         setLoading(true);
         try {
             const proveedorData = await getAllProveedores.execute(`?page=${page}&limit=${pageSize}`);
-            setProveedores(Array.isArray(proveedorData.data) ? proveedorData.data : (Array.isArray(proveedorData) ? proveedorData : []));
+            let proveedoresList = Array.isArray(proveedorData.data) ? proveedorData.data : (Array.isArray(proveedorData) ? proveedorData : []);
+            const proveedoresWithTarifario = await Promise.all(
+                proveedoresList.map(async (prov) => {
+                    // Aquí deberías tener un método para obtener el tarifario por proveedorId
+                    const tarifario = await getTarifarioById.execute(prov.id);
+                    // Si hay tarifario, toma el validityTo del primero
+                    return {
+                        ...prov,
+                        validityTo: tarifario && tarifario.length > 0 ? tarifario[0].validityTo : '',
+                    };
+                })
+            );
+            setProveedores(proveedoresWithTarifario);
             setTotalRecords(proveedorData.total || (Array.isArray(proveedorData) ? proveedorData.length : 0));
         } catch (error) {
             console.error('Error al obtener los proveedores:', error);
@@ -110,6 +126,11 @@ const Proveedores = () => {
                     <Column 
                         field="serviceType" 
                         header="Tipo de servicio" 
+                        style={{ width: '20%' }}>
+                    </Column>
+                    <Column 
+                        field="validityTo" 
+                        header="Vigencia" 
                         style={{ width: '20%' }}>
                     </Column>
                     <Column 
