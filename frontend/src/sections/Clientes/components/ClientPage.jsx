@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Button } from 'primereact/button';
 import { InputText } from 'primereact/inputtext';
@@ -100,7 +100,7 @@ const ClientPage = () => {
   }, [isEditing, id]);
 
   // Cargar contactos del cliente
-  const fetchContacts = async () => {
+  const fetchContacts = useCallback(async () => {
     if (isEditing && id) {
       try {
         const contactRepository = new ContactRepository();
@@ -112,13 +112,13 @@ const ClientPage = () => {
         setContacts([]);
       }
     }
-  };
+  }, [isEditing, id]);
 
   useEffect(() => {
     if (isEditing && id) {
       fetchContacts();
     }
-  }, [isEditing, id]);
+  }, [isEditing, id, fetchContacts]);
 
   // Opciones para los dropdowns
   const paises = [
