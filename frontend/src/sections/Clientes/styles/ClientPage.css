@@ -338,8 +338,8 @@
 
 .client-page-form-field .p-calendar .p-datepicker-trigger {
   position: absolute !important;
-  right: 8px !important;
-  top: 50% !important;
+  right: 25px !important;
+  top: 30% !important;
   transform: translateY(-50%) !important;
   background: #1976d2 !important;
   border: none !important;
@@ -361,6 +361,13 @@
 .client-page-form-field .p-calendar .p-datepicker-trigger .p-button-icon {
   font-size: 14px !important;
   color: white !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100% !important;
+  height: 100% !important;
 }
 
 /* Botones de acción */
