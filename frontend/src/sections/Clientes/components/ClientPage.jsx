@@ -211,12 +211,30 @@ const ClientPage = () => {
         response = await apiService.createClient(clientData);
       }
       
-      if (response) {
-        navigate('/clientes');
-      }
+        if (response) {
+          // Si es un cliente nuevo, cambiar a la pestaña de contactos
+          if (!isEditing) {
+            // Actualizar el formData con la respuesta del servidor para mostrar el nombre
+            if (response.nombre) {
+              setFormData(prev => ({ ...prev, nombre: response.nombre }));
+            }
+            setActiveTab('contacto');
+          } else {
+            // Si es edición, volver a la lista de clientes
+            navigate('/clientes');
+          }
+        }
     } catch (error) {
       console.error('Error al procesar cliente:', error);
-      alert('Error al procesar el cliente. Por favor, inténtalo de nuevo.');
+      
+      // Manejar errores específicos
+      if (error.message.includes('Duplicate entry') && error.message.includes('correo')) {
+        alert('Error: Ya existe un cliente con este correo electrónico. Por favor, usa un correo diferente.');
+      } else if (error.message.includes('Duplicate entry') && error.message.includes('numeroDocumento')) {
+        alert('Error: Ya existe un cliente con este número de documento. Por favor, usa un número diferente.');
+      } else {
+        alert('Error al procesar el cliente. Por favor, inténtalo de nuevo.');
+      }
     } finally {
       setLoading(false);
     }
@@ -312,7 +330,7 @@ const ClientPage = () => {
             <span className="client-page-breadcrumb">Clientes</span>
           </div>
           <h1 className="client-page-title">
-            {isEditing ? (formData.nombre || 'Editar Cliente') : 'Nuevo Cliente'}
+            {isEditing ? (formData.nombre || 'Editar Cliente') : (formData.nombre || 'Nuevo Cliente')}
           </h1>
         </div>
       </div>
@@ -533,23 +551,16 @@ const ClientPage = () => {
           </div>
         </div>
 
-        {/* Botones de acción */}
-        <div className="client-page-form-actions">
-          <Button
-            type="button"
-            label="Cancelar"
-            icon="pi pi-times"
-            className="p-button-text"
-            onClick={handleBack}
-          />
-          <Button
-            type="submit"
-            label="Guardar cambios"
-            icon="pi pi-check"
-            loading={loading}
-            disabled={loading}
-          />
-        </div>
+          {/* Botones de acción */}
+          <div className="client-page-form-actions">
+            <Button
+              type="submit"
+              label={isEditing ? "Guardar cambios" : "Continuar"}
+              icon={isEditing ? "pi pi-check" : "pi pi-arrow-right"}
+              loading={loading}
+              disabled={loading}
+            />
+          </div>
       </form>
       )}
 
