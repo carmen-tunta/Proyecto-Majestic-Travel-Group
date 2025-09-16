@@ -131,6 +131,20 @@ const Proveedores = () => {
                     <Column 
                         field="validityTo" 
                         header="Vigencia" 
+                        body={rowData => {
+                            if (!rowData.validityTo) return '';
+                            const date = new Date(rowData.validityTo);
+                            let formatted = date.toLocaleDateString('es-ES', {
+                                weekday: 'short',
+                                day: '2-digit',
+                                month: 'short',
+                                year: 'numeric'
+                            });
+                            formatted = formatted.replace(/,/g, '').split(' ')
+                                .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                                .join(' ');
+                            return formatted;
+                        }}
                         style={{ width: '20%' }}>
                     </Column>
                     <Column 

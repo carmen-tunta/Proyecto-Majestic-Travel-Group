@@ -28,7 +28,7 @@ class TarifaIncrementRepository {
     }
 
     async update(increment) {
-        const response = await fetch(`${apiUrl}/update/${increment.tarifaId}`, {
+        const response = await fetch(`${apiUrl}/update/${increment.id}`, {
             method: "PUT",
             headers: getAuthHeaders(),
             body: JSON.stringify(increment),

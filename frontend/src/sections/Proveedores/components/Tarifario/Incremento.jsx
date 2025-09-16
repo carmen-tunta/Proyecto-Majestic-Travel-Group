@@ -109,6 +109,20 @@ const Incremento = ({ tarifa }) => {
                     <Column 
                         field="incrementDate" 
                         header="Fecha de incremento" 
+                        body={rowData => {
+                            if (!rowData.incrementDate) return '';
+                            const date = new Date(rowData.incrementDate);
+                            let formatted = date.toLocaleDateString('es-ES', {
+                                weekday: 'short',
+                                day: '2-digit',
+                                month: 'short',
+                                year: 'numeric'
+                            });
+                            formatted = formatted.replace(/,/g, '').split(' ')
+                                .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                                .join(' ');
+                            return formatted;
+                        }}
                         style={{ width: '20%' }}
                     />
                     <Column 

@@ -1,9 +1,9 @@
 .increment-modal {
     background-color: white;
     border-radius: 8px;
-    padding: 0rem 1rem 1rem 1rem;
-    height: 80vh;
-    width: 40vw;
+    padding: 0rem 2rem 2rem 2rem;
+    height: 60vh;
+    width: 30vw;
     z-index: 1000;
     display: flex;
     flex-direction: column;
@@ -44,3 +44,22 @@
     justify-content: space-between;
     align-items: center;
 }
+
+.increment-modal .p-float-label {
+    width: 100%;
+    margin-bottom: 1rem;
+}
+
+.increment-modal .p-calendar {
+    width: 100%;
+}
+
+.increment-modal .p-inputnumber {
+    width: 100%;
+}
+
+.increment-modal .checkbox-percentage {
+    margin-bottom: 1rem;
+}
+
+
