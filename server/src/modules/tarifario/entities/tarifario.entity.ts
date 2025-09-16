@@ -2,6 +2,7 @@ import { Proveedores } from 'src/modules/proveedores/entities/proveedores.entity
 import { TarifaComponent } from 'src/modules/tarifaComponent/entities/tarifaComponent.entity';
 import { TarifaColumn } from 'src/modules/tarifaColumn/entities/tarifaColumn.entity';
 import { Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn, OneToMany } from 'typeorm';
+import { TarifaIncrement } from 'src/modules/tarifaIncrement/entities/increment.entity';
 
 @Entity('tarifario')
 export class Tarifario {
@@ -36,4 +37,7 @@ export class Tarifario {
 
   @OneToMany(() => TarifaColumn, tc => tc.tarifa, { cascade: true })
   columns: TarifaColumn[];
+
+  @OneToMany(() => TarifaIncrement, inc => inc.tarifa, { cascade: true })
+  increments: TarifaIncrement[];
 }
