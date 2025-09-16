@@ -7,9 +7,10 @@ import TarifaIncrementRepository from "../../../../modules/TarifaIncrement/repos
 import GetTarifaIncrementByTarifaId from "../../../../modules/TarifaIncrement/application/GetTarifaIncrementByTarifaId";
 import DeleteTarifaIncrement from "../../../../modules/TarifaIncrement/application/DeleteTarifaIncrement";
 import { useNotification } from "../../../Notification/NotificationContext";
-
+import { useModal } from "../../../../contexts/ModalContext";
 
 import "../../styles/Tarifario/Incremento.css"
+import IncrementoModal from "./IncrementoModal";
 
 
 const Incremento = ({ tarifa }) => {
@@ -19,6 +20,9 @@ const Incremento = ({ tarifa }) => {
     const [loading, setLoading] = useState(true);
     const [visibleDialog, setVisibleDialog] = useState(false);
     const {showNotification} = useNotification();
+
+    const { setIsModalOpen } = useModal();
+    const [showModal, setShowModal] = useState(false);
 
     const tarifaIncrementRepo = new TarifaIncrementRepository();
     const getTarifaIncrements = new GetTarifaIncrementByTarifaId(tarifaIncrementRepo);
@@ -43,6 +47,18 @@ const Incremento = ({ tarifa }) => {
         fetchIncrements();
     }, []);
 
+    const handleEdit = (increment) => {
+        setSelectedIncrement(increment);
+        setShowModal(true);
+        setIsModalOpen(true);
+    };
+
+    const handleNew = () => {
+        setSelectedIncrement(null);
+        setShowModal(true);
+        setIsModalOpen(true);
+    };
+
     const handleDelete = async () => {
         console.log("Deleting increment:", selectedIncrement);
         try {
@@ -64,6 +80,12 @@ const Incremento = ({ tarifa }) => {
         setVisibleDialog(false);
     };
 
+    const handleModalClose = () => {
+        setShowModal(false);
+        setIsModalOpen(false);
+        fetchIncrements();
+    };
+
 
     return (    
         <div className="incremento-body">
@@ -74,7 +96,7 @@ const Incremento = ({ tarifa }) => {
                     label="Nuevo"
                     size='small'
                     outlined
-                    onClick={() => {}}
+                    onClick={() => handleNew()}
                 />
             </div>
             <div>
@@ -90,10 +112,10 @@ const Incremento = ({ tarifa }) => {
                         style={{ width: '20%' }}
                     />
                     <Column 
-                        field="porcentage"  
+                        field="percentage"  
                         header="Porcentaje" 
                         body={rowData => {
-                            if(rowData.porcentage) return "Si"; else return "No";
+                            if(rowData.percentage) return "Si"; else return "No";
                         }}
                         style={{ width: '20%' }} 
                     />
@@ -114,7 +136,7 @@ const Incremento = ({ tarifa }) => {
                                     className="pi pi-pencil"    
                                     title="Editar" 
                                     style={{ marginRight: '10px', cursor:"pointer"}}
-                                    onClick={() => {}}
+                                    onClick={() => handleEdit(rowData)}
                                 ></i>
                                 <i 
                                     className="pi pi-trash"    
@@ -137,6 +159,16 @@ const Incremento = ({ tarifa }) => {
                 accept={() => {handleDelete();}}
                 reject={() => reject()} 
             />
+
+            {showModal && (
+                <IncrementoModal
+                    visible={showModal}
+                    onHide={handleModalClose}
+                    increment={selectedIncrement}
+                    tarifa={tarifa}
+                />
+            )}
+
         </div>
     );
 }

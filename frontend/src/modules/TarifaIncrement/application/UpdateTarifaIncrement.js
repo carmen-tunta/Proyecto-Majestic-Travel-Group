@@ -3,8 +3,8 @@ class UpdateTarifaIncrement {
         this.tarifaIncrementRepository = tarifaIncrementRepository;
     }
 
-    async execute(id, data) {
-        return await this.tarifaIncrementRepository.update(id, data);
+    async execute(data) {
+        return await this.tarifaIncrementRepository.update(data);
     }
 }
 

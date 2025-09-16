@@ -13,7 +13,7 @@ export class TarifaIncrement {
    incrementDate: Date;
 
    @Column({ type: 'boolean', comment: 'Porcentual o monetario' })
-   porcentage: boolean;
+   percentage: boolean;
 
    @Column({ type: 'decimal', precision: 10, scale: 2, comment: 'Valor del incremento' })
    incrementValue: number;
