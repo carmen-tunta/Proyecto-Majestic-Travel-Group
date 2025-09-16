@@ -56,7 +56,6 @@ class TarifaComponentRepository {
             method: "DELETE",
             headers: getAuthHeaders()
         });
-        console.log('Response from delete:', response);
         if (!response.ok) throw new Error('Error al eliminar el componente de la tarifa');
         return await response.json();
     }

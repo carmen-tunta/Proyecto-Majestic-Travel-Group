@@ -41,8 +41,8 @@ class TarifaPriceRepository {
         return await response.json();
     }
 
-    async update(price) {
-        const response = await fetch(`${apiUrl}/update/${price.id}`, {
+    async update(id, price) {
+        const response = await fetch(`${apiUrl}/update/${id}`, {
             method: "PUT",
             headers: getAuthHeaders(),
             body: JSON.stringify(price),
