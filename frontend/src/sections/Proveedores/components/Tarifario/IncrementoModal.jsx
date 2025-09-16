@@ -76,7 +76,8 @@ const IncrementoModal = ({ onHide, increment, tarifa }) => {
                     <i 
                         className="pi pi-times" 
                         style={{ marginBottom: "1rem", cursor:"pointer" }}
-                        onClick={onHide}>
+                        onClick={() => { if(loading) {} else onHide(); }}>
+                        
                     </i>
                 </div>
                 <FloatLabel>
@@ -120,6 +121,7 @@ const IncrementoModal = ({ onHide, increment, tarifa }) => {
                         outlined
                         className='p-button-secondary'
                         onClick={onHide}
+                        disabled={loading}
                     />
                     <Button 
                         label={(increment && increment.id ? "Editar" : "Guardar")}
