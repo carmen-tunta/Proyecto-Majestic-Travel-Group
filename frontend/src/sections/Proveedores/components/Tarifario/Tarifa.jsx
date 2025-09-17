@@ -1,20 +1,14 @@
-import { useNavigate, useLocation } from "react-router-dom";
-import { useEffect, useRef, useState } from "react";
-import { TabMenu } from "primereact/tabmenu";
+import { useEffect, useState } from "react";
 import { InputText } from "primereact/inputtext";
 import { FloatLabel } from "primereact/floatlabel";
-import { RadioButton } from "primereact/radiobutton";
 import { Button } from "primereact/button";
-import { Dropdown } from "primereact/dropdown";
 import { Calendar } from "primereact/calendar";
-import { MultiSelect } from "primereact/multiselect";
 import { addLocale } from "primereact/api";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { ConfirmDialog } from "primereact/confirmdialog";
 import { useNotification } from "../../../Notification/NotificationContext";
-import { useModal } from "../../../../contexts/ModalContext";
-import "../../styles/Tarifario/Tarifa.css"
+import { ProgressSpinner } from "primereact/progressspinner";
 import TarifarioRepository from "../../../../modules/Tarifario/repository/TarifarioRepository";
 import GetTarifarioByIdProveedor from "../../../../modules/Tarifario/application/GetTarifarioByIdProveedor";
 import CreateTarifario from "../../../../modules/Tarifario/application/CreateTarifario";
@@ -32,8 +26,9 @@ import GetTarifaColumnByIdTarifa from "../../../../modules/TarifaColumn/applicat
 import UpdateTarifaColumn from "../../../../modules/TarifaColumn/application/UpdateTarifaColumn";
 import DeleteTarifaColumn from "../../../../modules/TarifaColumn/application/DeleteTarifaColumn";
 import TarifaPriceRepository from "../../../../modules/TarifaPrice/repository/TarifaPriceRepository";
-import FindPriceByComponentColumnId from "../../../../modules/TarifaPrice/application/FindPriceByComponentColumnId";
 import GetTarifaPriceByTarifaId from "../../../../modules/TarifaPrice/application/GetTarifaPriceByTarifaId";
+import "../../styles/Tarifario/Tarifa.css"
+
 
 const TarifaMenu = ({ proveedor, tarifa, setTarifa }) => {
     const [loading, setLoading] = useState(false);
@@ -43,7 +38,6 @@ const TarifaMenu = ({ proveedor, tarifa, setTarifa }) => {
     const { showNotification } = useNotification();
     const [selectedComponents, setSelectedComponents] = useState([]);
     const [tarifaComponents, setTarifaComponents] = useState([]);
-    const [tarifaId, setTarifaId] = useState('');
     
     const [columns, setColumns] = useState([]);
     const [modalColumn, setModalColumn] = useState(false);
@@ -52,8 +46,9 @@ const TarifaMenu = ({ proveedor, tarifa, setTarifa }) => {
     const [paxMax, setPaxMax] = useState('');
 
     const [prices, setPrices] = useState([]);
+    const [modalColumnX, setModalColumnX] = useState(null);
+    const [modalColumnY, setModalColumnY] = useState(null);
 
-    
     const [visibleDialog, setVisibleDialog] = useState(false);
     const [componentToDelete, setComponentToDelete] = useState(null);
     const [columnToDelete, setColumnToDelete] = useState(null);
@@ -287,7 +282,11 @@ const TarifaMenu = ({ proveedor, tarifa, setTarifa }) => {
                                 color: '#00000075'
                             }}
                             title="Editar columna"
-                            onClick={() => {handleEditColumn(col)}}
+                            onClick={(e) => {
+                                handleEditColumn(col);
+                                setModalColumnX(e.pageX);
+                                setModalColumnY(e.pageY);
+                            }}
                         />
                         <i
                             className="pi pi-trash"
@@ -308,11 +307,6 @@ const TarifaMenu = ({ proveedor, tarifa, setTarifa }) => {
             paxMax: col.paxMax
         }));
     };
-
-
-    
-    
-                
 
     const buildRows = (tarifaComponents, columns, prices) => {
         return tarifaComponents.map(tc => {
@@ -517,12 +511,26 @@ const TarifaMenu = ({ proveedor, tarifa, setTarifa }) => {
     );
 
 
+    const MODAL_WIDTH = window.innerWidth * 0.27;
+    let modalStyle = {};
+    if (modalColumnX !== null) {
+        const windowWidth = window.innerWidth;
+        if (modalColumnX + MODAL_WIDTH > windowWidth) {
+            // Aparece por la izquierda si está muy cerca del borde derecho
+            modalStyle = { left: modalColumnX - MODAL_WIDTH }; // 20px de margen
+        } else {
+            modalStyle = { left: modalColumnX };
+        }
+        modalStyle.top = modalColumnY + 15 || '65vh';
+    }
+
+
 
     return (
         <>
-            {loading && tarifa ? (
-                <div>Cargando...</div>
-            ) : (
+            {/* {loading && tarifa ? ( */}
+                {/* <div>Cargando...</div> */}
+            {/* ) : ( */}
                 <div className="tarifa-header">
                     <FloatLabel className="tarifa-validity">
                         <Calendar
@@ -565,12 +573,20 @@ const TarifaMenu = ({ proveedor, tarifa, setTarifa }) => {
                         onClick={handleSaveTarifario}
                     />
                 </div>
-            )}
+            {/* )} */}
 
             {tarifa && (
                 <div className="tarifa-body">
                     <h3>Tarifa</h3>
+
+                    
+
                     <div className="tarifa-content">
+                        {loading && tarifa ? (
+                            <div style={{ display: 'flex', justifyContent: 'center', width: '100%', marginTop: '8rem', minHeight: 120 }}>
+                                <ProgressSpinner />
+                            </div>
+                        ) : (
                         <div className="scrolling-table">
                         <DataTable 
                             value={selectedComponents}
@@ -636,8 +652,20 @@ const TarifaMenu = ({ proveedor, tarifa, setTarifa }) => {
                             ))}
                         </DataTable>
                         </div>
-                        <i className="pi pi-plus-circle tarifa-add-column-button" onClick={() => setModalColumn(true)}></i>
+                        )}
+                        <i className="pi pi-plus-circle tarifa-add-column-button" 
+                            onClick={modalColumn ? undefined : (e) => {
+                                setModalColumn(true);
+                                setModalColumnX(e.pageX);
+                                setModalColumnY(e.pageY);
+                            }} 
+                            style={{ visibility: loading ? 'hidden' : 'visible' }}
+                        ></i>
+                        
                     </div>
+
+                     
+
                 </div>
             )}
 
@@ -656,56 +684,80 @@ const TarifaMenu = ({ proveedor, tarifa, setTarifa }) => {
                 reject={() => reject()} 
             />
 
-            {modalColumn && (
-                <div className="modal-add-column">
-                    <div className="modal-column-header">
-                        <h2>{editingColumn ? 'Editar columna' : 'Agregar columna'}</h2>
-                        <i className="pi pi-times" onClick={() => {
-                            setModalColumn(false);
-                            setEditingColumn(null);
-                            setColumnDescription('');
-                            setPaxMin('');
-                            setPaxMax('');
-                        }}></i>
-                    </div>
-                    <div className="modal-column-body">
-                        <FloatLabel>
-                            <InputText 
-                                id="columnDescription"
-                                value={columnDescription}
-                                onChange={(e) => setColumnDescription(e.target.value)}
-                                required
-                            />
-                            <label htmlFor="columnDescription">Descripción de la columna</label>
-                        </FloatLabel>
-                        <div>
-                            <FloatLabel className="pax">
-                                <InputText 
-                                    id="paxMin"
-                                    value={paxMin}
-                                    onChange={(e) => setPaxMin(e.target.value)}
-                                    required
-                                />
-                                <label htmlFor="paxMin">Pax mínimo</label>
-                            </FloatLabel>
 
-                            <FloatLabel className="pax">
+            {modalColumn && (
+                <div
+                    className="modal-add-column-backdrop"
+                    style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                        zIndex: 9998,
+                    }}
+                    onClick={() => {
+                        setModalColumn(false);
+                        setEditingColumn(null);
+                        setColumnDescription('');
+                        setPaxMin('');
+                        setPaxMax('');
+                    }}
+                >
+                    <div
+                        className="modal-add-column"
+                        style={modalStyle}
+                        onClick={e => e.stopPropagation()} // Evita que el click dentro del modal cierre el modal
+                    >
+                        <div className="modal-column-header">
+                            <h2>{editingColumn ? 'Editar columna' : 'Agregar columna'}</h2>
+                            <i className="pi pi-times" onClick={() => {
+                                setModalColumn(false);
+                                setEditingColumn(null);
+                                setColumnDescription('');
+                                setPaxMin('');
+                                setPaxMax('');
+                            }}></i>
+                        </div>
+                        <div className="modal-column-body">
+                            <FloatLabel>
                                 <InputText 
-                                    id="paxMax"
-                                    value={paxMax}
-                                    onChange={(e) => setPaxMax(e.target.value)}
+                                    id="columnDescription"
+                                    value={columnDescription}
+                                    onChange={(e) => setColumnDescription(e.target.value)}
                                     required
                                 />
-                                <label htmlFor="paxMax">Pax máximo</label>
+                                <label htmlFor="columnDescription">Descripción de la columna</label>
                             </FloatLabel>
+                            <div>
+                                <FloatLabel className="pax">
+                                    <InputText 
+                                        id="paxMin"
+                                        value={paxMin}
+                                        onChange={(e) => setPaxMin(e.target.value)}
+                                        required
+                                    />
+                                    <label htmlFor="paxMin">Pax mínimo</label>
+                                </FloatLabel>
+
+                                <FloatLabel className="pax">
+                                    <InputText 
+                                        id="paxMax"
+                                        value={paxMax}
+                                        onChange={(e) => setPaxMax(e.target.value)}
+                                        required
+                                    />
+                                    <label htmlFor="paxMax">Pax máximo</label>
+                                </FloatLabel>
+                            </div>
                         </div>
-                    </div>
-                    <div>
-                        {editingColumn ? (
-                            <Button label="Guardar cambios" onClick={handleSaveColumnEdit}/>
-                        ) : (
-                            <Button label="Agregar" onClick={handleAddColumn} />
-                        )}
+                        <div>
+                            {editingColumn ? (
+                                <Button label="Guardar cambios" onClick={handleSaveColumnEdit}/>
+                            ) : (
+                                <Button label="Agregar" onClick={handleAddColumn} />
+                            )}
+                        </div>
                     </div>
                 </div>
             )}

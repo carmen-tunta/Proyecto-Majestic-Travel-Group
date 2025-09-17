@@ -20,6 +20,7 @@ import GetTarifarioByIdProveedor from "../../../../modules/Tarifario/application
 import CreateTarifario from "../../../../modules/Tarifario/application/CreateTarifario";
 import UpdateTarifario from "../../../../modules/Tarifario/application/UpdateTarifario";
 import TarifaMenu from "./Tarifa";
+import Incremento from "./Incremento";
 
 const Tarifario = () => {
     const navigate = useNavigate();
@@ -71,7 +72,9 @@ const Tarifario = () => {
         )}
         {activeIndex === 1 && (
             <div>
-
+                <Incremento
+                    tarifa={tarifa}
+                />
             </div>
         )}
         {activeIndex === 2 && (

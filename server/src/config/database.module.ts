@@ -15,6 +15,7 @@ import { Tarifario } from 'src/modules/tarifario/entities/tarifario.entity';
 import { TarifaComponent } from 'src/modules/tarifaComponent/entities/tarifaComponent.entity';
 import { TarifaColumn } from 'src/modules/tarifaColumn/entities/tarifaColumn.entity';
 import { TarifaPrices } from 'src/modules/tarifaPrices/entities/tarifaPrices.entity';
+import { TarifaIncrement } from 'src/modules/tarifaIncrement/entities/increment.entity';
 
 @Module({
   imports: [
@@ -35,7 +36,8 @@ import { TarifaPrices } from 'src/modules/tarifaPrices/entities/tarifaPrices.ent
                   Tarifario,
                   TarifaComponent,
                   TarifaColumn,
-                  TarifaPrices
+                  TarifaPrices,
+                  TarifaIncrement
                 ], // Aquí se agregarán las entidades
       synchronize: true, // Cambia a true solo en desarrollo
     }),
