@@ -1,5 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, OneToMany } from 'typeorm';
 import { Service } from '../../services/entities/service.entity';
+import { TarifaComponent } from 'src/modules/tarifaComponent/entities/tarifaComponent.entity';
 
 @Entity('components')
 export class Component {
@@ -51,4 +52,7 @@ export class Component {
 
   @ManyToOne(() => Service, (service) => service.components, { nullable: true })
   service: Service | null;
+
+  @OneToMany(() => TarifaComponent, tc => tc.component)
+  tarifas: TarifaComponent[];
 }

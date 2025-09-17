@@ -11,9 +11,34 @@ import { ServicesModule } from '../services/services.module';
 import { ClientsModule } from '../clients/clients.module';
 import { ContactClientsModule } from '../contact-clients/contact-clients.module';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { ProveedoresModule } from '../proveedores/proveedores.module';
+import { ProveedorContactModule } from '../proveedor-contact/proveedor-contact.module';
+import { TarifarioModule } from '../tarifario/tarifario.module';
+import { TarifaComponentModule } from '../tarifaComponent/tarifaComponent.module';
+import { TarifaColumnModule } from '../tarifaColumn/tarifaColumn.module';
+import { TarifaPricesModule } from '../tarifaPrices/tarifaPrices.module';
+import { TarifaIncrementModule } from '../tarifaIncrement/tarifaIncrement.module';
 
 @Module({
-  imports: [DatabaseModule, UsersModule, AuthModule, ItineraryTemplateModule, ComponentsModule, ServicesModule, ClientsModule, ContactClientsModule],
+ 
+
+  imports: [DatabaseModule, 
+            UsersModule, 
+            AuthModule, 
+            ItineraryTemplateModule, 
+            ComponentsModule, 
+            ServicesModule, 
+            ClientsModule,
+            ContactClientsModule,
+            ProveedoresModule,
+            ProveedorContactModule,
+            TarifarioModule,
+            TarifaComponentModule,
+            TarifaColumnModule,
+            TarifaPricesModule,
+            TarifaIncrementModule
+          ],
+
   controllers: [AppController],
   providers: [
     AppService,
