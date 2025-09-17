@@ -7,7 +7,7 @@ import Itinerario from './sections/Itinerario/components/Itinerario';
 import ResetPassword from './sections/Login/components/ResetPassword';
 import Componentes from './sections/Componentes/components/Componentes';
 import Proveedores from './sections/Proveedores/components/Proveedores';
-import DetallesProveedores from './sections/Proveedores/components/DetallesProveedores';
+import DetallesProveedores from './sections/Proveedores/components/DetallesProveedor/DetallesProveedores';
 import Tarifario from './sections/Proveedores/components/Tarifario/Tarifario';
 import { NotificationProvider } from './sections/Notification/NotificationContext';
 import { AuthProvider } from './modules/auth/context/AuthContext';
