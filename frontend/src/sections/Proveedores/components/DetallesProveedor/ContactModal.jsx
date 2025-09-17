@@ -2,11 +2,11 @@ import { InputText } from 'primereact/inputtext';
 import { FloatLabel } from 'primereact/floatlabel';
 import { Button } from 'primereact/button';
 import { useEffect, useState } from 'react';
-import { useNotification } from '../../Notification/NotificationContext';
-import ProveedorContactRepository from '../../../modules/ProveedorContact/repository/ProveedorContactRepository';
-import UpdateProveedorContact from '../../../modules/ProveedorContact/application/UpdateProveedorContact';
-import CreateProveedorContact from '../../../modules/ProveedorContact/application/CreateProveedorContact';
-import "../styles/ContactModal.css"
+import { useNotification } from '../../../Notification/NotificationContext';
+import ProveedorContactRepository from '../../../../modules/ProveedorContact/repository/ProveedorContactRepository';
+import UpdateProveedorContact from '../../../../modules/ProveedorContact/application/UpdateProveedorContact';
+import CreateProveedorContact from '../../../../modules/ProveedorContact/application/CreateProveedorContact';
+import "../../styles/ContactModal.css"
 import { Dropdown } from 'primereact/dropdown';
 
 
