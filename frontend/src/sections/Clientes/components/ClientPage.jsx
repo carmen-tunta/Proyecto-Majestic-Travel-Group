@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Button } from 'primereact/button';
 import { InputText } from 'primereact/inputtext';
@@ -6,12 +6,19 @@ import { Dropdown } from 'primereact/dropdown';
 import { RadioButton } from 'primereact/radiobutton';
 import { Calendar } from 'primereact/calendar';
 import { apiService } from '../../../services/apiService';
+import ContactRepository from '../../../modules/ClientesContacto/repository/ContactRepository';
+import GetContactsByClient from '../../../modules/ClientesContacto/application/GetContactsByClient';
+import CreateContact from '../../../modules/ClientesContacto/application/CreateContact';
+import UpdateContact from '../../../modules/ClientesContacto/application/UpdateContact';
+import DeleteContact from '../../../modules/ClientesContacto/application/DeleteContact';
 import '../styles/ClientPage.css';
 
 const ClientPage = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const isEditing = Boolean(id);
+
+
 
   const [formData, setFormData] = useState({
     nombre: '',
@@ -27,11 +34,35 @@ const ClientPage = () => {
     mercado: '',
     rubro: '',
     genero: 'Masculino',
-    estado: 'Cotización'
+    estado: 'Registrado'
   });
 
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState('detalles');
+  const [contacts, setContacts] = useState([]);
+  const [showContactModal, setShowContactModal] = useState(false);
+  const [editingContact, setEditingContact] = useState(null);
+  const [contactFormData, setContactFormData] = useState({
+    medio: '',
+    descripcion: '',
+    nota: ''
+  });
+
+  // Función para formatear fechas en formato "Lun 01 Dic 25"
+  const formatDate = (dateString) => {
+    if (!dateString) return '';
+    
+    const date = new Date(dateString);
+    const days = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
+    const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+    
+    const dayName = days[date.getDay()];
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = months[date.getMonth()];
+    const year = String(date.getFullYear()).slice(-2);
+    
+    return `${dayName} ${day} ${month} ${year}`;
+  };
 
   // Cargar datos del cliente a editar
   useEffect(() => {
@@ -55,7 +86,7 @@ const ClientPage = () => {
               mercado: client.mercado || '',
               rubro: client.rubro || '',
               genero: client.genero || 'Masculino',
-              estado: client.estado || 'Cotización'
+              estado: client.estado || 'Registrado'
             });
           }
         } catch (error) {
@@ -67,6 +98,27 @@ const ClientPage = () => {
       loadClient();
     }
   }, [isEditing, id]);
+
+  // Cargar contactos del cliente
+  const fetchContacts = useCallback(async () => {
+    if (isEditing && id) {
+      try {
+        const contactRepository = new ContactRepository();
+        const getContactsByClient = new GetContactsByClient(contactRepository);
+        const response = await getContactsByClient.execute(id);
+        setContacts(Array.isArray(response) ? response : []);
+      } catch (error) {
+        console.error('Error al cargar contactos:', error);
+        setContacts([]);
+      }
+    }
+  }, [isEditing, id]);
+
+  useEffect(() => {
+    if (isEditing && id) {
+      fetchContacts();
+    }
+  }, [isEditing, id, fetchContacts]);
 
   // Opciones para los dropdowns
   const paises = [
@@ -159,12 +211,30 @@ const ClientPage = () => {
         response = await apiService.createClient(clientData);
       }
       
-      if (response) {
-        navigate('/clientes');
-      }
+        if (response) {
+          // Si es un cliente nuevo, cambiar a la pestaña de contactos
+          if (!isEditing) {
+            // Actualizar el formData con la respuesta del servidor para mostrar el nombre
+            if (response.nombre) {
+              setFormData(prev => ({ ...prev, nombre: response.nombre }));
+            }
+            setActiveTab('contacto');
+          } else {
+            // Si es edición, volver a la lista de clientes
+            navigate('/clientes');
+          }
+        }
     } catch (error) {
       console.error('Error al procesar cliente:', error);
-      alert('Error al procesar el cliente. Por favor, inténtalo de nuevo.');
+      
+      // Manejar errores específicos
+      if (error.message.includes('Duplicate entry') && error.message.includes('correo')) {
+        alert('Error: Ya existe un cliente con este correo electrónico. Por favor, usa un correo diferente.');
+      } else if (error.message.includes('Duplicate entry') && error.message.includes('numeroDocumento')) {
+        alert('Error: Ya existe un cliente con este número de documento. Por favor, usa un número diferente.');
+      } else {
+        alert('Error al procesar el cliente. Por favor, inténtalo de nuevo.');
+      }
     } finally {
       setLoading(false);
     }
@@ -172,6 +242,69 @@ const ClientPage = () => {
 
   const handleBack = () => {
     navigate('/clientes');
+  };
+
+  // Funciones para manejar contactos
+  const handleNewContact = () => {
+    setEditingContact(null);
+    setContactFormData({ medio: '', descripcion: '', nota: '' });
+    setShowContactModal(true);
+  };
+
+  const handleEditContact = (contact) => {
+    setEditingContact(contact);
+    setContactFormData({
+      medio: contact.medio || '',
+      descripcion: contact.descripcion || '',
+      nota: contact.nota || ''
+    });
+    setShowContactModal(true);
+  };
+
+  const handleDeleteContact = async (contactId) => {
+    if (window.confirm('¿Estás seguro de que quieres eliminar este contacto?')) {
+      try {
+        const contactRepository = new ContactRepository();
+        const deleteContact = new DeleteContact(contactRepository);
+        await deleteContact.execute(contactId);
+        fetchContacts(); // Recargar la lista
+      } catch (error) {
+        console.error('Error al eliminar contacto:', error);
+        alert('Error al eliminar el contacto');
+      }
+    }
+  };
+
+  const handleContactSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const contactRepository = new ContactRepository();
+      const contactData = {
+        ...contactFormData,
+        clientId: parseInt(id)
+      };
+
+      if (editingContact) {
+        const updateContact = new UpdateContact(contactRepository);
+        await updateContact.execute(editingContact.id, contactData);
+      } else {
+        const createContact = new CreateContact(contactRepository);
+        await createContact.execute(contactData);
+      }
+
+      setShowContactModal(false);
+      fetchContacts(); // Recargar la lista
+    } catch (error) {
+      console.error('Error al guardar contacto:', error);
+      alert('Error al guardar el contacto');
+    }
+  };
+
+  const handleContactInputChange = (field, value) => {
+    setContactFormData(prev => ({
+      ...prev,
+      [field]: value
+    }));
   };
 
   if (loading && isEditing) {
@@ -197,7 +330,7 @@ const ClientPage = () => {
             <span className="client-page-breadcrumb">Clientes</span>
           </div>
           <h1 className="client-page-title">
-            {isEditing ? (formData.nombre || 'Editar Cliente') : 'Nuevo Cliente'}
+            {isEditing ? (formData.nombre || 'Editar Cliente') : (formData.nombre || 'Nuevo Cliente')}
           </h1>
         </div>
       </div>
@@ -218,10 +351,11 @@ const ClientPage = () => {
         </button>
       </div>
 
-      {/* Form */}
-      <form onSubmit={handleSubmit} className="client-page-form">
-        <div className="client-page-form-card">
-          <h3 className="client-page-form-title">Datos principales</h3>
+      {/* Form - Solo mostrar cuando activeTab es 'detalles' */}
+      {activeTab === 'detalles' && (
+        <form onSubmit={handleSubmit} className="client-page-form">
+          <div className="client-page-form-card">
+            <h3 className="client-page-form-title">Datos principales</h3>
           
           <div className="client-page-form-section">
             <div className="client-page-form-row">
@@ -295,14 +429,24 @@ const ClientPage = () => {
 
                 <div className="client-page-form-field">
                   <label htmlFor="fechaNacimiento">Fecha de nacimiento</label>
-                  <Calendar
-                    id="fechaNacimiento"
-                    value={formData.fechaNacimiento}
-                    onChange={(e) => handleInputChange('fechaNacimiento', e.value)}
-                    dateFormat="dd/mm/yy"
-                    placeholder="Seleccione fecha"
-                    showIcon
-                  />
+                  <div className="client-page-calendar-container">
+                    <InputText
+                      id="fechaNacimiento"
+                      value={formData.fechaNacimiento ? formatDate(formData.fechaNacimiento) : ''}
+                      placeholder="Seleccione fecha"
+                      readOnly
+                      className="client-page-calendar-input"
+                    />
+                    <Calendar
+                      value={formData.fechaNacimiento}
+                      onChange={(e) => handleInputChange('fechaNacimiento', e.value)}
+                      showIcon
+                      icon="pi pi-calendar"
+                      inputStyle={{ width: '100%' }}
+                      panelStyle={{ zIndex: 1000 }}
+                      className="client-page-calendar-overlay"
+                    />
+                  </div>
                 </div>
               </div>
 
@@ -397,7 +541,7 @@ const ClientPage = () => {
                   <label htmlFor="fechaRegistro">Fecha de registro</label>
                   <InputText
                     id="fechaRegistro"
-                    value={isEditing && formData.fechaRegistro ? new Date(formData.fechaRegistro).toLocaleDateString() : new Date().toLocaleDateString()}
+                    value={isEditing && formData.fechaRegistro ? formatDate(formData.fechaRegistro) : formatDate(new Date().toISOString())}
                     disabled
                     className="client-page-disabled-field"
                   />
@@ -407,24 +551,138 @@ const ClientPage = () => {
           </div>
         </div>
 
-        {/* Botones de acción */}
-        <div className="client-page-form-actions">
-          <Button
-            type="button"
-            label="Cancelar"
-            icon="pi pi-times"
-            className="p-button-text"
-            onClick={handleBack}
-          />
-          <Button
-            type="submit"
-            label="Guardar cambios"
-            icon="pi pi-check"
-            loading={loading}
-            disabled={loading}
-          />
-        </div>
+          {/* Botones de acción */}
+          <div className="client-page-form-actions">
+            <Button
+              type="submit"
+              label={isEditing ? "Guardar cambios" : "Continuar"}
+              icon={isEditing ? "pi pi-check" : "pi pi-arrow-right"}
+              loading={loading}
+              disabled={loading}
+            />
+          </div>
       </form>
+      )}
+
+      {/* Sección de Datos de Contacto */}
+      {activeTab === 'contacto' && (
+        <div className="client-page-contacts">
+          <div className="client-page-contacts-header">
+            <h3>Datos de contacto</h3>
+            <Button
+              label="+ Nuevo"
+              size="small"
+              onClick={handleNewContact}
+            />
+          </div>
+          
+          <div className="client-page-contacts-table">
+            <table className="contacts-table">
+              <thead>
+                <tr>
+                  <th>Medio</th>
+                  <th>Descripción</th>
+                  <th>Nota</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                {contacts.length === 0 ? (
+                  <tr>
+                    <td colSpan="4" className="no-contacts">
+                      No hay contactos registrados
+                    </td>
+                  </tr>
+                ) : (
+                  contacts.map((contact) => (
+                    <tr key={contact.id}>
+                      <td>{contact.medio}</td>
+                      <td>{contact.descripcion}</td>
+                      <td>{contact.nota || '-'}</td>
+                      <td className="contact-actions">
+                        <i
+                          className="pi pi-pencil"
+                          onClick={() => handleEditContact(contact)}
+                          title="Editar"
+                        />
+                        <i
+                          className="pi pi-trash"
+                          onClick={() => handleDeleteContact(contact.id)}
+                          title="Eliminar"
+                        />
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* Modal para agregar/editar contacto */}
+      {showContactModal && (
+        <div className="contact-modal-overlay">
+          <div className="contact-modal">
+            <div className="contact-modal-header">
+              <h3>{editingContact ? 'Editar dato de contacto' : 'Nuevo dato de contacto'}</h3>
+              <i
+                className="pi pi-times"
+                onClick={() => setShowContactModal(false)}
+              />
+            </div>
+            <form onSubmit={handleContactSubmit} className="contact-modal-form">
+              <div className="contact-form-field">
+                <label>Medio *</label>
+                <Dropdown
+                  value={contactFormData.medio}
+                  options={[
+                    { label: 'WhatsApp', value: 'WhatsApp' },
+                    { label: 'Correo', value: 'Correo' },
+                    { label: 'Red social', value: 'Red social' },
+                    { label: 'Persona', value: 'Persona' },
+                    { label: 'Teléfono', value: 'Teléfono' },
+                    { label: 'Otro', value: 'Otro' }
+                  ]}
+                  onChange={(e) => handleContactInputChange('medio', e.value)}
+                  placeholder="Seleccione medio"
+                  required
+                  style={{ width: '100%' }}
+                />
+              </div>
+              <div className="contact-form-field">
+                <label>Descripción *</label>
+                <InputText
+                  value={contactFormData.descripcion}
+                  onChange={(e) => handleContactInputChange('descripcion', e.target.value)}
+                  placeholder="Agregar descripción"
+                  required
+                />
+              </div>
+              <div className="contact-form-field">
+                <label>Nota</label>
+                <InputText
+                  value={contactFormData.nota}
+                  onChange={(e) => handleContactInputChange('nota', e.target.value)}
+                  placeholder="Información adicional (opcional)"
+                />
+              </div>
+              <div className="contact-modal-actions">
+                <Button
+                  type="button"
+                  label="Cancelar"
+                  className="p-button-text"
+                  onClick={() => setShowContactModal(false)}
+                />
+                <Button
+                  type="submit"
+                  label="Guardar"
+                />
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

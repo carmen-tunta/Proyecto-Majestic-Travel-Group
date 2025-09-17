@@ -9,6 +9,7 @@ import { ItineraryTemplateModule } from '../itinerary-template/itinerary-templat
 import { ComponentsModule } from '../components/components.module';
 import { ServicesModule } from '../services/services.module';
 import { ClientsModule } from '../clients/clients.module';
+import { ContactClientsModule } from '../contact-clients/contact-clients.module';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { ProveedoresModule } from '../proveedores/proveedores.module';
 import { ProveedorContactModule } from '../proveedor-contact/proveedor-contact.module';
@@ -19,6 +20,8 @@ import { TarifaPricesModule } from '../tarifaPrices/tarifaPrices.module';
 import { TarifaIncrementModule } from '../tarifaIncrement/tarifaIncrement.module';
 
 @Module({
+ 
+
   imports: [DatabaseModule, 
             UsersModule, 
             AuthModule, 
@@ -26,6 +29,7 @@ import { TarifaIncrementModule } from '../tarifaIncrement/tarifaIncrement.module
             ComponentsModule, 
             ServicesModule, 
             ClientsModule,
+            ContactClientsModule,
             ProveedoresModule,
             ProveedorContactModule,
             TarifarioModule,
@@ -34,6 +38,7 @@ import { TarifaIncrementModule } from '../tarifaIncrement/tarifaIncrement.module
             TarifaPricesModule,
             TarifaIncrementModule
           ],
+
   controllers: [AppController],
   providers: [
     AppService,

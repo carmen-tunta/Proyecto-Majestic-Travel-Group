@@ -50,6 +50,22 @@ const Clientes = () => {
     return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
   };
 
+  // Función para formatear fechas en formato "Lun 01 Dic 25"
+  const formatDate = (dateString) => {
+    if (!dateString) return '';
+    
+    const date = new Date(dateString);
+    const days = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
+    const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+    
+    const dayName = days[date.getDay()];
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = months[date.getMonth()];
+    const year = String(date.getFullYear()).slice(-2);
+    
+    return `${dayName} ${day} ${month} ${year}`;
+  };
+
   // Buscador universal para clientes
   const { search, setSearch, results, loading: searchLoading } = useSearch(
     (q) => apiService.universalSearch('clients', q),
@@ -189,16 +205,19 @@ const Clientes = () => {
           <Column
             field="fechaRegistro"
             header="F. registro"
-            style={{ width: '10%', textAlign: 'center' }}
+            style={{ width: '12%', textAlign: 'center', minWidth: '100px' }}
             body={(rowData) => (
               <div style={{ 
                 textAlign: 'center', 
                 width: '100%',
                 display: 'flex',
                 alignItems: 'center',
-                justifyContent: 'center'
+                justifyContent: 'center',
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis'
               }}>
-                {new Date(rowData.fechaRegistro).toLocaleDateString()}
+                {formatDate(rowData.fechaRegistro)}
               </div>
             )}
           />
@@ -214,7 +233,7 @@ const Clientes = () => {
                 alignItems: 'center',
                 justifyContent: 'center'
               }}>
-                {rowData.estado || 'Cotización'}
+                {rowData.estado || 'Registrado'}
               </div>
             )}
           />
