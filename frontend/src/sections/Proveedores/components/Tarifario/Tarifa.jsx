@@ -309,12 +309,13 @@ const TarifaMenu = ({ proveedor, tarifa, setTarifa }) => {
     };
 
     const buildRows = (tarifaComponents, columns, prices) => {
+        const getCell = (tcId, colId) =>
+            prices.find(p => p.tarifa_component_id === tcId && p.tarifa_column_id === colId);
+
         return tarifaComponents.map(tc => {
-            const row = { ...tc.component};
+            const row = { ...tc.component };
             columns.forEach(col => {
-                const cell = prices.find(
-                    p => p.tarifa_component_id === tc.id && p.tarifa_column_id === col.id
-                );
+                const cell = getCell(tc.id, col.id);
                 row[col.id] = cell ? Number(cell.price) : 0;
                 row[`${col.id}_priceId`] = cell ? cell.id : null;
             });
