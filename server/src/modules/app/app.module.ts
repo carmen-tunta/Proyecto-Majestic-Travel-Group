@@ -18,6 +18,7 @@ import { TarifaComponentModule } from '../tarifaComponent/tarifaComponent.module
 import { TarifaColumnModule } from '../tarifaColumn/tarifaColumn.module';
 import { TarifaPricesModule } from '../tarifaPrices/tarifaPrices.module';
 import { TarifaIncrementModule } from '../tarifaIncrement/tarifaIncrement.module';
+import { ServiceImagesModule } from '../serviceImages/serviceImages.module';
 
 @Module({
  
@@ -36,7 +37,8 @@ import { TarifaIncrementModule } from '../tarifaIncrement/tarifaIncrement.module
             TarifaComponentModule,
             TarifaColumnModule,
             TarifaPricesModule,
-            TarifaIncrementModule
+            TarifaIncrementModule,
+            ServiceImagesModule
           ],
 
   controllers: [AppController],
