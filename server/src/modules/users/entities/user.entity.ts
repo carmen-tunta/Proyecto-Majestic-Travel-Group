@@ -7,24 +7,24 @@ export class User {
 
   @Column({ 
     unique: true, 
-    length: 50, 
+    type: 'text', 
     comment: 'Nombre de usuario único para login' 
   })
   username: string;
 
   @Column({ 
-    length: 255, 
+    type: 'longtext',
     comment: 'Contraseña hasheada del usuario' 
   })
   password: string;
 
   @Column({ 
-    length: 150, 
+    type: 'text', 
     comment: 'Email del usuario' 
   })
   email: string;
 
-  @Column({ nullable: true, type: 'varchar'})
+  @Column({ nullable: true, type: 'longtext'})
   resetPasswordToken: string | null;
 
   @Column({ nullable: true, type: 'datetime' })

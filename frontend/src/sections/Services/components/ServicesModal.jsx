@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { InputText } from 'primereact/inputtext';
 import { FloatLabel } from 'primereact/floatlabel';
 import { Button } from 'primereact/button';
@@ -16,6 +16,10 @@ import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Galleria } from 'primereact/galleria';
 import "../styles/ServicesModal.css"
+import ServiceImageRepository from '../../../modules/Service/repository/ServiceImageRepository';
+import UploadServiceImage from '../../../modules/Service/application/UploadServiceImage';
+import GetServiceImagesByServiceId from '../../../modules/Service/application/GetServiceImagesByServiceId';
+import DeleteImageFromService from '../../../modules/Service/application/DeleteImageFromService';
 
 const ServicesModal = ({ onHide, service }) => {
     const peruCities = ["Lima", "Cusco", "Arequipa", "Trujillo", "Iquitos", "Puno", "Chiclayo", "Piura", "Huaraz", "Nazca"];
@@ -23,42 +27,30 @@ const ServicesModal = ({ onHide, service }) => {
     const updateService = new UpdateService(serviceRepository);
     const createService = new CreateService(serviceRepository);
     const deleteComponentFromService = new DeleteComponentFromService(serviceRepository);
+    
+    const serviceImageRepo = new ServiceImageRepository();
+    const upload = new UploadServiceImage(serviceImageRepo);
+    const deleteImage = new DeleteImageFromService(serviceImageRepo);
+
     const {showNotification} = useNotification();
     const [loading, setLoading] = useState(false);
 
     const [serviceName, setServiceName] = useState(service?.name || '');
     const [serviceCity, setServiceCity] = useState(service?.city || '');
-    const [imageUrls, setImageUrls] = useState(service?.images || []);
+    const [images, setImages] = useState(service?.images || []);
     const [serviceComponents, setServiceComponents] = useState(service?.components || []);
     const [selectedComponent, setSelectedComponent] = useState(null);
-    const galleriaImages = (imageUrls || [])
-        .filter(url => typeof url === 'string' && url.trim() !== '')
-        .map(url => ({
-            itemImageSrc: url,
-            thumbnailImageSrc: url,
-            alt: 'Imagen de servicio',
-            title: 'Imagen'
-        }));
+    const [newImages, setNewImages] = useState([]);
+    const [deletedImages, setDeletedImages] = useState([]);
 
+    const filesUploadRef = useRef(null);
 
     useEffect(() => {
         setServiceName(service?.name || '');
         setServiceCity(service?.city || '');
         setServiceComponents(service?.components || []);
+        setImages(service?.images || []);
     }, [service]);
-
-
-    const handleImageUrlChange = (index, value) => {
-        setImageUrls(urls => urls.map((url, i) => i === index ? value : url));
-    };
-
-    const handleAddImageUrl = () => {
-        setImageUrls(urls => [...urls, '']);
-    };
-
-    const handleRemoveImageUrl = (index) => {
-        setImageUrls(urls => urls.filter((_, i) => i !== index));
-    };
 
     const handleSave = async () => {
         if (!serviceName.trim() || !serviceCity.trim()) {
@@ -74,16 +66,33 @@ const ServicesModal = ({ onHide, service }) => {
                     name: serviceName.trim(),
                     city: serviceCity.trim(),
                     componentIds,
-                    images: (imageUrls || []).filter(url => typeof url === 'string' && url.trim() !== '')
                 });
-            showNotification('Servicio actualizada con éxito!', 'success');
+            for (const image of newImages) {
+                await upload.execute({
+                    serviceId: service.id,
+                    uploadDate: image.uploadDate,
+                    file: image.file
+                });
+            }
+            for (const image of deletedImages) {
+                if (image.id) {
+                    await deleteImage.execute(image.id);
+                }
+            }
+            showNotification('Servicio actualizado con éxito!', 'success');
         } else {
-            await createService.execute({
+            const resp = await createService.execute({
                 name: serviceName.trim(),
                 city: serviceCity.trim(),
                 componentIds,
-                images: (imageUrls || []).filter(url => typeof url === 'string' && url.trim() !== '')
             });
+            for (const image of images) {
+                await upload.execute({
+                    serviceId: resp.id,
+                    uploadDate: image.uploadDate,
+                    file: image.file
+                });
+            }
             showNotification('Servicio creado con éxito!', 'success');
         }
         onHide();
@@ -111,6 +120,33 @@ const ServicesModal = ({ onHide, service }) => {
         setSelectedComponent(null); 
     }
 
+    const handleDeleteImage = (image) => {
+        if (image.id) { setDeletedImages(prevDeleted => [...prevDeleted, image]); }
+        setImages(images.filter(img => img !== image));
+        setNewImages(newImages.filter(img => img !== image));
+    }
+
+    const handleAddImage = async (e) => {
+        const files = e.files;
+        if (!files || files.length === 0) {
+            showNotification('No se seleccionó ningún archivo.', 'error');
+            return;
+        }
+        for (const img of files) {
+            const now = new Date().toISOString();
+            const localUrl = URL.createObjectURL(img);
+            const image = {
+                    uploadDate: now, 
+                    url: localUrl, 
+                    file: img
+            };
+            setImages(images => [...images, image]);
+            setNewImages(prevNewImages => [...prevNewImages, image]);
+            await new Promise(resolve => setTimeout(resolve, 1)); // Pequeña pausa para evitar bloqueos
+        }
+        if (filesUploadRef.current) { filesUploadRef.current.clear(); }
+        showNotification('Imagen(es) agregada(s) correctamente, recuerda guardar los cambios.', 'success');
+    }
 
     const { search, setSearch, results, loading: searchLoading } = useSearch((q) => apiService.universalSearch('components', q));
 
@@ -123,7 +159,8 @@ const ServicesModal = ({ onHide, service }) => {
                     <i 
                         className="pi pi-times" 
                         style={{ marginBottom: "1rem", cursor:"pointer" }}
-                        onClick={onHide}>
+                        onClick={loading ? () => undefined : onHide}
+                    >
                     </i>
                 </div>
                 <FloatLabel style={{ marginTop: '2rem' }}>
@@ -133,6 +170,7 @@ const ServicesModal = ({ onHide, service }) => {
                         value={serviceName} 
                         onChange={e => setServiceName(e.target.value)}
                         required 
+                        disabled={loading}
                     />
                     <label htmlFor="name">Nombre del servicio</label>
                 </FloatLabel>
@@ -144,65 +182,47 @@ const ServicesModal = ({ onHide, service }) => {
                         onChange={(e) => setServiceCity(e.value)} 
                         style={{ width: '100%' }}
                         required
+                        disabled={loading}
                     />
                     <label htmlFor="city">Ciudad</label>
                 </FloatLabel>
+                <p>Galería de imágenes</p>
                 <div className="p-4">
-                    <p>Galería de imágenes</p>
-                    {imageUrls.map((url, idx) => (
-                        <div key={idx} style={{ display: 'flex', alignItems: 'center', marginBottom: 8 }}>
-                            <InputText
-                                value={url}
-                                onChange={e => handleImageUrlChange(idx, e.target.value)}
-                                placeholder={`https://ejemplo.com/imagen${idx + 1}.jpg`}
-                                style={{ width: '60%' }}
-                            />
-                            <Button
-                                icon="pi pi-trash"
-                                className="p-button-text"
-                                style={{ marginLeft: 8 }}
-                                onClick={() => handleRemoveImageUrl(idx)}
-                            />
-                        </div>
-                    ))}
-                    <Button
-                        icon="pi pi-plus"
-                        label="Agregar imagen"
-                        className="p-button-sm"
-                        onClick={handleAddImageUrl}
-                        style={{ marginTop: 8 }}
+                    <FileUpload
+                        ref={filesUploadRef}
+                        name="file"
+                        mode="basic"
+                        accept="image/*"
+                        className='service-upload-images'
+                        customUpload
+                        multiple
+                        auto
+                        uploadHandler={(e) => handleAddImage(e)}
+                        disabled={loading}
                     />
-                    {galleriaImages.length > 0 && galleriaImages.every(img => img.itemImageSrc) && (
-                        <div style={{ marginTop: 16 }}>
-                            <Galleria
-                                value={galleriaImages}
-                                style={{ maxWidth: '100%' }}
-                                showThumbnails
-                                showItemNavigators
-                                item={(item) => (
-                                    <img
-                                        src={item.itemImageSrc}
-                                        alt={item.alt}
-                                        style={{ width: '100%', maxHeight: 300, objectFit: 'contain' }}
-                                    />
-                                )}
-                                thumbnail={(item) => (
-                                    <img
-                                        src={item.thumbnailImageSrc}
-                                        alt={item.alt}
-                                        style={{ width: 60, height: 60, objectFit: 'cover', borderRadius: 6, border: '1px solid #eee' }}
-                                    />
-                                )}
-                            />
-                        </div>
-                    )}
-
-
+                    {images
+                        .filter(img => img && (img.imagePath || img.url))
+                        .map((img, idx) => (
+                            <div key={idx} className='service-image'>
+                                <img
+                                    src={img.imagePath ? `http://localhost:3080/${img.imagePath}` : img.url}
+                                    alt={`Imagen de servicio ${idx}`}
+                                />
+                                <i 
+                                    className="pi pi-times delete-image"
+                                    onClick={loading ? () => undefined : () => handleDeleteImage(img)}
+                                    
+                                    title="Eliminar imagen"
+                                
+                                />
+                            </div>
+                        ))
+                    }
                 </div>
                 <div className='service-components-search'>
-                    <SearchBar value={search} onChange={setSearch} placeholder="Buscar componentes..." />
+                    <SearchBar disabled={loading} value={search} onChange={setSearch} placeholder="Buscar componentes..." />
                     <div>
-                        <Button icon="pi pi-plus" outlined label='Agregar' size='small' onClick={() => handleSaveComponent()} disabled={!selectedComponent}></Button>
+                        <Button icon="pi pi-plus" outlined label='Agregar' size='small' onClick={() => handleSaveComponent()} disabled={!selectedComponent || loading}></Button>
                     </div>
                     {search && results.length > 0 && selectedComponent?.componentName !== search && (
                         <div
@@ -262,7 +282,7 @@ const ServicesModal = ({ onHide, service }) => {
                                         className="pi pi-trash"    
                                         title="Eliminar" 
                                         style={{color:'#gray', cursor:"pointer"}}
-                                        onClick={() => handleDeleteComponent(rowData)}
+                                        onClick={loading ? () => undefined : handleDeleteComponent(rowData)}
                                     ></i>
                                 </span>
                             )}
@@ -278,6 +298,7 @@ const ServicesModal = ({ onHide, service }) => {
                         outlined
                         className='p-button-secondary'
                         onClick={onHide}
+                        disabled={loading}
                     />
                     <Button 
                         label={(service && service.id ? "Editar" : "Guardar")}
