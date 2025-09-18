@@ -47,7 +47,6 @@ const ServicesModal = ({ onHide, service }) => {
             alt: 'Imagen de servicio',
             title: 'Imagen'
         }));
-        console.log(galleriaImages);
 
     useEffect(() => {
         setServiceName(service?.name || '');
@@ -163,44 +162,29 @@ const ServicesModal = ({ onHide, service }) => {
                     />
                     <label htmlFor="city">Ciudad</label>
                 </FloatLabel>
+                <p>Galería de imágenes</p>
                 <div className="p-4">
-                    <p>Galería de imágenes</p>
                     <FileUpload
                         name="file"
                         mode="basic"
                         accept="image/*"
                         chooseLabel="Subir"
-                        className='service-images'
+                        className='service-upload-images'
                         customUpload
                         multiple
                         uploadHandler={(e) => handleUpload(e)}
                     />
-                    {galleriaImages.length > 0 && galleriaImages.every(img => img.itemImageSrc) && (
-                        <div style={{ marginTop: 16 }}>
-                            <Galleria
-                                value={galleriaImages}
-                                style={{ maxWidth: '100%' }}
-                                showThumbnails
-                                showItemNavigators
-                                item={(item) => (
-                                    <img
-                                        src={item.itemImageSrc}
-                                        alt={item.alt}
-                                        style={{ width: '100%', maxHeight: 300, objectFit: 'contain' }}
-                                    />
-                                )}
-                                thumbnail={(item) => (
-                                    <img
-                                        src={item.thumbnailImageSrc}
-                                        alt={item.alt}
-                                        style={{ width: 60, height: 60, objectFit: 'cover', borderRadius: 6, border: '1px solid #eee' }}
-                                    />
-                                )}
+                    {images
+                        .filter(img => img && img.imagePath)
+                        .map((img, idx) => (
+                            <img
+                                className='service-image'
+                                key={img.id || idx}
+                                src={`http://localhost:3080/${img.imagePath}`}
+                                alt={`Imagen de servicio ${img.id || idx}`}
                             />
-                        </div>
-                    )}
-
-
+                        ))
+                    }
                 </div>
                 <div className='service-components-search'>
                     <SearchBar value={search} onChange={setSearch} placeholder="Buscar componentes..." />

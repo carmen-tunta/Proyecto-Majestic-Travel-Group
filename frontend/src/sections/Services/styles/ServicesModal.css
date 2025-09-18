@@ -53,11 +53,12 @@
     width: 100%;
 }
 
-.service-images .p-button{
+.service-upload-images .p-button{
     background-color: rgba(0, 0, 0, 0);
     width: 5rem;
     height: 6rem;
     border: 1px dashed rgba(128, 128, 128, 0.7);
+    color: red;
 }
 
 .service-components-search {
@@ -67,4 +68,18 @@
     position: relative;
     margin-top: 2rem;
     margin-bottom: 1rem;
+}
+
+.p-4 {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.service-image {
+    width: 5rem;
+    height: 6rem;
+    object-fit: cover;
+    border-radius: 8px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
 }
