@@ -16,6 +16,9 @@ import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Galleria } from 'primereact/galleria';
 import "../styles/ServicesModal.css"
+import ServiceImageRepository from '../../../modules/Service/repository/ServiceImageRepository';
+import UploadServiceImage from '../../../modules/Service/application/UploadServiceImage';
+import GetServiceImagesByServiceId from '../../../modules/Service/application/GetServiceImagesByServiceId';
 
 const ServicesModal = ({ onHide, service }) => {
     const peruCities = ["Lima", "Cusco", "Arequipa", "Trujillo", "Iquitos", "Puno", "Chiclayo", "Piura", "Huaraz", "Nazca"];
@@ -23,42 +26,35 @@ const ServicesModal = ({ onHide, service }) => {
     const updateService = new UpdateService(serviceRepository);
     const createService = new CreateService(serviceRepository);
     const deleteComponentFromService = new DeleteComponentFromService(serviceRepository);
+    
+    const serviceImageRepo = new ServiceImageRepository();
+    const upload = new UploadServiceImage(serviceImageRepo);
+    const getImagesByServiceId = new GetServiceImagesByServiceId(serviceImageRepo);
+
     const {showNotification} = useNotification();
     const [loading, setLoading] = useState(false);
 
     const [serviceName, setServiceName] = useState(service?.name || '');
     const [serviceCity, setServiceCity] = useState(service?.city || '');
-    const [imageUrls, setImageUrls] = useState(service?.images || []);
+    const [images, setImages] = useState(service?.images || []);
     const [serviceComponents, setServiceComponents] = useState(service?.components || []);
     const [selectedComponent, setSelectedComponent] = useState(null);
-    const galleriaImages = (imageUrls || [])
-        .filter(url => typeof url === 'string' && url.trim() !== '')
-        .map(url => ({
-            itemImageSrc: url,
-            thumbnailImageSrc: url,
+    const galleriaImages = (images || [])
+        .filter(img => typeof img && img.imagePath)
+        .map(img => ({
+            itemImageSrc: `http://localhost:3080/${img.imagePath}`,
+            thumbnailImageSrc: `http://localhost:3080/${img.imagePath}`,
             alt: 'Imagen de servicio',
             title: 'Imagen'
         }));
-
+        console.log(galleriaImages);
 
     useEffect(() => {
         setServiceName(service?.name || '');
         setServiceCity(service?.city || '');
         setServiceComponents(service?.components || []);
+        setImages(service?.images || []);
     }, [service]);
-
-
-    const handleImageUrlChange = (index, value) => {
-        setImageUrls(urls => urls.map((url, i) => i === index ? value : url));
-    };
-
-    const handleAddImageUrl = () => {
-        setImageUrls(urls => [...urls, '']);
-    };
-
-    const handleRemoveImageUrl = (index) => {
-        setImageUrls(urls => urls.filter((_, i) => i !== index));
-    };
 
     const handleSave = async () => {
         if (!serviceName.trim() || !serviceCity.trim()) {
@@ -74,7 +70,6 @@ const ServicesModal = ({ onHide, service }) => {
                     name: serviceName.trim(),
                     city: serviceCity.trim(),
                     componentIds,
-                    images: (imageUrls || []).filter(url => typeof url === 'string' && url.trim() !== '')
                 });
             showNotification('Servicio actualizada con éxito!', 'success');
         } else {
@@ -82,7 +77,6 @@ const ServicesModal = ({ onHide, service }) => {
                 name: serviceName.trim(),
                 city: serviceCity.trim(),
                 componentIds,
-                images: (imageUrls || []).filter(url => typeof url === 'string' && url.trim() !== '')
             });
             showNotification('Servicio creado con éxito!', 'success');
         }
@@ -111,6 +105,28 @@ const ServicesModal = ({ onHide, service }) => {
         setSelectedComponent(null); 
     }
 
+    const handleUpload = async (event) => {
+        const files = event.files;
+        if (!files || files.length === 0) {
+            showNotification('No se seleccionó ningún archivo.', 'error');
+            return;
+        }
+        try {
+            const now = new Date().toISOString();
+            for (const file of files) {
+                const image = await upload.execute({
+                    serviceId: service.id,
+                    uploadDate: now}, 
+                    file
+                ); 
+                setImages(images => [...images, image]);
+            }
+            showNotification('Imagen subida con éxito!', 'success');
+        } catch (error) {
+            showNotification('Error al subir la imagen', 'error');
+            console.error('Error uploading image:', error);
+        }
+    };
 
     const { search, setSearch, results, loading: searchLoading } = useSearch((q) => apiService.universalSearch('components', q));
 
@@ -149,28 +165,15 @@ const ServicesModal = ({ onHide, service }) => {
                 </FloatLabel>
                 <div className="p-4">
                     <p>Galería de imágenes</p>
-                    {imageUrls.map((url, idx) => (
-                        <div key={idx} style={{ display: 'flex', alignItems: 'center', marginBottom: 8 }}>
-                            <InputText
-                                value={url}
-                                onChange={e => handleImageUrlChange(idx, e.target.value)}
-                                placeholder={`https://ejemplo.com/imagen${idx + 1}.jpg`}
-                                style={{ width: '60%' }}
-                            />
-                            <Button
-                                icon="pi pi-trash"
-                                className="p-button-text"
-                                style={{ marginLeft: 8 }}
-                                onClick={() => handleRemoveImageUrl(idx)}
-                            />
-                        </div>
-                    ))}
-                    <Button
-                        icon="pi pi-plus"
-                        label="Agregar imagen"
-                        className="p-button-sm"
-                        onClick={handleAddImageUrl}
-                        style={{ marginTop: 8 }}
+                    <FileUpload
+                        name="file"
+                        mode="basic"
+                        accept="image/*"
+                        chooseLabel="Subir"
+                        className='service-images'
+                        customUpload
+                        multiple
+                        uploadHandler={(e) => handleUpload(e)}
                     />
                     {galleriaImages.length > 0 && galleriaImages.every(img => img.itemImageSrc) && (
                         <div style={{ marginTop: 16 }}>

@@ -7,25 +7,25 @@ export class Client {
   id: number;
 
   @Column({
-    length: 100,
+    type: 'text',
     comment: 'Nombre del cliente',
   })
   nombre: string;
 
   @Column({
-    length: 100,
+    type: 'text',
     comment: 'País del cliente',
   })
   pais: string;
 
   @Column({
-    length: 100,
+    type: 'text',
     comment: 'Ciudad del cliente',
   })
   ciudad: string;
 
   @Column({
-    length: 255,
+    type: 'text',
     comment: 'Dirección del cliente',
   })
   direccion: string;
@@ -37,7 +37,7 @@ export class Client {
   whatsapp: string;
 
   @Column({
-    length: 150,
+    type: 'text',
     unique: true,
     comment: 'Correo electrónico del cliente',
   })
@@ -50,32 +50,32 @@ export class Client {
   fechaNacimiento: Date;
 
   @Column({
-    length: 50,
+    type: 'text',
     comment: 'Lengua nativa del cliente',
   })
   lenguaNativa: string;
 
   @Column({
-    length: 50,
+    type: 'text',
     comment: 'Tipo de documento del cliente',
   })
   tipoDocumento: string;
 
   @Column({
-    length: 50,
+    type: 'text',
     unique: true,
     comment: 'Número de documento del cliente',
   })
   numeroDocumento: string;
 
   @Column({
-    length: 100,
+    type: 'text',
     comment: 'Mercado del cliente',
   })
   mercado: string;
 
   @Column({
-    length: 100,
+    type: 'text',
     comment: 'Rubro del cliente',
   })
   rubro: string;
@@ -94,8 +94,7 @@ export class Client {
   fechaRegistro: Date;
 
   @Column({
-    type: 'varchar',
-    length: 50,
+    type: 'text',
     default: 'Registrado',
     comment: 'Estado del cliente',
   })

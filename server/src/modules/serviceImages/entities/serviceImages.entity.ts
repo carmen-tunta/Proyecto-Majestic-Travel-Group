@@ -10,7 +10,7 @@ export class ServiceImage {
   @Column({ type: 'number', nullable: false })
   serviceId: number;
 
-  @Column({ length: 255, unique: true, nullable: false })
+  @Column({ type: 'text', unique: true, nullable: false })
   imagePath: string;
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })

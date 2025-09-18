@@ -26,7 +26,7 @@ export class ServicesService {
   }
 
   async findAll(): Promise<Service[]> {
-    return this.serviceRepository.find({ relations: ['components'] });
+    return this.serviceRepository.find({ relations: ['components', 'images'] });
   }
 
   async findOne(id: number): Promise<Service | null> {

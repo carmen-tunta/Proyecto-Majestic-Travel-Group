@@ -7,22 +7,22 @@ export class Proveedores {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ length: 50, comment: 'Nombre del proveedor' })
+  @Column({ type: 'text', comment: 'Nombre del proveedor' })
   name: string;
 
-  @Column({ length: 50, comment: 'Representante legal' })
+  @Column({ type: 'text', comment: 'Representante legal' })
   legal: string;
 
-  @Column({ length: 25, comment: 'Tipo de servicio' })
+  @Column({ type: 'text', comment: 'Tipo de servicio' })
   serviceType: string;
 
-  @Column({ length: 50, comment: 'Ciudad' })
+  @Column({ type: 'text', comment: 'Ciudad' })
   city: string;
 
-  @Column({ length: 30, comment: 'WhatsApp' })
+  @Column({ type: 'text', comment: 'WhatsApp' })
   whatsapp: string;
 
-  @Column({ length: 50, comment: 'Correo electrónico' })
+  @Column({ type: 'text', comment: 'Correo electrónico' })
   mail: string;
 
   @Column({ type: 'json', comment: 'Idiomas' })
@@ -34,7 +34,7 @@ export class Proveedores {
   @Column({ comment: 'Número de documento' })
   documentNumber: number;
 
-  @Column({ length: 100, comment: 'Dirección' })
+  @Column({ type: 'text', comment: 'Dirección' })
   direction: string;
 
   @Column({ type: 'date', comment: 'Fecha de nacimiento' })

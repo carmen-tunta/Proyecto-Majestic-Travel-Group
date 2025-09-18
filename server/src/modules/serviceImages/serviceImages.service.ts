@@ -38,6 +38,7 @@ export class ServiceImagesService {
 
         // Ruta relativa para guardar en la base de datos
         const imageRoute = `images-service/${fileName}`;
+        console.log('Image saved at:', filePath);
 
         
         const newServiceImage = this.serviceImagesRepository.create({
@@ -62,5 +63,12 @@ export class ServiceImagesService {
 
     getById(id: number): Promise<ServiceImage | null> {
         return this.serviceImagesRepository.findOneBy({ id });
+    }
+
+    getByServiceId(serviceId: number): Promise<ServiceImage[]> {
+        return this.serviceImagesRepository.find({
+            where: { serviceId },
+            order: { uploadDate: 'DESC' }
+        });
     }
 }

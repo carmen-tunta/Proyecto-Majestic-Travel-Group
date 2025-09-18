@@ -12,7 +12,12 @@ async function bootstrap() {
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     credentials: true,
   });
+
+  const express = require('express');
+  const path = require('path');
+  app.use('/images-service', express.static(path.join(process.cwd(), 'uploads/images-service')));
+
   await app.listen(process.env.BACK_HOST || 3080);
-}
+} 
 
 bootstrap();
