@@ -13,8 +13,8 @@ export class TarifarioDocumentsController {
     @UseInterceptors(FileInterceptor('file'))
     async uploadFile(
         @Body() data: Partial<MulterFile>,
-        @UploadedFile() file: MulterFile) 
-    {
+        @UploadedFile() file: MulterFile
+    ) {
         return this.tdService.create(file, data);
     }
 
@@ -34,7 +34,12 @@ export class TarifarioDocumentsController {
     }
 
     @Put('update/:id')
-    async updateFile(@Param('id') id: string, @Body() data: Partial<TarifarioDocuments>) {
-        return this.tdService.update(id, data);
+    @UseInterceptors(FileInterceptor('file'))
+    async updateFile(
+        @Param('id') id: string, 
+        @Body() data: Partial<TarifarioDocuments>,
+        @UploadedFile() file: MulterFile
+    ) {
+        return this.tdService.update(id, data, file);
     }
 }

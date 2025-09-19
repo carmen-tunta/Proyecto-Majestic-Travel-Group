@@ -50,16 +50,22 @@ class TarifarioDocumentsRepository {
         return await response.json();
     }
 
-    async update(data) {
+    async update(data, file) {
+        const formData = new FormData();
+        if(file) formData.append('file', file);
+        Object.entries(data).forEach(([key, value]) => {
+            formData.append(key, value);
+        });
+        const token = localStorage.getItem('authToken');
+        const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
         const response = await fetch(`${apiUrl}/update/${data.id}`, {
             method: "PUT",
-            headers: getAuthHeaders(),
-            body: JSON.stringify(data),
+            headers,
+            body: formData
         });
         if (!response.ok) throw new Error('Error al actualizar');
         return await response.json();
     }
-
 
 }
 

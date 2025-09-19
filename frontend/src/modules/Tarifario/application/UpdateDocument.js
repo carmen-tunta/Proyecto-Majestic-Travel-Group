@@ -3,8 +3,8 @@ class UpdateDocument {
         this.repo = repo
     }
 
-    update(data) {
-        return this.repo.update(data);
+    execute(data, file) {
+        return this.repo.update(data, file);
     }
 }
 

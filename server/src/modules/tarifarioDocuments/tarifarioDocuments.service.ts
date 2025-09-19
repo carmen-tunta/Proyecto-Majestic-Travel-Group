@@ -71,8 +71,36 @@ export class TarifarioDocumentsService {
         });
     }
 
-    async update(id: string, data: Partial<TarifarioDocuments>): Promise<TarifarioDocuments | null> {
-        await this.tdRepository.update(id, data);
-        return this.tdRepository.findOneBy({ id: Number(id) })
+    async update(id: string, data: Partial<TarifarioDocuments>, file?: MulterFile): Promise<TarifarioDocuments | null> {
+        const document = await this.tdRepository.findOneBy({ id: Number(id) });
+        if (!document) return null;
+
+        let updatedFields = { ...data };
+
+        if (file) {
+            // Eliminar el archivo anterior
+            const oldFilePath = path.join(process.cwd(), 'uploads', document.documentPath);
+            if (fs.existsSync(oldFilePath)) {
+                fs.unlinkSync(oldFilePath);
+            }
+
+            // Guardar el nuevo archivo
+            const uploadDir = path.join(process.cwd(), 'uploads/documents-tarifario');
+            if (!fs.existsSync(uploadDir)) {
+                fs.mkdirSync(uploadDir, { recursive: true });
+            }
+            const fileExt = path.extname(file.originalname);
+            const dateString = typeof data.uploadDate === 'string' ? data.uploadDate : data.uploadDate?.toString?.() ?? '';
+            const safeDateString = dateString.replace(/[\/\\:*?"<>|]/g, '-');
+            const fileName = `${safeDateString}_tarifario${document.tarifarioId}${fileExt}`;
+            const filePath = path.join(uploadDir, fileName);
+            fs.writeFileSync(filePath, file.buffer);
+
+            // Actualizar la ruta del documento
+            updatedFields.documentPath = `documents-tarifario/${fileName}`;
+        }
+
+        await this.tdRepository.update(id, updatedFields);
+        return this.tdRepository.findOneBy({ id: Number(id) });
     }
 }

@@ -20,6 +20,7 @@ const Documents = ({ tarifario }) => {
     const [selectedDocument, setSelectedDocument] = useState(null);
     const [visibleDialog, setVisibleDialog] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
+    const [docToEdit, setDocToEdit] = useState(null);
     
     const [description, setDescription] = useState("");
     const [file, setFile] = useState(null);
@@ -93,11 +94,40 @@ const Documents = ({ tarifario }) => {
         setIsEditing(true);
         setDescription(data.description);
         setFile({name: data.name});
+        setDocToEdit(data);
     }
 
-    const handleUpdate = () => {
-        if(newFile) {
-            // TODO
+    const handleUpdate = async () => {
+        try {
+            setLoading(true);
+            let data;
+            let fileToSend = null;
+            if (newFile) {
+                const now = new Date().toISOString();
+                data = {
+                    id: docToEdit.id,
+                    description: description,
+                    name: newFile.name,
+                    uploadDate: now
+                };
+                fileToSend = newFile;
+            } else {
+                data = {
+                    id: docToEdit.id,
+                    description: description,
+                };
+            }
+            await updateDocument.execute(data, fileToSend);
+            fetchDocuments();
+        } catch (error) {
+            console.error("Error updating document:", error);
+        } finally {
+            setLoading(false);
+            setIsEditing(false);
+            setNewFile(null);
+            setDocToEdit(null);
+            setFile(null);
+            setDescription("");
         }
     }
 
@@ -143,7 +173,7 @@ const Documents = ({ tarifario }) => {
                     label={!isEditing ? "Agregar" : "Actualizar"} 
                     icon="pi pi-plus"
                     outlined 
-                    onClick={() => {handleUpload()}}
+                    onClick={!isEditing ? () => handleUpload() : () => handleUpdate()}
                     disabled={loading}
                 />
             </div>
