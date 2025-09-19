@@ -168,19 +168,12 @@ export default function CotizacionForm(){
     }catch(e){ showNotification(e.message || 'No se pudo agregar','error'); }
   }
 
-  const totalServicios = (detalle?.servicios||[]).reduce((acc,s)=> acc + (Number(s.precio)||0) + (s.componentes||[]).reduce((a,c)=> a + (Number(c.precio)||0),0), 0);
+  const totalServicios = (detalle?.servicios||[]).reduce((acc,s)=> acc + (s.componentes||[]).reduce((a,c)=> a + (Number(c.precio)||0),0), 0);
   const costoPorPasajero = form.nroPax ? totalServicios / Number(form.nroPax) : 0;
   const precioVenta = totalServicios * (1 + Number(form.utilidad||0)/100);
 
   // Handlers para notas y precios (servicio y componente)
-  async function handleServicePriceBlur(serviceId, value){
-    const precio = Number(value);
-    if(Number.isNaN(precio)) { showNotification('Precio inválido','error'); return; }
-    try {
-      await apiService.updateCotizacionService(serviceId, { precio });
-      await refreshDetalle(cotizacionId);
-    } catch(e){ showNotification(e.message || 'No se pudo guardar el precio','error'); }
-  }
+  // Se quitó el precio a nivel servicio según requerimiento
 
   async function handleComponentAddNote(componentItemId){
     const nota = window.prompt('Agregar nota para el componente');
@@ -308,15 +301,6 @@ export default function CotizacionForm(){
                         🗑️
                       </button>
                       <div style={{fontWeight:600}}>{s.service?.name}</div>
-                    </div>
-                    <div style={{display:'flex',gap:8,alignItems:'center'}}>
-                      <input
-                        defaultValue={Number(s.precio||0).toFixed(2)}
-                        onClick={(e)=> e.stopPropagation()}
-                        onBlur={(e)=> handleServicePriceBlur(s.id, e.target.value)}
-                        placeholder="0.00"
-                        style={{width:70,padding:'6px 8px',border:'1px solid #cfd6e4',borderRadius:6}}
-                      />
                     </div>
                   </div>
                   {s.componentes?.map(ci => (
