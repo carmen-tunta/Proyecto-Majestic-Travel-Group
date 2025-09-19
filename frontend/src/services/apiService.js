@@ -194,4 +194,36 @@ export const apiService = {
       throw new Error(error.message || 'Error al actualizar cliente');
     }
   },
+
+  // Cotizaciones
+  async getCotizaciones() {
+    try {
+      const response = await fetch(`${API_BASE_URL}/cotizacion`, {
+        headers: getAuthHeaders()
+      });
+      if (!response.ok) {
+        throw new Error('Error al obtener cotizaciones');
+      }
+      return await response.json();
+    } catch (error) {
+      throw new Error(error.message || 'Error al obtener cotizaciones');
+    }
+  },
+
+  async createCotizacion(data) {
+    try {
+      const response = await fetch(`${API_BASE_URL}/cotizacion`, {
+        method: 'POST',
+        headers: getAuthHeaders(),
+        body: JSON.stringify(data)
+      });
+      if (!response.ok) {
+        const msg = await response.text();
+        throw new Error(msg || 'Error al crear cotización');
+      }
+      return await response.json();
+    } catch (error) {
+      throw new Error(error.message || 'Error al crear cotización');
+    }
+  },
 };

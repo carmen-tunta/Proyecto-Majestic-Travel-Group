@@ -55,7 +55,7 @@ export class CreateCotizacionDto {
   @IsInt()
   anio: number;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsInt()
-  numeroFile: number;
+  numeroFile?: number;
 }

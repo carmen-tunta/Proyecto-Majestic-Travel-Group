@@ -19,8 +19,21 @@ export class CotizacionService {
     if (!client) {
       throw new NotFoundException('Cliente no encontrado');
     }
+    // Ensure numeroFile is assigned when not provided: sequential per year
+    const anio = createCotizacionDto.anio;
+    let numeroFile = createCotizacionDto.numeroFile;
+    if (numeroFile == null) {
+      const lastByYear = await this.cotizacionRepository
+        .createQueryBuilder('c')
+        .select('MAX(c.numeroFile)', 'max')
+        .where('c.anio = :anio', { anio })
+        .getRawOne<{ max: number | null }>();
+      numeroFile = (lastByYear?.max || 0) + 1;
+    }
+
     const cotizacion = this.cotizacionRepository.create({
       ...createCotizacionDto,
+      numeroFile,
       cliente: client,
       fechaViaje: new Date(createCotizacionDto.fechaViaje),
     });
