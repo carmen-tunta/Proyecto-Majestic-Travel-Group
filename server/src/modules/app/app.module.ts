@@ -19,6 +19,7 @@ import { TarifaColumnModule } from '../tarifaColumn/tarifaColumn.module';
 import { TarifaPricesModule } from '../tarifaPrices/tarifaPrices.module';
 import { TarifaIncrementModule } from '../tarifaIncrement/tarifaIncrement.module';
 import { ServiceImagesModule } from '../serviceImages/serviceImages.module';
+import { CotizacionModule } from '../cotizacion/cotizacion.module';
 
 @Module({
  
@@ -38,7 +39,8 @@ import { ServiceImagesModule } from '../serviceImages/serviceImages.module';
             TarifaColumnModule,
             TarifaPricesModule,
             TarifaIncrementModule,
-            ServiceImagesModule
+            ServiceImagesModule,
+            CotizacionModule
           ],
 
   controllers: [AppController],

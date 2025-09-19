@@ -17,6 +17,8 @@ import { ModalProvider, useModal } from './contexts/ModalContext';
 import Clientes from './sections/Clientes/components/Clientes';
 import ClientPage from './sections/Clientes/components/ClientPage';
 import Services from './sections/Services/components/Services';
+import Cotizaciones from './sections/Cotizacion/components/Cotizaciones';
+import CotizacionForm from './sections/Cotizacion/components/CotizacionForm';
 
 function AppContent() {
   const location = useLocation();
@@ -64,6 +66,21 @@ function AppContent() {
           <Route path="/proveedores" element={
             <ProtectedRoute>
               <Proveedores />
+            </ProtectedRoute>
+          } />
+          <Route path="/cotizaciones" element={
+            <ProtectedRoute>
+              <Cotizaciones />
+            </ProtectedRoute>
+          } />
+          <Route path="/cotizaciones/nuevo" element={
+            <ProtectedRoute>
+              <CotizacionForm />
+            </ProtectedRoute>
+          } />
+          <Route path="/cotizaciones/:id" element={
+            <ProtectedRoute>
+              <CotizacionForm />
             </ProtectedRoute>
           } />
           <Route path="/proveedores/detalles" element={
