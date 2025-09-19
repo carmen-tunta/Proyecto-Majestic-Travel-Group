@@ -3,6 +3,7 @@ import { TarifaComponent } from 'src/modules/tarifaComponent/entities/tarifaComp
 import { TarifaColumn } from 'src/modules/tarifaColumn/entities/tarifaColumn.entity';
 import { Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn, OneToMany } from 'typeorm';
 import { TarifaIncrement } from 'src/modules/tarifaIncrement/entities/increment.entity';
+import { TarifarioDocuments } from 'src/modules/tarifarioDocuments/entities/tarifarioDocuments.entity';
 
 @Entity('tarifario')
 export class Tarifario {
@@ -40,4 +41,7 @@ export class Tarifario {
 
   @OneToMany(() => TarifaIncrement, inc => inc.tarifa, { cascade: true })
   increments: TarifaIncrement[];
+
+  @OneToMany(() => TarifarioDocuments, td => td.tarifario, { cascade: true })
+  documents: TarifarioDocuments[];
 }

@@ -19,6 +19,7 @@ import { TarifaColumnModule } from '../tarifaColumn/tarifaColumn.module';
 import { TarifaPricesModule } from '../tarifaPrices/tarifaPrices.module';
 import { TarifaIncrementModule } from '../tarifaIncrement/tarifaIncrement.module';
 import { ServiceImagesModule } from '../serviceImages/serviceImages.module';
+import { TarifarioDocumentsModule } from '../tarifarioDocuments/tarifarioDocuments.module';
 import { CotizacionModule } from '../cotizacion/cotizacion.module';
 
 @Module({
@@ -40,6 +41,7 @@ import { CotizacionModule } from '../cotizacion/cotizacion.module';
             TarifaPricesModule,
             TarifaIncrementModule,
             ServiceImagesModule,
+            TarifarioDocumentsModule,
             CotizacionModule
           ],
 

@@ -20,6 +20,7 @@ import { TarifaColumn } from 'src/modules/tarifaColumn/entities/tarifaColumn.ent
 import { TarifaPrices } from 'src/modules/tarifaPrices/entities/tarifaPrices.entity';
 import { TarifaIncrement } from 'src/modules/tarifaIncrement/entities/increment.entity';
 import { ServiceImage } from 'src/modules/serviceImages/entities/serviceImages.entity';
+import { TarifarioDocuments } from 'src/modules/tarifarioDocuments/entities/tarifarioDocuments.entity';
 import { Cotizacion } from 'src/modules/cotizacion/entities/cotizacion.entity';
 import { CotizacionServicio } from 'src/modules/cotizacion/entities/cotizacion-servicio.entity';
 import { CotizacionServicioComponente } from 'src/modules/cotizacion/entities/cotizacion-servicio-componente.entity';
@@ -51,6 +52,7 @@ import { CotizacionServicioComponente } from 'src/modules/cotizacion/entities/co
                   TarifaPrices,
                   TarifaIncrement,
                   ServiceImage,
+                  TarifarioDocuments,
                   Cotizacion,
                   CotizacionServicio,
                   CotizacionServicioComponente

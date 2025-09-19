@@ -1,0 +1,54 @@
+.documents-body {
+    margin-top: 1rem;
+    box-shadow: 0 0 7px rgba(0,0,0,0.15);
+    padding: 3rem 2rem 3rem 2rem;
+    border-radius: 10px;
+}
+
+.documents-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: initial;
+    margin-bottom: 1rem;
+    padding-bottom: 2rem;
+    width: 100%;
+    gap: 2rem;
+}
+
+.documents-header .p-fileupload-choose .p-button-icon {
+    display: none;
+}
+
+.document-upload .p-float-label {
+    width: 30vw;
+    margin: 0;
+}
+
+.document-upload {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 3rem;
+    width: 100%;
+}
+
+.documents-table {
+    box-shadow: 0 0 8px rgba(0,0,0,0.05);
+    border: 1px solid #ddd;
+}
+
+.upload {
+    min-width: 15vw;
+    max-width: 40vw;
+}
+
+.p-fileupload-choose {
+    width: 100%;
+}
+
+.upload-button {
+    min-width: 7rem;
+}
+
+
