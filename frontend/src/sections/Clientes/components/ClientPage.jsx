@@ -642,16 +642,24 @@ const ClientPage = () => {
                       <td>{contact.descripcion}</td>
                       <td>{contact.nota || '-'}</td>
                       <td className="contact-actions">
-                        <i
-                          className="pi pi-pencil"
+                        <button
+                          type="button"
+                          className="contact-action-button contact-edit-button"
                           onClick={() => handleEditContact(contact)}
                           title="Editar"
-                        />
-                        <i
-                          className="pi pi-trash"
+                          aria-label="Editar contacto"
+                        >
+                          <i className="pi pi-pencil" />
+                        </button>
+                        <button
+                          type="button"
+                          className="contact-action-button contact-delete-button"
                           onClick={() => handleDeleteContact(contact.id)}
                           title="Eliminar"
-                        />
+                          aria-label="Eliminar contacto"
+                        >
+                          <i className="pi pi-trash" />
+                        </button>
                       </td>
                     </tr>
                   ))
