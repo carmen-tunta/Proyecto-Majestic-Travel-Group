@@ -1,0 +1,61 @@
+import { IsNotEmpty, IsString, IsEnum, IsNumber, IsDateString, IsInt, Min, Max, IsOptional } from 'class-validator';
+
+export class CreateCotizacionDto {
+  @IsNotEmpty()
+  @IsNumber()
+  clienteId: number;
+
+  @IsOptional()
+  @IsString()
+  nombreCotizacion?: string;
+
+  @IsNotEmpty()
+  @IsEnum(['Privado', 'Compartido', 'Priv'])
+  categoria: string;
+
+  @IsNotEmpty()
+  @IsNumber()
+  utilidad: number;
+
+  @IsNotEmpty()
+  @IsString()
+  codigoReserva: string;
+
+  @IsNotEmpty()
+  @IsDateString()
+  fechaViaje: string;
+
+  @IsNotEmpty()
+  @IsEnum(['Iniciado', 'Proceso', 'Finalizado'])
+  estado: string;
+
+  @IsNotEmpty()
+  @IsEnum(['Viator', 'Civitatis', 'GetYourGuide', 'TourRadar', 'TripAdvisor', 'Peru Hop', 'Inca Rail', 'PeruRail', 'Lima Tours', 'Condor Travel'])
+  agencia: string;
+
+  @IsNotEmpty()
+  @IsEnum(['Perú', 'Bolivia', 'Chile', 'Argentina', 'Brasil', 'Ecuador', 'Colombia', 'España', 'Estados Unidos', 'Francia'])
+  pais: string;
+
+  @IsNotEmpty()
+  @IsEnum(['Español', 'Inglés', 'Francés', 'Alemán', 'Portugués', 'Italiano'])
+  idioma: string;
+
+  @IsNotEmpty()
+  @IsInt()
+  @Min(1)
+  nroPax: number;
+
+  @IsOptional()
+  @IsInt()
+  @Min(0)
+  nroNinos?: number;
+
+  @IsNotEmpty()
+  @IsInt()
+  anio: number;
+
+  @IsNotEmpty()
+  @IsInt()
+  numeroFile: number;
+}
