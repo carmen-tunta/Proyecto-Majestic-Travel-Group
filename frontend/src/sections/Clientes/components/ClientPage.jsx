@@ -64,40 +64,52 @@ const ClientPage = () => {
     return `${dayName} ${day} ${month} ${year}`;
   };
 
+  // Función auxiliar para mapear datos del cliente
+  const mapClientData = (client) => {
+    return {
+      nombre: client.nombre || '',
+      pais: client.pais || '',
+      ciudad: client.ciudad || '',
+      direccion: client.direccion || '',
+      whatsapp: client.whatsapp || '',
+      correo: client.correo || '',
+      fechaNacimiento: client.fechaNacimiento ? new Date(client.fechaNacimiento) : null,
+      lenguaNativa: client.lenguaNativa || '',
+      tipoDocumento: client.tipoDocumento || '',
+      numeroDocumento: client.numeroDocumento || '',
+      mercado: client.mercado || '',
+      rubro: client.rubro || '',
+      genero: client.genero || 'Masculino',
+      estado: client.estado || 'Registrado'
+    };
+  };
+
+  // Función auxiliar para manejar errores de carga
+  const handleLoadError = (error) => {
+    console.error('Error al cargar cliente:', error);
+  };
+
+  // Función principal para cargar cliente
+  const loadClient = useCallback(async () => {
+    try {
+      setLoading(true);
+      const client = await apiService.getClient(id);
+      if (client) {
+        setFormData(mapClientData(client));
+      }
+    } catch (error) {
+      handleLoadError(error);
+    } finally {
+      setLoading(false);
+    }
+  }, [id]);
+
   // Cargar datos del cliente a editar
   useEffect(() => {
     if (isEditing && id) {
-      const loadClient = async () => {
-        try {
-          setLoading(true);
-          const client = await apiService.getClient(id);
-          if (client) {
-            setFormData({
-              nombre: client.nombre || '',
-              pais: client.pais || '',
-              ciudad: client.ciudad || '',
-              direccion: client.direccion || '',
-              whatsapp: client.whatsapp || '',
-              correo: client.correo || '',
-              fechaNacimiento: client.fechaNacimiento ? new Date(client.fechaNacimiento) : null,
-              lenguaNativa: client.lenguaNativa || '',
-              tipoDocumento: client.tipoDocumento || '',
-              numeroDocumento: client.numeroDocumento || '',
-              mercado: client.mercado || '',
-              rubro: client.rubro || '',
-              genero: client.genero || 'Masculino',
-              estado: client.estado || 'Registrado'
-            });
-          }
-        } catch (error) {
-          console.error('Error al cargar cliente:', error);
-        } finally {
-          setLoading(false);
-        }
-      };
       loadClient();
     }
-  }, [isEditing, id]);
+  }, [isEditing, id, loadClient]);
 
   // Cargar contactos del cliente
   const fetchContacts = useCallback(async () => {
