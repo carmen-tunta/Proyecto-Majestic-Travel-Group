@@ -6,8 +6,34 @@ import { InputText } from "primereact/inputtext";
 import "../../styles/Tarifario/Documents.css"
 import { Button } from "primereact/button";
 import { Column } from "primereact/column";
+import { useEffect, useState } from "react";
+import TarifarioDocumentsRepository from "../../../../modules/Tarifario/repository/TarifarioDocumentsRepository";
+import getDocumentByTarifarioId from "../../../../modules/Tarifario/application/GetDocumentByTarifarioId";
 
-const Documents = () => {
+const Documents = ({ tarifario }) => {
+    const [loading, setLoading] = useState(false);
+    const [documents, setDocuments] = useState([]);
+
+    const documentRepo = new TarifarioDocumentsRepository();
+    const getDocuments = new getDocumentByTarifarioId(documentRepo);
+
+    const fetchDocuments = async () => {
+        try {
+            setLoading(true);
+            const response = await getDocuments.execute(tarifario.id);
+            setDocuments(response);
+            console.log(response);
+        } catch (error) {
+            console.error("Error fetching documents:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchDocuments();
+    }, []);
+
     return (
         <div className="documents-body">
             <div className="documents-header">
@@ -38,7 +64,8 @@ const Documents = () => {
                 <DataTable
                     className="documents-table"
                     size="small"
-                    // value={documents}
+                    value={documents}
+                    loading={loading}
                     tableStyle={{ minWidth: '100%' }} 
                     emptyMessage="No se añadieron documentos"
                 >

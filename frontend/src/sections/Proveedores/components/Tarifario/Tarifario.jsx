@@ -63,7 +63,9 @@ const Tarifario = () => {
         )}
         {activeIndex === 2 && (
             <div>
-                <Documents />
+                <Documents
+                    tarifario={tarifa}
+                />
             </div>
         )}
 
