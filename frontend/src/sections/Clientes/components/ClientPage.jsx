@@ -205,48 +205,76 @@ const ClientPage = () => {
     }));
   };
 
+  // Función auxiliar para construir los datos del cliente
+  const buildClientData = () => {
+    return {
+      ...formData,
+      fechaNacimiento: formData.fechaNacimiento ? formData.fechaNacimiento.toISOString().split('T')[0] : null,
+      fechaRegistro: isEditing ? formData.fechaRegistro : new Date().toISOString().split('T')[0]
+    };
+  };
+
+  // Funciones auxiliares para manejar errores específicos
+  const handleDuplicateEmailError = () => {
+    alert('Error: Ya existe un cliente con este correo electrónico. Por favor, usa un correo diferente.');
+  };
+
+  const handleDuplicateDocumentError = () => {
+    alert('Error: Ya existe un cliente con este número de documento. Por favor, usa un número diferente.');
+  };
+
+  const handleGenericError = () => {
+    alert('Error al procesar el cliente. Por favor, inténtalo de nuevo.');
+  };
+
+  // Función auxiliar para manejar la respuesta exitosa
+  const handleSuccessResponse = (response) => {
+    if (!response) return;
+
+    if (!isEditing) {
+      // Cliente nuevo: actualizar nombre y cambiar a pestaña de contactos
+      if (response.nombre) {
+        setFormData(prev => ({ ...prev, nombre: response.nombre }));
+      }
+      setActiveTab('contacto');
+    } else {
+      // Cliente existente: volver a la lista
+      navigate('/clientes');
+    }
+  };
+
+  // Función auxiliar para procesar el cliente (crear o actualizar)
+  const processClient = async (clientData) => {
+    if (isEditing) {
+      return await apiService.updateClient(id, clientData);
+    } else {
+      return await apiService.createClient(clientData);
+    }
+  };
+
+  // Función auxiliar para manejar errores
+  const handleError = (error) => {
+    console.error('Error al procesar cliente:', error);
+    
+    if (error.message.includes('Duplicate entry') && error.message.includes('correo')) {
+      handleDuplicateEmailError();
+    } else if (error.message.includes('Duplicate entry') && error.message.includes('numeroDocumento')) {
+      handleDuplicateDocumentError();
+    } else {
+      handleGenericError();
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      const clientData = {
-        ...formData,
-        fechaNacimiento: formData.fechaNacimiento ? formData.fechaNacimiento.toISOString().split('T')[0] : null,
-        fechaRegistro: isEditing ? formData.fechaRegistro : new Date().toISOString().split('T')[0]
-      };
-
-      let response;
-      if (isEditing) {
-        response = await apiService.updateClient(id, clientData);
-      } else {
-        response = await apiService.createClient(clientData);
-      }
-      
-        if (response) {
-          // Si es un cliente nuevo, cambiar a la pestaña de contactos
-          if (!isEditing) {
-            // Actualizar el formData con la respuesta del servidor para mostrar el nombre
-            if (response.nombre) {
-              setFormData(prev => ({ ...prev, nombre: response.nombre }));
-            }
-            setActiveTab('contacto');
-          } else {
-            // Si es edición, volver a la lista de clientes
-            navigate('/clientes');
-          }
-        }
+      const clientData = buildClientData();
+      const response = await processClient(clientData);
+      handleSuccessResponse(response);
     } catch (error) {
-      console.error('Error al procesar cliente:', error);
-      
-      // Manejar errores específicos
-      if (error.message.includes('Duplicate entry') && error.message.includes('correo')) {
-        alert('Error: Ya existe un cliente con este correo electrónico. Por favor, usa un correo diferente.');
-      } else if (error.message.includes('Duplicate entry') && error.message.includes('numeroDocumento')) {
-        alert('Error: Ya existe un cliente con este número de documento. Por favor, usa un número diferente.');
-      } else {
-        alert('Error al procesar el cliente. Por favor, inténtalo de nuevo.');
-      }
+      handleError(error);
     } finally {
       setLoading(false);
     }
