@@ -1,10 +1,16 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { apiService } from '../../../services/apiService';
+import { Button } from 'primereact/button';
 import '../styles/Cotizacion.css';
 
 function formatFecha(dateStr){
-  try{ const d = new Date(dateStr); return d.toLocaleDateString('es-PE', { weekday:'short', day:'2-digit', month:'short', year:'2-digit' }); }catch{ return dateStr; }
+  try {
+    const d = new Date(dateStr);
+    const dias = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
+    const meses = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+    return `${dias[d.getDay()]} ${d.getDate().toString().padStart(2, '0')} ${meses[d.getMonth()]} ${d.getFullYear().toString().slice(-2)}`;
+  } catch { return dateStr; }
 }
 
 export default function Cotizaciones(){
@@ -34,7 +40,13 @@ export default function Cotizaciones(){
     <div className="cotz-page">
       <div className="cotz-header">
         <h2>Cotización</h2>
-        <button className="btn-primary" onClick={()=>navigate('/cotizaciones/nuevo')}>+ Nuevo</button>
+        <Button
+          icon="pi pi-plus"
+          label="Nuevo"
+          size="small"
+          outlined
+          onClick={()=>navigate('/cotizaciones/nuevo')}
+        />
       </div>
 
       <div className="cotz-search">
@@ -66,7 +78,7 @@ export default function Cotizaciones(){
                 <div>{formatFecha(r.fechaViaje)}</div>
                 <div>{r.estado}</div>
                 <div className="acciones">
-                  <button className="btn-icon" title="Ver">⟶</button>
+                  <button className="btn-icon" title="Editar" onClick={()=>navigate(`/cotizaciones/${r.id}`)}>⟶</button>
                 </div>
               </div>
             )) : (<div className="empty">Sin resultados</div>)

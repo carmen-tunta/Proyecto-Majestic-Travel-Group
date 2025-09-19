@@ -78,6 +78,11 @@ function AppContent() {
               <CotizacionForm />
             </ProtectedRoute>
           } />
+          <Route path="/cotizaciones/:id" element={
+            <ProtectedRoute>
+              <CotizacionForm />
+            </ProtectedRoute>
+          } />
           <Route path="/proveedores/detalles" element={
             <ProtectedRoute>
               <DetallesProveedores />

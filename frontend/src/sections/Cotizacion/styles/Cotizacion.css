@@ -1,6 +1,37 @@
 /* Basic styles to match the Figma-like look */
 .cotz-page, .cotz-form-page { padding: 16px 24px; }
 .cotz-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
+.cotz-header h2 { color: #1976d2; font-weight: 600; }
+.cotz-header .p-button {
+	border: 1.5px solid #1976d2;
+	color: #1976d2;
+	background: #fff;
+	font-weight: 500;
+	font-size: 15px;
+	border-radius: 6px;
+	box-shadow: 0 1px 2px rgba(25,118,210,0.08);
+	transition: background 0.2s, color 0.2s;
+}
+.cotz-header .p-button:hover {
+	background: #e3f2fd;
+	color: #1256a3;
+	border-color: #1256a3;
+}
+
+.btn-primary, .cotz-header .btn-primary {
+	background: #1976d2;
+	color: #fff;
+	border: none;
+	padding: 8px 16px;
+	border-radius: 6px;
+	font-weight: 500;
+	font-size: 15px;
+	box-shadow: 0 1px 2px rgba(25,118,210,0.08);
+	transition: background 0.2s;
+}
+.btn-primary:hover, .cotz-header .btn-primary:hover {
+	background: #1256a3;
+}
 .cotz-search { position:relative; width:300px; margin: 8px 0 16px; }
 .cotz-search input{ width:100%; padding:10px 12px 10px 32px; border:1px solid #cfd6e4; border-radius:6px; }
 .cotz-search .icon{ position:absolute; left:10px; top:10px; opacity:.6 }
@@ -11,7 +42,12 @@
 
 .table{ border:1px solid #e6e9ef; border-radius:6px; overflow:hidden; }
 .thead, .tr{ display:grid; grid-template-columns: 2fr 1fr 1fr 1.2fr 1fr 1fr .8fr; gap:12px; align-items:center; }
-.thead{ background:#f5f7fb; color:#6b778c; padding:10px 12px; font-weight:600; }
+.thead{
+	background: #1976d2;
+	color: #fff;
+	padding: 10px 12px;
+	font-weight: 600;
+}
 .tbody .tr{ padding:12px; border-top:1px solid #eef1f6; }
 .client-name{ font-weight:600; }
 .sub{ color:#7b8794; font-size:12px; margin-top:4px; }
