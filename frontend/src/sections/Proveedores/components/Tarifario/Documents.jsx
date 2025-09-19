@@ -35,7 +35,6 @@ const Documents = ({ tarifario }) => {
             setLoading(true);
             const response = await getDocuments.execute(tarifario.id);
             setDocuments(response);
-            console.log(response);
         } catch (error) {
             console.error("Error fetching documents:", error);
         } finally {
@@ -52,10 +51,6 @@ const Documents = ({ tarifario }) => {
             alert("Por favor, seleccione un archivo.");
             return;
         }
-
-        console.log(description)
-        console.log(file)
-
         try {
             setLoading(true);
             const now = new Date().toISOString();
@@ -78,7 +73,6 @@ const Documents = ({ tarifario }) => {
 
     const handleDelete = () => {
         try {
-            console.log(selectedDocument);
             setLoading(true);
             deleteDocument.execute(selectedDocument.id);
             setDocuments(documents.filter(doc => doc.id !== selectedDocument.id));
@@ -164,7 +158,9 @@ const Documents = ({ tarifario }) => {
                                     className="pi pi-eye"    
                                     title="Vista previa" 
                                     style={{ marginRight: '10px', cursor:"pointer"}}
-                                    onClick={() => undefined}
+                                    onClick={() => {
+                                        window.open(`http://localhost:3080/${rowData.documentPath}`, '_blank');
+                                    }}
                                 ></i>
                                 <i 
                                     className="pi pi-pencil"    
