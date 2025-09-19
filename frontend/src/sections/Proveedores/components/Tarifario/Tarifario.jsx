@@ -1,26 +1,10 @@
 import { useNavigate, useLocation } from "react-router-dom";
-import { useEffect, useState } from "react";
 import { TabMenu } from "primereact/tabmenu";
-import { InputText } from "primereact/inputtext";
-import { FloatLabel } from "primereact/floatlabel";
-import { RadioButton } from "primereact/radiobutton";
-import { Button } from "primereact/button";
-import { Dropdown } from "primereact/dropdown";
-import { Calendar } from "primereact/calendar";
-import { MultiSelect } from "primereact/multiselect";
-import { addLocale } from "primereact/api";
-import { DataTable } from "primereact/datatable";
-import { Column } from "primereact/column";
-import { ConfirmDialog } from "primereact/confirmdialog";
-import { useNotification } from "../../../Notification/NotificationContext";
-import { useModal } from "../../../../contexts/ModalContext";
-import "../../styles/Tarifario/Tarifario.css"
-import TarifarioRepository from "../../../../modules/Tarifario/repository/TarifarioRepository";
-import GetTarifarioByIdProveedor from "../../../../modules/Tarifario/application/GetTarifarioByIdProveedor";
-import CreateTarifario from "../../../../modules/Tarifario/application/CreateTarifario";
-import UpdateTarifario from "../../../../modules/Tarifario/application/UpdateTarifario";
+import { useState } from "react";
 import TarifaMenu from "./Tarifa";
 import Incremento from "./Incremento";
+import Documents from "./Documents";
+import "../../styles/Tarifario/Tarifario.css"
 
 const Tarifario = () => {
     const navigate = useNavigate();
@@ -78,7 +62,9 @@ const Tarifario = () => {
             </div>
         )}
         {activeIndex === 2 && (
-            <div></div>
+            <div>
+                <Documents />
+            </div>
         )}
 
     </div>

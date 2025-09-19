@@ -20,6 +20,7 @@ import { TarifaColumn } from 'src/modules/tarifaColumn/entities/tarifaColumn.ent
 import { TarifaPrices } from 'src/modules/tarifaPrices/entities/tarifaPrices.entity';
 import { TarifaIncrement } from 'src/modules/tarifaIncrement/entities/increment.entity';
 import { ServiceImage } from 'src/modules/serviceImages/entities/serviceImages.entity';
+import { TarifarioDocuments } from 'src/modules/tarifarioDocuments/entities/tarifarioDocuments.entity';
 
 
 @Module({
@@ -47,7 +48,8 @@ import { ServiceImage } from 'src/modules/serviceImages/entities/serviceImages.e
                   TarifaColumn,
                   TarifaPrices,
                   TarifaIncrement,
-                  ServiceImage
+                  ServiceImage,
+                  TarifarioDocuments
                 ], // Aquí se agregarán las entidades
 
       synchronize: true, // Cambia a true solo en desarrollo
