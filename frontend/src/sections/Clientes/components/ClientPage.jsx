@@ -683,8 +683,9 @@ const ClientPage = () => {
             </div>
             <form onSubmit={handleContactSubmit} className="contact-modal-form">
               <div className="contact-form-field">
-                <label>Medio *</label>
+                <label htmlFor="contact-medio">Medio *</label>
                 <Dropdown
+                  id="contact-medio"
                   value={contactFormData.medio}
                   options={[
                     { label: 'WhatsApp', value: 'WhatsApp' },
@@ -701,8 +702,9 @@ const ClientPage = () => {
                 />
               </div>
               <div className="contact-form-field">
-                <label>Descripción *</label>
+                <label htmlFor="contact-descripcion">Descripción *</label>
                 <InputText
+                  id="contact-descripcion"
                   value={contactFormData.descripcion}
                   onChange={(e) => handleContactInputChange('descripcion', e.target.value)}
                   placeholder="Agregar descripción"
@@ -710,8 +712,9 @@ const ClientPage = () => {
                 />
               </div>
               <div className="contact-form-field">
-                <label>Nota</label>
+                <label htmlFor="contact-nota">Nota</label>
                 <InputText
+                  id="contact-nota"
                   value={contactFormData.nota}
                   onChange={(e) => handleContactInputChange('nota', e.target.value)}
                   placeholder="Información adicional (opcional)"
