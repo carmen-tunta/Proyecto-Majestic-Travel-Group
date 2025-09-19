@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Delete, Get, Param, Post, UploadedFile, UseInterceptors } from "@nestjs/common";
+import { BadRequestException, Body, Controller, Delete, Get, Param, Post, Put, UploadedFile, UseInterceptors } from "@nestjs/common";
 import { TarifarioDocumentsService } from "./tarifarioDocuments.service";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { File as MulterFile } from "multer";
@@ -33,4 +33,8 @@ export class TarifarioDocumentsController {
         return this.tdService.getByTarifarioId(tarifarioId);
     }
 
+    @Put('update/:id')
+    async updateFile(@Param('id') id: string, @Body() data: Partial<TarifarioDocuments>) {
+        return this.tdService.update(id, data);
+    }
 }

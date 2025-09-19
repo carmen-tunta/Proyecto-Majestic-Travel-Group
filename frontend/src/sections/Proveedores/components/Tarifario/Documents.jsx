@@ -11,6 +11,7 @@ import getDocumentByTarifarioId from "../../../../modules/Tarifario/application/
 import DeleteDocument from "../../../../modules/Tarifario/application/DeleteDocument";
 import "../../styles/Tarifario/Documents.css"
 import UploadDocument from "../../../../modules/Tarifario/application/UploadDocument";
+import UpdateDocument from "../../../../modules/Tarifario/application/UpdateDocument";
 
 
 const Documents = ({ tarifario }) => {
@@ -18,15 +19,18 @@ const Documents = ({ tarifario }) => {
     const [documents, setDocuments] = useState([]);
     const [selectedDocument, setSelectedDocument] = useState(null);
     const [visibleDialog, setVisibleDialog] = useState(false);
+    const [isEditing, setIsEditing] = useState(false);
     
     const [description, setDescription] = useState("");
     const [file, setFile] = useState(null);
+    const [newFile, setNewFile] = useState(null);
 
 
     const documentRepo = new TarifarioDocumentsRepository();
     const getDocuments = new getDocumentByTarifarioId(documentRepo);
     const deleteDocument = new DeleteDocument(documentRepo);
     const uploadDocument = new UploadDocument(documentRepo);
+    const updateDocument = new UpdateDocument(documentRepo);
 
     const filesUploadRef = useRef(null)
 
@@ -85,6 +89,18 @@ const Documents = ({ tarifario }) => {
         }
     };
 
+    const handleEdit = (data) => {
+        setIsEditing(true);
+        setDescription(data.description);
+        setFile({name: data.name});
+    }
+
+    const handleUpdate = () => {
+        if(newFile) {
+            // TODO
+        }
+    }
+
     const reject = () => {
         setSelectedDocument(null);
         setVisibleDialog(false);
@@ -112,18 +128,19 @@ const Documents = ({ tarifario }) => {
                         accept=".pdf,.doc,.docx,.xls,.xlsx"
                         mode="basic"
                         maxFileSize={5000000}
-                        chooseLabel={file ? file.name : "Elegir archivo"}
+                        chooseLabel={ !newFile ? (file ? file.name : "Elegir archivo") : newFile.name}
                         chooseOptions={{ className: 'p-button-outlined' }}
                         customUpload
                         onSelect={(e) => {
-                            setFile(e.files[0]);
+                            !isEditing ? setFile(e.files[0]) : setNewFile(e.files[0]);
                             if (filesUploadRef.current) { filesUploadRef.current.clear() }
                         }}
                         disabled={loading}
                     />
                 </div>
                 <Button 
-                    label="Agregar" 
+                    className="upload-button"
+                    label={!isEditing ? "Agregar" : "Actualizar"} 
                     icon="pi pi-plus"
                     outlined 
                     onClick={() => {handleUpload()}}
@@ -158,7 +175,7 @@ const Documents = ({ tarifario }) => {
                                     className="pi pi-eye"    
                                     title="Vista previa" 
                                     style={{ marginRight: '10px', cursor:"pointer"}}
-                                    onClick={() => {
+                                    onClick={loading ? undefined : () => {
                                         window.open(`http://localhost:3080/${rowData.documentPath}`, '_blank');
                                     }}
                                 ></i>
@@ -166,7 +183,7 @@ const Documents = ({ tarifario }) => {
                                     className="pi pi-pencil"    
                                     title="Editar" 
                                     style={{ marginRight: '10px', cursor:"pointer"}}
-                                    onClick={() => undefined}
+                                    onClick={loading ? undefined : () => handleEdit(rowData)}
                                 ></i>
                                 <i 
                                     className="pi pi-trash"    

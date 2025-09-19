@@ -47,4 +47,8 @@
     width: 100%;
 }
 
+.upload-button {
+    min-width: 7rem;
+}
+
 

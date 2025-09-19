@@ -33,7 +33,6 @@ const Incremento = ({ tarifa }) => {
         try {
             setLoading(true);
             const data = await getTarifaIncrements.execute(tarifa.id);
-            console.log(data);
             setIncrements(Array.isArray(data) ? data : []);
         } catch (error) {
             console.error("Error fetching increments:", error);
@@ -60,7 +59,6 @@ const Incremento = ({ tarifa }) => {
     };
 
     const handleDelete = async () => {
-        console.log("Deleting increment:", selectedIncrement);
         try {
             if (selectedIncrement) {
                 await deleteTarifaIncrement.execute(selectedIncrement.id);

@@ -70,4 +70,9 @@ export class TarifarioDocumentsService {
             order: { uploadDate: 'DESC' }
         });
     }
+
+    async update(id: string, data: Partial<TarifarioDocuments>): Promise<TarifarioDocuments | null> {
+        await this.tdRepository.update(id, data);
+        return this.tdRepository.findOneBy({ id: Number(id) })
+    }
 }

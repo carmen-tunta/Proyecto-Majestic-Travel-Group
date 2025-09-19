@@ -50,6 +50,17 @@ class TarifarioDocumentsRepository {
         return await response.json();
     }
 
+    async update(data) {
+        const response = await fetch(`${apiUrl}/update/${data.id}`, {
+            method: "PUT",
+            headers: getAuthHeaders(),
+            body: JSON.stringify(data),
+        });
+        if (!response.ok) throw new Error('Error al actualizar');
+        return await response.json();
+    }
+
+
 }
 
 export default TarifarioDocumentsRepository;
