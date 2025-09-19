@@ -552,29 +552,31 @@ const ClientPage = () => {
                 </div>
 
                 <div className="client-page-form-field">
-                  <label>Género *</label>
-                  <div className="client-page-radio-group">
-                    <div className="client-page-radio-option">
-                      <RadioButton
-                        inputId="masculino"
-                        name="genero"
-                        value="Masculino"
-                        checked={formData.genero === 'Masculino'}
-                        onChange={(e) => setFormData(prev => ({ ...prev, genero: e.value }))}
-                      />
-                      <label htmlFor="masculino" className="client-page-radio-label">Masculino</label>
+                  <fieldset className="client-page-radio-fieldset">
+                    <legend className="client-page-radio-legend">Género *</legend>
+                    <div className="client-page-radio-group">
+                      <div className="client-page-radio-option">
+                        <RadioButton
+                          inputId="masculino"
+                          name="genero"
+                          value="Masculino"
+                          checked={formData.genero === 'Masculino'}
+                          onChange={(e) => setFormData(prev => ({ ...prev, genero: e.value }))}
+                        />
+                        <label htmlFor="masculino" className="client-page-radio-label">Masculino</label>
+                      </div>
+                      <div className="client-page-radio-option">
+                        <RadioButton
+                          inputId="femenino"
+                          name="genero"
+                          value="Femenino"
+                          checked={formData.genero === 'Femenino'}
+                          onChange={(e) => setFormData(prev => ({ ...prev, genero: e.value }))}
+                        />
+                        <label htmlFor="femenino" className="client-page-radio-label">Femenino</label>
+                      </div>
                     </div>
-                    <div className="client-page-radio-option">
-                      <RadioButton
-                        inputId="femenino"
-                        name="genero"
-                        value="Femenino"
-                        checked={formData.genero === 'Femenino'}
-                        onChange={(e) => setFormData(prev => ({ ...prev, genero: e.value }))}
-                      />
-                      <label htmlFor="femenino" className="client-page-radio-label">Femenino</label>
-                    </div>
-                  </div>
+                  </fieldset>
                 </div>
 
                 <div className="client-page-form-field">
