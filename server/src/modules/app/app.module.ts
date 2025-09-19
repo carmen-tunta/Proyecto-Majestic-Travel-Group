@@ -20,6 +20,7 @@ import { TarifaPricesModule } from '../tarifaPrices/tarifaPrices.module';
 import { TarifaIncrementModule } from '../tarifaIncrement/tarifaIncrement.module';
 import { ServiceImagesModule } from '../serviceImages/serviceImages.module';
 import { TarifarioDocumentsModule } from '../tarifarioDocuments/tarifarioDocuments.module';
+import { CotizacionModule } from '../cotizacion/cotizacion.module';
 
 @Module({
  
@@ -40,7 +41,8 @@ import { TarifarioDocumentsModule } from '../tarifarioDocuments/tarifarioDocumen
             TarifaPricesModule,
             TarifaIncrementModule,
             ServiceImagesModule,
-            TarifarioDocumentsModule
+            TarifarioDocumentsModule,
+            CotizacionModule
           ],
 
   controllers: [AppController],

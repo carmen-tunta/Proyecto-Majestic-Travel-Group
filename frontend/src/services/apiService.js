@@ -72,7 +72,7 @@ export const apiService = {
 
   // Buscador único para los recursos
   async universalSearch(resource, query) {
-    switch(resource) {
+    switch (resource) {
       case 'services':
         return this.searchServices(query);
       case 'components':
@@ -193,5 +193,129 @@ export const apiService = {
     } catch (error) {
       throw new Error(error.message || 'Error al actualizar cliente');
     }
+  },
+
+  // Cotizaciones
+  async getCotizaciones() {
+    try {
+      const response = await fetch(`${API_BASE_URL}/cotizacion`, {
+        headers: getAuthHeaders()
+      });
+      if (!response.ok) {
+        throw new Error('Error al obtener cotizaciones');
+      }
+      return await response.json();
+    } catch (error) {
+      throw new Error(error.message || 'Error al obtener cotizaciones');
+    }
+  },
+
+  async createCotizacion(data) {
+    try {
+      const response = await fetch(`${API_BASE_URL}/cotizacion`, {
+        method: 'POST',
+        headers: getAuthHeaders(),
+        body: JSON.stringify(data)
+      });
+      if (!response.ok) {
+        const msg = await response.text();
+        throw new Error(msg || 'Error al crear cotización');
+      }
+      return await response.json();
+    } catch (error) {
+      throw new Error(error.message || 'Error al crear cotización');
+    }
+  },
+
+  async updateCotizacion(id, data) {
+    try {
+      const response = await fetch(`${API_BASE_URL}/cotizacion/${id}`, {
+        method: 'PUT',
+        headers: getAuthHeaders(),
+        body: JSON.stringify(data)
+      });
+      if (!response.ok) throw new Error('Error al actualizar cotización');
+      return await response.json();
+    } catch (error) {
+      throw new Error(error.message || 'Error al actualizar cotización');
+    }
+  },
+
+  async getCotizacionDetalle(id) {
+    try {
+      const response = await fetch(`${API_BASE_URL}/cotizacion/${id}/detalle`, { headers: getAuthHeaders() });
+      if (!response.ok) throw new Error('Error al obtener detalle de cotización');
+      return await response.json();
+    } catch (error) { throw new Error(error.message || 'Error al obtener detalle de cotización'); }
+  },
+
+  async addServiceToCotizacion(id, { serviceId, precio }) {
+    try {
+      const response = await fetch(`${API_BASE_URL}/cotizacion/${id}/servicios`, {
+        method: 'POST', headers: getAuthHeaders(), body: JSON.stringify({ serviceId, precio })
+      });
+      if (!response.ok) throw new Error('Error al agregar servicio a cotización');
+      return await response.json();
+    } catch (error) { throw new Error(error.message || 'Error al agregar servicio'); }
+  },
+
+  async addComponentsToCotizacionService(csId, componentIds) {
+    try {
+      const response = await fetch(`${API_BASE_URL}/cotizacion/servicios/${csId}/componentes`, {
+        method: 'POST', headers: getAuthHeaders(), body: JSON.stringify({ componentIds })
+      });
+      if (!response.ok) throw new Error('Error al agregar componentes');
+      return await response.json();
+    } catch (error) { throw new Error(error.message || 'Error al agregar componentes'); }
+  },
+
+  async addExtraComponentToCotizacionService(csId, { nombre, precio }) {
+    try {
+      const response = await fetch(`${API_BASE_URL}/cotizacion/servicios/${csId}/componentes-extra`, {
+        method: 'POST', headers: getAuthHeaders(), body: JSON.stringify({ nombre, precio })
+      });
+      if (!response.ok) throw new Error('Error al agregar componente extra');
+      return await response.json();
+    } catch (error) { throw new Error(error.message || 'Error al agregar componente extra'); }
+  },
+
+  async updateCotizacionService(csId, data) {
+    try {
+      const response = await fetch(`${API_BASE_URL}/cotizacion/servicios/${csId}`, {
+        method: 'PUT', headers: getAuthHeaders(), body: JSON.stringify(data)
+      });
+      if (!response.ok) throw new Error('Error al actualizar servicio');
+      return await response.json();
+    } catch (error) { throw new Error(error.message || 'Error al actualizar servicio'); }
+  },
+
+  async updateCotizacionServiceComponent(cscId, data) {
+    try {
+      const response = await fetch(`${API_BASE_URL}/cotizacion/servicios/componentes/${cscId}`, {
+        method: 'PUT', headers: getAuthHeaders(), body: JSON.stringify(data)
+      });
+      if (!response.ok) throw new Error('Error al actualizar componente del servicio');
+      return await response.json();
+    } catch (error) { throw new Error(error.message || 'Error al actualizar componente del servicio'); }
+  },
+
+  async deleteCotizacionService(csId) {
+    try {
+      const response = await fetch(`${API_BASE_URL}/cotizacion/servicios/${csId}`, {
+        method: 'DELETE', headers: getAuthHeaders()
+      });
+      if (!response.ok) throw new Error('Error al eliminar servicio');
+      return await response.json();
+    } catch (error) { throw new Error(error.message || 'Error al eliminar servicio'); }
+  },
+
+  async deleteCotizacionServiceComponent(cscId) {
+    try {
+      const response = await fetch(`${API_BASE_URL}/cotizacion/servicios/componentes/${cscId}`, {
+        method: 'DELETE', headers: getAuthHeaders()
+      });
+      if (!response.ok) throw new Error('Error al eliminar componente');
+      return await response.json();
+    } catch (error) { throw new Error(error.message || 'Error al eliminar componente'); }
   },
 };
