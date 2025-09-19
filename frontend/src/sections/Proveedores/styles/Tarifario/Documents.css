@@ -12,6 +12,8 @@
     align-items: initial;
     margin-bottom: 1rem;
     padding-bottom: 2rem;
+    width: 100%;
+    gap: 2rem;
 }
 
 .documents-header .p-fileupload-choose .p-button-icon {
@@ -27,13 +29,22 @@
     display: flex;
     flex-direction: row;
     align-items: center;
-    justify-content: space-between;
     gap: 3rem;
+    width: 100%;
 }
 
 .documents-table {
     box-shadow: 0 0 8px rgba(0,0,0,0.05);
     border: 1px solid #ddd;
+}
+
+.upload {
+    min-width: 15vw;
+    max-width: 40vw;
+}
+
+.p-fileupload-choose {
+    width: 100%;
 }
 
 

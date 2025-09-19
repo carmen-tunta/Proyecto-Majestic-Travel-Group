@@ -13,10 +13,10 @@ export class TarifarioDocuments {
   @Column({ type: 'text', unique: true, nullable: false })
   documentPath: string;
 
-  @Column({ type: 'text', unique: true })
+  @Column({ type: 'text' })
   description: string;
 
-  @Column({ type: 'text', unique: true, nullable: false })
+  @Column({ type: 'text', nullable: false })
   name: string;
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
