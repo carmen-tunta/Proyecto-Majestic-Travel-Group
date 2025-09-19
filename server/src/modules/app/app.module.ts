@@ -21,6 +21,7 @@ import { TarifaIncrementModule } from '../tarifaIncrement/tarifaIncrement.module
 import { ServiceImagesModule } from '../serviceImages/serviceImages.module';
 import { TarifarioDocumentsModule } from '../tarifarioDocuments/tarifarioDocuments.module';
 import { CotizacionModule } from '../cotizacion/cotizacion.module';
+import { PasajerosModule } from '../pasajeros/pasajeros.module';
 
 @Module({
  
@@ -42,7 +43,8 @@ import { CotizacionModule } from '../cotizacion/cotizacion.module';
             TarifaIncrementModule,
             ServiceImagesModule,
             TarifarioDocumentsModule,
-            CotizacionModule
+            CotizacionModule,
+            PasajerosModule
           ],
 
   controllers: [AppController],
