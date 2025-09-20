@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { Service } from './entities/service.entity';
 import { Component } from '../components/entities/component.entity';
 
@@ -15,14 +15,16 @@ export class ServicesService {
 
   async create(data: Partial<Service> & { componentIds?: number[] }): Promise<Service> {
     const { componentIds, ...serviceData } = data;
-    const service = this.serviceRepository.create(serviceData);
-
+    // 1) guardar el servicio primero para obtener ID
+    const saved = await this.serviceRepository.save(this.serviceRepository.create(serviceData));
+    // 2) asignar componentes (lado dueño: Service con @JoinTable)
     if (componentIds && componentIds.length > 0) {
-      const components = await this.componentRepository.findByIds(componentIds);
-      service.components = components;
+      const components = await this.componentRepository.findBy({ id: In(componentIds) });
+      saved.components = components;
+      await this.serviceRepository.save(saved);
     }
-
-    return this.serviceRepository.save(service);
+    // 3) devolver con relaciones
+    return (await this.findOne(saved.id))!;
   }
 
   async findAll(): Promise<Service[]> {
@@ -30,14 +32,14 @@ export class ServicesService {
   }
 
   async findOne(id: number): Promise<Service | null> {
-    return this.serviceRepository.findOne({ where: { id }, relations: ['components'] });
+    return this.serviceRepository.findOne({ where: { id }, relations: ['components', 'images'] });
   }
 
   async update(id: number, data: Partial<Service> & { componentIds?: number[] }): Promise<Service | null> {
     const { componentIds, ...serviceData } = data;
-    const metadata = this.serviceRepository.metadata;
+  const metadata = this.serviceRepository.metadata;
     const columnsOnly = Object.keys(serviceData).reduce((obj, key) => {
-      const column = metadata.findColumnWithPropertyName(key);
+  const column = metadata.findColumnWithPropertyName(key);
       if (column) obj[key] = serviceData[key];
       return obj;
     }, {} as Partial<Service>);
@@ -47,8 +49,8 @@ export class ServicesService {
     if (componentIds) {
       const service = await this.serviceRepository.findOne({ where: { id }, relations: ['components'] });
       if (service) {
-        const components = await this.componentRepository.findByIds(componentIds);
-        service.components = components;
+        const newComponents = await this.componentRepository.findBy({ id: In(componentIds) });
+        service.components = newComponents;
         await this.serviceRepository.save(service);
       }
     }
@@ -58,15 +60,15 @@ export class ServicesService {
 
 
   async remove(id: number): Promise<void> {
-    // Desasociar los componentes antes de eliminar el servicio
+    // Desasociar los componentes (ManyToMany) antes de eliminar el servicio
     const service = await this.serviceRepository.findOne({ where: { id }, relations: ['components'] });
-    if (service && service.components && service.components.length > 0) {
-      for (const component of service.components) {
-        component.service = null;
-        await this.componentRepository.save(component);
-      }
+    if (service) {
+      service.components = [];
+      await this.serviceRepository.save(service);
+      await this.serviceRepository.delete(id);
+    } else {
+      await this.serviceRepository.delete(id);
     }
-    await this.serviceRepository.delete(id);
   }
 
   // SEARCH - Buscar servicios por nombre
@@ -81,22 +83,18 @@ export class ServicesService {
   async removeComponentFromService(serviceId: number, componentId: number): Promise<void> {
     const service = await this.serviceRepository.findOne({ where: { id: serviceId }, relations: ['components'] });
     if (!service) return;
-    service.components = service.components.filter(c => c.id !== componentId);
-
+    service.components = (service.components || []).filter(c => c.id !== componentId);
     await this.serviceRepository.save(service);
-
-    const component = await this.componentRepository.findOne({ where: { id: componentId } });
-    if (component) {
-      component.service = null;
-      await this.componentRepository.save(component);
-    }
   }
 
   async addComponentsToService(serviceId: number, componentIds: number[]): Promise<Service | null> {
     const service = await this.serviceRepository.findOne({ where: { id: serviceId }, relations: ['components'] });
     if (!service) return null;
-    const components = await this.componentRepository.findByIds(componentIds);
-    service.components = [...service.components, ...components];
+    const components = await this.componentRepository.findBy({ id: In(componentIds) });
+    const existing = service.components || [];
+    const map = new Map<number, Component>(existing.map(c => [c.id, c]));
+    for (const c of components) map.set(c.id, c);
+    service.components = Array.from(map.values());
     await this.serviceRepository.save(service);
     return this.findOne(serviceId);
   }

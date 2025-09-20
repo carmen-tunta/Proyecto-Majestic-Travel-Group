@@ -65,6 +65,16 @@ class ServiceRepository {
         });
     }
 
+    async addComponentsToService(serviceId, componentIds) {
+        const response = await fetch(`${apiUrl}/${serviceId}/component`, {
+            method: "PUT",
+            headers: getAuthHeaders(),
+            body: JSON.stringify({ componentIds })
+        });
+        if (!response.ok) throw new Error('Error al agregar componentes al servicio');
+        return await response.json();
+    }
+
 }
 
 export default ServiceRepository;
