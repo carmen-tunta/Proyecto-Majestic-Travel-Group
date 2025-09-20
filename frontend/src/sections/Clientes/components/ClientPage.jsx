@@ -64,40 +64,52 @@ const ClientPage = () => {
     return `${dayName} ${day} ${month} ${year}`;
   };
 
+  // Función auxiliar para mapear datos del cliente
+  const mapClientData = (client) => {
+    return {
+      nombre: client.nombre || '',
+      pais: client.pais || '',
+      ciudad: client.ciudad || '',
+      direccion: client.direccion || '',
+      whatsapp: client.whatsapp || '',
+      correo: client.correo || '',
+      fechaNacimiento: client.fechaNacimiento ? new Date(client.fechaNacimiento) : null,
+      lenguaNativa: client.lenguaNativa || '',
+      tipoDocumento: client.tipoDocumento || '',
+      numeroDocumento: client.numeroDocumento || '',
+      mercado: client.mercado || '',
+      rubro: client.rubro || '',
+      genero: client.genero || 'Masculino',
+      estado: client.estado || 'Registrado'
+    };
+  };
+
+  // Función auxiliar para manejar errores de carga
+  const handleLoadError = (error) => {
+    console.error('Error al cargar cliente:', error);
+  };
+
+  // Función principal para cargar cliente
+  const loadClient = useCallback(async () => {
+    try {
+      setLoading(true);
+      const client = await apiService.getClient(id);
+      if (client) {
+        setFormData(mapClientData(client));
+      }
+    } catch (error) {
+      handleLoadError(error);
+    } finally {
+      setLoading(false);
+    }
+  }, [id]);
+
   // Cargar datos del cliente a editar
   useEffect(() => {
     if (isEditing && id) {
-      const loadClient = async () => {
-        try {
-          setLoading(true);
-          const client = await apiService.getClient(id);
-          if (client) {
-            setFormData({
-              nombre: client.nombre || '',
-              pais: client.pais || '',
-              ciudad: client.ciudad || '',
-              direccion: client.direccion || '',
-              whatsapp: client.whatsapp || '',
-              correo: client.correo || '',
-              fechaNacimiento: client.fechaNacimiento ? new Date(client.fechaNacimiento) : null,
-              lenguaNativa: client.lenguaNativa || '',
-              tipoDocumento: client.tipoDocumento || '',
-              numeroDocumento: client.numeroDocumento || '',
-              mercado: client.mercado || '',
-              rubro: client.rubro || '',
-              genero: client.genero || 'Masculino',
-              estado: client.estado || 'Registrado'
-            });
-          }
-        } catch (error) {
-          console.error('Error al cargar cliente:', error);
-        } finally {
-          setLoading(false);
-        }
-      };
       loadClient();
     }
-  }, [isEditing, id]);
+  }, [isEditing, id, loadClient]);
 
   // Cargar contactos del cliente
   const fetchContacts = useCallback(async () => {
@@ -193,48 +205,76 @@ const ClientPage = () => {
     }));
   };
 
+  // Función auxiliar para construir los datos del cliente
+  const buildClientData = () => {
+    return {
+      ...formData,
+      fechaNacimiento: formData.fechaNacimiento ? formData.fechaNacimiento.toISOString().split('T')[0] : null,
+      fechaRegistro: isEditing ? formData.fechaRegistro : new Date().toISOString().split('T')[0]
+    };
+  };
+
+  // Funciones auxiliares para manejar errores específicos
+  const handleDuplicateEmailError = () => {
+    alert('Error: Ya existe un cliente con este correo electrónico. Por favor, usa un correo diferente.');
+  };
+
+  const handleDuplicateDocumentError = () => {
+    alert('Error: Ya existe un cliente con este número de documento. Por favor, usa un número diferente.');
+  };
+
+  const handleGenericError = () => {
+    alert('Error al procesar el cliente. Por favor, inténtalo de nuevo.');
+  };
+
+  // Función auxiliar para manejar la respuesta exitosa
+  const handleSuccessResponse = (response) => {
+    if (!response) return;
+
+    if (!isEditing) {
+      // Cliente nuevo: actualizar nombre y cambiar a pestaña de contactos
+      if (response.nombre) {
+        setFormData(prev => ({ ...prev, nombre: response.nombre }));
+      }
+      setActiveTab('contacto');
+    } else {
+      // Cliente existente: volver a la lista
+      navigate('/clientes');
+    }
+  };
+
+  // Función auxiliar para procesar el cliente (crear o actualizar)
+  const processClient = async (clientData) => {
+    if (isEditing) {
+      return await apiService.updateClient(id, clientData);
+    } else {
+      return await apiService.createClient(clientData);
+    }
+  };
+
+  // Función auxiliar para manejar errores
+  const handleError = (error) => {
+    console.error('Error al procesar cliente:', error);
+    
+    if (error.message.includes('Duplicate entry') && error.message.includes('correo')) {
+      handleDuplicateEmailError();
+    } else if (error.message.includes('Duplicate entry') && error.message.includes('numeroDocumento')) {
+      handleDuplicateDocumentError();
+    } else {
+      handleGenericError();
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      const clientData = {
-        ...formData,
-        fechaNacimiento: formData.fechaNacimiento ? formData.fechaNacimiento.toISOString().split('T')[0] : null,
-        fechaRegistro: isEditing ? formData.fechaRegistro : new Date().toISOString().split('T')[0]
-      };
-
-      let response;
-      if (isEditing) {
-        response = await apiService.updateClient(id, clientData);
-      } else {
-        response = await apiService.createClient(clientData);
-      }
-      
-        if (response) {
-          // Si es un cliente nuevo, cambiar a la pestaña de contactos
-          if (!isEditing) {
-            // Actualizar el formData con la respuesta del servidor para mostrar el nombre
-            if (response.nombre) {
-              setFormData(prev => ({ ...prev, nombre: response.nombre }));
-            }
-            setActiveTab('contacto');
-          } else {
-            // Si es edición, volver a la lista de clientes
-            navigate('/clientes');
-          }
-        }
+      const clientData = buildClientData();
+      const response = await processClient(clientData);
+      handleSuccessResponse(response);
     } catch (error) {
-      console.error('Error al procesar cliente:', error);
-      
-      // Manejar errores específicos
-      if (error.message.includes('Duplicate entry') && error.message.includes('correo')) {
-        alert('Error: Ya existe un cliente con este correo electrónico. Por favor, usa un correo diferente.');
-      } else if (error.message.includes('Duplicate entry') && error.message.includes('numeroDocumento')) {
-        alert('Error: Ya existe un cliente con este número de documento. Por favor, usa un número diferente.');
-      } else {
-        alert('Error al procesar el cliente. Por favor, inténtalo de nuevo.');
-      }
+      handleError(error);
     } finally {
       setLoading(false);
     }
@@ -512,29 +552,31 @@ const ClientPage = () => {
                 </div>
 
                 <div className="client-page-form-field">
-                  <label>Género *</label>
-                  <div className="client-page-radio-group">
-                    <div className="client-page-radio-option">
-                      <RadioButton
-                        inputId="masculino"
-                        name="genero"
-                        value="Masculino"
-                        checked={formData.genero === 'Masculino'}
-                        onChange={(e) => setFormData(prev => ({ ...prev, genero: e.value }))}
-                      />
-                      <label htmlFor="masculino" className="client-page-radio-label">Masculino</label>
+                  <fieldset className="client-page-radio-fieldset">
+                    <legend className="client-page-radio-legend">Género *</legend>
+                    <div className="client-page-radio-group">
+                      <div className="client-page-radio-option">
+                        <RadioButton
+                          inputId="masculino"
+                          name="genero"
+                          value="Masculino"
+                          checked={formData.genero === 'Masculino'}
+                          onChange={(e) => setFormData(prev => ({ ...prev, genero: e.value }))}
+                        />
+                        <label htmlFor="masculino" className="client-page-radio-label">Masculino</label>
+                      </div>
+                      <div className="client-page-radio-option">
+                        <RadioButton
+                          inputId="femenino"
+                          name="genero"
+                          value="Femenino"
+                          checked={formData.genero === 'Femenino'}
+                          onChange={(e) => setFormData(prev => ({ ...prev, genero: e.value }))}
+                        />
+                        <label htmlFor="femenino" className="client-page-radio-label">Femenino</label>
+                      </div>
                     </div>
-                    <div className="client-page-radio-option">
-                      <RadioButton
-                        inputId="femenino"
-                        name="genero"
-                        value="Femenino"
-                        checked={formData.genero === 'Femenino'}
-                        onChange={(e) => setFormData(prev => ({ ...prev, genero: e.value }))}
-                      />
-                      <label htmlFor="femenino" className="client-page-radio-label">Femenino</label>
-                    </div>
-                  </div>
+                  </fieldset>
                 </div>
 
                 <div className="client-page-form-field">
@@ -600,16 +642,24 @@ const ClientPage = () => {
                       <td>{contact.descripcion}</td>
                       <td>{contact.nota || '-'}</td>
                       <td className="contact-actions">
-                        <i
-                          className="pi pi-pencil"
+                        <button
+                          type="button"
+                          className="contact-action-button contact-edit-button"
                           onClick={() => handleEditContact(contact)}
                           title="Editar"
-                        />
-                        <i
-                          className="pi pi-trash"
+                          aria-label="Editar contacto"
+                        >
+                          <i className="pi pi-pencil" />
+                        </button>
+                        <button
+                          type="button"
+                          className="contact-action-button contact-delete-button"
                           onClick={() => handleDeleteContact(contact.id)}
                           title="Eliminar"
-                        />
+                          aria-label="Eliminar contacto"
+                        >
+                          <i className="pi pi-trash" />
+                        </button>
                       </td>
                     </tr>
                   ))
@@ -633,8 +683,9 @@ const ClientPage = () => {
             </div>
             <form onSubmit={handleContactSubmit} className="contact-modal-form">
               <div className="contact-form-field">
-                <label>Medio *</label>
+                <label htmlFor="contact-medio">Medio *</label>
                 <Dropdown
+                  id="contact-medio"
                   value={contactFormData.medio}
                   options={[
                     { label: 'WhatsApp', value: 'WhatsApp' },
@@ -651,8 +702,9 @@ const ClientPage = () => {
                 />
               </div>
               <div className="contact-form-field">
-                <label>Descripción *</label>
+                <label htmlFor="contact-descripcion">Descripción *</label>
                 <InputText
+                  id="contact-descripcion"
                   value={contactFormData.descripcion}
                   onChange={(e) => handleContactInputChange('descripcion', e.target.value)}
                   placeholder="Agregar descripción"
@@ -660,8 +712,9 @@ const ClientPage = () => {
                 />
               </div>
               <div className="contact-form-field">
-                <label>Nota</label>
+                <label htmlFor="contact-nota">Nota</label>
                 <InputText
+                  id="contact-nota"
                   value={contactFormData.nota}
                   onChange={(e) => handleContactInputChange('nota', e.target.value)}
                   placeholder="Información adicional (opcional)"

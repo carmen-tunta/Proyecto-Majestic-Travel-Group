@@ -11,3 +11,5 @@ npm install passport
 npm install passport-jwt
 npm install bcrypt
 npm install -D @types/bcrypt
+npm install class-validator 
+npm install class-transformer

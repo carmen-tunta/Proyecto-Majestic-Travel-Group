@@ -165,6 +165,20 @@
 }
 
 /* Radio buttons */
+.client-page-radio-fieldset {
+  border: none;
+  padding: 0;
+  margin: 0;
+}
+
+.client-page-radio-legend {
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 8px;
+  padding: 0;
+}
+
 .client-page-radio-group {
   display: flex;
   gap: 24px;
@@ -534,22 +548,40 @@
   justify-content: center;
 }
 
-.contact-actions i {
+.contact-action-button {
+  background: none;
+  border: none;
+  padding: 8px;
   cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  min-height: 32px;
+}
+
+.contact-action-button:hover {
+  background-color: #f5f5f5;
+}
+
+.contact-action-button:focus {
+  outline: 2px solid #1976d2;
+  outline-offset: 2px;
+}
+
+.contact-action-button i {
   color: #666;
   font-size: 16px;
   transition: color 0.2s ease;
 }
 
-.contact-actions i:hover {
+.contact-edit-button:hover i {
   color: #1976d2;
 }
 
-.contact-actions .pi-pencil:hover {
-  color: #1976d2;
-}
-
-.contact-actions .pi-trash:hover {
+.contact-delete-button:hover i {
   color: #dc3545;
 }
 
