@@ -318,4 +318,5 @@ export const apiService = {
       return await response.json();
     } catch (error) { throw new Error(error.message || 'Error al eliminar componente'); }
   },
+
 };

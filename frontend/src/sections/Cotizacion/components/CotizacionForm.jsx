@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { apiService } from '../../../services/apiService';
 import { useNotification } from '../../Notification/NotificationContext';
+import PasajerosTab from './PasajerosTab';
 import '../styles/Cotizacion.css';
 
 // Formatea fecha a 'Jue 25 Dic 25'
@@ -38,6 +39,7 @@ export default function CotizacionForm(){
   const [clientQuery, setClientQuery] = useState('');
   const [clientResults, setClientResults] = useState([]);
   const [selectedClient, setSelectedClient] = useState(null);
+  const [activeTab, setActiveTab] = useState('cotizacion');
 
   const [form, setForm] = useState({
     nombreCotizacion: '',
@@ -139,6 +141,11 @@ export default function CotizacionForm(){
       setCotizacionId(id);
       await refreshDetalle(id);
       showNotification(cotizacionId ? 'Cotización actualizada' : 'Cotización guardada','success');
+      
+      // Si es una nueva cotización, cambiar a la pestaña de pasajeros
+      if (!cotizacionId) {
+        setActiveTab('pasajeros');
+      }
     }catch(e){ showNotification(e.message || 'Error al guardar','error'); }
   }
 
@@ -201,11 +208,24 @@ export default function CotizacionForm(){
       </div>
 
       <div className="tabs">
-        <button className="tab active">Cotización</button>
-        <button className="tab" disabled>Nombre de pasajeros</button>
+        <button 
+          className={`tab ${activeTab === 'cotizacion' ? 'active' : ''}`}
+          onClick={() => setActiveTab('cotizacion')}
+        >
+          Cotización
+        </button>
+        <button 
+          className={`tab ${activeTab === 'pasajeros' ? 'active' : ''} ${!cotizacionId ? 'disabled' : ''}`}
+          onClick={() => cotizacionId && setActiveTab('pasajeros')}
+          disabled={!cotizacionId}
+        >
+          Pasajeros
+        </button>
       </div>
 
-      <div className="form-card">
+      {activeTab === 'cotizacion' && (
+        <>
+          <div className="form-card">
         <div className="row">
           <div className="label">Año: <b>{anio}</b></div>
           <div className="label">File: <b>{numeroFile || ''}</b></div>
@@ -287,9 +307,9 @@ export default function CotizacionForm(){
         </div>
       </div>
 
-      <div className="center">CONSTRUIR EXPERIENCIAS</div>
+          <div className="center">CONSTRUIR EXPERIENCIAS</div>
 
-      {cotizacionId && (
+          {cotizacionId && (
         <div className="form-card" style={{marginTop:16}}>
           {detalle?.servicios?.length > 0 ? (
             <div>
@@ -382,6 +402,15 @@ export default function CotizacionForm(){
             </div>
           </div>
         </div>
+      )}
+        </>
+      )}
+
+      {activeTab === 'pasajeros' && cotizacionId && (
+        <PasajerosTab 
+          cotizacionId={cotizacionId}
+          cotizacionNombre={form.nombreCotizacion || `Cotización ${numeroFile}`}
+        />
       )}
     </div>
   );
