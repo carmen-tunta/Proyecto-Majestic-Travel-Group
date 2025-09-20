@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, OneToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany, ManyToMany } from 'typeorm';
 import { Service } from '../../services/entities/service.entity';
 import { TarifaComponent } from 'src/modules/tarifaComponent/entities/tarifaComponent.entity';
 
@@ -43,15 +43,9 @@ export class Component {
   })
   isActive: boolean;
 
-  @Column({ 
-    type: 'int', 
-    nullable: true,
-    comment: 'ID del servicio asociado, si aplica' 
-  })
-  serviceId: number | null;
-
-  @ManyToOne(() => Service, (service) => service.components, { nullable: true })
-  service: Service | null;
+  // Relación ManyToMany: un componente puede pertenecer a muchos servicios
+  @ManyToMany(() => Service, (service) => service.components)
+  services: Service[];
 
   @OneToMany(() => TarifaComponent, tc => tc.component)
   tarifas: TarifaComponent[];

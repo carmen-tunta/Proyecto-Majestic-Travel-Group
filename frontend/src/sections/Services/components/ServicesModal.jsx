@@ -113,11 +113,18 @@ const ServicesModal = ({ onHide, service }) => {
     }
 
     const handleSaveComponent = () => {
-        if (selectedComponent && !serviceComponents.find(c => c.id === selectedComponent.id)) {
-            setServiceComponents(prevComponents => [...prevComponents, selectedComponent]);
+        let comp = selectedComponent;
+        // Si no hay selección explícita, intentar emparejar por nombre exacto (case-insensitive)
+        if (!comp && search && results?.length) {
+            const q = search.trim().toLowerCase();
+            comp = results.find(r => (r.componentName || '').toLowerCase() === q);
         }
-        setSearch(''); 
-        setSelectedComponent(null); 
+        if (!comp) return; // no hay nada que agregar
+        if (!serviceComponents.find(c => c.id === comp.id)) {
+            setServiceComponents(prevComponents => [...prevComponents, comp]);
+        }
+        setSearch('');
+        setSelectedComponent(null);
     }
 
     const handleDeleteImage = (image) => {
@@ -219,47 +226,56 @@ const ServicesModal = ({ onHide, service }) => {
                         ))
                     }
                 </div>
-                <div className='service-components-search'>
-                    <SearchBar disabled={loading} value={search} onChange={setSearch} placeholder="Buscar componentes..." />
-                    <div>
-                        <Button icon="pi pi-plus" outlined label='Agregar' size='small' onClick={() => handleSaveComponent()} disabled={!selectedComponent || loading}></Button>
-                    </div>
-                    {search && results.length > 0 && selectedComponent?.componentName !== search && (
-                        <div
-                            style={{
-                                position: 'absolute',
-                                top: '3rem', // ajusta según la altura del input
-                                left: 0,
-                                width: '100%',
-                                background: '#fff',
-                                border: '1px solid #ddd',
-                                borderRadius: 4,
-                                boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
-                                zIndex: 10,
-                                maxHeight: '200px',
-                                overflowY: 'auto',
-                            }}
-                        >
-                            {results
-                                .filter(comp => !comp.serviceId && 
-                                    !serviceComponents.some(sc => sc.id === comp.id)) 
-                                .map(comp => (
-                                <div
-                                    key={comp.id}
-                                    style={{
-                                        padding: '8px 12px',
-                                        cursor: 'pointer',
-                                        borderBottom: '1px solid #eee'
-                                    }}
-                                    onClick={() => handleSelectComponent(comp)}
-                                >
-                                    {comp.componentName} <span style={{ color: '#888' }}>({comp.serviceType})</span>
-                                </div>
-                            ))}
-                        </div>
-                    )}
+                                <div className='service-components-search'>
+                                        <SearchBar disabled={loading} value={search} onChange={setSearch} placeholder="Buscar componentes..." />
+                                        <div>
+                                                <Button 
+                                                    icon="pi pi-plus" 
+                                                    outlined 
+                                                    label='Agregar' 
+                                                    size='small' 
+                                                    onClick={handleSaveComponent}
+                                                    disabled={
+                                                        loading || (
+                                                            !selectedComponent && !results?.some(r => (r.componentName||'').toLowerCase() === (search||'').trim().toLowerCase())
+                                                        )
+                                                    }
+                                                />
+                                        </div>
+                                        {search && results.length > 0 && selectedComponent?.componentName !== search && (
+                                            <div
+                                                style={{
+                                                    position: 'absolute',
+                                                    top: '3rem',
+                                                    left: 0,
+                                                    width: '100%',
+                                                    background: '#fff',
+                                                    border: '1px solid #ddd',
+                                                    borderRadius: 4,
+                                                    boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+                                                    zIndex: 10,
+                                                    maxHeight: '200px',
+                                                    overflowY: 'auto',
+                                                }}
+                                            >
+                                                {results
+                                                    .filter(comp => !serviceComponents.some(sc => sc.id === comp.id))
+                                                    .map(comp => (
+                                                        <div
+                                                            key={comp.id}
+                                                            style={{
+                                                                padding: '8px 12px',
+                                                                cursor: 'pointer',
+                                                                borderBottom: '1px solid #eee'
+                                                            }}
+                                                            onClick={() => handleSelectComponent(comp)}
+                                                        >
+                                                            {comp.componentName} <span style={{ color: '#888' }}>({comp.serviceType})</span>
+                                                        </div>
+                                                    ))}
+                                            </div>
+                                        )}
                 </div>
-
 
                 <div className="card">
                     <DataTable  className="components-table" size="small" value={serviceComponents} tableStyle={{ minWidth: '60%' }} emptyMessage="Este servicio aun no cuenta con componentes">
@@ -282,7 +298,7 @@ const ServicesModal = ({ onHide, service }) => {
                                         className="pi pi-trash"    
                                         title="Eliminar" 
                                         style={{color:'#gray', cursor:"pointer"}}
-                                        onClick={loading ? () => undefined : handleDeleteComponent(rowData)}
+                                        onClick={() => { if (!loading) handleDeleteComponent(rowData); }}
                                     ></i>
                                 </span>
                             )}
