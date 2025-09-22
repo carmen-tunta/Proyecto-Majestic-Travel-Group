@@ -590,6 +590,7 @@ const TarifaMenu = ({ proveedor, tarifa, setTarifa }) => {
                         ) : (
                         <div className="scrolling-table">
                         <DataTable 
+                            className="tarifa-table"
                             value={selectedComponents}
                             scrollable
                             scrollHeight="flex" 

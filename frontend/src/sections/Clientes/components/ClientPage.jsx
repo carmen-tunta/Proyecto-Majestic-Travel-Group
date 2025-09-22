@@ -350,7 +350,7 @@ const ClientPage = () => {
   if (loading && isEditing) {
     return (
       <div className="client-page-loading">
-        <div className="loading-spinner">Cargando...</div>
+        <div className="loading-spinner"></div>
       </div>
     );
   }

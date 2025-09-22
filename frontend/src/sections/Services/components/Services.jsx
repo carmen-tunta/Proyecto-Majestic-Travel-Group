@@ -97,56 +97,51 @@ const Services = () => {
             </div>
 
             <div className="card">
-                {(loading || searchLoading) ? (
-                    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 120 }}>
-                        <ProgressSpinner />
-                    </div>
-                ) : (
-                    <DataTable
-                        className="service-table"
-                        size="small"
-                        value={search ? results : services}
-                        tableStyle={{ minWidth: '60%' }}
-                        emptyMessage="No se encontraron servicios"
-                        paginator
-                        first={first}
-                        rows={rows}
-                        totalRecords={totalRecords}
-                        onPage={onPageChange}
-                        expandedRows={expandedRows}
-                        onRowToggle={e => setExpandedRows(e.data)}
-                        rowExpansionTemplate={rowExpansionTemplate}
-                    >
-                        <Column
-                            expander
-                            style={{ width: '40px' }}
-                        />   
-                        <Column
-                            field="name"
-                            header="Nombre del servicio"
-                            style={{ width: '66%' }}>
-                        </Column>
-                        <Column
-                            field="city"
-                            header="Ciudad"
-                            style={{ width: '28%' }}>
-                        </Column>
-                        <Column
-                            header="Acción"
-                            style={{ width: '6%' }}
-                            body={rowData => (
-                                <span style={{ display: 'flex', justifyContent: 'center' }}>
-                                    <i
-                                        className="pi pi-pencil"
-                                        title="Editar"
-                                        style={{ color: '#1976d2', cursor: "pointer" }}
-                                        onClick={() => handleEdit(rowData)}
-                                    ></i>
-                                </span>
-                            )}
-                        />
-                    </DataTable>
-                )}
+                <DataTable
+                    className="service-table"
+                    size="small"
+                    value={search ? results : services}
+                    tableStyle={{ minWidth: '60%' }}
+                    emptyMessage="No se encontraron servicios"
+                    paginator
+                    first={first}
+                    rows={rows}
+                    totalRecords={totalRecords}
+                    onPage={onPageChange}
+                    expandedRows={expandedRows}
+                    onRowToggle={e => setExpandedRows(e.data)}
+                    rowExpansionTemplate={rowExpansionTemplate}
+                    loading={loading || searchLoading}
+                >
+                    <Column
+                        expander
+                        style={{ width: '40px' }}
+                    />   
+                    <Column
+                        field="name"
+                        header="Nombre del servicio"
+                        style={{ width: '66%' }}>
+                    </Column>
+                    <Column
+                        field="city"
+                        header="Ciudad"
+                        style={{ width: '28%' }}>
+                    </Column>
+                    <Column
+                        header="Acción"
+                        style={{ width: '6%' }}
+                        body={rowData => (
+                            <span style={{ display: 'flex', justifyContent: 'center' }}>
+                                <i
+                                    className="pi pi-pencil"
+                                    title="Editar"
+                                    style={{ color: '#1976d2', cursor: "pointer" }}
+                                    onClick={() => handleEdit(rowData)}
+                                ></i>
+                            </span>
+                        )}
+                    />
+                </DataTable>
             </div>
 
             {showModal && (

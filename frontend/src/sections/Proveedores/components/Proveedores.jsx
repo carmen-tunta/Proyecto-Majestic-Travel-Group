@@ -101,11 +101,6 @@ const Proveedores = () => {
             </div>
 
             <div className="card">
-                {(loading || searchLoading) ? (
-                    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 120 }}>
-                        <ProgressSpinner />
-                    </div>
-                ) : (
                 <DataTable 
                     className="proveedores-table" 
                     size="small" 
@@ -117,6 +112,7 @@ const Proveedores = () => {
                     rows={rows}
                     totalRecords={totalRecords}
                     onPage={onPageChange}
+                    loading={loading || searchLoading}
                 >
                     <Column 
                         field="name" 
@@ -183,7 +179,6 @@ const Proveedores = () => {
                         )}
                     />
                 </DataTable>
-                )}
             </div>
 
             

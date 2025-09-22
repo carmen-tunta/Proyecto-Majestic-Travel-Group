@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import GetAllCotizaciones from '../../../modules/Cotizacion/application/GetAllCotizaciones';
 import { Button } from 'primereact/button';
 import '../styles/Cotizacion.css';
-import '../../Proveedores/styles/Proveedores.css';
 import SearchBar from '../../../components/SearchBar';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
@@ -76,8 +75,8 @@ export default function Cotizaciones() {
   );
 
   return (
-    <div className="proveedores">
-      <div className="proveedores-header">
+    <div className="cotizaciones">
+      <div className="cotizaciones-header">
         <h2>Cotización</h2>
         <Button
           icon="pi pi-plus"
@@ -88,19 +87,17 @@ export default function Cotizaciones() {
         />
       </div>
 
-      <div className="proveedores-search cotz-search-half">
+      <div className="cotizaciones-search cotz-search-half">
         <SearchBar value={q} onChange={setQ} placeholder="Buscar cliente" />
       </div>
 
       <div className="card">
-        {loading ? (
-          <div className="cotz-spinner"><ProgressSpinner /></div>
-        ) : (
           <DataTable
-            className="proveedores-table"
+            className="cotizaciones-table"
             size="small"
             value={filtered}
             emptyMessage="Sin resultados"
+            loading={loading}
             paginator
             first={first}
             rows={rowsPerPage}
@@ -120,7 +117,6 @@ export default function Cotizaciones() {
             <Column header="Estado" field="estado" />
             <Column header="Acción" body={actionTemplate} />
           </DataTable>
-        )}
       </div>
     </div>
   );
