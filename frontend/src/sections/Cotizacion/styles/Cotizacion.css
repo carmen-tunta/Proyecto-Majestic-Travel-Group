@@ -1,72 +1,217 @@
-/* Basic styles to match the Figma-like look */
-.cotz-page, .cotz-form-page { padding: 16px 24px; }
-.cotz-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
-.cotz-header h2 { color: #1976d2; font-weight: 600; }
-.cotz-header .p-button {
-	border: 1.5px solid #1976d2;
-	color: #1976d2;
-	background: #fff;
-	font-weight: 500;
-	font-size: 15px;
-	border-radius: 6px;
-	box-shadow: 0 1px 2px rgba(25,118,210,0.08);
-	transition: background 0.2s, color 0.2s;
-}
-.cotz-header .p-button:hover {
-	background: #e3f2fd;
-	color: #1256a3;
-	border-color: #1256a3;
+/* Estilos para la visualización de la cotización en dos filas */
+.cotz-resumen {
+	width: 100%;
+	font-family: inherit;
+	margin-bottom: 2px;
 }
 
-.btn-primary, .cotz-header .btn-primary {
-	background: #1976d2;
-	color: #fff;
-	border: none;
-	padding: 8px 16px;
-	border-radius: 6px;
-	font-weight: 500;
-	font-size: 15px;
-	box-shadow: 0 1px 2px rgba(25,118,210,0.08);
-	transition: background 0.2s;
+.cotz-resumen-row {
+	display: flex;
+	width: 100%;
+	align-items: center;
 }
-.btn-primary:hover, .cotz-header .btn-primary:hover {
-	background: #1256a3;
-}
-.cotz-search { position:relative; width:300px; margin: 8px 0 16px; }
-.cotz-search input{ width:100%; padding:10px 12px 10px 32px; border:1px solid #cfd6e4; border-radius:6px; }
-.cotz-search .icon{ position:absolute; left:10px; top:10px; opacity:.6 }
-.btn-primary{ background:#2c7be5; color:#fff; border:0; padding:8px 12px; border-radius:6px; cursor:pointer; }
-.btn-outline{ margin-left:auto; border:1px solid #2c7be5; background:transparent; color:#2c7be5; padding:6px 10px; border-radius:6px; cursor:pointer; }
-.btn-link{ background:transparent; border:0; font-size:18px; cursor:pointer; }
-.btn-icon{ background:transparent; border:1px solid #cfd6e4; border-radius:6px; padding:4px 8px; cursor:pointer; }
 
-.table{ border:1px solid #e6e9ef; border-radius:6px; overflow:hidden; }
-.thead, .tr{ display:grid; grid-template-columns: 2fr 1fr 1fr 1.2fr 1fr 1fr .8fr; gap:12px; align-items:center; }
-.thead{
+.cotz-resumen-row1 {
+	justify-content: space-between;
+	font-size: 15px;
+	font-weight: 500;
+	color: #222;
+	margin-bottom: 2px;
+}
+
+.cotz-resumen-nombre {
+	flex: 2;
+	text-align: left;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+.cotz-resumen-tipo {
+	flex: 1;
+	text-align: center;
+}
+.cotz-resumen-porcentaje {
+	flex: 0.7;
+	text-align: right;
+	margin-right: 18px;
+}
+.cotz-resumen-codigo {
+	flex: 1.2;
+	text-align: right;
+	font-family: monospace;
+}
+
+.cotz-resumen-row2 {
+	font-size: 13px;
+	color: #444;
+	font-weight: 400;
+	line-height: 1.3;
+	flex-wrap: wrap;
+}
+.cotz-label {
+	font-weight: 600;
+	color: #222;
+	margin-left: 2px;
+}
+/* Detalle debajo del cliente en la tabla de cotizaciones */
+.cotz-cliente-cell {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	justify-content: center;
+}
+
+/* Fila expandida siempre visible con el detalle */
+.cotz-detail-row {
+	font-size: 13px;
+	color: #444;
+	margin-top: 4px;
+	margin-left: 4px;
+}
+.cotz-sep {
+	display: inline-block;
+	padding: 0 8px;
+	color: #999;
+}
+.cotz-expander .p-row-toggler {
+	opacity: 0;
+	width: 0;
+}
+
+/* Hide expander toggle for our always-expanded detail rows */
+.cotz-expander-col .p-row-toggler {
+  opacity: 0;
+  width: 0;
+}
+
+/* Alineación columnas top-row */
+.cotz-col-nombre { text-align: left !important; width: 28%; }
+.cotz-col-tipo { text-align: center !important; width: 16%; }
+.cotz-col-porcentaje { text-align: center !important; width: 10%; }
+.cotz-col-codigo { text-align: right !important; width: 20%; font-family: monospace; }
+.cotz-col-accion { text-align: center !important; width: 6%; }
+.cotz-expander-col { width: 2% !important; }
+
+.cotz-action { display:flex; justify-content:center; }
+.cotz-action-icon { color:#1976d2; cursor:pointer; font-size:18px; }
+
+.cotz-detalle-linea {
+	font-size: 13px;
+	color: #444;
+	margin-top: 2px;
+	line-height: 1.3;
+	font-family: inherit;
+	font-weight: 400;
+	white-space: normal;
+}
+
+.cotz-det-label {
+	font-weight: 600;
+	color: #222;
+}
+
+.cotz-actions .cotz-detail-icon {
+	margin-left: 6px;
+	color: #b0b0b0;
+	font-size: 17px;
+	display: flex;
+	align-items: center;
+}
+/* Cotización listing base styles matching Proveedores */
+.menu-edition {
+	padding: 0rem 4rem 2rem 2rem;
+}
+
+.header {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	margin-bottom: 1rem;
+}
+
+.header-row {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 1rem;
+	width: 100%;
+}
+
+/* Inherit .header-icon and inner font-size from DetallesProveedores.css to keep exact look */
+
+/* Search input */
+.cotz-search {
+	position: relative;
+	width: 420px;
+	margin: 0 0 13px;
+}
+
+.cotz-search input {
+	width: 100%;
+	padding: 10px 12px 10px 36px;
+	border: 1px solid #cfd6e4;
+	border-radius: 6px;
+}
+
+.cotz-search .icon {
+	position: absolute;
+	left: 10px;
+	top: 10px;
+	opacity: .6
+}
+
+/* Table look aligned to Proveedores */
+.table {
+	border: 1px solid #e6e9ef;
+	border-radius: 6px;
+	overflow: hidden;
+}
+
+.thead,
+.tr {
+	display: grid;
+	grid-template-columns: 2fr 1fr 1fr 1.2fr 1fr 1fr .8fr;
+	gap: 12px;
+	align-items: center;
+}
+
+.thead {
 	background: #1976d2;
 	color: #fff;
 	padding: 10px 12px;
 	font-weight: 600;
 }
-.tbody .tr{ padding:12px; border-top:1px solid #eef1f6; }
-.client-name{ font-weight:600; }
-.sub{ color:#7b8794; font-size:12px; margin-top:4px; }
-.empty{ padding:16px; color:#7b8794; }
-.pager{ text-align:center; color:#7b8794; padding:12px; }
 
-.tabs{ display:flex; gap:12px; margin: 8px 0 12px; }
-.tab{ border:0; background:transparent; padding:8px 12px; border-bottom:2px solid transparent; cursor:pointer; }
-.tab.active{ border-bottom-color:#2c7be5; color:#2c7be5; }
+.tbody .tr {
+	padding: 12px;
+	border-top: 1px solid #eef1f6;
+}
 
-.form-card{ border:1px solid #e6e9ef; border-radius:8px; padding:12px; }
-.form-card .row{ display:flex; align-items:center; gap:16px; margin-bottom:12px; }
-.form-card .label{ color:#6b778c; }
-.grid{ display:grid; grid-template-columns: repeat(4, 1fr); gap:12px; }
-.grid .span-2{ grid-column: span 2; }
-.grid input, .grid select{ width:100%; padding:8px 10px; border:1px solid #cfd6e4; border-radius:6px; }
-.search-select{ position:relative; }
-.dropdown{ position:absolute; top:100%; left:0; right:0; background:#fff; border:1px solid #cfd6e4; border-radius:6px; z-index:20; max-height:200px; overflow:auto; }
-.option{ padding:8px 10px; cursor:pointer; }
-.option:hover{ background:#f5f7fb; }
-.option.disabled{ color:#98a2b3; cursor:default; }
-.center{ padding:40px 0; text-align:center; color:#98a2b3; font-weight:600; }
+.client-name {
+	font-weight: 600;
+}
+
+.sub {
+	color: #7b8794;
+	font-size: 12px;
+	margin-top: 4px;
+}
+
+.empty {
+	padding: 16px;
+	color: #7b8794;
+}
+
+/* Make Cotización search width half screen like design */
+.cotz-search-half { 
+	--cotz-search-width: 35%;
+	max-width: var(--cotz-search-width);
+}
+
+/* Remove alternating blue rows only for Cotización table */
+.proveedores-table.cotz-onecol .p-datatable-tbody > tr:nth-child(even) > td {
+  background: #ffffff !important;
+}
+.proveedores-table.cotz-table .p-datatable-tbody > tr:nth-child(even) > td {
+  background: #ffffff !important;
+}

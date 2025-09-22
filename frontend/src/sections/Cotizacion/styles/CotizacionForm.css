@@ -1,0 +1,389 @@
+/* Cotizacion Form specific styles aligned with Proveedores */
+
+.form-card {
+    border: 1px solid #e6e9ef;
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.08);
+    /* Shared width tokens to keep symmetry across rows */
+    --w-left: 50%;   /* Nombre cliente / Nombre cotización */
+    --w-mid: 34%;    /* Agencia */
+    --w-small: 16%;  /* Estado, Fecha, Código */
+    --w-small3: 12%; /* Pax, Niños, % */
+}
+
+.form-card .row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 12px;
+}
+
+.form-card .row-spacer {
+    flex: 1;
+}
+
+.form-card .right-btn {
+    margin-left: auto;
+}
+
+.form-card .label { color: #6b778c; }
+
+/* Link-like save button (top-right) */
+.form-card .link-btn {
+    background: transparent;
+    border: 0;
+    color: #2c7be5;
+    font-weight: 600;
+    cursor: pointer;
+}
+.form-card .link-btn:hover { text-decoration: underline; }
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(4, 2fr);
+    gap: 12px;
+    justify-items: start;
+}
+
+/* 6-column variant used at top form */
+.grid.grid-6 {
+    grid-template-columns: repeat(6, 1fr);
+}
+
+/* 12-column variant for fine-grained spans */
+.grid.grid-12 {
+    grid-template-columns: repeat(12, 1fr);
+}
+
+/* Explicit row grids with 12-unit symmetry (fr-based) */
+.form-grid {
+    display: grid;
+    column-gap: 12px;
+    row-gap: 16px; /* más espacio vertical entre filas */
+}
+
+/* Separación vertical entre los bloques de filas (row1, row2, row3) */
+.form-card .form-grid + .form-grid {
+    margin-top: 20px;
+}
+
+/* Row 1: [Nombre cliente][Tipo][Fecha][Estado] */
+.row1-grid { grid-template-columns: minmax(300px, 6fr) minmax(160px, 2fr) minmax(160px, 2fr) minmax(160px, 2fr); }
+
+/* Row 2: [Nombre cotización][Agencia][Código] */
+.row2-grid { grid-template-columns: minmax(300px, 6fr) minmax(220px, 4fr) minmax(150px, 2fr); }
+
+/* Row 3: [País][Idioma][Paxs][Niños][%][Observación] */
+.row3-grid { grid-template-columns: minmax(150px, 2fr) minmax(150px, 2fr) minmax(120px, 2fr) minmax(120px, 2fr) minmax(120px, 2fr) minmax(300px, 6fr); }
+
+/* Ensure controls inside form-grid adopt the same single-outline look */
+.form-grid input,
+.form-grid select {
+    width: var(--field-w, 100%);
+    padding: 10px 12px;
+    height: 40px;
+    border: 1px solid #9ec0f7;
+    border-radius: 10px;
+    box-sizing: border-box;
+    background: #fff;
+}
+
+.form-grid input:focus,
+.form-grid select:focus {
+    outline: none;
+    border-color: #2c7be5;
+    box-shadow: 0 0 0 3px rgba(44, 123, 229, .12);
+}
+
+.form-grid .p-inputtext,
+.form-grid .p-dropdown,
+.form-grid .p-calendar {
+    width: var(--field-w, 100%);
+    max-width: 100%;
+}
+
+.form-grid .p-dropdown.p-component,
+.form-grid .p-calendar.p-component {
+    border: 1px solid #9ec0f7;
+    border-radius: 10px;
+    background: #fff;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+}
+
+.form-grid .p-dropdown .p-dropdown-label,
+.form-grid .p-calendar .p-inputtext {
+    border: 0 !important;
+    box-shadow: none !important;
+    background: transparent !important;
+    border-radius: 0 !important;
+    padding: 8px 12px;
+    height: 100%;
+}
+
+.form-grid .p-dropdown .p-dropdown-trigger,
+.form-grid .p-calendar .p-datepicker-trigger {
+    border-left: 0 !important;
+    background: transparent !important;
+    border: 0 !important;
+}
+
+.form-grid .p-dropdown.p-focus,
+.form-grid .p-calendar.p-focus {
+    border-color: #2c7be5 !important;
+    box-shadow: 0 0 0 3px rgba(44, 123, 229, .12) !important;
+}
+
+.grid .span-1 { grid-column: span 1; }
+.grid .span-2 { grid-column: span 2; }
+.grid .span-3 { grid-column: span 3; }
+.grid .span-4 { grid-column: span 4; }
+.grid .span-5 { grid-column: span 5; }
+.grid .span-6 { grid-column: span 6; }
+.grid .span-7 { grid-column: span 7; }
+.grid .span-8 { grid-column: span 8; }
+.grid .span-9 { grid-column: span 9; }
+.grid .span-10 { grid-column: span 10; }
+.grid .span-11 { grid-column: span 11; }
+.grid .span-12 { grid-column: span 12; }
+
+.grid input,
+.grid select {
+    width: var(--field-w, 100%);
+    padding: 10px 12px;
+    height: 40px;
+    border: 1px solid #9ec0f7;
+    border-radius: 10px;
+    box-sizing: border-box;
+    background: #fff;
+}
+
+/* PrimeReact controls: allow per-field custom width via --field-w */
+.grid .p-inputtext,
+.grid .p-dropdown,
+.grid .p-calendar {
+    width: var(--field-w, 100%);
+    max-width: 100%;
+}
+
+/* PrimeReact: single outline look (no inner borders) */
+.grid .p-dropdown.p-component,
+.grid .p-calendar.p-component {
+    border: 1px solid #9ec0f7;
+    border-radius: 10px;
+    background: #fff;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+}
+.grid .p-dropdown .p-dropdown-label,
+.grid .p-calendar .p-inputtext {
+    border: 0 !important;
+    box-shadow: none !important;
+    background: transparent !important;
+    border-radius: 0 !important;
+    padding: 8px 12px;
+    height: 100%;
+}
+.grid .p-dropdown .p-dropdown-trigger,
+.grid .p-calendar .p-datepicker-trigger {
+    border-left: 0 !important;
+    background: transparent !important;
+    border: 0 !important;
+}
+
+.grid input:focus,
+.grid select:focus {
+    outline: none;
+    border-color: #2c7be5;
+    box-shadow: 0 0 0 3px rgba(44, 123, 229, .12);
+}
+
+/* Focus ring for PrimeReact wrappers */
+.grid .p-dropdown.p-focus,
+.grid .p-calendar.p-focus {
+    border-color: #2c7be5 !important;
+    box-shadow: 0 0 0 3px rgba(44, 123, 229, .12) !important;
+}
+
+.search-select {
+    position: relative;
+}
+
+.search-select .dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: #fff;
+    border: 1px solid #cfd6e4;
+    border-radius: 6px;
+    z-index: 20;
+    max-height: 200px;
+    overflow: auto;
+}
+
+.search-select .option {
+    padding: 8px 10px;
+    cursor: pointer;
+}
+
+.search-select .option:hover {
+    background: #f5f7fb;
+}
+
+.search-select .option.disabled {
+    color: #98a2b3;
+    cursor: default;
+}
+
+.center {
+    padding: 40px 0;
+    text-align: center;
+    color: #98a2b3;
+    font-weight: 600;
+}
+
+/* Builder */
+.cotz-service-card {
+    padding: 12px;
+    border: 2px solid #2c7be5;
+    border-radius: 8px;
+    margin-bottom: 12px;
+    background: transparent;
+    cursor: pointer;
+}
+
+.cotz-service-card.selected {
+    background: #eaf4ff;
+}
+
+.cotz-service-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.cotz-service-title {
+    font-weight: 600;
+}
+
+.cotz-component-row {
+    display: grid;
+    grid-template-columns: auto 1fr auto 80px;
+    gap: 8px;
+    align-items: center;
+    margin-left: 16px;
+    color: #293241;
+    padding: 6px 0;
+}
+
+.muted {
+    color: #6b7280;
+}
+
+.label-muted {
+    opacity: .7;
+}
+
+.btn-sm {
+    padding: 4px 8px;
+}
+
+.price-input {
+    width: 80px;
+    padding: 6px 8px;
+    border: 1px solid #cfd6e4;
+    border-radius: 6px;
+}
+
+.cotz-select-hint {
+    margin-top: 8px;
+    color: #1976d2;
+    font-size: 12px;
+}
+
+.cotz-builder {
+    display: grid;
+    grid-template-columns: 1fr 260px;
+    gap: 16px;
+    margin-top: 8px;
+    align-items: start;
+}
+
+.cotz-searchline {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 12px;
+}
+
+.cotz-searchbar {
+    display: flex;
+    gap: 8px;
+    position: relative;
+}
+
+.cotz-searchbar .icon {
+    position: absolute;
+    left: 10px;
+    top: 9px;
+    opacity: .6;
+}
+
+.search-status {
+    position: absolute;
+    right: 120px;
+    top: 10px;
+    font-size: 12px;
+    color: #98a2b3;
+}
+
+.totals-card {
+    border: 1px dashed #cfd6e4;
+    border-radius: 8px;
+    padding: 12px 16px;
+    color: #333;
+}
+
+.totals-row {
+    display: flex;
+    justify-content: space-between;
+}
+
+.totals-row+.totals-row {
+    margin-top: 6px;
+}
+
+.totals-row.bold {
+    font-weight: 700;
+}
+
+/* Client field search icon at right */
+.client-search-wrap {
+    position: relative;
+}
+
+.client-search-wrap input {
+    padding-right: 36px;
+}
+
+/* Asegurar que el campo de 'Nombre del cliente' (PrimeReact InputText) tenga misma altura y ancho */
+.client-search-wrap .p-inputtext {
+    height: 40px;
+    width: 100%;
+    box-sizing: border-box;
+    padding-right: 36px; /* deja espacio para el icono */
+}
+
+.client-search-wrap .right-icon {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    opacity: .6;
+}
