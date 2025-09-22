@@ -90,7 +90,7 @@
 .cotz-col-porcentaje { text-align: center !important; width: 10%; }
 .cotz-col-codigo { text-align: right !important; width: 20%; font-family: monospace; }
 .cotz-col-accion { text-align: center !important; width: 6%; }
-.cotz-expander-col { width: 2% !important; }
+.cotz-expander-col { max-width: 2% !important; }
 
 .cotz-action { display:flex; justify-content:center; }
 .cotz-action-icon { color:#1976d2; cursor:pointer; font-size:18px; }
@@ -214,4 +214,40 @@
 }
 .proveedores-table.cotz-table .p-datatable-tbody > tr:nth-child(even) > td {
   background: #ffffff !important;
+}
+
+.cotizaciones {
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    padding: 0rem 4rem 2rem 2rem;
+}
+
+.cotizaciones-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.cotizaciones-search {
+    margin-bottom: 2rem;
+}
+
+.cotizaciones-table .p-datatable-thead > tr > th {
+  background: #1976d2;
+  color: #ffffff;
+  font-weight: normal;
+  border: none;
+}
+
+.cotizaciones-table .p-datatable-tbody > tr > td {
+  border: none;
+  padding: 15px;
+}
+
+
+.cotizaciones-table .p-datatable-tbody > tr:nth-child(even) > td {
+  border-bottom: 1px solid #e6e9ef;
+  padding: 0rem 0rem 0.5rem 2.5rem;
 }

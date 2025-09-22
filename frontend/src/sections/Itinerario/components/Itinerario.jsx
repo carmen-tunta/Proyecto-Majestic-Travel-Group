@@ -92,11 +92,6 @@ const Itinerario = () => {
             </div>
 
             <div className="card">
-                {(loading || searchLoading) ? (
-                    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 120 }}>
-                        <ProgressSpinner />
-                    </div>
-                ) : (
                 <DataTable 
                     className="itinerario-table" 
                     size="small" 
@@ -108,6 +103,7 @@ const Itinerario = () => {
                     rows={rows}
                     totalRecords={totalRecords}
                     onPage={onPageChange}
+                    loading={loading || searchLoading}
                 >
                     <Column 
                         field="templateTitle" 
@@ -134,7 +130,6 @@ const Itinerario = () => {
                         )}
                     />
                 </DataTable>
-                )}
             </div>
 
             {showModal && (

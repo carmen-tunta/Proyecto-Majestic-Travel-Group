@@ -126,7 +126,7 @@
     vertical-align: middle !important;
 }
 
-.p-datatable-tbody > tr > td {
+.tarifa-table .p-datatable-tbody > tr > td {
     border-bottom: 1px solid #eee !important;
 }
 
