@@ -29,4 +29,9 @@ export class ProveedoresController {
    updateProveedor(@Param('id') id: string, @Body() data: Partial<Proveedores>) {
        return this.proveedoresService.update(id, data);
    }
+
+   @Get('component/:idc/pax/:pax')
+    getProveedorByComponentAndPax(@Param('idc') componentId: string, @Param('pax') pax: string) {
+        return this.proveedoresService.findByComponentIdAndPax(componentId, Number(pax));
+    }
 }
