@@ -1,89 +1,126 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { apiService } from '../../../services/apiService';
+import GetAllCotizaciones from '../../../modules/Cotizacion/application/GetAllCotizaciones';
 import { Button } from 'primereact/button';
 import '../styles/Cotizacion.css';
+import '../../Proveedores/styles/Proveedores.css';
+import SearchBar from '../../../components/SearchBar';
+import { DataTable } from 'primereact/datatable';
+import { Column } from 'primereact/column';
+import { ProgressSpinner } from 'primereact/progressspinner';
 
-function formatFecha(dateStr){
-  try {
-    const d = new Date(dateStr);
-    const dias = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
-    const meses = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
-    return `${dias[d.getDay()]} ${d.getDate().toString().padStart(2, '0')} ${meses[d.getMonth()]} ${d.getFullYear().toString().slice(-2)}`;
-  } catch { return dateStr; }
-}
-
-export default function Cotizaciones(){
+export default function Cotizaciones() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [rows, setRows] = useState([]);
   const [q, setQ] = useState('');
+  const [first, setFirst] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [totalRecords, setTotalRecords] = useState(0);
+  const [expandedRows, setExpandedRows] = useState({});
 
   useEffect(() => {
     let mounted = true;
-    (async() => {
+    (async () => {
       try {
-        const data = await apiService.getCotizaciones();
-        if(mounted) setRows(data);
-      } catch (e) { console.error(e); }
-      finally { if(mounted) setLoading(false); }
+        const data = await new GetAllCotizaciones().execute();
+        if (mounted) {
+          setRows(Array.isArray(data) ? data : []);
+          setTotalRecords(Array.isArray(data) ? data.length : 0);
+        }
+      } catch (e) {
+        console.error(e);
+      } finally {
+        if (mounted) setLoading(false);
+      }
     })();
-    return () => { mounted = false; };
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   const filtered = useMemo(() => {
-    if(!q) return rows;
-    return rows.filter(r => r?.cliente?.nombre?.toLowerCase().includes(q.toLowerCase()));
+    if (!q) return rows;
+    return rows.filter((r) => r?.cliente?.nombre?.toLowerCase().includes(q.toLowerCase()));
   }, [rows, q]);
 
+  const onPageChange = (event) => {
+    setFirst(event.first);
+    setRowsPerPage(event.rows);
+  };
+
+  // expandir todas las filas siempre para mostrar la línea de detalle
+  useEffect(() => {
+    if (Array.isArray(rows)) {
+      const map = {};
+      rows.forEach(r => { if (r?.id != null) map[r.id] = true; });
+      setExpandedRows(map);
+    }
+  }, [rows]);
+
+  const rowExpansionTemplate = (row) => (
+    <div className="cotz-detail-row">
+      <span className="cotz-det-label">Cotización:</span> {row?.cotizacion || row?.tipoCotizacion || ''} <span className="cotz-sep">|</span>
+      <span className="cotz-det-label">Agencia:</span> {row?.agencia || ''} <span className="cotz-sep">|</span>
+      <span className="cotz-det-label">País:</span> {row?.pais || ''} <span className="cotz-sep">|</span>
+      <span className="cotz-det-label">Idioma:</span> {row?.idioma || ''} <span className="cotz-sep">|</span>
+      <span className="cotz-det-label">Nro. pax:</span> {row?.nroPax ?? ''} <span className="cotz-sep">|</span>
+      <span className="cotz-det-label">Nro. Niños(as):</span> {row?.nroNinos ?? ''}
+    </div>
+  );
+
+  const actionTemplate = (row) => (
+    <span className="cotz-action">
+      <i className="pi pi-arrow-right cotz-action-icon" title="Editar" onClick={() => navigate(`/cotizaciones/${row.id}`)} />
+    </span>
+  );
+
   return (
-    <div className="cotz-page">
-      <div className="cotz-header">
+    <div className="proveedores">
+      <div className="proveedores-header">
         <h2>Cotización</h2>
         <Button
           icon="pi pi-plus"
           label="Nuevo"
           size="small"
           outlined
-          onClick={()=>navigate('/cotizaciones/nuevo')}
+          onClick={() => navigate('/cotizaciones/nuevo')}
         />
       </div>
 
-      <div className="cotz-search">
-        <span className="icon pi pi-search"/>
-        <input value={q} onChange={e=>setQ(e.target.value)} placeholder="Buscar cliente"/>
+      <div className="proveedores-search cotz-search-half">
+        <SearchBar value={q} onChange={setQ} placeholder="Buscar cliente" />
       </div>
 
-      <div className="table">
-        <div className="thead">
-          <div>Nombre del cliente</div>
-          <div>Categoría</div>
-          <div>% Utilidad</div>
-          <div>Código reserva</div>
-          <div>Fecha viaje</div>
-          <div>Estado</div>
-          <div>Acción</div>
-        </div>
-        <div className="tbody">
-          {loading ? (<div className="empty">Cargando…</div>) : (
-            filtered.length ? filtered.map((r)=> (
-              <div className="tr" key={r.id}>
-                <div>
-                  <div className="client-name">{r?.cliente?.nombre}</div>
-                  <div className="sub">Cotización: OPERADOR TOUR | Agencia: {r.agencia} | País: {r.pais} | Idioma: {r.idioma} | Nro. pax: {r.nroPax} | Nro. Niños(as): {r.nroNinos}</div>
-                </div>
-                <div>{r.categoria === 'Priv' ? 'VIP' : r.categoria}</div>
-                <div>{Number(r.utilidad).toFixed(0)}%</div>
-                <div>{r.codigoReserva}</div>
-                <div>{formatFecha(r.fechaViaje)}</div>
-                <div>{r.estado}</div>
-                <div className="acciones">
-                  <button className="btn-icon" title="Editar" onClick={()=>navigate(`/cotizaciones/${r.id}`)}>⟶</button>
-                </div>
-              </div>
-            )) : (<div className="empty">Sin resultados</div>)
-          )}
-        </div>
+      <div className="card">
+        {loading ? (
+          <div className="cotz-spinner"><ProgressSpinner /></div>
+        ) : (
+          <DataTable
+            className="proveedores-table"
+            size="small"
+            value={filtered}
+            emptyMessage="Sin resultados"
+            paginator
+            first={first}
+            rows={rowsPerPage}
+            totalRecords={totalRecords}
+            onPage={onPageChange}
+            dataKey="id"
+            expandedRows={expandedRows}
+            onRowToggle={(e) => setExpandedRows(e.data)}
+            rowExpansionTemplate={rowExpansionTemplate}
+          >
+            <Column expander className="cotz-expander-col" />
+            <Column header="Nombre del cliente" body={(r) => <span className="client-name">{r?.cliente?.nombre}</span>} />
+            <Column header="Categoría" body={(r) => (r?.categoria === 'Priv' ? 'Privado' : r?.categoria)} />
+            <Column header="% Utilidad" body={(r) => (r?.utilidad != null ? `${Number(r.utilidad).toFixed(0)}%` : '')} />
+            <Column header="Código reserva" body={(r) => (r?.codigoReserva || r?.codigo || '')} />
+            <Column header="Fecha viaje" body={(r) => (r?.fechaViaje ? new Date(r.fechaViaje).toLocaleDateString('es-ES', { weekday: 'short', day: '2-digit', month: 'short', year: '2-digit' }) : '')} />
+            <Column header="Estado" field="estado" />
+            <Column header="Acción" body={actionTemplate} />
+          </DataTable>
+        )}
       </div>
     </div>
   );
