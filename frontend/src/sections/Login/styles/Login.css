@@ -1,0 +1,15 @@
+.login-password-group {
+  position: relative;
+}
+
+.login-password-eye {
+  position: absolute;
+  right: 17px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  z-index: 2;
+  font-size: 1.2em;
+  background: transparent;
+  padding: 0 4px;
+}

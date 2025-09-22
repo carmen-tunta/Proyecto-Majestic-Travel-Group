@@ -5,6 +5,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { apiService } from '../../../services/apiService';
 import { useNotification } from '../../Notification/NotificationContext';
 import { useAuth } from '../../../modules/auth/context/AuthContext';
+import "../styles/Login.css"
 
 function Login() {
   const [showPassword, setShowPassword] = useState(false);
@@ -47,10 +48,8 @@ function Login() {
           <img src={process.env.PUBLIC_URL + '/logo_mtg.png'} alt="MTG" style={{ height: 48 }} />
         </div>
         
-        <div className="p-inputgroup" style={{ marginBottom: 12 }}>
-          <span className="p-inputgroup-addon">
-            <i className="pi pi-user" />
-          </span>
+        <div className="p-input-icon-left" style={{ marginBottom: 12 }}>
+          <i className="pi pi-user" />
           <InputText 
             placeholder="Usuario" 
             value={username}
@@ -60,10 +59,8 @@ function Login() {
           />
         </div>
         
-        <div className="p-inputgroup" style={{ marginBottom: 12 }}>
-          <span className="p-inputgroup-addon">
-            <i className="pi pi-lock" />
-          </span>
+        <div className="p-input-icon-left login-password-group" style={{ marginBottom: 12 }}>
+          <i className="pi pi-lock" />
           <InputText 
             placeholder="Contraseña" 
             type={showPassword ? 'text' : 'password'}
@@ -73,11 +70,10 @@ function Login() {
             disabled={loading}
           />
           <span
-            className="p-inputgroup-addon"
+            className="login-password-eye"
             role="button"
             aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
             onClick={toggleShowPassword}
-            style={{ cursor: 'pointer' }}
           >
             <i className={showPassword ? 'pi pi-eye-slash' : 'pi pi-eye'} />
           </span>

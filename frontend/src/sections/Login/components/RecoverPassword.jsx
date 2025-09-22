@@ -40,7 +40,6 @@ const RecoverPassword = () => {
             <InputText 
               type="email" 
               placeholder="Correo" 
-              className='p-inputtext-sm'
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -49,7 +48,6 @@ const RecoverPassword = () => {
         </div>
         <Button 
           label={loading ? "Cargando..." : "Recuperar contraseña"} 
-          size='small' 
           type='submit' 
           disabled={loading}
           loading={loading}
