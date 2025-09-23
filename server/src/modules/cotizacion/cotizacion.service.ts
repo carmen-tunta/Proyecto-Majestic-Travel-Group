@@ -8,6 +8,7 @@ import { CotizacionServicio } from './entities/cotizacion-servicio.entity';
 import { CotizacionServicioComponente } from './entities/cotizacion-servicio-componente.entity';
 import { Service } from '../services/entities/service.entity';
 import { Component } from '../components/entities/component.entity';
+import { Proveedores } from '../proveedores/entities/proveedores.entity';
 
 @Injectable()
 export class CotizacionService {
@@ -24,6 +25,8 @@ export class CotizacionService {
     private readonly serviceRepo: Repository<Service>,
     @InjectRepository(Component)
     private readonly componentRepo: Repository<Component>,
+    @InjectRepository(Proveedores)
+    private readonly proveedoresRepo: Repository<Proveedores>,
   ) {}
 
   async create(createCotizacionDto: CreateCotizacionDto): Promise<Cotizacion> {
@@ -142,11 +145,14 @@ export class CotizacionService {
   }
 
   // Actualizar nota y/o precio de un componente dentro del servicio de la cotización
-  async updateServiceComponentItem(cscId: number, data: { nota?: string; precio?: number }) {
+  async updateServiceComponentItem(cscId: number, data: { nota?: string; precio?: number; scheduledAt?: string | null }) {
     const csc = await this.cotizacionServicioCompRepo.findOne({ where: { id: cscId } });
     if (!csc) throw new NotFoundException('Componente de servicio de cotización no encontrado');
     if (typeof data.nota !== 'undefined') csc.nota = data.nota as any;
     if (typeof data.precio !== 'undefined') csc.precio = Number(data.precio) as any;
+    if (typeof data.scheduledAt !== 'undefined') {
+      csc.scheduledAt = data.scheduledAt ? new Date(data.scheduledAt) : null;
+    }
     return this.cotizacionServicioCompRepo.save(csc);
   }
 
@@ -162,5 +168,18 @@ export class CotizacionService {
     if (!exists) throw new NotFoundException('Componente de servicio de cotización no encontrado');
     await this.cotizacionServicioCompRepo.delete({ id: cscId });
     return { success: true };
+  }
+
+  // Asignar proveedor a un componente del servicio y opcionalmente guardar el precio total calculado
+  async assignProviderToComponent(cscId: number, proveedorId: number, precioTotal?: number) {
+    const csc = await this.cotizacionServicioCompRepo.findOne({ where: { id: cscId } });
+    if (!csc) throw new NotFoundException('Componente de servicio de cotización no encontrado');
+    const proveedor = await this.proveedoresRepo.findOne({ where: { id: proveedorId } });
+    if (!proveedor) throw new NotFoundException('Proveedor no encontrado');
+    (csc as any).proveedor = proveedor;
+    if (typeof precioTotal !== 'undefined') {
+      csc.precio = Number(precioTotal) as any;
+    }
+    return this.cotizacionServicioCompRepo.save(csc);
   }
 }
