@@ -13,6 +13,7 @@ import { InputNumber } from 'primereact/inputnumber';
 import { Calendar as PrimeCalendar } from 'primereact/calendar';
 import { Dialog } from 'primereact/dialog';
 import { addLocale } from 'primereact/api';
+import { FloatLabel } from 'primereact/floatlabel';
 import { apiService } from '../../../services/apiService';
 import CreateCotizacion from '../../../modules/Cotizacion/application/CreateCotizacion';
 import UpdateCotizacion from '../../../modules/Cotizacion/application/UpdateCotizacion';
@@ -435,7 +436,10 @@ export default function CotizacionForm() {
             <div className="form-grid row1-grid">
               <div>
                 <div className="search-select client-search-wrap">
-                  <InputText value={clientQuery} onChange={e => { setClientQuery(e.target.value); setSelectedClient(null); }} placeholder="Nombre del cliente" />
+                  <FloatLabel>
+                    <InputText id="cliente" value={clientQuery} onChange={e => { setClientQuery(e.target.value); setSelectedClient(null); }} />
+                    <label htmlFor="cliente">Nombre del cliente</label>
+                  </FloatLabel>
                   <span className="pi pi-search right-icon" />
                   {clientQuery && !selectedClient && (
                     <div className="dropdown">
@@ -453,52 +457,88 @@ export default function CotizacionForm() {
                 </div>
               </div>
               <div>
-                <Dropdown value={form.categoria} options={categorias} onChange={e => setForm(f => ({ ...f, categoria: e.value }))} placeholder="Privado, compartido, vip" />
+                <FloatLabel>
+                  <Dropdown inputId="categoria" value={form.categoria} options={categorias} onChange={e => setForm(f => ({ ...f, categoria: e.value }))} />
+                  <label htmlFor="categoria">Categoría</label>
+                </FloatLabel>
               </div>
               <div>
-                <Calendar
-                  value={form.fechaViaje ? fromLocalDateStringToDate(form.fechaViaje) : null}
-                  onChange={e => setForm(f => ({ ...f, fechaViaje: e.value ? toLocalDateString(e.value) : '' }))}
-                  dateFormat="D dd M y"
-                  locale="es"
-                  placeholder="Fecha de viaje"
-                />
+                <FloatLabel>
+                  <Calendar
+                    inputId="fechaViaje"
+                    value={form.fechaViaje ? fromLocalDateStringToDate(form.fechaViaje) : null}
+                    onChange={e => setForm(f => ({ ...f, fechaViaje: e.value ? toLocalDateString(e.value) : '' }))}
+                    dateFormat="D dd M y"
+                    locale="es"
+                  />
+                  <label htmlFor="fechaViaje">Fecha de viaje</label>
+                </FloatLabel>
               </div>
               <div>
-                <Dropdown value={form.estado} options={estados} onChange={e => setForm(f => ({ ...f, estado: e.value }))} placeholder="Estado" />
+                <FloatLabel>
+                  <Dropdown inputId="estado" value={form.estado} options={estados} onChange={e => setForm(f => ({ ...f, estado: e.value }))} />
+                  <label htmlFor="estado">Estado</label>
+                </FloatLabel>
               </div>
             </div>
 
             <div className="form-grid row2-grid">
               <div>
-                <InputText value={form.nombreCotizacion} onChange={e => setForm(f => ({ ...f, nombreCotizacion: e.target.value }))} placeholder="Nombre de cotización" />
+                <FloatLabel>
+                  <InputText id="nombreCotizacion" value={form.nombreCotizacion} onChange={e => setForm(f => ({ ...f, nombreCotizacion: e.target.value }))} />
+                  <label htmlFor="nombreCotizacion">Nombre de cotización</label>
+                </FloatLabel>
               </div>
               <div>
-                <Dropdown value={form.agencia} options={agencias} onChange={e => setForm(f => ({ ...f, agencia: e.value }))} placeholder="Agencia" />
+                <FloatLabel>
+                  <Dropdown inputId="agencia" value={form.agencia} options={agencias} onChange={e => setForm(f => ({ ...f, agencia: e.value }))} />
+                  <label htmlFor="agencia">Agencia</label>
+                </FloatLabel>
               </div>
               <div>
-                <InputText value={form.codigoReserva} onChange={e => setForm(f => ({ ...f, codigoReserva: e.target.value }))} placeholder="Código de reserva" />
+                <FloatLabel>
+                  <InputText id="codigoReserva" value={form.codigoReserva} onChange={e => setForm(f => ({ ...f, codigoReserva: e.target.value }))} />
+                  <label htmlFor="codigoReserva">Código de reserva</label>
+                </FloatLabel>
               </div>
             </div>
 
             <div className="form-grid row3-grid">
               <div>
-                <Dropdown value={form.pais} options={paises} onChange={e => setForm(f => ({ ...f, pais: e.value }))} placeholder="País" />
+                <FloatLabel>
+                  <Dropdown inputId="pais" value={form.pais} options={paises} onChange={e => setForm(f => ({ ...f, pais: e.value }))} />
+                  <label htmlFor="pais">País</label>
+                </FloatLabel>
               </div>
               <div>
-                <Dropdown value={form.idioma} options={idiomas} onChange={e => setForm(f => ({ ...f, idioma: e.value }))} placeholder="Idioma" />
+                <FloatLabel>
+                  <Dropdown inputId="idioma" value={form.idioma} options={idiomas} onChange={e => setForm(f => ({ ...f, idioma: e.value }))} />
+                  <label htmlFor="idioma">Idioma</label>
+                </FloatLabel>
               </div>
               <div>
-                <InputText type="number" min="1" value={form.nroPax} onChange={e => setForm(f => ({ ...f, nroPax: e.target.value }))} placeholder="Nro. Paxs" />
+                <FloatLabel>
+                  <InputText id="nroPax" type="number" min="1" value={form.nroPax} onChange={e => setForm(f => ({ ...f, nroPax: e.target.value }))} />
+                  <label htmlFor="nroPax">Nro. Paxs</label>
+                </FloatLabel>
               </div>
               <div>
-                <InputText type="number" min="0" value={form.nroNinos} onChange={e => setForm(f => ({ ...f, nroNinos: e.target.value }))} placeholder="Nro Niños(as)" />
+                <FloatLabel>
+                  <InputText id="nroNinos" type="number" min="0" value={form.nroNinos} onChange={e => setForm(f => ({ ...f, nroNinos: e.target.value }))} />
+                  <label htmlFor="nroNinos">Nro Niños(as)</label>
+                </FloatLabel>
               </div>
               <div>
-                <InputText type="number" min="0" max="100" value={form.utilidad} onChange={e => setForm(f => ({ ...f, utilidad: e.target.value }))} placeholder="% de utilidad" />
+                <FloatLabel>
+                  <InputText id="utilidad" type="number" min="0" max="100" value={form.utilidad} onChange={e => setForm(f => ({ ...f, utilidad: e.target.value }))} />
+                  <label htmlFor="utilidad">% de utilidad</label>
+                </FloatLabel>
               </div>
               <div>
-                <InputText value={form.observacion} onChange={e => setForm(f => ({ ...f, observacion: e.target.value }))} placeholder="Observación" />
+                <FloatLabel>
+                  <InputText id="observacion" value={form.observacion} onChange={e => setForm(f => ({ ...f, observacion: e.target.value }))} />
+                  <label htmlFor="observacion">Observación</label>
+                </FloatLabel>
               </div>
             </div>
           </div>
