@@ -77,7 +77,7 @@
   --blue-600:#336181;
   --blue-700:#1f4a69;
   --blue-800:#123a57;
-  --blue-900:#051c2c;
+  --blue-900:var(--primary-color);
   --green-50:#f4fcf7;
   --green-100:#caf1d8;
   --green-200:#a0e6ba;
@@ -2279,9 +2279,9 @@
     border-color: var(--blue-800);
   }
   .p-button:not(:disabled):active {
-    background: #1d4ed8;
+    background: var(--blue-800);
     color: #ffffff;
-    border-color: #1d4ed8;
+    border-color: var(--blue-800);
   }
   .p-button.p-button-outlined {
     background-color: transparent;
