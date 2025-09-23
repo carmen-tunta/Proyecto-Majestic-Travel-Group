@@ -15,8 +15,8 @@
 .form-card .row {
     display: flex;
     align-items: center;
-    gap: 16px;
-    margin-bottom: 12px;
+    gap: 10px; /* más pegado horizontalmente */
+    margin-bottom: 30px; /* un poco más de aire bajo el header */
 }
 
 .form-card .row-spacer {
@@ -25,6 +25,7 @@
 
 .form-card .right-btn {
     margin-left: auto;
+    margin-top: 6px; /* bajar ligeramente el botón para que no quede pegado a los inputs */
 }
 
 .form-card .label { color: #6b778c; }
@@ -59,13 +60,13 @@
 /* Explicit row grids with 12-unit symmetry (fr-based) */
 .form-grid {
     display: grid;
-    column-gap: 12px;
-    row-gap: 16px; /* más espacio vertical entre filas */
+    column-gap: 6px;  /* aún más pegado entre campos */
+    row-gap: 10px;    /* un poco menos de espacio vertical */
 }
 
 /* Separación vertical entre los bloques de filas (row1, row2, row3) */
 .form-card .form-grid + .form-grid {
-    margin-top: 20px;
+    margin-top: 2px; /* bloques más cercanos entre sí */
 }
 
 /* Row 1: [Nombre cliente][Tipo][Fecha][Estado] */
@@ -102,6 +103,9 @@
     width: var(--field-w, 100%);
     max-width: 100%;
 }
+
+/* Asegurar que el contenedor FloatLabel ocupe todo el ancho del grid */
+.form-grid .p-float-label { width: 100%; }
 
 .form-grid .p-dropdown.p-component,
 .form-grid .p-calendar.p-component {
@@ -168,6 +172,9 @@
     width: var(--field-w, 100%);
     max-width: 100%;
 }
+
+/* FloatLabel dentro de grillas genéricas */
+.grid .p-float-label { width: 100%; }
 
 /* PrimeReact: single outline look (no inner borders) */
 .grid .p-dropdown.p-component,
