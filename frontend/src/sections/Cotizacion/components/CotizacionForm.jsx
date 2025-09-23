@@ -31,6 +31,7 @@ import '../styles/Cotizacion.css';
 import '../styles/CotizacionForm.css';
 import '../../Proveedores/styles/DetallesProveedores.css';
 import { categorias, estados, agencias, paises, idiomas } from '../constants/options';
+import { RadioButton } from 'primereact/radiobutton';
 // Modal de asignación de proveedores
 
 // (formatFecha eliminado: ya usamos Calendar con locale 'es')
@@ -464,8 +465,8 @@ export default function CotizacionForm() {
                   {detalle.servicios.map(s => (
                     <div key={s.id} className={`cotz-service-card ${selectedCS === s.id ? 'selected' : ''}`} onClick={() => setSelectedCS(s.id)}>
                       <div className="cotz-service-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                          <Button icon="pi pi-trash" rounded text severity="danger" aria-label="Eliminar servicio"
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                          <i className="pi pi-trash" style={{ cursor: 'pointer'}} aria-label="Eliminar servicio"
                             onClick={(e) => {
                               e.stopPropagation();
                               new DeleteCotizacionService().execute(s.id).then(() => {
@@ -480,56 +481,61 @@ export default function CotizacionForm() {
                         </div>
                         {selectedCS === s.id && <span className="cotz-select-hint">Seleccionado para agregar componentes</span>}
                       </div>
-                      <DataTable value={s.componentes || []} size="small" stripedRows responsiveLayout="scroll">
-                        <Column header="#" body={(rowData) => (
-                          <Button icon="pi pi-trash" rounded text severity="danger" onClick={(e) => {
-                            e.stopPropagation();
-                            new DeleteCotizacionServiceComponent().execute(rowData.id).then(() => {
-                              setDetalle(prev => {
-                                if (!prev) return prev;
-                                const servicios = (prev.servicios || []).map(svc => ({
-                                  ...svc,
-                                  componentes: (svc.componentes || []).filter(c => c.id !== rowData.id)
-                                }));
-                                return { ...prev, servicios };
-                              });
-                            });
-                          }} />
-                        )} style={{ width: 60 }}></Column>
-                        <Column header="Componente" body={(rowData) => (
-                          <div style={{ fontWeight: 600 }}>{rowData.component?.componentName || rowData.nombreExtra}</div>
-                        )} ></Column>
-                        <Column header="Programación" body={(rowData) => (
-                          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                            <Button label="Fecha y hora" link onClick={(e) => { e.stopPropagation(); openDateTimePicker(rowData); }} />
-                            {rowData.scheduledAt
-                              ? <span className="muted" style={{ fontSize: 12 }}>{formatFechaHoraCorta(rowData.scheduledAt)}</span>
-                              : <span className="muted" style={{ fontSize: 12 }}>(definir)</span>
-                            }
+
+                      <div className="componentes-list">
+                        {(s.componentes || []).map(rowData => (
+                          <div key={rowData.id} className="componente-card" style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 8 }}>
+                            
+                            <div style={{ display: 'flex', alignItems: 'center', width: '25%' }}>
+                              <i style={{ width: '1.5rem', marginLeft: '2rem', cursor: 'pointer' }} className="pi pi-trash" onClick={(e) => {
+                                e.stopPropagation();
+                                new DeleteCotizacionServiceComponent().execute(rowData.id).then(() => {
+                                  setDetalle(prev => {
+                                    if (!prev) return prev;
+                                    const servicios = (prev.servicios || []).map(svc => ({
+                                      ...svc,
+                                      componentes: (svc.componentes || []).filter(c => c.id !== rowData.id)
+                                    }));
+                                    return { ...prev, servicios };
+                                  });
+                                });
+                              }} />
+                              <div style={{ cursor: 'pointer' }} onClick={(e) => { e.stopPropagation(); openDateTimePicker(rowData); }}>
+                                {rowData.scheduledAt
+                                  ? <span className="muted">{formatFechaHoraCorta(rowData.scheduledAt)}</span>
+                                  : <span className="muted">Fecha y hora</span>
+                                }
+                              </div>
+                            </div>
+
+                            <div style={{ fontWeight: 600, width: '40%'}}>
+                              <i className='pi pi-cog' style={{ marginRight: '0.5rem' }} />{rowData.component?.componentName || rowData.nombreExtra}
+                              <div style={{ marginLeft: '1.5rem', display: 'flex', alignItems: 'center', marginTop: '0.25rem', cursor: 'pointer', width: 'fit-content' }} onClick={(e) => { e.stopPropagation(); handleOpenAsignarProveedor(rowData, s); }}>
+                                {rowData.proveedor?.name
+                                  ? <span className="muted" style={{ fontSize: 12 }}>{rowData.proveedor.name}</span>
+                                  : <span className="muted" style={{ fontSize: 12 }} onClick={(e) => { e.stopPropagation(); handleOpenAsignarProveedor(rowData, s); }}>Asignar proveedor</span>
+                                }
+                              </div>
+                            
+                            
+                            </div>
+                            
+                            
+                            <div style={{ width: '35%' }}>
+                              <NoteCell cscId={rowData.id} initial={rowData.nota || ''} />
+                            </div>
+                            <div>
+                              <InputNumber inputClassName="price-input" value={priceDrafts[rowData.id] ?? Number(rowData.precio || 0)} mode="decimal" minFractionDigits={2} maxFractionDigits={2}
+                                onValueChange={(e) => setPriceDrafts(d => ({ ...d, [rowData.id]: e.value }))}
+                                onKeyDown={(e) => e.stopPropagation()}
+                                onKeyUp={(e) => e.stopPropagation()}
+                                onBlur={() => handleComponentPriceBlur(rowData.id, priceDrafts[rowData.id] ?? Number(rowData.precio || 0))}
+                                disabled={true}
+                              />
+                            </div>
                           </div>
-                        )} ></Column>
-                        <Column header="Proveedor" body={(rowData) => (
-                          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                            {rowData.proveedor?.name
-                              ? <span className="muted" style={{ fontWeight: 600 }}>{rowData.proveedor.name}</span>
-                              : <Button label="Asignar proveedor" className="p-button-outlined p-button-sm" onClick={(e) => { e.stopPropagation(); handleOpenAsignarProveedor(rowData, s); }} />
-                            }
-                          </div>
-                        )} ></Column>
-                        <Column header="Nota" body={(rowData) => (
-                          <NoteCell cscId={rowData.id} initial={rowData.nota || ''} />
-                        )} ></Column>
-                        <Column header="Precio" body={(rowData) => (
-                          <div onClick={(e) => e.stopPropagation()}>
-                            <InputNumber inputClassName="price-input" value={priceDrafts[rowData.id] ?? Number(rowData.precio || 0)} mode="decimal" minFractionDigits={2} maxFractionDigits={2}
-                              onValueChange={(e) => setPriceDrafts(d => ({ ...d, [rowData.id]: e.value }))}
-                              onKeyDown={(e) => e.stopPropagation()}
-                              onKeyUp={(e) => e.stopPropagation()}
-                              onBlur={() => handleComponentPriceBlur(rowData.id, priceDrafts[rowData.id] ?? Number(rowData.precio || 0))}
-                            />
-                          </div>
-                        )} style={{ width: 160 }}></Column>
-                      </DataTable>
+                        ))}
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -538,10 +544,35 @@ export default function CotizacionForm() {
               )}
 
               <div className="cotz-builder">
-                <div>
-                  <div className="cotz-searchline" style={{ marginBottom: 8 }}>
-                    <label><input type="radio" name="searchType" checked={searchType === 'service'} onChange={() => { setSearchType('service'); setSearchQuery(''); setSelectedSuggestion(null); setSuggestions([]); }} /> Buscar servicio</label>
-                    <label><input type="radio" name="searchType" checked={searchType === 'component'} onChange={() => { setSearchType('component'); setSearchQuery(''); setSelectedSuggestion(null); setSuggestions([]); }} /> Buscar componente</label>
+                <div className='cotz-builder-left'>
+                  <div className="cotz-searchline" style={{ marginBottom: '1rem' }}>
+                    <label htmlFor="service">Buscar servicio</label>
+                    <RadioButton
+                        inputId="service"
+                        name="serviceType"
+                        value="service"
+                        onChange={() => 
+                          { setSearchType('service');
+                            setSearchQuery(''); 
+                            setSelectedSuggestion(null); 
+                            setSuggestions([]); 
+                          }}
+                        checked={searchType === 'service'}
+                    /> 
+                    <label htmlFor="gender-f">Buscar componente</label>
+                    <RadioButton
+                        inputId="component"
+                        name="serviceType"
+                        value="component"
+                        onChange={() => 
+                          { setSearchType('component');
+                            setSearchQuery(''); 
+                            setSelectedSuggestion(null); 
+                            setSuggestions([]); 
+                          }}
+                        checked={searchType === 'component'}
+                    />
+                  
                   </div>
                   <div className="cotz-searchbar" style={{ gap: 8 }}>
                     <AutoComplete
@@ -554,10 +585,10 @@ export default function CotizacionForm() {
                       onSelect={(e) => { setSelectedSuggestion(e.value); setSearchQuery(e.value?.label || ''); }}
                       forceSelection={false}
                       dropdown
-                      style={{ flex: 1 }}
+                      style={{ width: '60%', marginRight: 8 }}
                       inputClassName="p-inputtext"
                     />
-                    <Button label="Agregar" icon="pi pi-plus" className="p-button-outlined" onClick={onAdd} />
+                    <Button label="Agregar" className="p-button-outlined" onClick={onAdd} />
                     {isSearching && <span className="search-status">Buscando…</span>}
                   </div>
                 </div>
@@ -608,7 +639,6 @@ export default function CotizacionForm() {
       <Dialog
         header="Seleccionar fecha y hora"
         visible={dateTimeModalOpen}
-        style={{ width: '400px' }}
         modal
         onHide={() => setDateTimeModalOpen(false)}
         footer={

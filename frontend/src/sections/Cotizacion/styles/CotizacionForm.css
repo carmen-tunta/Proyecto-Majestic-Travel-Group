@@ -242,34 +242,37 @@
 }
 
 .center {
-    padding: 40px 0;
+    padding: 2rem 0 1rem 0;
     text-align: center;
     color: #98a2b3;
-    font-weight: 600;
+    font-size: 1.3rem;
+    font-weight: 350;
 }
 
 /* Builder */
 .cotz-service-card {
-    padding: 12px;
-    border: 2px solid #2c7be5;
+    padding: 2rem 0.75rem 2rem 0.75rem;
+    border: 2px solid var(--blue-50);
     border-radius: 8px;
-    margin-bottom: 12px;
+    margin-bottom: 1rem;
     background: transparent;
-    cursor: pointer;
+    
 }
 
 .cotz-service-card.selected {
-    background: #eaf4ff;
+    background: var(--blue-50);
 }
 
 .cotz-service-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin-bottom: 0.5rem;
 }
 
 .cotz-service-title {
     font-weight: 600;
+    font-size: 1.05rem;
 }
 
 .cotz-component-row {
@@ -302,17 +305,28 @@
 }
 
 .cotz-select-hint {
-    margin-top: 8px;
-    color: #1976d2;
+    margin-top: 0px;
+    color: var(--blue-400);
     font-size: 12px;
 }
 
 .cotz-builder {
-    display: grid;
-    grid-template-columns: 1fr 260px;
-    gap: 16px;
-    margin-top: 8px;
-    align-items: start;
+    display: flex;
+    margin-top: 2rem;
+    align-items: center;
+    height: 9rem;
+    padding: 0rem 1rem 0rem 1rem;
+    border: 1px dashed var(--gray-300);
+    border-radius: 10px;
+}
+
+.cotz-builder-left {
+    height: 100%;
+    width: 70%;
+    padding: 1.5rem 0rem 1.5rem 0rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 .cotz-searchline {
@@ -324,16 +338,10 @@
 
 .cotz-searchbar {
     display: flex;
-    gap: 8px;
+    align-items: center;
     position: relative;
 }
 
-.cotz-searchbar .icon {
-    position: absolute;
-    left: 10px;
-    top: 9px;
-    opacity: .6;
-}
 
 .search-status {
     position: absolute;
@@ -344,15 +352,21 @@
 }
 
 .totals-card {
-    border: 1px dashed #cfd6e4;
-    border-radius: 8px;
+    border-left: 1px dashed var(--gray-300);
     padding: 12px 16px;
     color: #333;
+    height: 100%;
+    width: 30%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: initial baseline;
 }
 
 .totals-row {
     display: flex;
     justify-content: space-between;
+    margin-left: 4rem;
 }
 
 .totals-row+.totals-row {
@@ -386,4 +400,13 @@
     top: 50%;
     transform: translateY(-50%);
     opacity: .6;
+}
+
+.p-dialog {
+    background-color: white;
+    width: 40vw;
+}
+
+.p-dialog-header {
+    cursor:default;
 }
