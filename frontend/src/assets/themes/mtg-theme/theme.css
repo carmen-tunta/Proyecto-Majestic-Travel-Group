@@ -1900,8 +1900,8 @@
     border-color: var(--primary-color);
   }
   .p-radiobutton:not(.p-disabled):has(.p-radiobutton-input:hover).p-highlight .p-radiobutton-box {
-    border-color: #1d4ed8;
-    background: #1d4ed8;
+    border-color: var(--blue-600);
+    background: var(--blue-600);
   }
   .p-radiobutton:not(.p-disabled):has(.p-radiobutton-input:hover).p-highlight .p-radiobutton-box .p-radiobutton-icon {
     background-color: #ffffff;
