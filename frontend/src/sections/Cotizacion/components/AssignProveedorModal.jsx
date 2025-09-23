@@ -3,6 +3,7 @@ import { Dialog } from 'primereact/dialog';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { apiService } from '../../../services/apiService';
+import '../styles/AssignProveedorModal.css';
 
 export default function AssignProveedorModal({
   visible,
@@ -94,7 +95,7 @@ export default function AssignProveedorModal({
     <Dialog
       header="ASIGNAR PROVEEDOR"
       visible={visible}
-      style={{ width: '820px', maxWidth: '95vw' }}
+      style={{ width: '50vw', maxWidth: '95vw', maxHeight: '80vh' }}
       modal
       onHide={onHide}
     >
@@ -102,16 +103,24 @@ export default function AssignProveedorModal({
         <div>Tipo de servicio: <span style={{ fontWeight: 700 }}>{serviceType || '-'}</span></div>
         <div>Fecha: <span style={{ fontWeight: 700 }}>{formatFechaCorta(date)}</span></div>
       </div>
-      <div style={{ display: 'flex', justifyContent: 'center' }}>
+      <div className='assign-proveedor-body' style={{ display: 'flex', justifyContent: 'center' }}>
         <div style={{ width: '92%' }}>
-          <DataTable value={rows} loading={loading} responsiveLayout="scroll" stripedRows size="small" onRowDoubleClick={(e) => handleAssign(e.data)}>
+          <DataTable 
+            className="assign-proveedor-table"
+            value={rows} 
+            loading={loading} 
+            responsiveLayout="scroll" 
+            stripedRows 
+            onRowClick={(e) => handleAssign(e.data)}
+            emptyMessage="No hay proveedores disponibles"
+          >
             <Column field="nombre" header="Proveedor" style={{ width: '50%' }}></Column>
             <Column field="costo" header="Costo" body={(r) => <div style={{ textAlign: 'right', width: '100%' }}>{r.costo}</div>} style={{ width: '17%' }}></Column>
             <Column field="incrementoLabel" header="Incremento" body={(r) => <div style={{ textAlign: 'right', width: '100%' }}>{r.incrementoLabel}</div>} style={{ width: '17%' }}></Column>
             <Column field="total" header="Total" body={(r) => <div style={{ textAlign: 'right', width: '100%' }}>{r.total}</div>} style={{ width: '16%' }}></Column>
-            <Column header="" body={(r) => (
+            {/* <Column header="" body={(r) => (
               <button className="p-button p-button-sm" onClick={() => handleAssign(r)}>Elegir</button>
-            )} style={{ width: 90 }}></Column>
+            )} style={{ width: 90 }}></Column> */}
           </DataTable>
           <div style={{ fontSize: 12, color: '#8891a6', marginTop: 8 }}>Montos expresados en USD</div>
         </div>

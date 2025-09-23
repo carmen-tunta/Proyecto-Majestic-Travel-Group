@@ -6,6 +6,7 @@ import CreatePasajeroWithFile from '../../../modules/Pasajeros/application/Creat
 import UpdatePasajero from '../../../modules/Pasajeros/application/UpdatePasajero';
 import UpdatePasajeroWithFile from '../../../modules/Pasajeros/application/UpdatePasajeroWithFile';
 import '../styles/PasajeroModal.css';
+import { Button } from 'primereact/button';
 
 const paises = ['Perú', 'Bolivia', 'Chile', 'Argentina', 'Brasil', 'Ecuador', 'Colombia', 'España', 'Estados Unidos', 'Francia'];
 
@@ -130,7 +131,7 @@ export default function PasajeroModal({
             onClick={onClose}
             aria-label="Cerrar modal"
           >
-            ×
+            <i className="pi pi-times"></i>
           </button>
         </div>
 
@@ -208,21 +209,18 @@ export default function PasajeroModal({
           </div>
 
           <div className="form-actions">
-            <button 
+            <Button 
               type="button" 
-              className="btn-cancel" 
               onClick={onClose}
+              label='Cancelar'
               disabled={loading}
-            >
-              Cancelar
-            </button>
-            <button 
+              outlined
+            />
+            <Button 
               type="submit" 
-              className="btn-save" 
               disabled={loading}
-            >
-              {loading ? 'Guardando...' : (pasajero ? 'Actualizar' : 'Crear')}
-            </button>
+              label={loading ? 'Guardando...' : (pasajero ? 'Actualizar' : 'Crear')}
+            />
           </div>
         </form>
       </div>

@@ -1,0 +1,19 @@
+.assign-proveedor-body {
+    width: 100%;
+}
+
+.assign-proveedor-table th {
+  background: var(--surface-b);
+  color: var(--surface-700);
+  font-weight: 600;
+}
+
+.assign-proveedor-table tbody > tr:hover,
+.assign-proveedor-body .p-datatable.p-datatable-striped .p-datatable-tbody > tr.p-row-odd:hover {
+    background-color: var(--blue-50);
+    cursor: pointer;
+}
+
+.assign-proveedor-body .p-datatable.p-datatable-striped .p-datatable-tbody > tr.p-row-odd {
+    background-color: white;
+}
