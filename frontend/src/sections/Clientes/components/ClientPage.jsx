@@ -1,10 +1,13 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Button } from 'primereact/button';
+import { ConfirmDialog } from 'primereact/confirmdialog';
 import { InputText } from 'primereact/inputtext';
 import { Dropdown } from 'primereact/dropdown';
-import { RadioButton } from 'primereact/radiobutton';
 import { Calendar } from 'primereact/calendar';
+import { FloatLabel } from 'primereact/floatlabel';
+import { TabMenu } from 'primereact/tabmenu';
+import { addLocale } from 'primereact/api';
 import { apiService } from '../../../services/apiService';
 import ContactRepository from '../../../modules/ClientesContacto/repository/ContactRepository';
 import GetContactsByClient from '../../../modules/ClientesContacto/application/GetContactsByClient';
@@ -13,12 +16,22 @@ import UpdateContact from '../../../modules/ClientesContacto/application/UpdateC
 import DeleteContact from '../../../modules/ClientesContacto/application/DeleteContact';
 import '../styles/ClientPage.css';
 
+// Configurar locale español para PrimeReact
+addLocale('es', {
+  firstDayOfWeek: 1,
+  dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+  dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+  dayNamesMin: ['D', 'L', 'M', 'X', 'J', 'V', 'S'],
+  monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+  monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+  today: 'Hoy',
+  clear: 'Limpiar'
+});
+
 const ClientPage = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const isEditing = Boolean(id);
-
-
 
   const [formData, setFormData] = useState({
     nombre: '',
@@ -38,8 +51,10 @@ const ClientPage = () => {
   });
 
   const [loading, setLoading] = useState(false);
-  const [activeTab, setActiveTab] = useState('detalles');
+  const [activeIndex, setActiveIndex] = useState(0);
   const [contacts, setContacts] = useState([]);
+  const [confirmVisible, setConfirmVisible] = useState(false);
+  const [contactToDelete, setContactToDelete] = useState(null);
   const [showContactModal, setShowContactModal] = useState(false);
   const [editingContact, setEditingContact] = useState(null);
   const [contactFormData, setContactFormData] = useState({
@@ -198,6 +213,20 @@ const ClientPage = () => {
     { label: 'Otros', value: 'Otros' }
   ];
 
+  const generos = [
+    { label: 'Masculino', value: 'Masculino' },
+    { label: 'Femenino', value: 'Femenino' },
+    { label: 'Otro', value: 'Otro' }
+  ];
+
+  // estados (no utilizado) eliminado para limpiar lint
+
+  // Items para TabMenu
+  const items = [
+    { label: 'Detalles' },
+    { label: 'Contactos', disabled: !isEditing }
+  ];
+
   const handleInputChange = (field, value) => {
     setFormData(prev => ({
       ...prev,
@@ -236,7 +265,7 @@ const ClientPage = () => {
       if (response.nombre) {
         setFormData(prev => ({ ...prev, nombre: response.nombre }));
       }
-      setActiveTab('contacto');
+      setActiveIndex(1);
     } else {
       // Cliente existente: volver a la lista
       navigate('/clientes');
@@ -315,6 +344,11 @@ const ClientPage = () => {
     }
   };
 
+  const requestDeleteContact = (contact) => {
+    setContactToDelete(contact);
+    setConfirmVisible(true);
+  };
+
   const handleContactSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -356,269 +390,204 @@ const ClientPage = () => {
   }
 
   return (
-    <div className="client-page">
+    <div className="menu-edition">
       {/* Header */}
-      <div className="client-page-header">
-        <div className="client-page-header-content">
-          <div className="client-page-header-top">
-            <Button
-              icon="pi pi-arrow-left"
-              className="p-button-text p-button-plain"
-              onClick={handleBack}
-              tooltip="Volver a clientes"
-            />
-            <span className="client-page-breadcrumb">Clientes</span>
-          </div>
-          <h1 className="client-page-title">
-            {isEditing ? (formData.nombre || 'Editar Cliente') : (formData.nombre || 'Nuevo Cliente')}
-          </h1>
+      <div className="header">
+        <div className="header-icon">
+          <i className="pi pi-arrow-left" onClick={handleBack}></i>
+          <div>Clientes</div>
+        </div>
+        <div className="proveedor-name">
+          {isEditing ? (formData.nombre || 'Editar Cliente') : (formData.nombre || 'Nuevo Cliente')}
         </div>
       </div>
 
-      {/* Tabs */}
-      <div className="client-page-tabs">
-        <button
-          className={`client-page-tab ${activeTab === 'detalles' ? 'active' : ''}`}
-          onClick={() => setActiveTab('detalles')}
-        >
-          Detalles
-        </button>
-        <button
-          className={`client-page-tab ${activeTab === 'contacto' ? 'active' : ''}`}
-          onClick={() => setActiveTab('contacto')}
-        >
-          Datos de contacto
-        </button>
-      </div>
+      {/* TabMenu */}
+      <TabMenu
+        model={items}
+        activeIndex={activeIndex}
+        onTabChange={(e) => setActiveIndex(e.index)}
+      />
 
-      {/* Form - Solo mostrar cuando activeTab es 'detalles' */}
-      {activeTab === 'detalles' && (
-        <form onSubmit={handleSubmit} className="client-page-form">
-          <div className="client-page-form-card">
-            <h3 className="client-page-form-title">Datos principales</h3>
-          
-          <div className="client-page-form-section">
-            <div className="client-page-form-row">
-              {/* Columna izquierda */}
-              <div className="client-page-form-column">
-                <div className="client-page-form-field">
-                  <label htmlFor="nombre">Nombre del cliente *</label>
+      {/* Form - Solo mostrar cuando activeIndex es 0 */}
+      {activeIndex === 0 && (
+        <div className="details">
+          <div className="details-header">
+            <h3>Datos principales</h3>
+          </div>
+          <form onSubmit={handleSubmit}>
+            <div className="details-form">
+            <div className="left">
+                <FloatLabel>
                   <InputText
                     id="nombre"
                     value={formData.nombre}
                     onChange={(e) => handleInputChange('nombre', e.target.value)}
-                    placeholder="Ingrese el nombre completo"
                     required
                   />
-                </div>
+                  <label htmlFor="nombre">Nombre del cliente</label>
+                </FloatLabel>
 
-                <div className="client-page-form-field">
-                  <label htmlFor="pais">País *</label>
+                <FloatLabel>
                   <Dropdown
                     id="pais"
                     value={formData.pais}
                     options={paises}
                     onChange={(e) => handleInputChange('pais', e.value)}
-                    placeholder="Seleccione un país"
                     required
                   />
-                </div>
+                  <label htmlFor="pais">País</label>
+                </FloatLabel>
 
-                <div className="client-page-form-field">
-                  <label htmlFor="ciudad">Ciudad *</label>
+                <FloatLabel>
                   <InputText
                     id="ciudad"
                     value={formData.ciudad}
                     onChange={(e) => handleInputChange('ciudad', e.target.value)}
-                    placeholder="Ingrese la ciudad"
                     required
                   />
-                </div>
+                  <label htmlFor="ciudad">Ciudad</label>
+                </FloatLabel>
 
-                <div className="client-page-form-field">
-                  <label htmlFor="direccion">Dirección</label>
+                <FloatLabel>
                   <InputText
                     id="direccion"
                     value={formData.direccion}
                     onChange={(e) => handleInputChange('direccion', e.target.value)}
-                    placeholder="Ingrese la dirección"
                   />
-                </div>
+                  <label htmlFor="direccion">Dirección</label>
+                </FloatLabel>
 
-                <div className="client-page-form-field">
-                  <label htmlFor="whatsapp">WhatsApp</label>
+                <FloatLabel>
                   <InputText
                     id="whatsapp"
                     value={formData.whatsapp}
                     onChange={(e) => handleInputChange('whatsapp', e.target.value)}
-                    placeholder="+51 999 999 999"
                   />
-                </div>
+                  <label htmlFor="whatsapp">WhatsApp</label>
+                </FloatLabel>
 
-                <div className="client-page-form-field">
-                  <label htmlFor="correo">Correo *</label>
+                <FloatLabel>
                   <InputText
                     id="correo"
                     type="email"
                     value={formData.correo}
                     onChange={(e) => handleInputChange('correo', e.target.value)}
-                    placeholder="cliente@ejemplo.com"
                     required
                   />
-                </div>
+                  <label htmlFor="correo">Correo</label>
+                </FloatLabel>
 
-                <div className="client-page-form-field">
+                <FloatLabel>
+                  <Calendar
+                    id="fechaNacimiento"
+                    value={formData.fechaNacimiento}
+                    onChange={(e) => handleInputChange('fechaNacimiento', e.value)}
+                    dateFormat="D dd M y"
+                    locale="es"
+                  />
                   <label htmlFor="fechaNacimiento">Fecha de nacimiento</label>
-                  <div className="client-page-calendar-container">
-                    <InputText
-                      id="fechaNacimiento"
-                      value={formData.fechaNacimiento ? formatDate(formData.fechaNacimiento) : ''}
-                      placeholder="Seleccione fecha"
-                      readOnly
-                      className="client-page-calendar-input"
-                    />
-                    <Calendar
-                      value={formData.fechaNacimiento}
-                      onChange={(e) => handleInputChange('fechaNacimiento', e.value)}
-                      showIcon
-                      icon="pi pi-calendar"
-                      inputStyle={{ width: '100%' }}
-                      panelStyle={{ zIndex: 1000 }}
-                      className="client-page-calendar-overlay"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* Columna derecha */}
-              <div className="client-page-form-column">
-                <div className="client-page-form-field">
-                  <label htmlFor="lenguaNativa">Lengua nativa *</label>
+                </FloatLabel>
+            </div>
+            <div className="right">
+                <FloatLabel>
                   <Dropdown
                     id="lenguaNativa"
                     value={formData.lenguaNativa}
                     options={lenguasNativas}
                     onChange={(e) => handleInputChange('lenguaNativa', e.value)}
-                    placeholder="Seleccione idioma"
                     required
                   />
-                </div>
+                  <label htmlFor="lenguaNativa">Lengua nativa</label>
+                </FloatLabel>
 
-                <div className="client-page-form-field">
-                  <label htmlFor="tipoDocumento">Tipo de documento *</label>
+                <FloatLabel>
                   <Dropdown
                     id="tipoDocumento"
                     value={formData.tipoDocumento}
                     options={tiposDocumento}
                     onChange={(e) => handleInputChange('tipoDocumento', e.value)}
-                    placeholder="Seleccione tipo"
                     required
                   />
-                </div>
+                  <label htmlFor="tipoDocumento">Tipo de documento</label>
+                </FloatLabel>
 
-                <div className="client-page-form-field">
-                  <label htmlFor="numeroDocumento">Número de documento *</label>
+                <FloatLabel>
                   <InputText
                     id="numeroDocumento"
                     value={formData.numeroDocumento}
                     onChange={(e) => handleInputChange('numeroDocumento', e.target.value)}
-                    placeholder="Ingrese el número"
                     required
                   />
-                </div>
+                  <label htmlFor="numeroDocumento">Número de documento</label>
+                </FloatLabel>
 
-                <div className="client-page-form-field">
-                  <label htmlFor="mercado">Mercado *</label>
+                <FloatLabel>
                   <Dropdown
                     id="mercado"
                     value={formData.mercado}
                     options={mercados}
                     onChange={(e) => handleInputChange('mercado', e.value)}
-                    placeholder="Seleccione mercado"
                     required
                   />
-                </div>
+                  <label htmlFor="mercado">Mercado</label>
+                </FloatLabel>
 
-                <div className="client-page-form-field">
-                  <label htmlFor="rubro">Rubro *</label>
+                <FloatLabel>
                   <Dropdown
                     id="rubro"
                     value={formData.rubro}
                     options={rubros}
                     onChange={(e) => handleInputChange('rubro', e.value)}
-                    placeholder="Seleccione rubro"
                     required
                   />
-                </div>
+                  <label htmlFor="rubro">Rubro</label>
+                </FloatLabel>
 
-                <div className="client-page-form-field">
-                  <fieldset className="client-page-radio-fieldset">
-                    <legend className="client-page-radio-legend">Género *</legend>
-                    <div className="client-page-radio-group">
-                      <div className="client-page-radio-option">
-                        <RadioButton
-                          inputId="masculino"
-                          name="genero"
-                          value="Masculino"
-                          checked={formData.genero === 'Masculino'}
-                          onChange={(e) => setFormData(prev => ({ ...prev, genero: e.value }))}
-                        />
-                        <label htmlFor="masculino" className="client-page-radio-label">Masculino</label>
-                      </div>
-                      <div className="client-page-radio-option">
-                        <RadioButton
-                          inputId="femenino"
-                          name="genero"
-                          value="Femenino"
-                          checked={formData.genero === 'Femenino'}
-                          onChange={(e) => setFormData(prev => ({ ...prev, genero: e.value }))}
-                        />
-                        <label htmlFor="femenino" className="client-page-radio-label">Femenino</label>
-                      </div>
-                    </div>
-                  </fieldset>
-                </div>
+                <FloatLabel>
+                  <Dropdown
+                    id="genero"
+                    value={formData.genero}
+                    options={generos}
+                    onChange={(e) => handleInputChange('genero', e.value)}
+                    required
+                  />
+                  <label htmlFor="genero">Género</label>
+                </FloatLabel>
 
-                <div className="client-page-form-field">
-                  <label htmlFor="fechaRegistro">Fecha de registro</label>
+                <FloatLabel>
                   <InputText
                     id="fechaRegistro"
                     value={isEditing && formData.fechaRegistro ? formatDate(formData.fechaRegistro) : formatDate(new Date().toISOString())}
                     disabled
-                    className="client-page-disabled-field"
                   />
-                </div>
+                  <label htmlFor="fechaRegistro">Fecha de registro</label>
+                </FloatLabel>
               </div>
             </div>
-          </div>
+            <div className="details-button">
+              <Button
+                type="submit"
+                label={isEditing ? "Guardar cambios" : "Continuar"}
+                text
+                loading={loading}
+                disabled={loading}
+              />
+            </div>
+          </form>
         </div>
-
-          {/* Botones de acción */}
-          <div className="client-page-form-actions">
-            <Button
-              type="submit"
-              label={isEditing ? "Guardar cambios" : "Continuar"}
-              icon={isEditing ? "pi pi-check" : "pi pi-arrow-right"}
-              loading={loading}
-              disabled={loading}
-            />
-          </div>
-      </form>
       )}
 
       {/* Sección de Datos de Contacto */}
-      {activeTab === 'contacto' && (
-        <div className="client-page-contacts">
-          <div className="client-page-contacts-header">
+      {activeIndex === 1 && (
+        <>
+        <div className="contact">
+          <div className="contact-header">
             <h3>Datos de contacto</h3>
-            <Button
-              label="+ Nuevo"
-              size="small"
-              onClick={handleNewContact}
-            />
+            <Button icon="pi pi-plus" label="Nuevo" size="small" outlined onClick={handleNewContact} />
           </div>
           
-          <div className="client-page-contacts-table">
+          <div className="contact-table">
             <table className="contacts-table">
               <thead>
                 <tr>
@@ -654,7 +623,7 @@ const ClientPage = () => {
                         <button
                           type="button"
                           className="contact-action-button contact-delete-button"
-                          onClick={() => handleDeleteContact(contact.id)}
+                          onClick={() => requestDeleteContact(contact)}
                           title="Eliminar"
                           aria-label="Eliminar contacto"
                         >
@@ -668,6 +637,17 @@ const ClientPage = () => {
             </table>
           </div>
         </div>
+        <ConfirmDialog
+          group="declarative"
+          visible={confirmVisible}
+          onHide={() => setConfirmVisible(false)}
+          message="¿Seguro que  deseas eliminar este medio de contacto?"
+          header="Confirmación"
+          icon="pi pi-exclamation-triangle"
+          accept={() => { if (contactToDelete) { handleDeleteContact(contactToDelete.id); } setContactToDelete(null); setConfirmVisible(false); }}
+          reject={() => setConfirmVisible(false)}
+        />
+        </>
       )}
 
       {/* Modal para agregar/editar contacto */}
