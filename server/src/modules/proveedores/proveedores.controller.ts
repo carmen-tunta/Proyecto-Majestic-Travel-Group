@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, Param, Post, Put, Query } from '@nestjs/common';
 import { ProveedoresService } from './proveedores.service';
 import { Proveedores } from './entities/proveedores.entity';
 
@@ -30,8 +30,12 @@ export class ProveedoresController {
        return this.proveedoresService.update(id, data);
    }
 
-   @Get('component/:idc/pax/:pax')
-    getProveedorByComponentAndPax(@Param('idc') componentId: string, @Param('pax') pax: string) {
-        return this.proveedoresService.findByComponentIdAndPax(componentId, Number(pax));
-    }
+     @Get('component/:idc/pax/:pax')
+        getProveedorByComponentAndPax(
+            @Param('idc') componentId: string,
+            @Param('pax') pax: string,
+
+        ) {
+                return this.proveedoresService.findByComponentIdAndPax(componentId, Number(pax));
+        }
 }

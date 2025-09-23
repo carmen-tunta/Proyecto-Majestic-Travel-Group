@@ -1,6 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, ManyToOne, Column } from 'typeorm';
 import { CotizacionServicio } from './cotizacion-servicio.entity';
 import { Component } from '../../components/entities/component.entity';
+import { Proveedores } from '../../proveedores/entities/proveedores.entity';
 
 @Entity('cotizacion_servicio_componente')
 export class CotizacionServicioComponente {
@@ -26,4 +27,12 @@ export class CotizacionServicioComponente {
 
   @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
   precio?: number;
+
+  // Fecha y hora programada para realizar el componente
+  @Column({ type: 'datetime', nullable: true })
+  scheduledAt?: Date | null;
+
+  // Proveedor asignado (opcional)
+  @ManyToOne(() => Proveedores, { nullable: true, eager: true })
+  proveedor?: Proveedores | null;
 }

@@ -44,6 +44,26 @@ export class ProveedoresService {
   }
 
   // Nuevo: buscar proveedores por componentId y número de pasajeros (pax)
+  // async findByComponentIdAndPax(componentId: string, pax: number): Promise<any[]> {
+  //   // Devuelve proveedor y el precio de la celda de intersección
+  //   return this.proveedoresRepository
+  //     .createQueryBuilder('proveedor')
+  //     .innerJoin('proveedor.tarifario', 'tarifario')
+  //     .innerJoin('tarifario.components', 'tarifaComponent')
+  //     .innerJoin('tarifaComponent.component', 'component')
+  //     .innerJoin('tarifario.columns', 'col')
+  //     .innerJoin('tarifaComponent.prices', 'price', 'price.tarifa_column_id = col.id')
+  //     .where('component.id = :componentId', { componentId: parseInt(componentId, 10) })
+  //     .andWhere(':pax BETWEEN col.paxMin AND col.paxMax', { pax })
+  //     .select([
+  //       'proveedor.id',
+  //       'proveedor.name',
+  //       'proveedor.serviceType',
+  //       'price.price',
+  //       'col.description'
+  //     ])
+  //     .getRawMany();
+  // }
     async findByComponentIdAndPax(componentId: string, pax: number): Promise<any[]> {
       // Devuelve proveedor, el precio de la celda de intersección y los incrementos del tarifario
       const results = await this.proveedoresRepository

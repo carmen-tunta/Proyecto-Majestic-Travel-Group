@@ -50,6 +50,8 @@ class TarifarioRepository {
         });
         return await response.json();
     }
+
+    
 }
 
 export default TarifarioRepository;
