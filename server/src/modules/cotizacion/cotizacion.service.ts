@@ -46,11 +46,13 @@ export class CotizacionService {
       numeroFile = (lastByYear?.max || 0) + 1;
     }
 
+    const fechaViajeStr = this.toDateOnly(createCotizacionDto.fechaViaje);
     const cotizacion = this.cotizacionRepository.create({
       ...createCotizacionDto,
       numeroFile,
       cliente: client,
-      fechaViaje: new Date(createCotizacionDto.fechaViaje),
+      // Guardar como fecha (date-only) evitando desfase por zona horaria
+      fechaViaje: fechaViajeStr as any,
     });
     return this.cotizacionRepository.save(cotizacion);
   }
@@ -69,17 +71,27 @@ export class CotizacionService {
 
   async update(id: number, data: Partial<CreateCotizacionDto>): Promise<Cotizacion> {
     const cot = await this.findOne(id);
-    // permitir fecha en formato amigable 'Jue 25 Dic 25' o ISO
-    let fecha: Date | undefined;
+    // Permitir fecha en 'YYYY-MM-DD' o ISO; guardar como date-only string
+    let fechaViajeStr: string | undefined;
     if (data.fechaViaje) {
-      const tryDate = new Date(data.fechaViaje as any);
-      if (!isNaN(tryDate.getTime())) fecha = tryDate; else fecha = undefined;
+      fechaViajeStr = this.toDateOnly(data.fechaViaje as any);
     }
     Object.assign(cot, {
       ...data,
-      fechaViaje: fecha ?? cot.fechaViaje,
+      fechaViaje: (fechaViajeStr ?? (cot.fechaViaje as any)),
     } as any);
     return this.cotizacionRepository.save(cot);
+  }
+
+  // Convierte entrada a 'YYYY-MM-DD' en zona LOCAL
+  private toDateOnly(input: string | Date): string {
+    if (!input) return '';
+    if (typeof input === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(input)) return input;
+    const d = new Date(input);
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${y}-${m}-${day}`;
   }
 
   // Agregar un servicio a una cotización
