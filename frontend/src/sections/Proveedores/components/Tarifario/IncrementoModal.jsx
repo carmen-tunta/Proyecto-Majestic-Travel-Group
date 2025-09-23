@@ -21,8 +21,23 @@ const IncrementoModal = ({ onHide, increment, tarifa }) => {
     const [loading, setLoading] = useState(false);
     const parseLocalDate = (dateString) => {
         if (!dateString) return null;
-        const [year, month, day] = dateString.split('-');
-        return new Date(year, month - 1, day);
+        try {
+            // Aceptar 'YYYY-MM-DD' o ISO con 'T'
+            const part = typeof dateString === 'string' && dateString.includes('T')
+                ? dateString.split('T')[0]
+                : dateString;
+            const [year, month, day] = part.split('-').map(Number);
+            // Mediodía local evita saltos por DST
+            return new Date(year, month - 1, day, 12, 0, 0);
+        } catch { return null; }
+    };
+    const toDateOnly = (date) => {
+        if (!date) return null;
+        const d = new Date(date);
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        return `${y}-${m}-${day}`;
     };
     addLocale('es', {
         firstDayOfWeek: 1,
@@ -45,7 +60,8 @@ const IncrementoModal = ({ onHide, increment, tarifa }) => {
             if (increment && increment.id) {
                 await updateIncrement.execute({
                     ...increment,
-                    incrementDate: date,
+                    // Enviar fecha como 'YYYY-MM-DD' para evitar desfase
+                    incrementDate: toDateOnly(date),
                     percentage,
                     incrementValue: value
                 });
@@ -53,7 +69,8 @@ const IncrementoModal = ({ onHide, increment, tarifa }) => {
             } else {
                 await createIncrement.execute({
                     tarifaId: tarifa.id,
-                    incrementDate: date,
+                    // Enviar fecha como 'YYYY-MM-DD' para evitar desfase
+                    incrementDate: toDateOnly(date),
                     percentage,
                     incrementValue: value
                 });

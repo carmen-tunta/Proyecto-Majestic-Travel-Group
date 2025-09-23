@@ -17,30 +17,56 @@ export default function AssignProveedorModal({
   const [loading, setLoading] = useState(false);
   const [rows, setRows] = useState([]);
 
+  // Normaliza cualquier fecha/Date a clave 'YYYY-MM-DD' en hora LOCAL
+  function localDayKey(value) {
+    try {
+      if (!value) return null;
+      if (typeof value === 'string') {
+        // Si ya viene como 'YYYY-MM-DD'
+        const m = value.match(/^\d{4}-\d{2}-\d{2}$/);
+        if (m) return value;
+      }
+      const d = new Date(value);
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return `${y}-${m}-${day}`;
+    } catch {
+      return null;
+    }
+  }
+
   useEffect(() => {
     let active = true;
     async function load() {
       if (!visible || !componentId || !pax) { setRows([]); return; }
       setLoading(true);
       try {
-  // Pasamos la fecha para que el backend filtre incrementos por día
+  // Obtenemos proveedores por componente y pax (pax ya debe incluir adultos + niños)
   const data = await apiService.getProveedoresByComponentAndPax(componentId, pax);
         const mapped = (data || []).map((row) => {
           const proveedor = row.proveedor || {};
-          const costo = Number(row.price || row.costo || 0) || 0;
+          // costoPerPax: costo unitario por pasajero devuelto por la tarifa del proveedor
+          const costoPerPax = Number(row.price || row.costo || 0) || 0;
+          const totalPax = Number(pax) || 1;
           let incPercent = 0;
           let incMoney = 0;
-          // Filtrar incrementos por la fecha del componente en el cliente
-          const scheduledDay = date ? new Date(date).toISOString().slice(0,10) : null;
+          // Filtrar incrementos por la fecha del componente en el cliente (día local exacto, ignorar hora)
+          const scheduledDay = date ? localDayKey(date) : null;
           (row.increments || []).forEach((inc) => {
             if (scheduledDay) {
-              const incDay = inc?.incrementDate ? new Date(inc.incrementDate).toISOString().slice(0,10) : null;
+              const incDay = inc?.incrementDate ? localDayKey(inc.incrementDate) : null;
               if (incDay !== scheduledDay) return;
             }
             if (inc?.percentage) incPercent += Number(inc.incrementValue) || 0;
             else incMoney += Number(inc.incrementValue) || 0;
           });
-          const total = costo * (1 + incPercent / 100) + incMoney;
+          // Regla solicitada:
+          // 1) El costo base es por pasajero y debe multiplicarse por el total de pasajeros (adultos + niños)
+          // 2) Si el incremento es porcentaje, se aplica sobre el TOTAL (base x pax)
+          // 3) Si el incremento es monto fijo, se suma tal cual al TOTAL
+          const baseTotal = costoPerPax * totalPax;
+          const total = baseTotal * (1 + incPercent / 100) + incMoney;
           // Mostrar solo porcentaje o solo monto
           const incrementoLabel = incPercent > 0
             ? `${incPercent}%`
@@ -48,7 +74,7 @@ export default function AssignProveedorModal({
           return {
             proveedorId: proveedor.id,
             nombre: proveedor.name || proveedor.nombre || '-',
-            costo: costo.toFixed(2),
+            costo: baseTotal.toFixed(2),
             incrementoLabel,
             total: total.toFixed(2),
             totalNumber: total,
@@ -106,7 +132,7 @@ export default function AssignProveedorModal({
         <div style={{ width: '92%' }}>
           <DataTable value={rows} loading={loading} responsiveLayout="scroll" stripedRows size="small" onRowDoubleClick={(e) => handleAssign(e.data)}>
             <Column field="nombre" header="Proveedor" style={{ width: '50%' }}></Column>
-            <Column field="costo" header="Costo" body={(r) => <div style={{ textAlign: 'right', width: '100%' }}>{r.costo}</div>} style={{ width: '17%' }}></Column>
+            <Column field="costo" header={`Costo`} body={(r) => <div style={{ textAlign: 'right', width: '100%' }}>{r.costo}</div>} style={{ width: '17%' }}></Column>
             <Column field="incrementoLabel" header="Incremento" body={(r) => <div style={{ textAlign: 'right', width: '100%' }}>{r.incrementoLabel}</div>} style={{ width: '17%' }}></Column>
             <Column field="total" header="Total" body={(r) => <div style={{ textAlign: 'right', width: '100%' }}>{r.total}</div>} style={{ width: '16%' }}></Column>
             <Column header="" body={(r) => (

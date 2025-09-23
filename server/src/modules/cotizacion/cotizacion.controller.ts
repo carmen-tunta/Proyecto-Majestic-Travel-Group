@@ -21,20 +21,15 @@ export class CotizacionController {
   async findAll() {
     this.logger.log('Listando todas las cotizaciones');
     const cotizaciones = await this.cotizacionService.findAll();
-    return cotizaciones.map(c => ({
-      ...c,
-      fechaViaje: c.fechaViaje ? this.formatFechaES(c.fechaViaje) : null
-    }));
+    // Devolver fechaViaje sin formatear para evitar desfases; el frontend formatea localmente
+    return cotizaciones;
   }
 
   @Get(':id')
   async findOne(@Param('id') id: string) {
     this.logger.log(`Buscando cotización con id: ${id}`);
     const c = await this.cotizacionService.findOne(Number(id));
-    return {
-      ...c,
-      fechaViaje: c.fechaViaje ? this.formatFechaES(c.fechaViaje) : null
-    };
+    return c;
   }
 
   @Put(':id')
@@ -115,12 +110,7 @@ export class CotizacionController {
     return this.cotizacionService.deleteServiceComponentItem(Number(cscId));
   }
 
-  private formatFechaES(date: Date | string): string {
-    const d = new Date(date);
-    const dias = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
-    const meses = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
-    return `${dias[d.getDay()]} ${d.getDate().toString().padStart(2, '0')} ${meses[d.getMonth()]} ${d.getFullYear().toString().slice(-2)}`;
-  }
+  // Quitar formatFechaES: el formateo se hará en el frontend para mantener consistencia local
 
 //
 

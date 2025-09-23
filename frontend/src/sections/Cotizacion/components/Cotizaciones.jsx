@@ -74,6 +74,26 @@ export default function Cotizaciones() {
     </span>
   );
 
+  // Formatea fecha en día local evitando el parseo UTC de 'YYYY-MM-DD'
+  function formatLocalDate(value) {
+    if (!value) return '';
+    try {
+      // Si viene como 'YYYY-MM-DD', construir Date local (año, mes-1, día)
+      const m = /^\d{4}-\d{2}-\d{2}$/.exec(value);
+      let d;
+      if (m) {
+        const [y, mth, day] = value.split('-').map(Number);
+        d = new Date(y, mth - 1, day, 12, 0, 0); // mediodía local para evitar cambio por DST
+      } else {
+        // Si viene ISO con tiempo, usar new Date normal
+        d = new Date(value);
+      }
+      return d.toLocaleDateString('es-ES', { weekday: 'short', day: '2-digit', month: 'short', year: '2-digit' });
+    } catch {
+      return value;
+    }
+  }
+
   return (
     <div className="cotizaciones">
       <div className="cotizaciones-header">
@@ -113,7 +133,7 @@ export default function Cotizaciones() {
             <Column header="Categoría" body={(r) => (r?.categoria === 'Priv' ? 'Privado' : r?.categoria)} />
             <Column header="% Utilidad" body={(r) => (r?.utilidad != null ? `${Number(r.utilidad).toFixed(0)}%` : '')} />
             <Column header="Código reserva" body={(r) => (r?.codigoReserva || r?.codigo || '')} />
-            <Column header="Fecha viaje" body={(r) => (r?.fechaViaje ? new Date(r.fechaViaje).toLocaleDateString('es-ES', { weekday: 'short', day: '2-digit', month: 'short', year: '2-digit' }) : '')} />
+            <Column header="Fecha viaje" body={(r) => (r?.fechaViaje ? formatLocalDate(r.fechaViaje) : '')} />
             <Column header="Estado" field="estado" />
             <Column header="Acción" body={actionTemplate} />
           </DataTable>

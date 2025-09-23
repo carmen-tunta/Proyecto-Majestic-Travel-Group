@@ -6,7 +6,6 @@ import { Dropdown } from 'primereact/dropdown';
 import { Calendar } from 'primereact/calendar';
 import AssignProveedorModal from './AssignProveedorModal';
 import { Button } from 'primereact/button';
-import { SelectButton } from 'primereact/selectbutton';
 import { AutoComplete } from 'primereact/autocomplete';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
@@ -80,6 +79,36 @@ export default function CotizacionForm() {
   const [dateTimeModalOpen, setDateTimeModalOpen] = useState(false);
   const [dateTimeTarget, setDateTimeTarget] = useState({ cscId: null, value: null });
   const [dateTimeDraft, setDateTimeDraft] = useState(null);
+
+  // Helpers de fechas (usar día/hora LOCAL para evitar desfases por zona horaria)
+  function toLocalDateString(date) {
+    if (!date) return '';
+    const d = new Date(date);
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${y}-${m}-${day}`;
+  }
+  function toLocalDateTimeString(date) {
+    if (!date) return null;
+    const d = new Date(date);
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    const hh = String(d.getHours()).padStart(2, '0');
+    const mm = String(d.getMinutes()).padStart(2, '0');
+    const ss = String(d.getSeconds()).padStart(2, '0');
+    // Sin sufijo Z: se interpreta como hora local por el backend/JS
+    return `${y}-${m}-${day}T${hh}:${mm}:${ss}`;
+  }
+  function fromLocalDateStringToDate(value) {
+    if (!value) return null;
+    if (/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+      const [y, m, d] = value.split('-').map(Number);
+      return new Date(y, m - 1, d, 12, 0, 0); // mediodía local, evita desplazamientos
+    }
+    return new Date(value);
+  }
 
   // Modal para buscar y agregar (servicio / componente)
   // Eliminado SelectAddModal: agregamos directamente desde el buscador principal
@@ -237,8 +266,12 @@ export default function CotizacionForm() {
     } catch (e) { showNotification(e.message || 'No se pudo agregar', 'error'); }
   }
 
+  // Nota: totalServicios es la suma de precios de todos los componentes seleccionados.
+  // El costo por pasajero se calcula en base a nroPax (adultos), pero para asignación de proveedor
+  // multiplicamos el costo unitario por el total de pasajeros (adultos + niños).
   const totalServicios = (detalle?.servicios || []).reduce((acc, s) => acc + (s.componentes || []).reduce((a, c) => a + (Number(c.precio) || 0), 0), 0);
-  const costoPorPasajero = form.nroPax ? totalServicios / Number(form.nroPax) : 0;
+  const totalPaxResumen = (Number(form.nroPax) || 0) + (Number(form.nroNinos) || 0);
+  const costoPorPasajero = totalPaxResumen ? totalServicios / totalPaxResumen : 0;
   const precioVenta = totalServicios * (1 + Number(form.utilidad || 0) / 100);
 
   // Handlers para notas y precios (servicio y componente)
@@ -265,7 +298,14 @@ export default function CotizacionForm() {
   function formatFechaHoraCorta(iso) {
     if (!iso) return '';
     try {
-      const d = new Date(iso);
+      // Parseo robusto: si viene 'YYYY-MM-DD', crear como fecha local; si trae hora, confiar en Date
+      let d;
+      if (/^\d{4}-\d{2}-\d{2}$/.test(iso)) {
+        const [y, m, day] = iso.split('-').map(Number);
+        d = new Date(y, m - 1, day, 12, 0, 0);
+      } else {
+        d = new Date(iso);
+      }
       const dias = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
       const meses = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
       return `${dias[d.getDay()]} ${String(d.getDate()).padStart(2,'0')} ${meses[d.getMonth()]} ${String(d.getFullYear()).slice(-2)} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
@@ -281,7 +321,8 @@ export default function CotizacionForm() {
   // Guardar sólo cuando el usuario presione Guardar en el modal
   async function handleDateTimeSave() {
     try {
-      const iso = dateTimeDraft ? new Date(dateTimeDraft).toISOString() : null;
+      // Guardar como fecha-hora LOCAL para evitar que el backend lo interprete en UTC
+      const iso = toLocalDateTimeString(dateTimeDraft);
       await new UpdateCotizacionServiceComponent().execute(dateTimeTarget.cscId, { scheduledAt: iso });
       // Optimistic: reflejar cambio en la UI sin recargar todo
       setDetalle(prev => {
@@ -414,7 +455,13 @@ export default function CotizacionForm() {
                 <Dropdown value={form.categoria} options={categorias} onChange={e => setForm(f => ({ ...f, categoria: e.value }))} placeholder="Privado, compartido, vip" />
               </div>
               <div>
-                <Calendar value={form.fechaViaje ? new Date(form.fechaViaje) : null} onChange={e => setForm(f => ({ ...f, fechaViaje: e.value ? e.value.toISOString().slice(0, 10) : '' }))} dateFormat="D dd M y" locale="es" placeholder="Fecha de viaje" />
+                <Calendar
+                  value={form.fechaViaje ? fromLocalDateStringToDate(form.fechaViaje) : null}
+                  onChange={e => setForm(f => ({ ...f, fechaViaje: e.value ? toLocalDateString(e.value) : '' }))}
+                  dateFormat="D dd M y"
+                  locale="es"
+                  placeholder="Fecha de viaje"
+                />
               </div>
               <div>
                 <Dropdown value={form.estado} options={estados} onChange={e => setForm(f => ({ ...f, estado: e.value }))} placeholder="Estado" />
@@ -589,7 +636,8 @@ export default function CotizacionForm() {
         onHide={() => setProvModalOpen(false)}
         cscId={provCscId}
         componentId={provComponentId}
-        pax={Number(form.nroPax) || 1}
+  // Total de pasajeros para costos de proveedor: adultos + niños
+  pax={(Number(form.nroPax) || 0) + (Number(form.nroNinos) || 0) || 1}
         serviceType={provServiceType}
         date={provDate}
         onAssigned={({ cscId, proveedor, precio }) => setDetalle(prev => {

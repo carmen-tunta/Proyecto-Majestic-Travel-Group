@@ -109,17 +109,23 @@ const Incremento = ({ tarifa }) => {
                         header="Fecha de incremento" 
                         body={rowData => {
                             if (!rowData.incrementDate) return '';
-                            const date = new Date(rowData.incrementDate);
-                            let formatted = date.toLocaleDateString('es-ES', {
-                                weekday: 'short',
-                                day: '2-digit',
-                                month: 'short',
-                                year: 'numeric'
-                            });
-                            formatted = formatted.replace(/,/g, '').split(' ')
-                                .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-                                .join(' ');
-                            return formatted;
+                            try {
+                                const part = typeof rowData.incrementDate === 'string' && rowData.incrementDate.includes('T')
+                                  ? rowData.incrementDate.split('T')[0]
+                                  : rowData.incrementDate;
+                                const [y, m, d] = part.split('-').map(Number);
+                                const dt = new Date(y, m - 1, d, 12, 0, 0);
+                                let formatted = dt.toLocaleDateString('es-ES', {
+                                    weekday: 'short',
+                                    day: '2-digit',
+                                    month: 'short',
+                                    year: 'numeric'
+                                });
+                                formatted = formatted.replace(/,/g, '').split(' ')
+                                    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                                    .join(' ');
+                                return formatted;
+                            } catch { return rowData.incrementDate; }
                         }}
                         style={{ width: '20%' }}
                     />
