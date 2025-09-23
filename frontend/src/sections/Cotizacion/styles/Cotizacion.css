@@ -93,7 +93,7 @@
 .cotz-expander-col { max-width: 2% !important; }
 
 .cotz-action { display:flex; justify-content:center; }
-.cotz-action-icon { color:#1976d2; cursor:pointer; font-size:18px; }
+.cotz-action-icon { cursor:pointer; font-size:18px; }
 
 .cotz-detalle-linea {
 	font-size: 13px;
@@ -235,7 +235,6 @@
 }
 
 .cotizaciones-table .p-datatable-thead > tr > th {
-  background: #1976d2;
   color: #ffffff;
   font-weight: normal;
   border: none;

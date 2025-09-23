@@ -17,7 +17,6 @@
 }
 
 .componentes-table .p-datatable-thead > tr > th {
-  background: #1976d2;
   color: #ffffff;
   font-weight: normal;
   border: none;
@@ -40,7 +39,7 @@
 }
 
 .componentes-table .p-datatable-tbody > tr:nth-child(even) > td {
-  background: #e3f2fd;
+  background: var(--blue-100);
 }
 
 /* Clase específica para centrar celdas */
@@ -115,13 +114,4 @@
     color: #333 !important;
 }
 
-.custom-paginator .p-paginator-page.p-highlight {
-    background: #1976d2 !important;
-    color: white !important;
-    border: none !important;
-}
 
-.custom-paginator .p-paginator-page.p-highlight:hover {
-    background: #1565c0 !important;
-    color: white !important;
-}

@@ -5,6 +5,7 @@ import PasajeroRepository from '../../../modules/Pasajeros/repository/PasajeroRe
 import GetPasajerosByCotizacion from '../../../modules/Pasajeros/application/GetPasajerosByCotizacion';
 import DeletePasajero from '../../../modules/Pasajeros/application/DeletePasajero';
 import '../styles/PasajerosTab.css';
+import { Button } from 'primereact/button';
 
 export default function PasajerosTab({ cotizacionId, cotizacionNombre }) {
   const { showNotification } = useNotification();
@@ -102,13 +103,12 @@ export default function PasajerosTab({ cotizacionId, cotizacionNombre }) {
             {cotizacionNombre && `Cotización: ${cotizacionNombre}`}
           </p>
         </div>
-        <button 
-          className="btn-add-pasajero"
+        <Button 
           onClick={handleCreatePasajero}
-        >
-          <i className="pi pi-plus"></i>
-          Agregar Pasajero
-        </button>
+          label='Nuevo'
+          icon='pi pi-plus'
+          outlined
+        />
       </div>
 
       {pasajeros.length === 0 ? (

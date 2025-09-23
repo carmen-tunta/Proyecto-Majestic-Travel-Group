@@ -38,6 +38,12 @@
     border: 1px solid #ddd;
 }
 
+.documents-table th {
+  background: var(--surface-b);
+  color: var(--surface-700);
+  font-weight: 600;
+}
+
 .upload {
     min-width: 15vw;
     max-width: 40vw;

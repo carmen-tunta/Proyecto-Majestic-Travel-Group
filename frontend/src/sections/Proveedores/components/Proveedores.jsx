@@ -166,13 +166,13 @@ const Proveedores = () => {
                                 <i 
                                     className="pi pi-file"    
                                     title="Editar" 
-                                    style={{color:'#1976d2', marginRight: '10px', cursor:"pointer"}}
+                                    style={{marginRight: '10px', cursor:"pointer"}}
                                     onClick={() => handleTarifario(rowData)}
                                 ></i>
                                 <i 
                                     className="pi pi-arrow-right"    
                                     title="Editar" 
-                                    style={{color:'#1976d2', cursor:"pointer"}}
+                                    style={{cursor:"pointer"}}
                                     onClick={() => handleEdit(rowData)}    
                                 ></i>
                             </span>

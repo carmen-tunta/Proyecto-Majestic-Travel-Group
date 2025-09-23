@@ -140,7 +140,7 @@ const ComponentModal = ({ onHide, component, onSave }) => {
         )}
 
         <div className="component-info-box">
-          <i className="pi pi-info-circle" style={{ marginRight: '0.5rem', color: '#1976d2' }}></i>
+          <i className="pi pi-info-circle" style={{ marginRight: '0.5rem'}}></i>
           <span>Los componentes son los items que se cotizan con los proveedores</span>
         </div>
 

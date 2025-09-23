@@ -111,3 +111,9 @@
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
+
+.contact-table th {
+  background: var(--surface-b);
+  color: var(--surface-700);
+  font-weight: 600;
+}

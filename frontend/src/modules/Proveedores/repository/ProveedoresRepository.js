@@ -23,7 +23,7 @@ class ProveedoresRepository {
             headers: getAuthHeaders(),
             body: JSON.stringify(proveedor),
         });
-        if (!response.ok) throw new Error('Error al crear la plantilla');
+        if (!response.ok) throw new Error('Error al crear el proveedor');
         return await response.json();
     }
 
