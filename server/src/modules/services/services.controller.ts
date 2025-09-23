@@ -6,16 +6,6 @@ import { Service } from './entities/service.entity';
 export class ServicesController {
   constructor(private readonly servicesService: ServicesService) { }
 
-  /**
-   * Crear un servicio y asociar componentes existentes
-   * Body ejemplo:
-   * {
-   *   "name": "Tour Machu Picchu",
-   *   "city": "Cusco",
-   *   "componentIds": [1, 2, 3]
-   * }
-   */
-
   @Post()
   create(@Body() data: Partial<Service> & { componentIds?: number[] }) {
     return this.servicesService.create(data);
