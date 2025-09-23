@@ -44,6 +44,13 @@ class ProveedoresRepository {
         return await response.json();
     }
 
+    async getProveedoresByIdComponentAndPax(componentId, pax) {
+        const response = await fetch(`${apiUrl}/component/${componentId}/pax/${pax}`, {
+            headers: getAuthHeaders()
+        });
+        return await response.json();
+    }
+
 }
 
 export default ProveedoresRepository;

@@ -10,6 +10,19 @@ const getAuthHeaders = () => {
 };
 
 export const apiService = {
+  // Obtener proveedores por componente y pax
+  async getProveedoresByComponentAndPax(componentId, pax) {
+    try {
+      const response = await fetch(`${API_BASE_URL}/proveedores/component/${componentId}/pax/${pax}`,
+      {
+        headers: getAuthHeaders()
+      });
+      if (!response.ok) throw new Error('Error al obtener proveedores');
+      return await response.json();
+    } catch (error) {
+      throw new Error(error.message || 'Error al obtener proveedores');
+    }
+  },
   // Buscar servicios por nombre o ciudad
   async searchServices(query) {
     try {
@@ -297,6 +310,18 @@ export const apiService = {
       if (!response.ok) throw new Error('Error al actualizar componente del servicio');
       return await response.json();
     } catch (error) { throw new Error(error.message || 'Error al actualizar componente del servicio'); }
+  },
+
+  async assignProviderToComponent(cscId, proveedorId, precioTotal) {
+    try {
+      const response = await fetch(`${API_BASE_URL}/cotizacion/servicios/componentes/${cscId}/proveedor`, {
+        method: 'PUT',
+        headers: getAuthHeaders(),
+        body: JSON.stringify({ proveedorId, precioTotal })
+      });
+      if (!response.ok) throw new Error('Error al asignar proveedor');
+      return await response.json();
+    } catch (error) { throw new Error(error.message || 'Error al asignar proveedor'); }
   },
 
   async deleteCotizacionService(csId) {

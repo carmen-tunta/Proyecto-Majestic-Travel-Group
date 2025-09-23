@@ -4,6 +4,15 @@ import { TabMenu } from 'primereact/tabmenu';
 import { InputText } from 'primereact/inputtext';
 import { Dropdown } from 'primereact/dropdown';
 import { Calendar } from 'primereact/calendar';
+import AssignProveedorModal from './AssignProveedorModal';
+import { Button } from 'primereact/button';
+import { SelectButton } from 'primereact/selectbutton';
+import { AutoComplete } from 'primereact/autocomplete';
+import { DataTable } from 'primereact/datatable';
+import { Column } from 'primereact/column';
+import { InputNumber } from 'primereact/inputnumber';
+import { Calendar as PrimeCalendar } from 'primereact/calendar';
+import { Dialog } from 'primereact/dialog';
 import { addLocale } from 'primereact/api';
 import { apiService } from '../../../services/apiService';
 import CreateCotizacion from '../../../modules/Cotizacion/application/CreateCotizacion';
@@ -22,6 +31,7 @@ import '../styles/Cotizacion.css';
 import '../styles/CotizacionForm.css';
 import '../../Proveedores/styles/DetallesProveedores.css';
 import { categorias, estados, agencias, paises, idiomas } from '../constants/options';
+// Modal de asignación de proveedores
 
 // (formatFecha eliminado: ya usamos Calendar con locale 'es')
 
@@ -54,10 +64,25 @@ export default function CotizacionForm() {
   const [selectedSuggestion, setSelectedSuggestion] = useState(null);
   const [isSearching, setIsSearching] = useState(false);
   const [selectedCS, setSelectedCS] = useState(null);
+  const [priceDrafts, setPriceDrafts] = useState({});
   const [clientQuery, setClientQuery] = useState('');
   const [clientResults, setClientResults] = useState([]);
   const [selectedClient, setSelectedClient] = useState(null);
   const [activeIndex, setActiveIndex] = useState(0);
+  // Estado del modal Asignar Proveedor
+  const [provModalOpen, setProvModalOpen] = useState(false);
+  const [provComponentId, setProvComponentId] = useState(null);
+  const [provServiceType, setProvServiceType] = useState('');
+  const [provDate, setProvDate] = useState('');
+  const [provCscId, setProvCscId] = useState(null);
+
+  // Modal para seleccionar fecha/hora de un componente
+  const [dateTimeModalOpen, setDateTimeModalOpen] = useState(false);
+  const [dateTimeTarget, setDateTimeTarget] = useState({ cscId: null, value: null });
+  const [dateTimeDraft, setDateTimeDraft] = useState(null);
+
+  // Modal para buscar y agregar (servicio / componente)
+  // Eliminado SelectAddModal: agregamos directamente desde el buscador principal
 
   const [form, setForm] = useState({
     nombreCotizacion: '',
@@ -117,19 +142,21 @@ export default function CotizacionForm() {
     return () => clearTimeout(id);
   }, [clientQuery]);
 
-  useEffect(() => {
-    let active = true;
-    const h = setTimeout(async () => {
-      if (!cotizacionId || !searchQuery) { setSuggestions([]); return; }
-      setIsSearching(true);
-      try {
-        const res = searchType === 'service' ? await apiService.searchServices(searchQuery) : await apiService.searchComponents(searchQuery);
-        if (active) { setSuggestions(Array.isArray(res) ? res.slice(0, 8) : []); setSelectedSuggestion(null); }
-      } catch { if (active) setSuggestions([]); }
-      finally { if (active) setIsSearching(false); }
-    }, 300);
-    return () => { active = false; clearTimeout(h); };
-  }, [searchQuery, searchType, cotizacionId]);
+  // AutoComplete completeMethod for search suggestions (PrimeReact)
+  async function handleComplete(e) {
+    const query = (e.query || '').trim();
+    if (!cotizacionId || !query) { setSuggestions([]); return; }
+    setIsSearching(true);
+    try {
+      const res = searchType === 'service' ? await apiService.searchServices(query) : await apiService.searchComponents(query);
+      const list = Array.isArray(res) ? res.slice(0, 8).map(r => ({ ...r, label: r.name || r.componentName })) : [];
+      setSuggestions(list);
+    } catch {
+      setSuggestions([]);
+    } finally {
+      setIsSearching(false);
+    }
+  }
 
   async function refreshDetalle(id) {
     try { const det = await new GetCotizacionDetalle().execute(id); setDetalle(det); } catch { }
@@ -174,21 +201,37 @@ export default function CotizacionForm() {
       if (searchType === 'service') {
         const item = selectedSuggestion || suggestions[0];
         if (!item) { showNotification('Selecciona un servicio', 'error'); return; }
-        await new AddServiceToCotizacion().execute(cotizacionId, { serviceId: item.id });
-        await refreshDetalle(cotizacionId);
+        const added = await new AddServiceToCotizacion().execute(cotizacionId, { serviceId: item.id });
+        // Optimistic: añadir el servicio devuelto sin volver a cargar todo
+        setDetalle(prev => {
+          if (!prev) return prev;
+          const servicios = [ ...(prev.servicios || []), added ];
+          return { ...prev, servicios };
+        });
         setSearchQuery(''); setSuggestions([]); setSelectedSuggestion(null);
       } else {
         if (!selectedCS) { showNotification('Selecciona un servicio en la lista para agregar componentes', 'error'); return; }
         const item = selectedSuggestion; // usar solo selección explícita
         if (item && item.id) {
-          await new AddComponentsToCotizacionService().execute(selectedCS, [item.id]);
+          const updated = await new AddComponentsToCotizacionService().execute(selectedCS, [item.id]);
+          // Optimistic: reemplazar el servicio actualizado
+          setDetalle(prev => {
+            if (!prev) return prev;
+            const servicios = (prev.servicios || []).map(s => s.id === updated.id ? updated : s);
+            return { ...prev, servicios };
+          });
         } else {
           // Crear componente extra con el texto buscado
           const nombre = (searchQuery || '').trim();
           if (!nombre) { showNotification('Escribe el nombre del componente', 'error'); return; }
-          await new AddExtraComponentToCotizacionService().execute(selectedCS, { nombre });
+          const csc = await new AddExtraComponentToCotizacionService().execute(selectedCS, { nombre });
+          // Optimistic: agregar el nuevo componente extra a la lista
+          setDetalle(prev => {
+            if (!prev) return prev;
+            const servicios = (prev.servicios || []).map(s => s.id === selectedCS ? { ...s, componentes: [ ...(s.componentes || []), csc ] } : s);
+            return { ...prev, servicios };
+          });
         }
-        await refreshDetalle(cotizacionId);
         setSearchQuery(''); setSuggestions([]); setSelectedSuggestion(null);
       }
     } catch (e) { showNotification(e.message || 'No se pudo agregar', 'error'); }
@@ -201,14 +244,109 @@ export default function CotizacionForm() {
   // Handlers para notas y precios (servicio y componente)
   // Se quitó el precio a nivel servicio según requerimiento
 
-  async function handleComponentAddNote(componentItemId) {
-    const nota = window.prompt('Agregar nota para el componente');
-    if (nota === null) return;
-    try {
-      await new UpdateCotizacionServiceComponent().execute(componentItemId, { nota });
-      await refreshDetalle(cotizacionId);
-    } catch (e) { showNotification(e.message || 'No se pudo guardar la nota', 'error'); }
+  // Abrir modal y pasar props
+  function handleOpenAsignarProveedor(ci, service) {
+    if (!ci?.component?.id) {
+      showNotification('Este componente no está vinculado a un registro de Component', 'error');
+      return;
+    }
+    // Validar fecha-hora programada en la nota del componente o futura propiedad; usamos ci.scheduledAt si existe
+    if (!ci.scheduledAt) {
+      showNotification('Asigna fecha y hora del componente antes de elegir proveedor', 'error');
+      return;
+    }
+    setProvComponentId(ci.component.id);
+  setProvServiceType(ci.component?.serviceType || service?.service?.name || '-');
+    setProvDate(ci.scheduledAt || '');
+    setProvCscId(ci.id);
+    setProvModalOpen(true);
   }
+
+  function formatFechaHoraCorta(iso) {
+    if (!iso) return '';
+    try {
+      const d = new Date(iso);
+      const dias = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
+      const meses = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+      return `${dias[d.getDay()]} ${String(d.getDate()).padStart(2,'0')} ${meses[d.getMonth()]} ${String(d.getFullYear()).slice(-2)} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+    } catch { return iso; }
+  }
+
+  async function openDateTimePicker(ci) {
+    setDateTimeTarget({ cscId: ci.id, value: ci.scheduledAt || null });
+    setDateTimeDraft(ci.scheduledAt ? new Date(ci.scheduledAt) : new Date());
+    setDateTimeModalOpen(true);
+  }
+
+  // Guardar sólo cuando el usuario presione Guardar en el modal
+  async function handleDateTimeSave() {
+    try {
+      const iso = dateTimeDraft ? new Date(dateTimeDraft).toISOString() : null;
+      await new UpdateCotizacionServiceComponent().execute(dateTimeTarget.cscId, { scheduledAt: iso });
+      // Optimistic: reflejar cambio en la UI sin recargar todo
+      setDetalle(prev => {
+        if (!prev) return prev;
+        const servicios = (prev.servicios || []).map(s => ({
+          ...s,
+          componentes: (s.componentes || []).map(c => c.id === dateTimeTarget.cscId ? { ...c, scheduledAt: iso } : c)
+        }));
+        return { ...prev, servicios };
+      });
+      setDateTimeModalOpen(false);
+      showNotification('Fecha y hora guardadas', 'success');
+    } catch (err) {
+      showNotification(err.message || 'No se pudo guardar fecha/hora', 'error');
+    }
+  }
+
+  async function handleNoteSave(componentItemId, value) {
+    try {
+      const trimmed = (value ?? '').trim();
+      const payload = { nota: trimmed.length ? trimmed : null };
+      await new UpdateCotizacionServiceComponent().execute(componentItemId, payload);
+      setDetalle((prev) => {
+        if (!prev) return prev;
+        const servicios = (prev.servicios || []).map(s => ({
+          ...s,
+          componentes: (s.componentes || []).map(c => c.id === componentItemId ? { ...c, nota: payload.nota || '' } : c)
+        }));
+        return { ...prev, servicios };
+      });
+    } catch (e) {
+      showNotification(e.message || 'No se pudo guardar la nota', 'error');
+    }
+  }
+
+  // Celda de Nota con estado local y debounce para mejor performance al escribir
+  const NoteCell = React.memo(function NoteCell({ cscId, initial }) {
+    const [val, setVal] = useState(initial || '');
+    const tRef = React.useRef(null);
+    useEffect(() => { setVal(initial || ''); }, [initial, cscId]);
+    const schedule = (next) => {
+      if (tRef.current) clearTimeout(tRef.current);
+      tRef.current = setTimeout(() => { void handleNoteSave(cscId, next); }, 2000);
+    };
+    return (
+      <div
+        onClick={(e) => e.stopPropagation()}
+        onMouseDown={(e) => e.stopPropagation()}
+        onMouseUp={(e) => e.stopPropagation()}
+        style={{ minWidth: 220 }}
+      >
+        <InputText
+          value={val}
+          onChange={(e) => { const v = e.target.value; setVal(v); schedule(v); }}
+          onKeyDown={(e) => e.stopPropagation()}
+          onKeyUp={(e) => e.stopPropagation()}
+          onFocus={(e) => e.stopPropagation()}
+          onBlur={() => handleNoteSave(cscId, val)}
+          placeholder="Escribe una nota..."
+          className="p-inputtext-sm"
+          style={{ width: '100%' }}
+        />
+      </div>
+    );
+  });
 
   async function handleComponentPriceBlur(componentItemId, value) {
     const precio = Number(value);
@@ -216,6 +354,7 @@ export default function CotizacionForm() {
     try {
       await new UpdateCotizacionServiceComponent().execute(componentItemId, { precio });
       await refreshDetalle(cotizacionId);
+      setPriceDrafts(d => { const nd = { ...d }; delete nd[componentItemId]; return nd; });
     } catch (e) { showNotification(e.message || 'No se pudo guardar el precio', 'error'); }
   }
 
@@ -323,44 +462,74 @@ export default function CotizacionForm() {
               {detalle?.servicios?.length > 0 ? (
                 <div>
                   {detalle.servicios.map(s => (
-                    <div key={s.id} onClick={() => setSelectedCS(s.id)} className={`cotz-service-card ${selectedCS === s.id ? 'selected' : ''}`}>
-                      <div className="cotz-service-header">
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                          <button title="Eliminar servicio" className="btn-icon" onClick={(e) => { e.stopPropagation(); new DeleteCotizacionService().execute(s.id).then(() => refreshDetalle(cotizacionId)); }}>
-                            🗑️
-                          </button>
+                    <div key={s.id} className={`cotz-service-card ${selectedCS === s.id ? 'selected' : ''}`} onClick={() => setSelectedCS(s.id)}>
+                      <div className="cotz-service-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                          <Button icon="pi pi-trash" rounded text severity="danger" aria-label="Eliminar servicio"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              new DeleteCotizacionService().execute(s.id).then(() => {
+                                setDetalle(prev => {
+                                  if (!prev) return prev;
+                                  const servicios = (prev.servicios || []).filter(x => x.id !== s.id);
+                                  return { ...prev, servicios };
+                                });
+                              });
+                            }} />
                           <div className="cotz-service-title">{s.service?.name}</div>
                         </div>
+                        {selectedCS === s.id && <span className="cotz-select-hint">Seleccionado para agregar componentes</span>}
                       </div>
-                      {s.componentes?.map(ci => (
-                        <div key={ci.id} className="cotz-component-row">
-                          <button title="Eliminar componente" className="btn-icon" onClick={(e) => { e.stopPropagation(); new DeleteCotizacionServiceComponent().execute(ci.id).then(() => refreshDetalle(cotizacionId)); }}>
-                            🗑️
-                          </button>
-                          <div>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                              <span className="label-muted">Fecha y hora</span>
-                              <span className="muted" style={{ fontSize: 12 }}>(definir)</span>
-                            </div>
-                            <div style={{ fontWeight: 600 }}>{ci.component?.componentName || ci.nombreExtra}</div>
-                            <button className="btn-outline btn-sm" style={{ marginTop: 4 }} onClick={(e) => { e.stopPropagation(); /* asignar proveedor - placeholder */ }}>Asignar proveedor</button>
-                            {ci.nota && (
-                              <div className="muted" style={{ fontSize: 12, marginTop: 4 }}>{ci.nota}</div>
-                            )}
+                      <DataTable value={s.componentes || []} size="small" stripedRows responsiveLayout="scroll">
+                        <Column header="#" body={(rowData) => (
+                          <Button icon="pi pi-trash" rounded text severity="danger" onClick={(e) => {
+                            e.stopPropagation();
+                            new DeleteCotizacionServiceComponent().execute(rowData.id).then(() => {
+                              setDetalle(prev => {
+                                if (!prev) return prev;
+                                const servicios = (prev.servicios || []).map(svc => ({
+                                  ...svc,
+                                  componentes: (svc.componentes || []).filter(c => c.id !== rowData.id)
+                                }));
+                                return { ...prev, servicios };
+                              });
+                            });
+                          }} />
+                        )} style={{ width: 60 }}></Column>
+                        <Column header="Componente" body={(rowData) => (
+                          <div style={{ fontWeight: 600 }}>{rowData.component?.componentName || rowData.nombreExtra}</div>
+                        )} ></Column>
+                        <Column header="Programación" body={(rowData) => (
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                            <Button label="Fecha y hora" link onClick={(e) => { e.stopPropagation(); openDateTimePicker(rowData); }} />
+                            {rowData.scheduledAt
+                              ? <span className="muted" style={{ fontSize: 12 }}>{formatFechaHoraCorta(rowData.scheduledAt)}</span>
+                              : <span className="muted" style={{ fontSize: 12 }}>(definir)</span>
+                            }
                           </div>
-                          <button className="btn-outline btn-sm" onClick={(e) => { e.stopPropagation(); handleComponentAddNote(ci.id); }}>Agregar nota</button>
-                          <input
-                            defaultValue={Number(ci.precio || 0).toFixed(2)}
-                            onClick={(e) => e.stopPropagation()}
-                            onBlur={(e) => handleComponentPriceBlur(ci.id, e.target.value)}
-                            placeholder="0.00"
-                            className="price-input"
-                          />
-                        </div>
-                      ))}
-                      {selectedCS === s.id && (
-                        <div className="cotz-select-hint">Seleccionado para agregar componentes</div>
-                      )}
+                        )} ></Column>
+                        <Column header="Proveedor" body={(rowData) => (
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                            {rowData.proveedor?.name
+                              ? <span className="muted" style={{ fontWeight: 600 }}>{rowData.proveedor.name}</span>
+                              : <Button label="Asignar proveedor" className="p-button-outlined p-button-sm" onClick={(e) => { e.stopPropagation(); handleOpenAsignarProveedor(rowData, s); }} />
+                            }
+                          </div>
+                        )} ></Column>
+                        <Column header="Nota" body={(rowData) => (
+                          <NoteCell cscId={rowData.id} initial={rowData.nota || ''} />
+                        )} ></Column>
+                        <Column header="Precio" body={(rowData) => (
+                          <div onClick={(e) => e.stopPropagation()}>
+                            <InputNumber inputClassName="price-input" value={priceDrafts[rowData.id] ?? Number(rowData.precio || 0)} mode="decimal" minFractionDigits={2} maxFractionDigits={2}
+                              onValueChange={(e) => setPriceDrafts(d => ({ ...d, [rowData.id]: e.value }))}
+                              onKeyDown={(e) => e.stopPropagation()}
+                              onKeyUp={(e) => e.stopPropagation()}
+                              onBlur={() => handleComponentPriceBlur(rowData.id, priceDrafts[rowData.id] ?? Number(rowData.precio || 0))}
+                            />
+                          </div>
+                        )} style={{ width: 160 }}></Column>
+                      </DataTable>
                     </div>
                   ))}
                 </div>
@@ -370,32 +539,26 @@ export default function CotizacionForm() {
 
               <div className="cotz-builder">
                 <div>
-                  <div className="cotz-searchline">
-                    <label><input type="radio" name="searchType" checked={searchType === 'service'} onChange={() => setSearchType('service')} /> Buscar servicio</label>
-                    <label><input type="radio" name="searchType" checked={searchType === 'component'} onChange={() => setSearchType('component')} /> Buscar componente</label>
+                  <div className="cotz-searchline" style={{ marginBottom: 8 }}>
+                    <label><input type="radio" name="searchType" checked={searchType === 'service'} onChange={() => { setSearchType('service'); setSearchQuery(''); setSelectedSuggestion(null); setSuggestions([]); }} /> Buscar servicio</label>
+                    <label><input type="radio" name="searchType" checked={searchType === 'component'} onChange={() => { setSearchType('component'); setSearchQuery(''); setSelectedSuggestion(null); setSuggestions([]); }} /> Buscar componente</label>
                   </div>
-                  <div className="cotz-searchbar">
-                    <span className="icon pi pi-search" style={{ position: 'absolute', left: 10, top: 9, opacity: .6 }} />
-                    <input value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder={'Ingresar criterio de búsqueda'} style={{ flex: 1, padding: '8px 30px', border: '1px solid #cfd6e4', borderRadius: 6 }} />
-                    <button
-                      className="btn-outline"
-                      onClick={onAdd}
-                      disabled={
-                        searchType === 'service'
-                          ? (!suggestions.length && !selectedSuggestion)
-                          : (searchQuery.trim().length === 0)
-                      }
-                    >Agregar</button>
-                    {isSearching && <div className="search-status">Buscando…</div>}
-                    {suggestions.length > 0 && (
-                      <div className="dropdown" style={{ top: '2.4rem' }}>
-                        {suggestions.map(s => (
-                          <div key={s.id} className="option" onClick={() => { setSelectedSuggestion(s); setSearchQuery((s.name || s.componentName || '').toString()); }}>
-                            {s.name || s.componentName}
-                          </div>
-                        ))}
-                      </div>
-                    )}
+                  <div className="cotz-searchbar" style={{ gap: 8 }}>
+                    <AutoComplete
+                      value={searchQuery}
+                      suggestions={suggestions}
+                      completeMethod={handleComplete}
+                      field="label"
+                      placeholder="Ingresar criterio de búsqueda"
+                      onChange={(e) => { setSearchQuery(e.value); setSelectedSuggestion(null); }}
+                      onSelect={(e) => { setSelectedSuggestion(e.value); setSearchQuery(e.value?.label || ''); }}
+                      forceSelection={false}
+                      dropdown
+                      style={{ flex: 1 }}
+                      inputClassName="p-inputtext"
+                    />
+                    <Button label="Agregar" icon="pi pi-plus" className="p-button-outlined" onClick={onAdd} />
+                    {isSearching && <span className="search-status">Buscando…</span>}
                   </div>
                 </div>
                 <div className="totals-card">
@@ -421,6 +584,50 @@ export default function CotizacionForm() {
           cotizacionNombre={form.nombreCotizacion || `Cotización ${numeroFile}`}
         />
       )}
+      <AssignProveedorModal
+        visible={provModalOpen}
+        onHide={() => setProvModalOpen(false)}
+        cscId={provCscId}
+        componentId={provComponentId}
+        pax={Number(form.nroPax) || 1}
+        serviceType={provServiceType}
+        date={provDate}
+        onAssigned={({ cscId, proveedor, precio }) => setDetalle(prev => {
+          if (!prev) return prev;
+          const servicios = (prev.servicios || []).map(s => ({
+            ...s,
+            componentes: (s.componentes || []).map(c => c.id === cscId ? { ...c, proveedor, precio } : c)
+          }));
+          return { ...prev, servicios };
+        })}
+      />
+
+  {/* SelectAddModal eliminado: agregamos directamente desde el buscador principal */}
+
+      {/* Modal para seleccionar fecha/hora del componente */}
+      <Dialog
+        header="Seleccionar fecha y hora"
+        visible={dateTimeModalOpen}
+        style={{ width: '400px' }}
+        modal
+        onHide={() => setDateTimeModalOpen(false)}
+        footer={
+          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8 }}>
+            <Button label="Cancelar" className="p-button-text" onClick={() => setDateTimeModalOpen(false)} />
+            <Button label="Guardar" icon="pi pi-check" onClick={handleDateTimeSave} />
+          </div>
+        }
+      >
+        <PrimeCalendar
+          value={dateTimeDraft}
+          onChange={(e) => setDateTimeDraft(e.value)}
+          showTime
+          hourFormat="24"
+          inline
+          style={{ width: '100%' }}
+        />
+      </Dialog>
     </div>
   );
 }
+

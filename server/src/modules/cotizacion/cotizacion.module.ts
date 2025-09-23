@@ -8,9 +8,10 @@ import { CotizacionServicio } from './entities/cotizacion-servicio.entity';
 import { CotizacionServicioComponente } from './entities/cotizacion-servicio-componente.entity';
 import { Service } from '../services/entities/service.entity';
 import { Component } from '../components/entities/component.entity';
+import { Proveedores } from '../proveedores/entities/proveedores.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Cotizacion, Client, CotizacionServicio, CotizacionServicioComponente, Service, Component])],
+  imports: [TypeOrmModule.forFeature([Cotizacion, Client, CotizacionServicio, CotizacionServicioComponente, Service, Component, Proveedores])],
   providers: [CotizacionService],
   controllers: [CotizacionController],
   exports: [CotizacionService],
