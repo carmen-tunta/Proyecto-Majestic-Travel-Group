@@ -245,7 +245,7 @@ const Clientes = () => {
                 <i 
                   className="pi pi-arrow-right" 
                   title="Ver detalles" 
-                  style={{color:'#1976d2', cursor: 'pointer'}}
+                  style={{cursor: 'pointer'}}
                   onClick={() => handleEditClient(rowData)}
                 />
               </div>

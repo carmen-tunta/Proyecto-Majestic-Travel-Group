@@ -17,7 +17,6 @@
 }
 
 .service-table .p-datatable-thead > tr > th {
-  background: #1976d2;
   color: #ffffff;
   font-weight: normal;
   border: none;
@@ -32,7 +31,7 @@
 }
 
 .service-components-table .p-datatable-tbody > tr:nth-child(even) > td {
-  background: #e3f2fd;
+  background: var(--blue-100);
 }
 
 .service-footer {

@@ -13,3 +13,13 @@
   background: transparent;
   padding: 0 4px;
 }
+
+.forgot-password-link {
+  text-decoration: none;
+  color: var(--blue-900);
+}
+
+.forgot-password-link:hover {
+  text-decoration: underline;
+  color: var(--blue-700);
+}

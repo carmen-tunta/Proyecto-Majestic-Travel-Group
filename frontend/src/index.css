@@ -11,3 +11,16 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+:root {
+  --mtg-primary-color: #051c2c;
+  --mtg-secondary-color: #ffffff;
+  --mtg-primary-500: #0c293d;
+  --mtg-primary-600: #194766;
+  --mtg-primary-700: #5a8daf;
+  --mtg-primary-800: rgb(194, 194, 218);
+  --mtg-primary-900: #ececf7;
+}
+
+
+

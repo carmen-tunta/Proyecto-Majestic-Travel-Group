@@ -101,6 +101,7 @@ const Incremento = ({ tarifa }) => {
                 <DataTable
                     className="incremento-table"
                     value={increments || []}
+                    size="small"
                     emptyMessage="No se registraron incrementos"
                     loading={loading}
                 >

@@ -127,3 +127,9 @@
     font-size: 8px;
     z-index: 2;
 }
+
+.service-modal-overlay .components-table th {
+  background: var(--surface-b);
+  color: var(--surface-700);
+  font-weight: 600;
+}

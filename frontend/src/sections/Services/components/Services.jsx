@@ -135,7 +135,7 @@ const Services = () => {
                                 <i
                                     className="pi pi-pencil"
                                     title="Editar"
-                                    style={{ color: '#1976d2', cursor: "pointer" }}
+                                    style={{ cursor: "pointer" }}
                                     onClick={() => handleEdit(rowData)}
                                 ></i>
                             </span>

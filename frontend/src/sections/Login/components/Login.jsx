@@ -89,7 +89,7 @@ function Login() {
         />
         
         <div style={{ textAlign: 'center', marginTop: 12 }}>
-          <Link to="/forgot-password" style={{ textDecoration: 'none', color: '#007bff' }}>
+          <Link to="/forgot-password" className="forgot-password-link">
             ¿Olvidaste contraseña?
           </Link>
         </div>

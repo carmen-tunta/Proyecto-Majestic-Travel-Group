@@ -130,6 +130,12 @@
     border-bottom: 1px solid #eee !important;
 }
 
+.tarifa-table th {
+  background: var(--surface-b);
+  color: var(--surface-700);
+  font-weight: 600;
+}
+
 input[type="number"]::-webkit-outer-spin-button,
 input[type="number"]::-webkit-inner-spin-button {
     -webkit-appearance: none;

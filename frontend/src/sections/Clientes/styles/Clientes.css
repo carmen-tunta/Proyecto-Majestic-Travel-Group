@@ -17,7 +17,6 @@
 }
 
 .clientes-table .p-datatable-thead > tr > th {
-  background: #1976d2;
   color: #ffffff;
   font-weight: normal;
   border: none;
@@ -46,7 +45,6 @@
 }
 
 .custom-paginator .p-paginator-pages .p-paginator-page.p-highlight {
-  background-color: #1976d2;
   color: white;
 }
 
