@@ -757,9 +757,9 @@ export default function CotizacionForm() {
                       dropdown
                       style={{ width: '60%', marginRight: 8 }}
                       inputClassName="p-inputtext"
-                      disabled={loading}
+                      disabled={loading || loadingCotizacion}
                     />
-                    <Button label="Agregar" className="p-button-outlined" onClick={onAdd} disabled={loading} />
+                    <Button label="Agregar" className="p-button-outlined" onClick={onAdd} disabled={loading || loadingCotizacion} />
                     {isSearching && <span className="search-status">Buscando…</span>}
                   </div>
                 </div>

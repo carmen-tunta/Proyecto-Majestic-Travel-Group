@@ -34,7 +34,7 @@
 .form-card .link-btn {
     background: transparent;
     border: 0;
-    color: #2c7be5;
+    color: var(--primary-color);
     font-weight: 600;
     cursor: pointer;
 }
@@ -84,7 +84,7 @@
     width: var(--field-w, 100%);
     padding: 10px 12px;
     height: 40px;
-    border: 1px solid #9ec0f7;
+    /* border: 1px solid #9ec0f7; */
     border-radius: 10px;
     box-sizing: border-box;
     background: #fff;
@@ -93,8 +93,8 @@
 .form-grid input:focus,
 .form-grid select:focus {
     outline: none;
-    border-color: #2c7be5;
-    box-shadow: 0 0 0 3px rgba(44, 123, 229, .12);
+    /* border-color: #2c7be5; */
+    /* box-shadow: 0 0 0 3px rgba(44, 123, 229, .12); */
 }
 
 .form-grid .p-inputtext,
@@ -109,7 +109,7 @@
 
 .form-grid .p-dropdown.p-component,
 .form-grid .p-calendar.p-component {
-    border: 1px solid #9ec0f7;
+    border: 1px solid #d1d5db;
     border-radius: 10px;
     background: #fff;
     height: 40px;
@@ -137,8 +137,8 @@
 
 .form-grid .p-dropdown.p-focus,
 .form-grid .p-calendar.p-focus {
-    border-color: #2c7be5 !important;
-    box-shadow: 0 0 0 3px rgba(44, 123, 229, .12) !important;
+    box-shadow: 0 0 0 0.2rem var(--blue-100);
+    border-color: var(--blue-500);
 }
 
 .grid .span-1 { grid-column: span 1; }
@@ -159,10 +159,10 @@
     width: var(--field-w, 100%);
     padding: 10px 12px;
     height: 40px;
-    border: 1px solid #9ec0f7;
+    /* border: 1px solid #9ec0f7; */
     border-radius: 10px;
     box-sizing: border-box;
-    background: #fff;
+    /* background: #fff; */
 }
 
 /* PrimeReact controls: allow per-field custom width via --field-w */
@@ -206,14 +206,14 @@
 .grid input:focus,
 .grid select:focus {
     outline: none;
-    border-color: #2c7be5;
-    box-shadow: 0 0 0 3px rgba(44, 123, 229, .12);
+    /* border-color: #2c7be5; */
+    /* box-shadow: 0 0 0 3px rgba(44, 123, 229, .12); */
 }
 
 /* Focus ring for PrimeReact wrappers */
 .grid .p-dropdown.p-focus,
 .grid .p-calendar.p-focus {
-    border-color: #2c7be5 !important;
+    /* border-color: #2c7be5 !important; */
     box-shadow: 0 0 0 3px rgba(44, 123, 229, .12) !important;
 }
 
@@ -307,7 +307,7 @@
 .price-input {
     width: 80px;
     padding: 6px 8px;
-    border: 1px solid #cfd6e4;
+    /* border: 1px solid #cfd6e4; */
     border-radius: 6px;
 }
 
