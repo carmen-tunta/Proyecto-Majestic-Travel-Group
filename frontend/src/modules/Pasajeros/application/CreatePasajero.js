@@ -17,7 +17,7 @@ export default class CreatePasajero {
 
     // Llamar al repositorio
     const result = await this.pasajeroRepository.createPasajero({
-      cotizacionId: pasajero.cotizacion,
+      cotizacionId: pasajero.cotizacionId,
       nombre: pasajero.nombre,
       pais: pasajero.pais,
       descripcionDocumento: pasajero.descripcionDocumento
