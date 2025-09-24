@@ -38,7 +38,7 @@ const RecoverPassword = () => {
         <div style={{ textAlign: 'center', marginBottom: 24 }}>
           <img src={process.env.PUBLIC_URL + '/logo_mtg.png'} alt="MTG" style={{ height: '5rem' }} />
         </div>
-        <div className="p-input-icon-left">
+        <div className="p-input-icon-left">  
             <i className="pi pi-envelope"/>
             <InputText 
               type="email" 
