@@ -136,6 +136,8 @@ const Contact = ( {proveedor} ) => {
                     icon="pi pi-exclamation-triangle" 
                     accept={() => handleDeleteContact()}
                     reject={() => reject()} 
+                    acceptLabel="Sí"
+                    rejectLabel="No"
                 />
 
                 {showModal && (
