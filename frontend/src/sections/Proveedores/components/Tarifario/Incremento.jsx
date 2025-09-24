@@ -177,6 +177,8 @@ const Incremento = ({ tarifa }) => {
                 icon="pi pi-exclamation-triangle" 
                 accept={() => {handleDelete();}}
                 reject={() => reject()} 
+                acceptLabel="Si"
+                rejectLabel="No"
             />
 
             {showModal && (

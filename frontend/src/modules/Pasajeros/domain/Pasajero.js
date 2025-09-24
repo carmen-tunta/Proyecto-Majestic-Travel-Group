@@ -1,7 +1,7 @@
 export default class Pasajero {
   constructor({
     id,
-    cotizacion,
+    cotizacionId,
     nombre,
     pais,
     descripcionDocumento,
@@ -11,7 +11,7 @@ export default class Pasajero {
     updatedAt
   }) {
     this.id = id;
-    this.cotizacion = cotizacion;
+    this.cotizacionId = cotizacionId;
     this.nombre = nombre;
     this.pais = pais;
     this.descripcionDocumento = descripcionDocumento;

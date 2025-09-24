@@ -32,6 +32,8 @@ import '../styles/CotizacionForm.css';
 import '../../Proveedores/styles/DetallesProveedores.css';
 import { categorias, estados, agencias, paises, idiomas } from '../constants/options';
 import { RadioButton } from 'primereact/radiobutton';
+import { ProgressSpinner } from 'primereact/progressspinner';
+import { ConfirmDialog } from 'primereact/confirmdialog';
 // Modal de asignación de proveedores
 
 // (formatFecha eliminado: ya usamos Calendar con locale 'es')
@@ -82,6 +84,14 @@ export default function CotizacionForm() {
   const [dateTimeTarget, setDateTimeTarget] = useState({ cscId: null, value: null });
   const [dateTimeDraft, setDateTimeDraft] = useState(null);
 
+  const [loading, setLoading] = useState(false);
+  const [loadingCotizacion, setLoadingCotizacion] = useState(false);
+  const [loadingServices, setLoadingServices] = useState(null);
+  const [visibleDialog, setVisibleDialog] = useState(false);
+  const [dialogType, setDialogType] = useState(null);
+  const [componentToDelete, setComponentToDelete] = useState(null);
+  const [serviceToDelete, setServiceToDelete] = useState(null);
+
   // Helpers de fechas (usar día/hora LOCAL para evitar desfases por zona horaria)
   function toLocalDateString(date) {
     if (!date) return '';
@@ -117,15 +127,15 @@ export default function CotizacionForm() {
 
   const [form, setForm] = useState({
     nombreCotizacion: '',
-    categoria: categorias[0],
+    categoria: null,
     fechaViaje: '',
-    estado: estados[0],
-    agencia: agencias[0],
-    pais: paises[0],
-    idioma: idiomas[0],
+    estado: null,
+    agencia: null,
+    pais: null,
+    idioma: null,
     utilidad: 18,
-    nroPax: 1,
-    nroNinos: 0,
+    nroPax: null,
+    nroNinos: null,
     codigoReserva: '',
     observacion: ''
   });
@@ -134,6 +144,7 @@ export default function CotizacionForm() {
     (async () => {
       if (routeId) {
         try {
+          setLoadingCotizacion(true);
           const list = await new GetAllCotizaciones().execute();
           const found = (list || []).find(c => String(c.id) === String(routeId));
           if (found) {
@@ -144,7 +155,7 @@ export default function CotizacionForm() {
               ...f,
               nombreCotizacion: found.nombreCotizacion || '',
               categoria: found.categoria,
-              // dejamos fechaViaje vacía para evitar formato no ISO en input
+              fechaViaje: found.fechaViaje || '',
               estado: found.estado,
               agencia: found.agencia,
               pais: found.pais,
@@ -159,7 +170,11 @@ export default function CotizacionForm() {
             const det = await new GetCotizacionDetalle().execute(found.id);
             setDetalle(det);
           }
-        } catch (e) { /* noop */ }
+        } catch (e) { 
+          console.error(e); 
+        } finally {
+          setLoadingCotizacion(false);
+        }
       }
     })();
   }, [routeId]);
@@ -197,6 +212,7 @@ export default function CotizacionForm() {
     if (!selectedClient) { showNotification('Selecciona un cliente', 'error'); return; }
     if (!form.fechaViaje) { showNotification('Fecha de viaje requerida', 'error'); return; }
     try {
+      setLoadingCotizacion(true);
       const payload = {
         clienteId: selectedClient.id,
         nombreCotizacion: form.nombreCotizacion || undefined,
@@ -223,13 +239,19 @@ export default function CotizacionForm() {
       if (!cotizacionId) {
         setActiveIndex(1);
       }
-    } catch (e) { showNotification(e.message || 'Error al guardar', 'error'); }
+    } catch (e) { 
+      showNotification(e.message || 'Error al guardar', 'error'); 
+    } finally {
+      setLoadingCotizacion(false);
+    }
   }
 
   async function onAdd() {
     if (!cotizacionId) { showNotification('Guarda la cotización primero', 'error'); return; }
     try {
+      setLoading(true);
       if (searchType === 'service') {
+        setLoadingServices('new');
         const item = selectedSuggestion || suggestions[0];
         if (!item) { showNotification('Selecciona un servicio', 'error'); return; }
         const added = await new AddServiceToCotizacion().execute(cotizacionId, { serviceId: item.id });
@@ -242,6 +264,7 @@ export default function CotizacionForm() {
         setSearchQuery(''); setSuggestions([]); setSelectedSuggestion(null);
       } else {
         if (!selectedCS) { showNotification('Selecciona un servicio en la lista para agregar componentes', 'error'); return; }
+        setLoadingServices(selectedCS);
         const item = selectedSuggestion; // usar solo selección explícita
         if (item && item.id) {
           const updated = await new AddComponentsToCotizacionService().execute(selectedCS, [item.id]);
@@ -265,7 +288,12 @@ export default function CotizacionForm() {
         }
         setSearchQuery(''); setSuggestions([]); setSelectedSuggestion(null);
       }
-    } catch (e) { showNotification(e.message || 'No se pudo agregar', 'error'); }
+    } catch (e) { 
+      showNotification(e.message || 'No se pudo agregar', 'error'); 
+    } finally {
+      setLoadingServices(null);
+      setLoading(false);
+    }
   }
 
   // Nota: totalServicios es la suma de precios de todos los componentes seleccionados.
@@ -391,21 +419,92 @@ export default function CotizacionForm() {
     );
   });
 
+  const updateCotizacionServiceComponent = new UpdateCotizacionServiceComponent();
+
   async function handleComponentPriceBlur(componentItemId, value) {
-    const precio = Number(value);
+  const precio = Number(value);
     if (Number.isNaN(precio)) { showNotification('Precio inválido', 'error'); return; }
     try {
-      await new UpdateCotizacionServiceComponent().execute(componentItemId, { precio });
-      await refreshDetalle(cotizacionId);
+      await updateCotizacionServiceComponent.execute(componentItemId, { precio });
+      setDetalle(prev => {
+        if (!prev) return prev;
+        const servicios = (prev.servicios || []).map(s => ({
+          ...s,
+          componentes: (s.componentes || []).map(c =>
+            c.id === componentItemId ? { ...c, precio } : c
+          )
+        }));
+        return { ...prev, servicios };
+      });
       setPriceDrafts(d => { const nd = { ...d }; delete nd[componentItemId]; return nd; });
     } catch (e) { showNotification(e.message || 'No se pudo guardar el precio', 'error'); }
   }
+
+  const handleDeleteService = async (serviceId) => {
+    try {
+      setLoadingServices(serviceId);
+      await new DeleteCotizacionService().execute(serviceId);
+      setDetalle(prev => {
+        if (!prev) return prev;
+        const servicios = (prev.servicios || []).filter(x => x.id !== serviceId);
+        return { ...prev, servicios };
+      });
+    } catch (e) {
+      showNotification(e.message || 'No se pudo eliminar el servicio', 'error');
+    } finally {
+      setLoadingServices(null);
+      setServiceToDelete(null);
+      setDialogType('');
+      setVisibleDialog(false);
+    }
+  }
+
+  const handleDeleteComponent = async (componentItemId, serviceId) => {
+    try {
+      setLoadingServices(serviceId);
+      await new DeleteCotizacionServiceComponent().execute(componentItemId).then(() => {
+        setDetalle(prev => {
+          if (!prev) return prev;
+          const servicios = (prev.servicios || []).map(svc => ({
+            ...svc,
+          componentes: (svc.componentes || []).filter(c => c.id !== componentItemId)
+        }));
+        return { ...prev, servicios };
+      });
+    });
+    } catch (e) {
+      showNotification(e.message || 'No se pudo eliminar el componente', 'error');
+    } finally {
+      setLoadingServices(null);
+      setComponentToDelete(null);
+      setDialogType('');
+      setVisibleDialog(false);
+    }
+  }
+
+  const reject = () => {
+        setComponentToDelete(null);
+        setServiceToDelete(null);
+        setDialogType('');
+        setVisibleDialog(false);
+    };
 
   // Items for TabMenu to mirror Proveedores tabs
   const items = [
     { label: 'Cotización' },
     { label: 'Nombre de pasajeros', disabled: !cotizacionId },
   ];
+
+  const iconComponents = {
+     'Transporte': 'pi pi-car',
+     'Boleto': 'pi pi-map',
+     'Ticket': 'pi pi-ticket',
+     'Tour': 'pi pi-globe',
+     'Hotel': 'pi pi-building',
+     'Guia': 'pi pi-user-plus',
+     'Restaurant': 'pi pi-shop',
+  };
+
 
   return (
     <div className="menu-edition">
@@ -425,6 +524,12 @@ export default function CotizacionForm() {
 
       {activeIndex === 0 && (
         <>
+  
+        {loadingCotizacion ? (
+            <div style={{ display: 'flex', justifyContent: 'center', width: '100%', marginTop: '2rem', minHeight: 120 }}>
+                <ProgressSpinner />
+            </div>
+        ) : (
           <div className="form-card">
             <div className="row">
               <div className="label">Año: <b>{anio}</b></div>
@@ -542,6 +647,7 @@ export default function CotizacionForm() {
               </div>
             </div>
           </div>
+        )}
 
           <div className="center">CONSTRUIR EXPERIENCIAS</div>
 
@@ -551,78 +657,89 @@ export default function CotizacionForm() {
                 <div>
                   {detalle.servicios.map(s => (
                     <div key={s.id} className={`cotz-service-card ${selectedCS === s.id ? 'selected' : ''}`} onClick={() => setSelectedCS(s.id)}>
-                      <div className="cotz-service-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                          <i className="pi pi-trash" style={{ cursor: 'pointer'}} aria-label="Eliminar servicio"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              new DeleteCotizacionService().execute(s.id).then(() => {
-                                setDetalle(prev => {
-                                  if (!prev) return prev;
-                                  const servicios = (prev.servicios || []).filter(x => x.id !== s.id);
-                                  return { ...prev, servicios };
-                                });
-                              });
-                            }} />
-                          <div className="cotz-service-title">{s.service?.name}</div>
-                        </div>
-                        {selectedCS === s.id && <span className="cotz-select-hint">Seleccionado para agregar componentes</span>}
-                      </div>
-
-                      <div className="componentes-list">
-                        {(s.componentes || []).map(rowData => (
-                          <div key={rowData.id} className="componente-card" style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 8 }}>
-                            
-                            <div style={{ display: 'flex', alignItems: 'center', width: '25%' }}>
-                              <i style={{ width: '1.5rem', marginLeft: '2rem', cursor: 'pointer' }} className="pi pi-trash" onClick={(e) => {
-                                e.stopPropagation();
-                                new DeleteCotizacionServiceComponent().execute(rowData.id).then(() => {
-                                  setDetalle(prev => {
-                                    if (!prev) return prev;
-                                    const servicios = (prev.servicios || []).map(svc => ({
-                                      ...svc,
-                                      componentes: (svc.componentes || []).filter(c => c.id !== rowData.id)
-                                    }));
-                                    return { ...prev, servicios };
-                                  });
-                                });
-                              }} />
-                              <div style={{ cursor: 'pointer' }} onClick={(e) => { e.stopPropagation(); openDateTimePicker(rowData); }}>
-                                {rowData.scheduledAt
-                                  ? <span className="muted">{formatFechaHoraCorta(rowData.scheduledAt)}</span>
-                                  : <span className="muted">Fecha y hora</span>
-                                }
-                              </div>
-                            </div>
-
-                            <div style={{ fontWeight: 600, width: '40%'}}>
-                              <i className='pi pi-cog' style={{ marginRight: '0.5rem' }} />{rowData.component?.componentName || rowData.nombreExtra}
-                              <div style={{ marginLeft: '1.5rem', display: 'flex', alignItems: 'center', marginTop: '0.25rem', cursor: 'pointer', width: 'fit-content' }} onClick={(e) => { e.stopPropagation(); handleOpenAsignarProveedor(rowData, s); }}>
-                                {rowData.proveedor?.name
-                                  ? <span className="muted" style={{ fontSize: 12 }}>{rowData.proveedor.name}</span>
-                                  : <span className="muted" style={{ fontSize: 12 }} onClick={(e) => { e.stopPropagation(); handleOpenAsignarProveedor(rowData, s); }}>Asignar proveedor</span>
-                                }
-                              </div>
-                            
-                            
-                            </div>
-                            
-                            
-                            <div style={{ width: '35%' }}>
-                              <NoteCell cscId={rowData.id} initial={rowData.nota || ''} />
-                            </div>
-                            <div>
-                              <InputNumber inputClassName="price-input" value={priceDrafts[rowData.id] ?? Number(rowData.precio || 0)} mode="decimal" minFractionDigits={2} maxFractionDigits={2}
-                                onValueChange={(e) => setPriceDrafts(d => ({ ...d, [rowData.id]: e.value }))}
-                                onKeyDown={(e) => e.stopPropagation()}
-                                onKeyUp={(e) => e.stopPropagation()}
-                                onBlur={() => handleComponentPriceBlur(rowData.id, priceDrafts[rowData.id] ?? Number(rowData.precio || 0))}
-                                disabled={true}
-                              />
-                            </div>
+                      {loadingServices === s.id ? (
+                          <div style={{ display: 'flex', justifyContent: 'center', width: '100%', height: '100%', alignItems: 'center' }}>
+                              <ProgressSpinner />
                           </div>
-                        ))}
-                      </div>
+                      ) : (
+                      <>
+                        <div className="cotz-service-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                            <i className="pi pi-trash" style={{ cursor: 'pointer'}} aria-label="Eliminar servicio"
+                              onClick={(e) => {
+                                if (loading) return;
+                                e.stopPropagation();
+                                setDialogType('service');
+                                setServiceToDelete(s.id);
+                                setVisibleDialog(true);
+                                // handleDeleteService(s.id);
+                              }} 
+                            />
+                            <div className="cotz-service-title">{s.service?.name}</div>
+                          </div>
+                          {selectedCS === s.id && <span className="cotz-select-hint">Seleccionado para agregar componentes</span>}
+                        </div>
+
+                        <div className="componentes-list">
+                          {(s.componentes || [])
+                          .slice()
+                          .sort((a, b) => {
+                            const dateA = a.scheduledAt ? new Date(a.scheduledAt).getTime() : 0;
+                            const dateB = b.scheduledAt ? new Date(b.scheduledAt).getTime() : 0;
+                            return dateA - dateB;
+                          })
+                          .map(rowData => (
+                            <div key={rowData.id} className="componente-card" style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 8 }}>
+                              
+                              <div style={{ display: 'flex', alignItems: 'center', width: '25%' }}>
+                                <i style={{ width: '1.5rem', marginLeft: '2rem', cursor: 'pointer' }} className="pi pi-trash" 
+                                  onClick={(e) => {
+                                    if (loading) return;
+                                    e.stopPropagation();
+                                    setDialogType('component');
+                                    setComponentToDelete({ cscId: rowData.id, serviceId: s.id });
+                                    setVisibleDialog(true);
+                                    // handleDeleteComponent(rowData.id, s.id);
+                                  }}
+                                />
+                                <div style={{ cursor: 'pointer' }} onClick={(e) => { e.stopPropagation(); openDateTimePicker(rowData); }}>
+                                  {rowData.scheduledAt
+                                    ? <span className="muted">{formatFechaHoraCorta(rowData.scheduledAt)}</span>
+                                    : <span className="muted">Fecha y hora</span>
+                                  }
+                                </div>
+                              </div>
+
+                              <div style={{ fontWeight: 600, width: '40%'}}>
+                                <i className={iconComponents[rowData.component?.serviceType] || 'pi pi-cog'} style={{ marginRight: '0.5rem' }} />{rowData.component?.componentName || rowData.nombreExtra}
+                                <div style={{ marginLeft: '1.5rem', display: 'flex', alignItems: 'center', marginTop: '0.25rem', cursor: 'pointer', width: 'fit-content' }} onClick={(e) => { e.stopPropagation(); handleOpenAsignarProveedor(rowData, s); }}>
+                                  {rowData.proveedor?.name
+                                    ? <span className="muted" style={{ fontSize: 12 }}>{rowData.proveedor.name}</span>
+                                    : <span className="muted" style={{ fontSize: 12 }} onClick={(e) => { e.stopPropagation(); handleOpenAsignarProveedor(rowData, s); }}>Asignar proveedor</span>
+                                  }
+                                </div>
+                              
+                              
+                              </div>
+                              
+                              
+                              <div style={{ width: '35%' }}>
+                                <NoteCell cscId={rowData.id} initial={rowData.nota || ''} />
+                              </div>
+                              <div>
+                                <InputNumber inputClassName="price-input" value={priceDrafts[rowData.id] ?? Number(rowData.precio || 0)} mode="decimal" minFractionDigits={2} maxFractionDigits={2}
+                                  onValueChange={(e) => setPriceDrafts(d => ({ ...d, [rowData.id]: e.value }))}
+                                  onKeyUp={(e) => e.stopPropagation()}
+                                  onKeyDown={(e) => e.stopPropagation()}
+                                  onBlur={(e) => handleComponentPriceBlur(rowData.id, priceDrafts[rowData.id] ?? e.target.value)}
+                                />
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </>
+                      )
+                      }
                     </div>
                   ))}
                 </div>
@@ -674,8 +791,9 @@ export default function CotizacionForm() {
                       dropdown
                       style={{ width: '60%', marginRight: 8 }}
                       inputClassName="p-inputtext"
+                      disabled={loading || loadingCotizacion}
                     />
-                    <Button label="Agregar" className="p-button-outlined" onClick={onAdd} />
+                    <Button label="Agregar" className="p-button-outlined" onClick={onAdd} disabled={loading || loadingCotizacion} />
                     {isSearching && <span className="search-status">Buscando…</span>}
                   </div>
                 </div>
@@ -721,6 +839,23 @@ export default function CotizacionForm() {
         })}
       />
 
+      <ConfirmDialog
+          group="declarative"  
+          visible={visibleDialog} 
+          onHide={() => setVisibleDialog(false)} 
+          message={dialogType === 'component' ? "¿Estás seguro de que deseas eliminar este componente del servicio?" 
+              : dialogType === 'service' ? "¿Estás seguro de que deseas eliminar este servicio de la cotización?" : ''}
+          header="Confirmación" 
+          icon="pi pi-exclamation-triangle" 
+          accept={() => {
+              if (dialogType === 'component' && componentToDelete) handleDeleteComponent(componentToDelete.cscId, componentToDelete.serviceId);
+              else if (dialogType === 'service' && serviceToDelete) handleDeleteService(serviceToDelete);
+          }}
+          reject={() => reject()} 
+          acceptLabel="Si"
+          rejectLabel="No"
+      />
+
   {/* SelectAddModal eliminado: agregamos directamente desde el buscador principal */}
 
       {/* Modal para seleccionar fecha/hora del componente */}
@@ -748,4 +883,3 @@ export default function CotizacionForm() {
     </div>
   );
 }
-

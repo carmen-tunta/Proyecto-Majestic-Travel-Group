@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { InputText } from 'primereact/inputtext';
 import { FloatLabel } from 'primereact/floatlabel';
 import { Button } from 'primereact/button';
+import { ConfirmDialog } from 'primereact/confirmdialog';
 import SearchBar from '../../../components/SearchBar';
 import useSearch from '../../../hooks/useSearch';
 import { apiService } from '../../../services/apiService';
@@ -103,8 +104,37 @@ const ServicesModal = ({ onHide, service }) => {
         }
     };
 
-    const handleDeleteComponent = async (component) => {
-        setServiceComponents(prevComponents => prevComponents.filter(c => c.id !== component.id));
+    // ConfirmDialog state for component/image deletion
+    const [deleteTarget, setDeleteTarget] = useState(null); // { type: 'component'|'image', data: object }
+    const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
+
+    const handleDeleteComponent = (component) => {
+        setDeleteTarget({ type: 'component', data: component });
+        setDeleteDialogVisible(true);
+    };
+
+    const handleDeleteImage = (image) => {
+        setDeleteTarget({ type: 'image', data: image });
+        setDeleteDialogVisible(true);
+    };
+
+    function handleDeleteAccept() {
+        if (!deleteTarget) return;
+        if (deleteTarget.type === 'component') {
+            setServiceComponents(prevComponents => prevComponents.filter(c => c.id !== deleteTarget.data.id));
+        } else if (deleteTarget.type === 'image') {
+            const image = deleteTarget.data;
+            if (image.id) { setDeletedImages(prevDeleted => [...prevDeleted, image]); }
+            setImages(images => images.filter(img => img !== image));
+            setNewImages(newImages => newImages.filter(img => img !== image));
+        }
+        setDeleteDialogVisible(false);
+        setDeleteTarget(null);
+    }
+
+    function handleDeleteReject() {
+        setDeleteDialogVisible(false);
+        setDeleteTarget(null);
     }
 
     const handleSelectComponent = (c) => {
@@ -127,11 +157,7 @@ const ServicesModal = ({ onHide, service }) => {
         setSelectedComponent(null);
     }
 
-    const handleDeleteImage = (image) => {
-        if (image.id) { setDeletedImages(prevDeleted => [...prevDeleted, image]); }
-        setImages(images.filter(img => img !== image));
-        setNewImages(newImages.filter(img => img !== image));
-    }
+
 
     const handleAddImage = async (e) => {
         const files = e.files;
@@ -218,9 +244,7 @@ const ServicesModal = ({ onHide, service }) => {
                                 <i 
                                     className="pi pi-times delete-image"
                                     onClick={loading ? () => undefined : () => handleDeleteImage(img)}
-                                    
                                     title="Eliminar imagen"
-                                
                                 />
                             </div>
                         ))
@@ -325,6 +349,17 @@ const ServicesModal = ({ onHide, service }) => {
                         loading={loading}
                     />
                 </div>
+            <ConfirmDialog
+                visible={deleteDialogVisible}
+                onHide={handleDeleteReject}
+                message={deleteTarget?.type === 'component' ? '¿Estás seguro de que deseas eliminar este componente del servicio?' : '¿Estás seguro de que deseas eliminar esta imagen?'}
+                header="Confirmar eliminación"
+                icon="pi pi-exclamation-triangle"
+                accept={handleDeleteAccept}
+                reject={handleDeleteReject}
+                acceptLabel="Sí, eliminar"
+                rejectLabel="Cancelar"
+            />
             </div>
         </div>
     )

@@ -646,6 +646,8 @@ const ClientPage = () => {
           icon="pi pi-exclamation-triangle"
           accept={() => { if (contactToDelete) { handleDeleteContact(contactToDelete.id); } setContactToDelete(null); setConfirmVisible(false); }}
           reject={() => setConfirmVisible(false)}
+          acceptLabel="Sí"
+          rejectLabel="No"
         />
         </>
       )}

@@ -684,6 +684,8 @@ const TarifaMenu = ({ proveedor, tarifa, setTarifa }) => {
                     else if (dialogType === 'column' && columnToDelete) handleDeleteColumn();
                 }}
                 reject={() => reject()} 
+                acceptLabel="Sí"
+                rejectLabel="No"
             />
 
 
