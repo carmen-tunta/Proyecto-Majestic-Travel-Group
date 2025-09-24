@@ -17,6 +17,7 @@ export default function PasajeroModal({
   pasajero = null, 
   onSave 
 }) {
+
   const { showNotification } = useNotification();
   
   const [formData, setFormData] = useState({
@@ -81,7 +82,7 @@ export default function PasajeroModal({
     try {
       let result;
       const pasajeroData = {
-        cotizacionId,
+        cotizacionId: cotizacionId,
         nombre: formData.nombre,
         pais: formData.pais,
         descripcionDocumento: formData.descripcionDocumento

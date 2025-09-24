@@ -56,14 +56,12 @@
 .menu-logo {
     height: 15%;
     display: flex;
-    justify-content: initial;
+    justify-content: center;
     align-items: center;
-    padding-bottom: 2rem;
-    padding-left: 1rem;
 }
 
 .menu-logo img {
-    width: 50%;
+    width: 40%;
     height: auto;
 }
 
