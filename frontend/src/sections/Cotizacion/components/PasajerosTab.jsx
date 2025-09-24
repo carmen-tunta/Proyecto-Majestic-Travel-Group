@@ -6,6 +6,7 @@ import GetPasajerosByCotizacion from '../../../modules/Pasajeros/application/Get
 import DeletePasajero from '../../../modules/Pasajeros/application/DeletePasajero';
 import '../styles/PasajerosTab.css';
 import { Button } from 'primereact/button';
+import { ConfirmDialog } from 'primereact/confirmdialog';
 
 export default function PasajerosTab({ cotizacionId, cotizacionNombre }) {
   const { showNotification } = useNotification();
@@ -14,6 +15,8 @@ export default function PasajerosTab({ cotizacionId, cotizacionNombre }) {
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [editingPasajero, setEditingPasajero] = useState(null);
+  const [pasajeroToDelete, setPasajeroToDelete] = useState(null);
+  const [visibleDialog, setVisibleDialog] = useState(false);
 
   // Instanciar repositorio y casos de uso
   const pasajeroRepository = new PasajeroRepository();
@@ -51,18 +54,16 @@ export default function PasajerosTab({ cotizacionId, cotizacionNombre }) {
   };
 
   const handleDeletePasajero = async (pasajero) => {
-    if (!window.confirm(`¿Estás seguro de eliminar al pasajero ${pasajero.nombre}?`)) {
-      return;
-    }
-
     try {
-      await deletePasajero.execute(pasajero.id, pasajero.hasDocument());
-      
-      showNotification('Pasajero eliminado correctamente', 'success');
+      setLoading(true);
+      await deletePasajero.execute(pasajero.id, pasajero.hasDocument());  
       loadPasajeros();
+      showNotification('Pasajero eliminado correctamente', 'success');
     } catch (error) {
       console.error('Error al eliminar pasajero:', error);
       showNotification(error.message || 'Error al eliminar pasajero', 'error');
+    } finally {
+      reject();
     }
   };
 
@@ -81,6 +82,11 @@ export default function PasajerosTab({ cotizacionId, cotizacionNombre }) {
     const sizes = ['Bytes', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  };
+
+  const reject = () => {
+      setPasajeroToDelete(null);
+      setVisibleDialog(false);
   };
 
   if (loading) {
@@ -145,7 +151,7 @@ export default function PasajerosTab({ cotizacionId, cotizacionNombre }) {
                     <button
                       type="button"
                       className="action-btn delete-btn"
-                      onClick={() => handleDeletePasajero(pasajero)}
+                      onClick={() => {setPasajeroToDelete(pasajero); setVisibleDialog(true);}}
                       title="Eliminar pasajero"
                       aria-label="Eliminar pasajero"
                     >
@@ -178,6 +184,19 @@ export default function PasajerosTab({ cotizacionId, cotizacionNombre }) {
           ))}
         </div>
       )}
+
+      <ConfirmDialog
+        group="declarative"
+        visible={visibleDialog}
+        onHide={() => setVisibleDialog(false)}
+        message="¿Estás seguro de que deseas eliminar este pasajero de la cotización?"
+        header="Confirmación"
+        icon="pi pi-exclamation-triangle"
+        accept={() => handleDeletePasajero(pasajeroToDelete)}
+        reject={() => reject()}
+        acceptLabel="Si"
+        rejectLabel="No"
+      />
 
       <PasajeroModal
         isOpen={showModal}
