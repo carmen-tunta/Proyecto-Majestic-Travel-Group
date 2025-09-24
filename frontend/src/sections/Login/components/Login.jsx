@@ -45,7 +45,7 @@ function Login() {
     <div style={{ minHeight: '100vh', minWidth: '100vw', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <div style={{ width: 360 }}>
         <div style={{ textAlign: 'center', marginBottom: 24 }}>
-          <img src={process.env.PUBLIC_URL + '/logo_mtg.png'} alt="MTG" style={{ height: 48 }} />
+          <img src={process.env.PUBLIC_URL + '/logo_mtg.png'} alt="MTG" style={{ height: '5rem' }} />
         </div>
         
         <div className="p-input-icon-left" style={{ marginBottom: 12 }}>
