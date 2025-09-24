@@ -12,6 +12,7 @@ import { Column } from 'primereact/column';
 import { InputNumber } from 'primereact/inputnumber';
 import { Calendar as PrimeCalendar } from 'primereact/calendar';
 import { Dialog } from 'primereact/dialog';
+import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog';
 import { addLocale } from 'primereact/api';
 import { FloatLabel } from 'primereact/floatlabel';
 import { apiService } from '../../../services/apiService';
@@ -407,6 +408,44 @@ export default function CotizacionForm() {
     { label: 'Nombre de pasajeros', disabled: !cotizacionId },
   ];
 
+  // ConfirmDialog state for service/component deletion
+  const [deleteTarget, setDeleteTarget] = useState(null); // { type: 'service'|'component', id: number }
+  const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
+
+  function handleDeleteWithConfirm(type, id) {
+    setDeleteTarget({ type, id });
+    setDeleteDialogVisible(true);
+  }
+
+  async function handleDeleteAccept() {
+    if (!deleteTarget) return;
+    if (deleteTarget.type === 'service') {
+      await new DeleteCotizacionService().execute(deleteTarget.id);
+      setDetalle(prev => {
+        if (!prev) return prev;
+        const servicios = (prev.servicios || []).filter(x => x.id !== deleteTarget.id);
+        return { ...prev, servicios };
+      });
+    } else if (deleteTarget.type === 'component') {
+      await new DeleteCotizacionServiceComponent().execute(deleteTarget.id);
+      setDetalle(prev => {
+        if (!prev) return prev;
+        const servicios = (prev.servicios || []).map(svc => ({
+          ...svc,
+          componentes: (svc.componentes || []).filter(c => c.id !== deleteTarget.id)
+        }));
+        return { ...prev, servicios };
+      });
+    }
+    setDeleteDialogVisible(false);
+    setDeleteTarget(null);
+  }
+
+  function handleDeleteReject() {
+    setDeleteDialogVisible(false);
+    setDeleteTarget(null);
+  }
+
   return (
     <div className="menu-edition">
       <div className="header">
@@ -556,13 +595,7 @@ export default function CotizacionForm() {
                           <i className="pi pi-trash" style={{ cursor: 'pointer'}} aria-label="Eliminar servicio"
                             onClick={(e) => {
                               e.stopPropagation();
-                              new DeleteCotizacionService().execute(s.id).then(() => {
-                                setDetalle(prev => {
-                                  if (!prev) return prev;
-                                  const servicios = (prev.servicios || []).filter(x => x.id !== s.id);
-                                  return { ...prev, servicios };
-                                });
-                              });
+                              handleDeleteWithConfirm('service', s.id);
                             }} />
                           <div className="cotz-service-title">{s.service?.name}</div>
                         </div>
@@ -576,16 +609,7 @@ export default function CotizacionForm() {
                             <div style={{ display: 'flex', alignItems: 'center', width: '25%' }}>
                               <i style={{ width: '1.5rem', marginLeft: '2rem', cursor: 'pointer' }} className="pi pi-trash" onClick={(e) => {
                                 e.stopPropagation();
-                                new DeleteCotizacionServiceComponent().execute(rowData.id).then(() => {
-                                  setDetalle(prev => {
-                                    if (!prev) return prev;
-                                    const servicios = (prev.servicios || []).map(svc => ({
-                                      ...svc,
-                                      componentes: (svc.componentes || []).filter(c => c.id !== rowData.id)
-                                    }));
-                                    return { ...prev, servicios };
-                                  });
-                                });
+                                handleDeleteWithConfirm('component', rowData.id);
                               }} />
                               <div style={{ cursor: 'pointer' }} onClick={(e) => { e.stopPropagation(); openDateTimePicker(rowData); }}>
                                 {rowData.scheduledAt
@@ -608,7 +632,7 @@ export default function CotizacionForm() {
                             </div>
                             
                             
-                            <div style={{ width: '35%' }}>
+                            <div style={{ width: '45%' }}>
                               <NoteCell cscId={rowData.id} initial={rowData.nota || ''} />
                             </div>
                             <div>
@@ -702,6 +726,18 @@ export default function CotizacionForm() {
           cotizacionNombre={form.nombreCotizacion || `Cotización ${numeroFile}`}
         />
       )}
+      <ConfirmDialog
+        visible={deleteDialogVisible}
+        onHide={handleDeleteReject}
+        message="¿Estás seguro de que deseas eliminar este elemento? Esta acción no se puede deshacer."
+        header="Confirmar eliminación"
+        icon="pi pi-exclamation-triangle"
+        accept={handleDeleteAccept}
+        reject={handleDeleteReject}
+        acceptLabel="Sí, eliminar"
+        rejectLabel="Cancelar"
+      />
+
       <AssignProveedorModal
         visible={provModalOpen}
         onHide={() => setProvModalOpen(false)}
