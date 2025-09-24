@@ -117,15 +117,15 @@ export default function CotizacionForm() {
 
   const [form, setForm] = useState({
     nombreCotizacion: '',
-    categoria: categorias[0],
+    categoria: null,
     fechaViaje: '',
-    estado: estados[0],
-    agencia: agencias[0],
-    pais: paises[0],
-    idioma: idiomas[0],
+    estado: null,
+    agencia: null,
+    pais: null,
+    idioma: null,
     utilidad: 18,
-    nroPax: 1,
-    nroNinos: 0,
+    nroPax: null,
+    nroNinos: null,
     codigoReserva: '',
     observacion: ''
   });
@@ -144,7 +144,7 @@ export default function CotizacionForm() {
               ...f,
               nombreCotizacion: found.nombreCotizacion || '',
               categoria: found.categoria,
-              // dejamos fechaViaje vacía para evitar formato no ISO en input
+              fechaViaje: found.fechaViaje || '',
               estado: found.estado,
               agencia: found.agencia,
               pais: found.pais,
@@ -570,7 +570,14 @@ export default function CotizacionForm() {
                       </div>
 
                       <div className="componentes-list">
-                        {(s.componentes || []).map(rowData => (
+                        {(s.componentes || [])
+                        .slice()
+                        .sort((a, b) => {
+                          const dateA = a.scheduledAt ? new Date(a.scheduledAt).getTime() : 0;
+                          const dateB = b.scheduledAt ? new Date(b.scheduledAt).getTime() : 0;
+                          return dateA - dateB;
+                        })
+                        .map(rowData => (
                           <div key={rowData.id} className="componente-card" style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 8 }}>
                             
                             <div style={{ display: 'flex', alignItems: 'center', width: '25%' }}>
