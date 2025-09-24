@@ -18,8 +18,13 @@ const ComponentModal = ({ onHide, component, onSave }) => {
   // Opciones para el dropdown de tipo de servicio
   const serviceTypeOptions = [
     { label: 'Transporte', value: 'Transporte' },
-    { label: 'Alojamiento', value: 'Alojamiento' },
-    { label: 'Otro', value: 'Otro' }
+    { label: 'Ticket', value: 'Ticket' },
+    { label: 'Boleto', value: 'Boleto' },
+    { label: 'Tour', value: 'Tour' },
+    { label: 'Hotel', value: 'Hotel' },
+    { label: 'Guia', value: 'Guia' },
+    { label: 'Restaurant', value: 'Restaurant' },
+    { label: 'Otros', value: 'Otros' }
   ];
 
   useEffect(() => {
