@@ -478,6 +478,17 @@ export default function CotizacionForm() {
     { label: 'Nombre de pasajeros', disabled: !cotizacionId },
   ];
 
+  const iconComponents = {
+     'Transporte': 'pi pi-car',
+     'Boleto': 'pi pi-map',
+     'Ticket': 'pi pi-ticket',
+     'Tour': 'pi pi-globe',
+     'Hotel': 'pi pi-building',
+     'Guia': 'pi pi-user-plus',
+     'Restaurant': 'pi pi-shop',
+  };
+
+
   return (
     <div className="menu-edition">
       <div className="header">
@@ -677,7 +688,7 @@ export default function CotizacionForm() {
                               </div>
 
                               <div style={{ fontWeight: 600, width: '40%'}}>
-                                <i className='pi pi-cog' style={{ marginRight: '0.5rem' }} />{rowData.component?.componentName || rowData.nombreExtra}
+                                <i className={iconComponents[rowData.component?.serviceType] || 'pi pi-cog'} style={{ marginRight: '0.5rem' }} />{rowData.component?.componentName || rowData.nombreExtra}
                                 <div style={{ marginLeft: '1.5rem', display: 'flex', alignItems: 'center', marginTop: '0.25rem', cursor: 'pointer', width: 'fit-content' }} onClick={(e) => { e.stopPropagation(); handleOpenAsignarProveedor(rowData, s); }}>
                                   {rowData.proveedor?.name
                                     ? <span className="muted" style={{ fontSize: 12 }}>{rowData.proveedor.name}</span>
