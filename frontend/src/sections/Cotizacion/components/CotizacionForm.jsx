@@ -83,6 +83,7 @@ export default function CotizacionForm() {
   const [dateTimeTarget, setDateTimeTarget] = useState({ cscId: null, value: null });
   const [dateTimeDraft, setDateTimeDraft] = useState(null);
 
+  const [loading, setLoading] = useState(false);
   const [loadingCotizacion, setLoadingCotizacion] = useState(false);
   const [loadingServices, setLoadingServices] = useState(null);
 
@@ -243,6 +244,7 @@ export default function CotizacionForm() {
   async function onAdd() {
     if (!cotizacionId) { showNotification('Guarda la cotización primero', 'error'); return; }
     try {
+      setLoading(true);
       if (searchType === 'service') {
         setLoadingServices('new');
         const item = selectedSuggestion || suggestions[0];
@@ -285,6 +287,7 @@ export default function CotizacionForm() {
       showNotification(e.message || 'No se pudo agregar', 'error'); 
     } finally {
       setLoadingServices(null);
+      setLoading(false);
     }
   }
 
@@ -636,9 +639,11 @@ export default function CotizacionForm() {
                           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
                             <i className="pi pi-trash" style={{ cursor: 'pointer'}} aria-label="Eliminar servicio"
                               onClick={(e) => {
+                                if (loading) return;
                                 e.stopPropagation();
                                 handleDeleteService(s.id);
-                              }} />
+                              }} 
+                            />
                             <div className="cotz-service-title">{s.service?.name}</div>
                           </div>
                           {selectedCS === s.id && <span className="cotz-select-hint">Seleccionado para agregar componentes</span>}
@@ -657,10 +662,12 @@ export default function CotizacionForm() {
                               
                               <div style={{ display: 'flex', alignItems: 'center', width: '25%' }}>
                                 <i style={{ width: '1.5rem', marginLeft: '2rem', cursor: 'pointer' }} className="pi pi-trash" 
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleDeleteComponent(rowData.id, s.id);
-                                }} />
+                                  onClick={(e) => {
+                                    if (loading) return;
+                                    e.stopPropagation();
+                                    handleDeleteComponent(rowData.id, s.id);
+                                  }}
+                                />
                                 <div style={{ cursor: 'pointer' }} onClick={(e) => { e.stopPropagation(); openDateTimePicker(rowData); }}>
                                   {rowData.scheduledAt
                                     ? <span className="muted">{formatFechaHoraCorta(rowData.scheduledAt)}</span>
@@ -750,8 +757,9 @@ export default function CotizacionForm() {
                       dropdown
                       style={{ width: '60%', marginRight: 8 }}
                       inputClassName="p-inputtext"
+                      disabled={loading}
                     />
-                    <Button label="Agregar" className="p-button-outlined" onClick={onAdd} />
+                    <Button label="Agregar" className="p-button-outlined" onClick={onAdd} disabled={loading} />
                     {isSearching && <span className="search-status">Buscando…</span>}
                   </div>
                 </div>
