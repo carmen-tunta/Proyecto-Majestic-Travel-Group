@@ -33,6 +33,7 @@ import '../../Proveedores/styles/DetallesProveedores.css';
 import { categorias, estados, agencias, paises, idiomas } from '../constants/options';
 import { RadioButton } from 'primereact/radiobutton';
 import { ProgressSpinner } from 'primereact/progressspinner';
+import { ConfirmDialog } from 'primereact/confirmdialog';
 // Modal de asignación de proveedores
 
 // (formatFecha eliminado: ya usamos Calendar con locale 'es')
@@ -86,6 +87,10 @@ export default function CotizacionForm() {
   const [loading, setLoading] = useState(false);
   const [loadingCotizacion, setLoadingCotizacion] = useState(false);
   const [loadingServices, setLoadingServices] = useState(null);
+  const [visibleDialog, setVisibleDialog] = useState(false);
+  const [dialogType, setDialogType] = useState(null);
+  const [componentToDelete, setComponentToDelete] = useState(null);
+  const [serviceToDelete, setServiceToDelete] = useState(null);
 
   // Helpers de fechas (usar día/hora LOCAL para evitar desfases por zona horaria)
   function toLocalDateString(date) {
@@ -448,6 +453,9 @@ export default function CotizacionForm() {
       showNotification(e.message || 'No se pudo eliminar el servicio', 'error');
     } finally {
       setLoadingServices(null);
+      setServiceToDelete(null);
+      setDialogType('');
+      setVisibleDialog(false);
     }
   }
 
@@ -464,13 +472,22 @@ export default function CotizacionForm() {
         return { ...prev, servicios };
       });
     });
-  } catch (e) {
-    showNotification(e.message || 'No se pudo eliminar el componente', 'error');
-  } finally {
-    setLoadingServices(null);
+    } catch (e) {
+      showNotification(e.message || 'No se pudo eliminar el componente', 'error');
+    } finally {
+      setLoadingServices(null);
+      setComponentToDelete(null);
+      setDialogType('');
+      setVisibleDialog(false);
+    }
   }
-}
 
+  const reject = () => {
+        setComponentToDelete(null);
+        setServiceToDelete(null);
+        setDialogType('');
+        setVisibleDialog(false);
+    };
 
   // Items for TabMenu to mirror Proveedores tabs
   const items = [
@@ -652,7 +669,10 @@ export default function CotizacionForm() {
                               onClick={(e) => {
                                 if (loading) return;
                                 e.stopPropagation();
-                                handleDeleteService(s.id);
+                                setDialogType('service');
+                                setServiceToDelete(s.id);
+                                setVisibleDialog(true);
+                                // handleDeleteService(s.id);
                               }} 
                             />
                             <div className="cotz-service-title">{s.service?.name}</div>
@@ -676,7 +696,10 @@ export default function CotizacionForm() {
                                   onClick={(e) => {
                                     if (loading) return;
                                     e.stopPropagation();
-                                    handleDeleteComponent(rowData.id, s.id);
+                                    setDialogType('component');
+                                    setComponentToDelete({ cscId: rowData.id, serviceId: s.id });
+                                    setVisibleDialog(true);
+                                    // handleDeleteComponent(rowData.id, s.id);
                                   }}
                                 />
                                 <div style={{ cursor: 'pointer' }} onClick={(e) => { e.stopPropagation(); openDateTimePicker(rowData); }}>
@@ -814,6 +837,23 @@ export default function CotizacionForm() {
           }));
           return { ...prev, servicios };
         })}
+      />
+
+      <ConfirmDialog
+          group="declarative"  
+          visible={visibleDialog} 
+          onHide={() => setVisibleDialog(false)} 
+          message={dialogType === 'component' ? "¿Estás seguro de que deseas eliminar este componente del servicio?" 
+              : dialogType === 'service' ? "¿Estás seguro de que deseas eliminar este servicio de la cotización?" : ''}
+          header="Confirmación" 
+          icon="pi pi-exclamation-triangle" 
+          accept={() => {
+              if (dialogType === 'component' && componentToDelete) handleDeleteComponent(componentToDelete.cscId, componentToDelete.serviceId);
+              else if (dialogType === 'service' && serviceToDelete) handleDeleteService(serviceToDelete);
+          }}
+          reject={() => reject()} 
+          acceptLabel="Si"
+          rejectLabel="No"
       />
 
   {/* SelectAddModal eliminado: agregamos directamente desde el buscador principal */}
