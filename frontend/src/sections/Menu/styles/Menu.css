@@ -10,8 +10,8 @@
     min-width: 15vw;
     max-width: 15vw;
     justify-content: space-around;
-    background-color: white;
     z-index: 998;
+    background-color: var(--primary-color);
 }
 
 /* Menú cuando el modal está abierto - no fijo */
@@ -33,13 +33,17 @@
     align-items: center;
     text-align: left;
     padding-left: 0.5rem;
-    color: black;
+    color: white;
+}
+
+.menu-app .p-button .pi {
+    color: white;
 }
 
 .menu-app .p-button:focus {
     border: none !important;
     box-shadow: none;
-    background-color: var(--blue-100) !important;
+    background-color: var(--blue-800) !important;
 }
 
 .menu-app .p-button .p-button-label {
@@ -56,14 +60,13 @@
 .menu-logo {
     height: 15%;
     display: flex;
-    justify-content: initial;
+    justify-content: center;
     align-items: center;
-    padding-bottom: 2rem;
-    padding-left: 1rem;
+    background-color: var(--blue-900);
 }
 
 .menu-logo img {
-    width: 50%;
+    width: 40%;
     height: auto;
 }
 
@@ -79,4 +82,14 @@
     display: flex;
     flex-direction: column;
     justify-content: end;
+}
+
+.menu-app .p-button.p-button-text:not(:disabled):hover {
+    background: var(--blue-800);
+    border-color: transparent;
+}
+
+.menu-app .p-button.p-button-text:not(:disabled):active {
+    background: var(--blue-700);
+    border-color: transparent;
 }

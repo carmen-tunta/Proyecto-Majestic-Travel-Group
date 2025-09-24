@@ -49,6 +49,9 @@ const ResetPassword = () => {
     return ( 
     <div className="reset-password">
         <form onSubmit={handleSubmit}>
+            <div style={{ textAlign: 'center'}}>
+                <img src={process.env.PUBLIC_URL + '/logo_mtg.png'} alt="MTG" style={{ height: '5rem' }} />
+            </div>
             <h1>Restablecer Contraseña</h1>
             <div style={{ position: 'relative', marginBottom: '1rem' }}>
                 <InputText 
@@ -110,6 +113,7 @@ const ResetPassword = () => {
                 </div>
             )}
             <Button 
+                className='reset-button'
                 type="submit"
                 label={loading ? "Cargando..." : "Restablecer"}
                 disabled={!passwordMatch || loading}
