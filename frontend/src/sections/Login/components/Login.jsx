@@ -42,13 +42,12 @@ function Login() {
   const toggleShowPassword = () => setShowPassword((prev) => !prev);
   
   return (
-    <div style={{ minHeight: '100vh', minWidth: '100vw', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'var(--primary-color)' }}>
-      <div style={{ width: 360 }}>
+    <div className='login-container'>
         <div style={{ textAlign: 'center', marginBottom: 24 }}>
-          <img src={process.env.PUBLIC_URL + '/logo_mtg.png'} alt="MTG" style={{ height: '5rem' }} />
+          <img src={process.env.PUBLIC_URL + '/logo_grande.png'} alt="MTG" style={{ height: '5rem' }} />
         </div>
         
-        <div className="p-input-icon-left" style={{ marginBottom: 12 }}>
+        <div className="p-input-icon-left" style={{ marginBottom: 12, width: '27vw' }}>
           <i className="pi pi-user" />
           <InputText 
             placeholder="Usuario" 
@@ -59,7 +58,7 @@ function Login() {
           />
         </div>
         
-        <div className="p-input-icon-left login-password-group" style={{ marginBottom: 12 }}>
+        <div className="p-input-icon-left login-password-group" style={{ marginBottom: 12, width: '27vw' }}>
           <i className="pi pi-lock" />
           <InputText 
             placeholder="Contraseña" 
@@ -82,7 +81,7 @@ function Login() {
         <Button 
           label={loading ? 'Autenticando...' : 'Acceder al sistema'} 
           className="p-button" 
-          style={{ width: '100%', backgroundColor: 'var(--blue-600)' }}
+          style={{ width: '27vw' }}
           onClick={handleLogin}
           disabled={loading}
           loading={loading}
@@ -93,7 +92,6 @@ function Login() {
             ¿Olvidaste contraseña?
           </Link>
         </div>
-      </div>
     </div>
   );
 }

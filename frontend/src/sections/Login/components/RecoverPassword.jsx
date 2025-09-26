@@ -36,9 +36,9 @@ const RecoverPassword = () => {
     <div className='recover-password'>
       <form className="recover-form" onSubmit={handleSubmit}>
         <div style={{ textAlign: 'center', marginBottom: 24 }}>
-          <img src={process.env.PUBLIC_URL + '/logo_mtg.png'} alt="MTG" style={{ height: '5rem' }} />
+          <img src={process.env.PUBLIC_URL + '/logo_grande.png'} alt="MTG" style={{ height: '5rem' }} />
         </div>
-        <div className="p-input-icon-left">  
+        <div className="p-input-icon-left" style={ { width: '27vw'} }>  
             <i className="pi pi-envelope"/>
             <InputText 
               type="email" 
@@ -50,6 +50,7 @@ const RecoverPassword = () => {
             />
         </div>
         <Button 
+          style={ { width: '27vw'} }
           label={loading ? "Cargando..." : "Recuperar contraseña"} 
           type='submit' 
           disabled={loading}
