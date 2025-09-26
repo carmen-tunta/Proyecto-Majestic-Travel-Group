@@ -13,6 +13,20 @@ export class User {
   username: string;
 
   @Column({ 
+    type: 'text', 
+    nullable: true,
+    comment: 'Nombre completo del usuario'
+  })
+  nombre: string | null;
+
+  @Column({ 
+    type: 'text', 
+    nullable: true,
+    comment: 'Área a la que pertenece el usuario'
+  })
+  area: string | null;
+
+  @Column({ 
     type: 'longtext',
     comment: 'Contraseña hasheada del usuario' 
   })
