@@ -11,10 +11,8 @@
     max-width: 15vw;
     justify-content: space-around;
     z-index: 998;
-    background-color: var(--primary-color);
 }
 
-/* Menú cuando el modal está abierto - no fijo */
 .menu-app-modal {
     position: static;
     width: 15vw;
@@ -27,24 +25,19 @@
 .menu-app .p-button {
     width: 100%;
     height: 2.2rem;
-     
+    color: black;
     display: flex;
     justify-content: flex-start;
     align-items: center;
     text-align: left;
     padding-left: 0.5rem;
-    color: white;
 }
 
 .menu-app .p-button .pi {
-    color: white;
+    color: black;
 }
 
-.menu-app .p-button:focus {
-    border: none !important;
-    box-shadow: none;
-    background-color: var(--blue-800) !important;
-}
+
 
 .menu-app .p-button .p-button-label {
     flex: 1;
@@ -65,8 +58,7 @@
 }
 
 .menu-logo img {
-    width: 40%;
-    width: 40%;
+    width: 60%;
     height: auto;
 }
 
@@ -84,12 +76,3 @@
     justify-content: end;
 }
 
-.menu-app .p-button.p-button-text:not(:disabled):hover {
-    background: var(--blue-800);
-    border-color: transparent;
-}
-
-.menu-app .p-button.p-button-text:not(:disabled):active {
-    background: var(--blue-700);
-    border-color: transparent;
-}
