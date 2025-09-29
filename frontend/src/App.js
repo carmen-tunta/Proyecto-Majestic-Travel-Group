@@ -20,11 +20,12 @@ import Services from './sections/Services/components/Services';
 import Cotizaciones from './sections/Cotizacion/components/Cotizaciones';
 import CotizacionForm from './sections/Cotizacion/components/CotizacionForm';
 import PlanYourTrip from './sections/Public/components/PlanYourTrip';
+import ThankYou from './sections/Public/components/ThankYou';
 
 function AppContent() {
   const location = useLocation();
   const { isModalOpen } = useModal();
-  const hideMenu = location.pathname === '/forgot-password' || location.pathname === '/'|| location.pathname === '/reset-password' || location.pathname === '/plan-your-trip';
+  const hideMenu = location.pathname === '/forgot-password' || location.pathname === '/'|| location.pathname === '/reset-password' || location.pathname === '/plan-your-trip' || location.pathname === '/plan-your-trip/thank-you';
   return (
     <>
       {!hideMenu && <Menu />}
@@ -48,6 +49,7 @@ function AppContent() {
             </PublicRoute>
           } />
           <Route path="/plan-your-trip" element={<PlanYourTrip />} />
+          <Route path="/plan-your-trip/thank-you" element={<ThankYou />} />
           
           {/* Rutas protegidas - solo para usuarios autenticados */}
           <Route path="/itinerario" element={

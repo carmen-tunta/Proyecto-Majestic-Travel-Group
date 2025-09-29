@@ -42,6 +42,14 @@
 .pyt-trip-info { padding: 10px 12px; }
 .pyt-trip-title { margin: 0; font-size: 13px; }
 
+.pyt-thanks-container { display:flex; align-items:center; justify-content:center; min-height: calc(100vh - 80px); padding: 0 16px; }
+.pyt-thanks-box { max-width: 250px; width: 100%; }
+.pyt-thanks-box h2 { font-size: 32px; margin: 0 0 10px; }
+.pyt-thanks-box p { font-size: 18px; color:#4b5563; margin:0; }
+
+/* Overlay de envío */
+.pyt-overlay { position: fixed; inset: 0; background: rgba(255,255,255,.6); display:flex; align-items:center; justify-content:center; z-index: 1000; }
+
 @media (max-width: 1280px) { .pyt-grid { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 1024px) { .pyt-main { grid-template-columns: 1fr; } }
 

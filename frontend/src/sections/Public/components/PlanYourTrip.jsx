@@ -9,6 +9,7 @@ import { FloatLabel } from 'primereact/floatlabel';
 import { addLocale } from 'primereact/api';
 import QuoteRequestRepository from '../../../modules/QuoteRequest/repository/QuoteRequestRepository';
 import CreateQuoteRequest from '../../../modules/QuoteRequest/application/CreateQuoteRequest';
+import { ProgressSpinner } from 'primereact/progressspinner';
 
 export default function PlanYourTrip() {
   const [services, setServices] = useState([]);
@@ -104,17 +105,22 @@ export default function PlanYourTrip() {
   }, [loading, services]);
 
   const countryOptions = useMemo(() => ([
-    { label: 'Peru (+51)', value: '+51' },
-    { label: 'México (+52)', value: '+52' },
-    { label: 'Colombia (+57)', value: '+57' },
-    { label: 'Chile (+56)', value: '+56' },
-    { label: 'Argentina (+54)', value: '+54' },
-    { label: 'España (+34)', value: '+34' },
-    { label: 'Estados Unidos (+1)', value: '+1' },
-    { label: 'Bolivia (+591)', value: '+591' },
-    { label: 'Ecuador (+593)', value: '+593' },
-    { label: 'Brasil (+55)', value: '+55' },
+    { label: 'Peru (+51)', value: '+51', country: 'Perú' },
+    { label: 'México (+52)', value: '+52', country: 'México' },
+    { label: 'Colombia (+57)', value: '+57', country: 'Colombia' },
+    { label: 'Chile (+56)', value: '+56', country: 'Chile' },
+    { label: 'Argentina (+54)', value: '+54', country: 'Argentina' },
+    { label: 'España (+34)', value: '+34', country: 'España' },
+    { label: 'Estados Unidos (+1)', value: '+1', country: 'Estados Unidos' },
+    { label: 'Bolivia (+591)', value: '+591', country: 'Bolivia' },
+    { label: 'Ecuador (+593)', value: '+593', country: 'Ecuador' },
+    { label: 'Brasil (+55)', value: '+55', country: 'Brasil' },
   ]), []);
+
+  function resolveCountryName(code) {
+    const found = countryOptions.find(c => c.value === code);
+    return found ? found.country : undefined;
+  }
 
   return (
     <div className="pyt-page">
@@ -129,6 +135,11 @@ export default function PlanYourTrip() {
       </header>
 
       <main className="pyt-main">
+        {submitting && (
+          <div className="pyt-overlay">
+            <ProgressSpinner />
+          </div>
+        )}
         <aside className="pyt-sidebar">
           <section className="pyt-card">
             <h2 className="pyt-section-title">Experiences for:</h2>
@@ -207,11 +218,11 @@ export default function PlanYourTrip() {
                     whatsapp: (phoneNumber || '').replace(/\D/g,''),
                     travelDate: travelDate ? new Date(travelDate).toISOString().slice(0,10) : undefined,
                     message: otherServices || undefined,
-                    countryName: undefined,
+                    countryName: resolveCountryName(phoneCountry),
                     serviceIds: trips.map(t=>t.id)
                   };
                   await useCase.execute(payload);
-                  alert('Solicitud enviada correctamente');
+                  window.location.assign('/plan-your-trip/thank-you');
                   // limpiar
                   setName(''); setEmail(''); setPhoneCountry('+51'); setPhoneNumber(''); setTravelDate(null); setOtherServices(''); setTrips([]);
                 } catch (e) {
@@ -219,7 +230,7 @@ export default function PlanYourTrip() {
                 } finally {
                   setSubmitting(false);
                 }
-              }}>Request a quote</button>
+              }}>{submitting ? 'Sending...' : 'Request a quote'}</button>
             </form>
           </section>
         </aside>
