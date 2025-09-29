@@ -31,6 +31,7 @@ export class ServicesController {
     }
 
 
+  @Public()
   @Get('search')
   async searchServices(@Query('name') name: string) {
     if (!name || name.trim() === '') {

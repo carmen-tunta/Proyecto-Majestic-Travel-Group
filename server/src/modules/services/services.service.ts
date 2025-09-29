@@ -77,6 +77,7 @@ export class ServicesService {
     return await this.serviceRepository.createQueryBuilder('service')
       .where('LOWER(TRIM(service.name)) LIKE :name', { name: `%${cleanName}%` })
       .leftJoinAndSelect('service.components', 'component')
+      .leftJoinAndSelect('service.images', 'images')
       .getMany();
   }
 

@@ -1,12 +1,16 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import '../styles/PlanYourTrip.css';
 import ServiceRepository from '../../../modules/Service/repository/ServiceRepository';
 import GetPublicServices from '../../../modules/Service/application/GetPublicServices';
+import SearchService from '../../../modules/Service/application/SearchService';
+import { Skeleton } from 'primereact/skeleton';
 
 export default function PlanYourTrip() {
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [query, setQuery] = useState('');
+  const searchTimeoutRef = useRef(null);
 
   useEffect(() => {
     let mounted = true;
@@ -28,6 +32,35 @@ export default function PlanYourTrip() {
     load();
     return () => { mounted = false; };
   }, []);
+
+  async function handleSearch(value) {
+    setQuery(value);
+    if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current);
+    setLoading(true);
+    setServices([]); // evita parpadeos con datos anteriores
+
+    searchTimeoutRef.current = setTimeout(async () => {
+      const trimmed = value.trim();
+      if (!trimmed) {
+        const repo = new ServiceRepository();
+        const useCase = new GetPublicServices(repo);
+        const result = await useCase.execute(6);
+        setServices(Array.isArray(result?.data) ? result.data.slice(0, 6) : []);
+        setLoading(false);
+        return;
+      }
+      try {
+        const repo = new ServiceRepository();
+        const search = new SearchService(repo);
+        const result = await search.execute(trimmed);
+        setServices(Array.isArray(result) ? result.slice(0, 6) : []);
+      } catch (e) {
+        setError(e?.message || 'Error en la búsqueda');
+      } finally {
+        setLoading(false);
+      }
+    }, 300);
+  }
 
   const cards = useMemo(() => {
     if (loading) return Array.from({ length: 6 }).map(() => ({ id: Math.random() }));
@@ -85,16 +118,31 @@ export default function PlanYourTrip() {
 
         <section className="pyt-content">
           <div className="pyt-search">
-            <input className="pyt-search-input" placeholder="Choose or search for the trip you want, for example, Cusco." />
+            <input
+              className="pyt-search-input"
+              value={query}
+              onChange={(e) => handleSearch(e.target.value)}
+              placeholder="Choose or search for the trip you want, for example, Cusco."
+            />
           </div>
           <div className="pyt-grid">
             {cards.map((svc, idx) => {
+              if (loading) {
+                return (
+                  <article key={idx} className="pyt-trip-card">
+                    <Skeleton width="100%" height="220px" borderRadius="8px 8px 0 0" />
+                    <div className="pyt-trip-info">
+                      <Skeleton width="70%" height="14px" />
+                    </div>
+                  </article>
+                );
+              }
               const img = svc?.images?.[0]?.imagePath ? `${process.env.REACT_APP_API_URL}/${svc.images[0].imagePath}` : null;
-              const title = svc?.name || 'Título de experiencia de ejemplo';
+              const title = svc?.name || '';
               return (
                 <article key={svc?.id ?? idx} className="pyt-trip-card">
                   {img ? (
-                    <img className="pyt-trip-image" src={img} alt={title} />
+                    <img className="pyt-trip-image" src={img} alt={title || 'Service image'} />
                   ) : (
                     <div className="pyt-trip-image" />
                   )}
