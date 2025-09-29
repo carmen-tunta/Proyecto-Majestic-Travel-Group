@@ -25,6 +25,8 @@ import { Cotizacion } from 'src/modules/cotizacion/entities/cotizacion.entity';
 import { CotizacionServicio } from 'src/modules/cotizacion/entities/cotizacion-servicio.entity';
 import { CotizacionServicioComponente } from 'src/modules/cotizacion/entities/cotizacion-servicio-componente.entity';
 import { Pasajero } from 'src/modules/pasajeros/entities/pasajero.entity';
+import { QuoteRequest } from 'src/modules/quote-requests/entities/quote-request.entity';
+import { QuoteRequestService } from 'src/modules/quote-requests/entities/quote-request-service.entity';
 
 
 @Module({
@@ -57,7 +59,9 @@ import { Pasajero } from 'src/modules/pasajeros/entities/pasajero.entity';
                   Cotizacion,
                   CotizacionServicio,
                   CotizacionServicioComponente,
-                  Pasajero
+                  Pasajero,
+                  QuoteRequest,
+                  QuoteRequestService
                 ], // Aquí se agregarán las entidades
 
       synchronize: true, // Cambia a true solo en desarrollo

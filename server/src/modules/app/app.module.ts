@@ -22,6 +22,7 @@ import { ServiceImagesModule } from '../serviceImages/serviceImages.module';
 import { TarifarioDocumentsModule } from '../tarifarioDocuments/tarifarioDocuments.module';
 import { CotizacionModule } from '../cotizacion/cotizacion.module';
 import { PasajerosModule } from '../pasajeros/pasajeros.module';
+import { QuoteRequestsModule } from '../quote-requests/quote-requests.module';
 
 @Module({
  
@@ -44,7 +45,8 @@ import { PasajerosModule } from '../pasajeros/pasajeros.module';
             ServiceImagesModule,
             TarifarioDocumentsModule,
             CotizacionModule,
-            PasajerosModule
+            PasajerosModule,
+            QuoteRequestsModule
           ],
 
   controllers: [AppController],
