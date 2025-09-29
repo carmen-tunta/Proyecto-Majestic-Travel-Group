@@ -19,13 +19,15 @@ export class RegistroPagoService {
         return await this.registroPagoRepository.find({ relations: ['cotizacion'] });
     }
 
-    async findById(id: number): Promise<RegistroPago | null> {
-        return await this.registroPagoRepository.findOne({ where: { id }, relations: ['cotizacion'] });
-    } 
+    async findByCotizacionId(id: number): Promise<RegistroPago[]> {
+        return await this.registroPagoRepository.find({ where: { cotizacionId: Number(id) }, relations: ['cotizacion'] });
+    }
 
     async update(id: number, data: Partial<RegistroPago>): Promise<RegistroPago | null> {
-        await this.registroPagoRepository.update(id, data);
-        return this.findById(id);
+        const registroPago = await this.registroPagoRepository.findOne({ where: { id } });
+        if (!registroPago) return null;
+        this.registroPagoRepository.merge(registroPago, data);
+        return await this.registroPagoRepository.save(registroPago);
     }
 
     async delete(id: number): Promise<boolean> {

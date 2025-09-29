@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Post, Put } from "@nestjs/common";
 import { RegistroPagoService } from "./registroPago.service";
 import { RegistroPago } from "./entities/registroPago.entity";
 
@@ -16,18 +16,18 @@ export class RegistroPagoController {
         return await this.registroPagoService.findAll();
     }
 
-    @Get(':id')
-    async findRegistroPagoById(@Body('id') id: number): Promise<RegistroPago | null> {
-        return await this.registroPagoService.findById(id);
+    @Get('cotizacion/:id')
+    async findRegistroPagoByCotizacionId(@Param('id') id: number): Promise<RegistroPago[]> {
+        return await this.registroPagoService.findByCotizacionId(id);
     }
 
-    @Post('update/:id')
-    async updateRegistroPago(@Body('id') id: number, @Body() data: Partial<RegistroPago>): Promise<RegistroPago | null> {
+    @Put('update/:id')
+    async updateRegistroPago(@Param('id') id: number, @Body() data: Partial<RegistroPago>): Promise<RegistroPago | null> {
         return await this.registroPagoService.update(id, data);
     }
 
-    @Post(':id')
-    async deleteRegistroPago(@Body('id') id: number): Promise<{ success: boolean }> {
+    @Delete(':id')
+    async deleteRegistroPago(@Param('id') id: number): Promise<{ success: boolean }> {
         const success = await this.registroPagoService.delete(id);
         return { success };
     }

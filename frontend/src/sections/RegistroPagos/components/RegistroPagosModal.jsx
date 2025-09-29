@@ -1,19 +1,90 @@
 import { InputText } from 'primereact/inputtext';
 import { FloatLabel } from 'primereact/floatlabel';
 import { Button } from 'primereact/button';
-import { useEffect, useState } from 'react';
+import { use, useEffect, useState } from 'react';
 import { useNotification } from '../../Notification/NotificationContext';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import "../styles/RegistroPagosModal.css"
+import RegistroPagoRepository from '../../../modules/RegistroPagos/repository/RegistroPagoRepository';
+import GetRegistroPagoByCotizacionId from '../../../modules/RegistroPagos/application/GetRegistroPagoByCotizacionId';
+import CreateRegistroPago from '../../../modules/RegistroPagos/application/CreateRegistroPago';
+import DeleteRegistroPago from '../../../modules/RegistroPagos/application/DeleteResgistroPago';
 
 const RegistroPagosModal = ({ onHide, cotizacion }) => {
+    const rpRepo = new RegistroPagoRepository();
+    const getRpByCotizacion = new GetRegistroPagoByCotizacionId(rpRepo);
+    const createRp = new CreateRegistroPago(rpRepo);
+    const deleteRp = new DeleteRegistroPago(rpRepo);
+
+    const [registroPago, setRegistroPago] = useState([]);
+
     const {showNotification} = useNotification();
     const [loading, setLoading] = useState(false);
 
     const [fecha, setFecha] = useState('');
     const [monto, setMonto] = useState('');
     const [nota, setNota] = useState('');
+
+    const adelanto = registroPago.reduce((sum, pago) => sum + (Number(pago.monto) || 0), 0);
+    const precioVenta = Number(cotizacion?.precioVenta) || 0;
+    const saldo = precioVenta - adelanto;
+
+
+    const fetchData = async () => {
+        try {
+            setLoading(true);
+            const data = await getRpByCotizacion.execute(cotizacion.id);
+            setRegistroPago(data);
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    const handleSaveRegistroPago = async () => {
+        if (!fecha.trim() || !monto.trim()) {
+            showNotification('Completa todos los campos correctamente.', 'error');
+            return;
+        }
+
+        try {
+            setLoading(true);
+            await createRp.execute({
+                fecha: fecha,
+                monto: monto,
+                nota: nota,
+                cotizacionId: cotizacion.id
+            });
+            showNotification('Registro de pago creado exitosamente.', 'success');
+            setFecha('');
+            setMonto('');
+            setNota('');
+        } catch (error) {
+            console.error(error);
+            showNotification('Error al crear el registro de pago.', 'error');
+        } finally {
+            fetchData();
+        }
+    }
+
+    const handleDeleteRp = async (id) => {
+        try {
+            setLoading(true);
+            await deleteRp.execute(id);
+            showNotification('Registro de pago eliminado exitosamente.', 'success');
+        } catch (error) {
+            console.error(error);
+            showNotification('Error al eliminar el registro de pago.', 'error');
+        } finally {
+            fetchData();
+        }
+    }
+
+    useEffect(() => {
+        fetchData();
+    }, []);
 
 
   return (
@@ -60,19 +131,22 @@ const RegistroPagosModal = ({ onHide, cotizacion }) => {
                         className="p-inputtext-sm" 
                         value={nota} 
                         onChange={e => setNota(e.target.value)}
-                        required 
                     />
                     <label htmlFor="nota">Nota</label>
                 </FloatLabel>
                 <Button 
                     icon="pi pi-plus"
                     className="p-button-sm" 
-                    onClick={() => undefined}
+                    onClick={() => handleSaveRegistroPago()}
                     disabled={loading}
                     loading={loading}
                 />
             </div>
-            <DataTable value={[]}>
+            <DataTable 
+                value={registroPago}
+                loading={loading}
+                emptyMessage="No hay registros de pago"
+            >
                 <Column 
                     field="fecha" 
                     header="Fecha de pago" 
@@ -96,7 +170,7 @@ const RegistroPagosModal = ({ onHide, cotizacion }) => {
                                 className="pi pi-trash"    
                                 title="Eliminar" 
                                 style={{cursor:"pointer"}}
-                                onClick={() => undefined }    
+                                onClick={() => handleDeleteRp(rowData.id)}    
                             ></i>
                         </span>
                     )}
@@ -107,8 +181,8 @@ const RegistroPagosModal = ({ onHide, cotizacion }) => {
                         Monto expresado en USD
                     </div>
                     <div style={{ textAlign: 'right', color: '#525252ff', fontWeight: 'bold' }}>
-                        <div>Adelanto: 00.00</div>
-                        <div>Saldo: 00.00</div>
+                        <div>Adelanto: {adelanto.toFixed(2)}</div>
+                        <div>Saldo: {saldo.toFixed(2)}</div>
                     </div>
             </div>
         </div>
