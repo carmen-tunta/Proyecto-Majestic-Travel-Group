@@ -5,10 +5,11 @@ import { Column } from "primereact/column";
 import useSearch from "../../../hooks/useSearch";
 import SearchBar from "../../../components/SearchBar";
 import { apiService } from "../../../services/apiService";
-
-import "../styles/RegistroPagos.css"
 import CotizacionRepository from "../../../modules/Cotizacion/repository/CotizacionRepository";
 import GetAllCotizaciones from "../../../modules/Cotizacion/application/GetAllCotizaciones";
+import { useModal } from "../../../contexts/ModalContext";
+import RegistroPagosModal from "./RegistroPagosModal";
+import "../styles/RegistroPagos.css"
 
 const RegistroPagos = () => {
     const cotizacionRepo = new CotizacionRepository();
@@ -16,8 +17,10 @@ const RegistroPagos = () => {
 
     const [cotizaciones, setCotizaciones] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [selectedCotizacion, setSelectedCotizacion] = useState(null);
 
     const [showModal, setShowModal] = useState(false);
+    const { setIsModalOpen } = useModal();
     const [first, setFirst] = useState(0);
     const [rows, setRows] = useState(10);
     const [totalRecords, setTotalRecords] = useState(0);
@@ -27,7 +30,6 @@ const RegistroPagos = () => {
             setLoading(true);
             const data = await getAllCotizaciones.execute({ page, pageSize });
             setCotizaciones(data);
-            console.log(data)
             // setTotalRecords(total);
 
         } catch (error) {
@@ -40,6 +42,18 @@ const RegistroPagos = () => {
     useEffect(() => {
         fetchData(0, rows);
     }, []);
+
+    const handleModalOpen = (cotizacion) => {
+        setSelectedCotizacion(cotizacion);
+        setShowModal(true);
+        setIsModalOpen(true);
+    }
+
+    const handleModalClose = () => {
+        setShowModal(false);
+        setIsModalOpen(false);
+        fetchData();
+    };
 
     const onPageChange = (event) => {
         const page = Math.floor(event.first / event.rows);
@@ -96,7 +110,7 @@ const RegistroPagos = () => {
                     style={{ width: '8%' }}>
                 </Column>
                 <Column 
-                    field="" 
+                    field="costo" 
                     header="Costo USD" 
                     style={{ width: '8%' }}>
                 </Column>
@@ -104,14 +118,14 @@ const RegistroPagos = () => {
                     header="% Utilidad USD" 
                     body={(rowData) => (
                         <span>
-                            {rowData.utilidad ? Number(rowData.utilidad).toFixed(0) : '0.00'}%
-
+                            <span style={{color: '#c9c9c9ff'}}>{rowData.utilidad ? Number(rowData.utilidad).toFixed(0) : '0.00'}% </span>
+                            {rowData.precioUtilidad}
                         </span>
                     )}
-                    style={{ width: '9%' }}>
+                    style={{ width: '11%' }}>
                 </Column>
                 <Column 
-                    field="" 
+                    field="precioVenta" 
                     header="Precio venta USD" 
                     style={{ width: '9%' }}>
                 </Column><Column 
@@ -133,7 +147,7 @@ const RegistroPagos = () => {
                                 className="pi pi-receipt"    
                                 title="Reporte" 
                                 style={{cursor:"pointer"}}
-                                onClick={() => undefined}    
+                                onClick={() => handleModalOpen(rowData)}    
                             ></i>
                         </span>
                     )}
@@ -142,12 +156,11 @@ const RegistroPagos = () => {
         </div>
 
         {showModal && (
-            <div>Hola</div>
-            // <ItineraryModal
-            //     visible={showModal}
-            //     onHide={handleModalClose}
-            //     template={selectedTemplate}
-            // />
+            <RegistroPagosModal
+                visible={showModal}
+                onHide={handleModalClose}
+                cotizacion={selectedCotizacion}
+            />
         )}
 
     </div>
