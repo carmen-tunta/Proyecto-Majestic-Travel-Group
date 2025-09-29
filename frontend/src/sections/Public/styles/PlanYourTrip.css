@@ -38,7 +38,7 @@
 .pyt-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
 .pyt-trip-card { background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden; cursor: pointer; }
 .pyt-selected { border-color: #3b82f6; box-shadow: 0 0 0 2px rgba(59,130,246,.15); }
-.pyt-trip-image { background: #d1d5db; height: 220px; }
+.pyt-trip-image { background: #d1d5db; height: 220px; width: 100%; object-fit: cover; display: block; }
 .pyt-trip-info { padding: 10px 12px; }
 .pyt-trip-title { margin: 0; font-size: 13px; }
 
