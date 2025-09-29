@@ -11,6 +11,7 @@ export default function PlanYourTrip() {
   const [error, setError] = useState('');
   const [query, setQuery] = useState('');
   const searchTimeoutRef = useRef(null);
+  const [trips, setTrips] = useState([]);
 
   useEffect(() => {
     let mounted = true;
@@ -62,6 +63,15 @@ export default function PlanYourTrip() {
     }, 300);
   }
 
+  function handleAddTrip(service) {
+    if (!service?.id) return;
+    setTrips(prev => (prev.some(t => t.id === service.id) ? prev : [...prev, { id: service.id, name: service.name }]));
+  }
+
+  function handleRemoveTrip(id) {
+    setTrips(prev => prev.filter(t => t.id !== id));
+  }
+
   const cards = useMemo(() => {
     if (loading) return Array.from({ length: 6 }).map(() => ({ id: Math.random() }));
     return services;
@@ -107,8 +117,15 @@ export default function PlanYourTrip() {
               <div className="pyt-subsection">
                 <h3>Trips</h3>
                 <ul className="pyt-trips">
-                  <li>Excursión de día completo a la montaña Arcoíris (excursión en grupo)</li>
-                  <li>Reserva Nacional de Salinas y Aguada Blanca</li>
+                  {trips.length === 0 && (
+                    <li style={{ opacity: 0.7 }}>Selecciona un tour para agregarlo aquí</li>
+                  )}
+                  {trips.map(t => (
+                    <li key={t.id} className="pyt-trip-item">
+                      <span className="pyt-trip-text">{t.name}</span>
+                      <button type="button" className="pyt-trip-remove" aria-label="Quitar" onClick={() => handleRemoveTrip(t.id)}>×</button>
+                    </li>
+                  ))}
                 </ul>
               </div>
               <button className="pyt-submit" type="button">Request a quote</button>
@@ -139,8 +156,16 @@ export default function PlanYourTrip() {
               }
               const img = svc?.images?.[0]?.imagePath ? `${process.env.REACT_APP_API_URL}/${svc.images[0].imagePath}` : null;
               const title = svc?.name || '';
+              const isSelected = trips.some(t => t.id === svc?.id);
               return (
-                <article key={svc?.id ?? idx} className="pyt-trip-card">
+                <article
+                  key={svc?.id ?? idx}
+                  className={`pyt-trip-card${isSelected ? ' pyt-selected' : ''}`}
+                  onClick={() => handleAddTrip(svc)}
+                  role="button"
+                  tabIndex={0}
+                  aria-pressed={isSelected}
+                >
                   {img ? (
                     <img className="pyt-trip-image" src={img} alt={title || 'Service image'} />
                   ) : (

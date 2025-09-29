@@ -18,22 +18,24 @@
 
 .pyt-subsection h3 { font-size: 13px; margin: 12px 0 8px; }
 .pyt-trips { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
-.pyt-trips li { background: #f3f4f6; border-radius: 8px; padding: 10px 12px; font-size: 12px; }
+.pyt-trips li { background: #f3f4f6; border-radius: 8px; padding: 10px 12px; font-size: 12px; display:flex; align-items:center; justify-content:space-between; gap:8px; }
+.pyt-trip-item { cursor: default; }
+.pyt-trip-text { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.pyt-trip-remove { border:0; background:#e5e7eb; border-radius:50%; width:22px; height:22px; cursor:pointer; }
 
 .pyt-submit { margin-top: 8px; height: 38px; background: #0d6efd; color: #fff; border: 0; border-radius: 8px; cursor: pointer; }
 
 .pyt-content { display: flex; flex-direction: column; gap: 16px; min-height: 0; width: 100%; }
 .pyt-search-input { width: 100%; height: 40px; border: 1px solid #d1d5db; border-radius: 8px; padding: 0 12px; }
-.pyt-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 20px; }
-.pyt-trip-card { background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden; }
+.pyt-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.pyt-trip-card { background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden; cursor: pointer; }
+.pyt-selected { border-color: #3b82f6; box-shadow: 0 0 0 2px rgba(59,130,246,.15); }
 .pyt-trip-image { background: #d1d5db; height: 220px; }
 .pyt-trip-info { padding: 10px 12px; }
 .pyt-trip-title { margin: 0; font-size: 13px; }
 
-@media (max-width: 1024px) {
-  .pyt-main { grid-template-columns: 1fr; }
-  .pyt-grid { grid-template-columns: repeat(2, 1fr); }
-}
+@media (max-width: 1280px) { .pyt-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 1024px) { .pyt-main { grid-template-columns: 1fr; } }
 
 @media (max-width: 640px) {
   .pyt-grid { grid-template-columns: 1fr; }
