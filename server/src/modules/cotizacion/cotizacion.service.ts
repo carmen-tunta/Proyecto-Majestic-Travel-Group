@@ -58,7 +58,7 @@ export class CotizacionService {
   }
 
   async findAll(): Promise<Cotizacion[]> {
-    return this.cotizacionRepository.find({ relations: ['cliente'] });
+    return this.cotizacionRepository.find({ relations: ['cliente', 'registroPagos'] });
   }
 
   async findOne(id: number): Promise<Cotizacion> {

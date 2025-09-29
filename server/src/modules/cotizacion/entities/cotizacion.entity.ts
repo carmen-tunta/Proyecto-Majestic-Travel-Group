@@ -1,5 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, OneToMany } from 'typeorm';
 import { Client } from '../../clients/entities/client.entity';
+import { RegistroPago } from 'src/modules/registroPago/entities/registroPago.entity';
 
 @Entity('cotizacion')
 export class Cotizacion {
@@ -59,5 +60,8 @@ export class Cotizacion {
 
   @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
   precioVenta: number;
+
+  @OneToMany(() => RegistroPago, (registroPago) => registroPago.cotizacion, { cascade: true })
+  registroPagos: RegistroPago[];
 
 }

@@ -25,6 +25,7 @@ import { Cotizacion } from 'src/modules/cotizacion/entities/cotizacion.entity';
 import { CotizacionServicio } from 'src/modules/cotizacion/entities/cotizacion-servicio.entity';
 import { CotizacionServicioComponente } from 'src/modules/cotizacion/entities/cotizacion-servicio-componente.entity';
 import { Pasajero } from 'src/modules/pasajeros/entities/pasajero.entity';
+import { RegistroPago } from 'src/modules/registroPago/entities/registroPago.entity';
 
 
 @Module({
@@ -57,7 +58,8 @@ import { Pasajero } from 'src/modules/pasajeros/entities/pasajero.entity';
                   Cotizacion,
                   CotizacionServicio,
                   CotizacionServicioComponente,
-                  Pasajero
+                  Pasajero,
+                  RegistroPago
                 ], // Aquí se agregarán las entidades
 
       synchronize: true, // Cambia a true solo en desarrollo
