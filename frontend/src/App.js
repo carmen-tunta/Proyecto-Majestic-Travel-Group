@@ -47,11 +47,7 @@ function AppContent() {
               <ResetPassword />
             </PublicRoute>
           } />
-          <Route path="/plan-your-trip" element={
-            <PublicRoute>
-              <PlanYourTrip />
-            </PublicRoute>
-          } />
+          <Route path="/plan-your-trip" element={<PlanYourTrip />} />
           
           {/* Rutas protegidas - solo para usuarios autenticados */}
           <Route path="/itinerario" element={

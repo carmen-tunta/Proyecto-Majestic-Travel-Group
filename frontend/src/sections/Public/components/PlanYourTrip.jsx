@@ -7,6 +7,8 @@ import { Skeleton } from 'primereact/skeleton';
 import { Calendar } from 'primereact/calendar';
 import { FloatLabel } from 'primereact/floatlabel';
 import { addLocale } from 'primereact/api';
+import QuoteRequestRepository from '../../../modules/QuoteRequest/repository/QuoteRequestRepository';
+import CreateQuoteRequest from '../../../modules/QuoteRequest/application/CreateQuoteRequest';
 
 export default function PlanYourTrip() {
   const [services, setServices] = useState([]);
@@ -18,6 +20,10 @@ export default function PlanYourTrip() {
   const [travelDate, setTravelDate] = useState(null);
   const [phoneCountry, setPhoneCountry] = useState('+51');
   const [phoneNumber, setPhoneNumber] = useState('');
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [otherServices, setOtherServices] = useState('');
+  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     let mounted = true;
@@ -129,11 +135,11 @@ export default function PlanYourTrip() {
             <form className="pyt-form" onSubmit={(e) => e.preventDefault()}>
               <label className="pyt-field">
                 <span>Passenger name*</span>
-                <input type="text" placeholder="" />
+                <input type="text" placeholder="" value={name} onChange={(e)=>setName(e.target.value)} required />
               </label>
               <label className="pyt-field">
                 <span>E-mail*</span>
-                <input type="email" placeholder="" />
+                <input type="email" placeholder="" value={email} onChange={(e)=>setEmail(e.target.value)} required />
               </label>
               <label className="pyt-field">
                 <span>Whatsapp*</span>
@@ -171,7 +177,7 @@ export default function PlanYourTrip() {
               </label>
               <label className="pyt-field">
                 <span>You can inquire about other services here...</span>
-                <input type="text" placeholder="" />
+                <input type="text" placeholder="" value={otherServices} onChange={(e)=>setOtherServices(e.target.value)} />
               </label>
               <div className="pyt-subsection">
                 <h3>Trips</h3>
@@ -187,7 +193,33 @@ export default function PlanYourTrip() {
                   ))}
                 </ul>
               </div>
-              <button className="pyt-submit" type="button">Request a quote</button>
+              <button className="pyt-submit" type="button" disabled={submitting} onClick={async()=>{
+                if (!name || !email) return;
+                if (trips.length === 0) { alert('Selecciona al menos un servicio'); return; }
+                try {
+                  setSubmitting(true);
+                  const repo = new QuoteRequestRepository();
+                  const useCase = new CreateQuoteRequest(repo);
+                  const payload = {
+                    passengerName: name,
+                    email: email,
+                    countryCode: phoneCountry,
+                    whatsapp: (phoneNumber || '').replace(/\D/g,''),
+                    travelDate: travelDate ? new Date(travelDate).toISOString().slice(0,10) : undefined,
+                    message: otherServices || undefined,
+                    countryName: undefined,
+                    serviceIds: trips.map(t=>t.id)
+                  };
+                  await useCase.execute(payload);
+                  alert('Solicitud enviada correctamente');
+                  // limpiar
+                  setName(''); setEmail(''); setPhoneCountry('+51'); setPhoneNumber(''); setTravelDate(null); setOtherServices(''); setTrips([]);
+                } catch (e) {
+                  alert(e?.message || 'Error al enviar solicitud');
+                } finally {
+                  setSubmitting(false);
+                }
+              }}>Request a quote</button>
             </form>
           </section>
         </aside>
