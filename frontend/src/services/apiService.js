@@ -38,6 +38,8 @@ export const apiService = {
     }
   },
 
+  // getServices movido al módulo Service (Repository + UseCase)
+
   // Buscar componentes por nombre, tipo o descripción
   async searchComponents(query) {
     try {
