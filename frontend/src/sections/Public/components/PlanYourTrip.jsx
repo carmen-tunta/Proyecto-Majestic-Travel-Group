@@ -4,6 +4,9 @@ import ServiceRepository from '../../../modules/Service/repository/ServiceReposi
 import GetPublicServices from '../../../modules/Service/application/GetPublicServices';
 import SearchService from '../../../modules/Service/application/SearchService';
 import { Skeleton } from 'primereact/skeleton';
+import { Calendar } from 'primereact/calendar';
+import { FloatLabel } from 'primereact/floatlabel';
+import { addLocale } from 'primereact/api';
 
 export default function PlanYourTrip() {
   const [services, setServices] = useState([]);
@@ -12,6 +15,9 @@ export default function PlanYourTrip() {
   const [query, setQuery] = useState('');
   const searchTimeoutRef = useRef(null);
   const [trips, setTrips] = useState([]);
+  const [travelDate, setTravelDate] = useState(null);
+  const [phoneCountry, setPhoneCountry] = useState('+51');
+  const [phoneNumber, setPhoneNumber] = useState('');
 
   useEffect(() => {
     let mounted = true;
@@ -32,6 +38,20 @@ export default function PlanYourTrip() {
     }
     load();
     return () => { mounted = false; };
+  }, []);
+
+  // Locale español (coherente con Clientes)
+  useEffect(() => {
+    addLocale('es', {
+      firstDayOfWeek: 1,
+      dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+      dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+      dayNamesMin: ['D', 'L', 'M', 'X', 'J', 'V', 'S'],
+      monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+      monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+      today: 'Hoy',
+      clear: 'Limpiar'
+    });
   }, []);
 
   async function handleSearch(value) {
@@ -77,6 +97,19 @@ export default function PlanYourTrip() {
     return services;
   }, [loading, services]);
 
+  const countryOptions = useMemo(() => ([
+    { label: 'Peru (+51)', value: '+51' },
+    { label: 'México (+52)', value: '+52' },
+    { label: 'Colombia (+57)', value: '+57' },
+    { label: 'Chile (+56)', value: '+56' },
+    { label: 'Argentina (+54)', value: '+54' },
+    { label: 'España (+34)', value: '+34' },
+    { label: 'Estados Unidos (+1)', value: '+1' },
+    { label: 'Bolivia (+591)', value: '+591' },
+    { label: 'Ecuador (+593)', value: '+593' },
+    { label: 'Brasil (+55)', value: '+55' },
+  ]), []);
+
   return (
     <div className="pyt-page">
       <header className="pyt-header">
@@ -104,11 +137,37 @@ export default function PlanYourTrip() {
               </label>
               <label className="pyt-field">
                 <span>Whatsapp*</span>
-                <input type="tel" placeholder="+51 Whatsapp*" />
+                <div className="pyt-phone">
+                  <select
+                    className="pyt-phone-select"
+                    value={phoneCountry}
+                    onChange={(e) => setPhoneCountry(e.target.value)}
+                    aria-label="Country code"
+                  >
+                    {countryOptions.map(opt => (
+                      <option key={opt.value} value={opt.value}>{opt.label}</option>
+                    ))}
+                  </select>
+                  <input
+                    className="pyt-phone-input"
+                    type="tel"
+                    inputMode="tel"
+                    placeholder="WhatsApp number"
+                    value={phoneNumber}
+                    onChange={(e) => setPhoneNumber(e.target.value)}
+                    aria-label="Phone number"
+                  />
+                </div>
               </label>
               <label className="pyt-field">
                 <span>Probable travel date</span>
-                <input type="date" />
+                <Calendar
+                  id="travelDate"
+                  value={travelDate}
+                  onChange={(e) => setTravelDate(e.value)}
+                  dateFormat="D dd M y"
+                  locale="es"
+                />
               </label>
               <label className="pyt-field">
                 <span>You can inquire about other services here...</span>

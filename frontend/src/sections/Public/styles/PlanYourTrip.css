@@ -15,6 +15,14 @@
 .pyt-field { display: flex; flex-direction: column; gap: 6px; font-size: 12px; }
 .pyt-field input { height: 38px; padding: 8px 10px; border: 1px solid #d1d5db; border-radius: 6px; outline: none; }
 .pyt-field input:focus { border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59,130,246,.1); }
+/* Alinear PrimeReact Calendar al mismo tamaño de inputs */
+.pyt-field .p-float-label { display: block; width: 100%; }
+.pyt-field .p-calendar { width: 100%; }
+.pyt-field .p-calendar .p-inputtext { width: 100%; height: 38px; padding: 8px 10px; border: 1px solid #d1d5db; border-radius: 6px; }
+.pyt-field .p-calendar .p-inputtext:focus { border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59,130,246,.1); }
+.pyt-phone { display:flex; gap:8px; }
+.pyt-phone-select { height: 38px; padding: 8px 10px; border: 1px solid #d1d5db; border-radius: 6px; background:#fff; width: 130px; }
+.pyt-phone-input { flex:1; height: 38px; padding: 8px 10px; border: 1px solid #d1d5db; border-radius: 6px; }
 
 .pyt-subsection h3 { font-size: 13px; margin: 12px 0 8px; }
 .pyt-trips { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
