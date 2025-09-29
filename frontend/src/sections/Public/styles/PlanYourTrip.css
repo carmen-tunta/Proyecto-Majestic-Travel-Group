@@ -1,0 +1,42 @@
+.pyt-page { padding: 16px; min-height: 100vh; display: flex; flex-direction: column; box-sizing: border-box; width: 100%; }
+.pyt-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+.pyt-brand { display: flex; align-items: center; gap: 12px; }
+.pyt-logo { width: 40px; height: 40px; }
+.pyt-title h1 { margin: 0; font-size: 20px; }
+.pyt-home-link { font-size: 12px; color: #6b7280; text-decoration: none; }
+
+.pyt-main { flex: 1; display: grid; grid-template-columns: 360px minmax(0, 1fr); gap: 20px; }
+
+.pyt-sidebar { }
+.pyt-card { background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px; }
+.pyt-section-title { margin: 0 0 8px; font-size: 14px; color: #374151; }
+
+.pyt-form { display: flex; flex-direction: column; gap: 10px; }
+.pyt-field { display: flex; flex-direction: column; gap: 6px; font-size: 12px; }
+.pyt-field input { height: 38px; padding: 8px 10px; border: 1px solid #d1d5db; border-radius: 6px; outline: none; }
+.pyt-field input:focus { border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59,130,246,.1); }
+
+.pyt-subsection h3 { font-size: 13px; margin: 12px 0 8px; }
+.pyt-trips { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
+.pyt-trips li { background: #f3f4f6; border-radius: 8px; padding: 10px 12px; font-size: 12px; }
+
+.pyt-submit { margin-top: 8px; height: 38px; background: #0d6efd; color: #fff; border: 0; border-radius: 8px; cursor: pointer; }
+
+.pyt-content { display: flex; flex-direction: column; gap: 16px; min-height: 0; width: 100%; }
+.pyt-search-input { width: 100%; height: 40px; border: 1px solid #d1d5db; border-radius: 8px; padding: 0 12px; }
+.pyt-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 20px; }
+.pyt-trip-card { background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden; }
+.pyt-trip-image { background: #d1d5db; height: 220px; }
+.pyt-trip-info { padding: 10px 12px; }
+.pyt-trip-title { margin: 0; font-size: 13px; }
+
+@media (max-width: 1024px) {
+  .pyt-main { grid-template-columns: 1fr; }
+  .pyt-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 640px) {
+  .pyt-grid { grid-template-columns: 1fr; }
+}
+
+
