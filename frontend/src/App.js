@@ -19,6 +19,7 @@ import ClientPage from './sections/Clientes/components/ClientPage';
 import Services from './sections/Services/components/Services';
 import Cotizaciones from './sections/Cotizacion/components/Cotizaciones';
 import CotizacionForm from './sections/Cotizacion/components/CotizacionForm';
+import RegistroPagos from './sections/RegistroPagos/components/RegistroPagos';
 
 function AppContent() {
   const location = useLocation();
@@ -106,6 +107,11 @@ function AppContent() {
           <Route path="/clientes/:id" element={
             <ProtectedRoute>
               <ClientPage />
+            </ProtectedRoute>
+          } />
+          <Route path="/registro-pagos" element={
+            <ProtectedRoute>
+              <RegistroPagos />
             </ProtectedRoute>
           } />
         </Routes>
