@@ -1,7 +1,39 @@
-import React from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import '../styles/PlanYourTrip.css';
+import ServiceRepository from '../../../modules/Service/repository/ServiceRepository';
+import GetPublicServices from '../../../modules/Service/application/GetPublicServices';
 
 export default function PlanYourTrip() {
+  const [services, setServices] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    let mounted = true;
+    async function load() {
+      try {
+        setLoading(true);
+        const repo = new ServiceRepository();
+        const useCase = new GetPublicServices(repo);
+        const result = await useCase.execute(6);
+        if (!mounted) return;
+        setServices(Array.isArray(result?.data) ? result.data.slice(0, 6) : []);
+      } catch (e) {
+        if (!mounted) return;
+        setError(e?.message || 'Error al cargar servicios');
+      } finally {
+        if (mounted) setLoading(false);
+      }
+    }
+    load();
+    return () => { mounted = false; };
+  }, []);
+
+  const cards = useMemo(() => {
+    if (loading) return Array.from({ length: 6 }).map(() => ({ id: Math.random() }));
+    return services;
+  }, [loading, services]);
+
   return (
     <div className="pyt-page">
       <header className="pyt-header">
@@ -56,14 +88,22 @@ export default function PlanYourTrip() {
             <input className="pyt-search-input" placeholder="Choose or search for the trip you want, for example, Cusco." />
           </div>
           <div className="pyt-grid">
-            {Array.from({ length: 6 }).map((_, idx) => (
-              <article key={idx} className="pyt-trip-card">
-                <div className="pyt-trip-image" />
-                <div className="pyt-trip-info">
-                  <h4 className="pyt-trip-title">Título de experiencia de ejemplo</h4>
-                </div>
-              </article>
-            ))}
+            {cards.map((svc, idx) => {
+              const img = svc?.images?.[0]?.imagePath ? `${process.env.REACT_APP_API_URL}/${svc.images[0].imagePath}` : null;
+              const title = svc?.name || 'Título de experiencia de ejemplo';
+              return (
+                <article key={svc?.id ?? idx} className="pyt-trip-card">
+                  {img ? (
+                    <img className="pyt-trip-image" src={img} alt={title} />
+                  ) : (
+                    <div className="pyt-trip-image" />
+                  )}
+                  <div className="pyt-trip-info">
+                    <h4 className="pyt-trip-title">{title}</h4>
+                  </div>
+                </article>
+              );
+            })}
           </div>
         </section>
       </main>
