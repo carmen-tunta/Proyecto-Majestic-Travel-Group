@@ -50,4 +50,14 @@ export class Cotizacion {
 
   @CreateDateColumn()
   createdAt: Date;
+
+  @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
+  costo: number;
+
+  @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
+  precioUtilidad: number;
+
+  @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
+  precioVenta: number;
+
 }

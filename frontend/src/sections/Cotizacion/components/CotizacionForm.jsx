@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { use, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { TabMenu } from 'primereact/tabmenu';
 import { InputText } from 'primereact/inputtext';
@@ -34,6 +34,7 @@ import { categorias, estados, agencias, paises, idiomas } from '../constants/opt
 import { RadioButton } from 'primereact/radiobutton';
 import { ProgressSpinner } from 'primereact/progressspinner';
 import { ConfirmDialog } from 'primereact/confirmdialog';
+import CotizacionRepository from '../../../modules/Cotizacion/repository/CotizacionRepository';
 // Modal de asignación de proveedores
 
 // (formatFecha eliminado: ya usamos Calendar con locale 'es')
@@ -299,10 +300,11 @@ export default function CotizacionForm() {
   // Nota: totalServicios es la suma de precios de todos los componentes seleccionados.
   // El costo por pasajero se calcula en base a nroPax (adultos), pero para asignación de proveedor
   // multiplicamos el costo unitario por el total de pasajeros (adultos + niños).
-  const totalServicios = (detalle?.servicios || []).reduce((acc, s) => acc + (s.componentes || []).reduce((a, c) => a + (Number(c.precio) || 0), 0), 0);
+  const costoPorPasajero = (detalle?.servicios || []).reduce((acc, s) => acc + (s.componentes || []).reduce((a, c) => a + (Number(c.precio) || 0), 0), 0);
   const totalPaxResumen = (Number(form.nroPax) || 0) + (Number(form.nroNinos) || 0);
-  const costoPorPasajero = totalPaxResumen ? totalServicios / totalPaxResumen : 0;
-  const precioVenta = totalServicios * (1 + Number(form.utilidad || 0) / 100);
+  const precioUtilidad = totalPaxResumen * costoPorPasajero * (Number(form.utilidad || 0) / 100);
+  const costoFinal = totalPaxResumen * costoPorPasajero;
+  const precioVenta = costoFinal + precioUtilidad;
 
   // Handlers para notas y precios (servicio y componente)
   // Se quitó el precio a nivel servicio según requerimiento
@@ -422,7 +424,7 @@ export default function CotizacionForm() {
   const updateCotizacionServiceComponent = new UpdateCotizacionServiceComponent();
 
   async function handleComponentPriceBlur(componentItemId, value) {
-  const precio = Number(value);
+    const precio = Number(value);
     if (Number.isNaN(precio)) { showNotification('Precio inválido', 'error'); return; }
     try {
       await updateCotizacionServiceComponent.execute(componentItemId, { precio });
@@ -439,6 +441,14 @@ export default function CotizacionForm() {
       setPriceDrafts(d => { const nd = { ...d }; delete nd[componentItemId]; return nd; });
     } catch (e) { showNotification(e.message || 'No se pudo guardar el precio', 'error'); }
   }
+
+  useEffect(() => {
+    if (cotizacionId) {
+      new UpdateCotizacion().execute(cotizacionId, { costo: costoFinal, precioUtilidad: precioUtilidad, precioVenta: precioVenta });
+    }
+  }, [costoFinal, precioUtilidad, precioVenta]);
+
+  
 
   const handleDeleteService = async (serviceId) => {
     try {
@@ -483,11 +493,11 @@ export default function CotizacionForm() {
   }
 
   const reject = () => {
-        setComponentToDelete(null);
-        setServiceToDelete(null);
-        setDialogType('');
-        setVisibleDialog(false);
-    };
+      setComponentToDelete(null);
+      setServiceToDelete(null);
+      setDialogType('');
+      setVisibleDialog(false);
+  };
 
   // Items for TabMenu to mirror Proveedores tabs
   const items = [
@@ -802,7 +812,7 @@ export default function CotizacionForm() {
                     <span>Costo por pasajero</span><span>{costoPorPasajero.toFixed(2)}</span>
                   </div>
                   <div className="totals-row">
-                    <span>Utilidad {Number(form.utilidad || 0)}%</span><span>{(totalServicios * Number(form.utilidad || 0) / 100).toFixed(2)}</span>
+                    <span>Utilidad {Number(form.utilidad || 0)}%</span><span>{Number(precioUtilidad).toFixed(2)}</span>
                   </div>
                   <div className="totals-row bold">
                     <span>Precio de venta</span><span>{precioVenta.toFixed(2)}</span>

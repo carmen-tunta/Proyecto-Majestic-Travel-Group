@@ -58,4 +58,16 @@ export class CreateCotizacionDto {
   @IsOptional()
   @IsInt()
   numeroFile?: number;
+
+  @IsOptional()
+  @IsInt()
+  costo?: number;
+
+  @IsOptional()
+  @IsInt()
+  precioUtilidad?: number;
+
+  @IsOptional()
+  @IsInt()
+  precioVenta?: number;
 }
