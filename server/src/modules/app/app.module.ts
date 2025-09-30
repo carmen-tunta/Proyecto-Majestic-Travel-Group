@@ -47,7 +47,7 @@ import { QuoteRequestsModule } from '../quote-requests/quote-requests.module';
             TarifarioDocumentsModule,
             CotizacionModule,
             PasajerosModule,
-            RegistroPagoModule
+            RegistroPagoModule,
             QuoteRequestsModule
           ],
 

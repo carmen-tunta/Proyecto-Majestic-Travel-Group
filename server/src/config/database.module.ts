@@ -61,7 +61,7 @@ import { QuoteRequestService } from 'src/modules/quote-requests/entities/quote-r
                   CotizacionServicio,
                   CotizacionServicioComponente,
                   Pasajero,
-                  RegistroPago
+                  RegistroPago,
                   QuoteRequest,
                   QuoteRequestService
                 ], // Aquí se agregarán las entidades
