@@ -14,6 +14,7 @@ import { Calendar } from 'primereact/calendar';
 import { InputNumber } from 'primereact/inputnumber';
 import CotizacionRepository from '../../../modules/Cotizacion/repository/CotizacionRepository';
 import UpdateCotizacion from '../../../modules/Cotizacion/application/UpdateCotizacion';
+import { addLocale } from 'primereact/api';
 
 const RegistroPagosModal = ({ onHide, cotizacion }) => {
     const rpRepo = new RegistroPagoRepository();
@@ -37,6 +38,17 @@ const RegistroPagosModal = ({ onHide, cotizacion }) => {
     const adelanto = registroPago.reduce((sum, pago) => sum + (Number(pago.monto) || 0), 0);
     const precioVenta = Number(cotizacion?.precioVenta) || 0;
     const saldo = precioVenta - adelanto;
+
+    addLocale('es', {
+                firstDayOfWeek: 1,
+                dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+                dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+                dayNamesMin: ['D', 'L', 'M', 'X', 'J', 'V', 'S'],
+                monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+                monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+                today: 'Hoy',
+                clear: 'Limpiar'
+            });
 
     useEffect(() => {
         if (!isInitialLoad) {
@@ -130,6 +142,8 @@ const RegistroPagosModal = ({ onHide, cotizacion }) => {
                         className="p-inputtext-sm" 
                         value={fecha} 
                         onChange={e => setFecha(e.target.value)}
+                        locale='es'
+                        dateFormat="D dd M y"
                         required 
                     />
                     <label htmlFor="fecha">Fecha de pago</label>
@@ -156,7 +170,7 @@ const RegistroPagosModal = ({ onHide, cotizacion }) => {
                 <Button 
                     icon="pi pi-plus"
                     className="p-button-sm" 
-                    onClick={() => handleSaveRegistroPago()}
+                    onClick={loading ? () => undefined : () => handleSaveRegistroPago()}
                     disabled={loading}
                     loading={loading}
                 />
@@ -170,6 +184,28 @@ const RegistroPagosModal = ({ onHide, cotizacion }) => {
                     field="fecha" 
                     header="Fecha de pago" 
                     style={{ width: '20%' }}
+                    body={rowData => {
+                        if (!rowData.fecha) return '';
+                        let date;
+                        if (typeof rowData.fecha === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(rowData.fecha)) {
+                            const [year, month, day] = rowData.fecha.split('-').map(Number);
+                            date = new Date(year, month - 1, day);
+                        } else {
+                            date = new Date(rowData.fecha);
+                            date = new Date(date.getTime() + date.getTimezoneOffset() * 60000);
+                        }
+                        
+                        let formatted = date.toLocaleDateString('es-ES', {
+                            weekday: 'short',
+                            day: '2-digit',
+                            month: 'short',
+                            year: '2-digit'
+                        });
+                            formatted = formatted.replace(/,/g, '').split(' ')
+                                .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                                .join(' ');
+                            return formatted;
+                        }}
                 />
                 <Column 
                     field="nota" 
