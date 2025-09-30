@@ -4,6 +4,7 @@ import { In, Repository, DeepPartial } from 'typeorm';
 import { QuoteRequest } from './entities/quote-request.entity';
 import { QuoteRequestService as QrServiceEntity } from './entities/quote-request-service.entity';
 import { CreateQuoteRequestDto } from './dto/create-quote-request.dto';
+import { UpdateQuoteRequestDto } from './dto/update-quote-request.dto';
 import { Client } from '../clients/entities/client.entity';
 import { Service } from '../services/entities/service.entity';
 
@@ -83,6 +84,37 @@ export class QuoteRequestsService {
       order: { id: 'DESC' },
     });
     return { data, total, page, limit };
+  }
+
+  async update(id: number, dto: UpdateQuoteRequestDto): Promise<QuoteRequest> {
+    // 1) Verificar que existe la solicitud
+    const existingRequest = await this.qrRepo.findOne({ 
+      where: { id },
+      relations: ['client', 'services', 'services.service']
+    });
+    
+    if (!existingRequest) {
+      throw new NotFoundException(`QuoteRequest with ID ${id} not found`);
+    }
+
+    // 2) Preparar datos para actualizar
+    const updateData: Partial<QuoteRequest> = {};
+    
+    if (dto.passengerName !== undefined) updateData.passengerName = dto.passengerName;
+    if (dto.email !== undefined) updateData.email = dto.email;
+    if (dto.countryCode !== undefined) updateData.countryCode = dto.countryCode;
+    if (dto.whatsapp !== undefined) updateData.whatsapp = dto.whatsapp;
+    if (dto.travelDate !== undefined) updateData.travelDate = dto.travelDate ? new Date(dto.travelDate) : null;
+    if (dto.message !== undefined) updateData.message = dto.message;
+    if (dto.status !== undefined) updateData.status = dto.status;
+    if (dto.agentId !== undefined) updateData.agentId = dto.agentId;
+    if (dto.source !== undefined) updateData.source = dto.source;
+
+    // 3) Actualizar la solicitud
+    await this.qrRepo.update(id, updateData);
+
+    // 4) Retornar la solicitud actualizada
+    return this.findOne(id);
   }
 }
 

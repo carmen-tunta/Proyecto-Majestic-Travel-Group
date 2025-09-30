@@ -43,6 +43,12 @@ export class QuoteRequest {
   @Column({ type: 'text', default: 'public_web' })
   source: string;
 
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  createdAt: Date;
+
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', onUpdate: 'CURRENT_TIMESTAMP' })
+  updatedAt: Date;
+
   @OneToMany(() => QuoteRequestService, (qrs) => qrs.quoteRequest, { cascade: true })
   services: QuoteRequestService[];
 
