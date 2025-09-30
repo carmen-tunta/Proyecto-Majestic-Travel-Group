@@ -12,6 +12,8 @@ import CreateRegistroPago from '../../../modules/RegistroPagos/application/Creat
 import DeleteRegistroPago from '../../../modules/RegistroPagos/application/DeleteResgistroPago';
 import { Calendar } from 'primereact/calendar';
 import { InputNumber } from 'primereact/inputnumber';
+import CotizacionRepository from '../../../modules/Cotizacion/repository/CotizacionRepository';
+import UpdateCotizacion from '../../../modules/Cotizacion/application/UpdateCotizacion';
 
 const RegistroPagosModal = ({ onHide, cotizacion }) => {
     const rpRepo = new RegistroPagoRepository();
@@ -19,7 +21,11 @@ const RegistroPagosModal = ({ onHide, cotizacion }) => {
     const createRp = new CreateRegistroPago(rpRepo);
     const deleteRp = new DeleteRegistroPago(rpRepo);
 
+    const cotizacionRepo = new CotizacionRepository();
+    const updateCotizacion = new UpdateCotizacion(cotizacionRepo);
+
     const [registroPago, setRegistroPago] = useState([]);
+    const [isInitialLoad, setIsInitialLoad] = useState(true);
 
     const {showNotification} = useNotification();
     const [loading, setLoading] = useState(false);
@@ -32,12 +38,28 @@ const RegistroPagosModal = ({ onHide, cotizacion }) => {
     const precioVenta = Number(cotizacion?.precioVenta) || 0;
     const saldo = precioVenta - adelanto;
 
+    useEffect(() => {
+        if (!isInitialLoad) {
+            try {
+                setLoading(true);
+                updateCotizacion.execute(cotizacion.id, {
+                    adelanto: adelanto,
+                    saldo: saldo
+                });
+            } catch (error) {
+                console.error(error);
+            } finally {
+                setLoading(false);
+            }
+        }
+    }, [adelanto, saldo]);
 
     const fetchData = async () => {
         try {
             setLoading(true);
             const data = await getRpByCotizacion.execute(cotizacion.id);
             setRegistroPago(data);
+            setIsInitialLoad(false);
         } catch (error) {
             console.error(error);
         } finally {
@@ -98,7 +120,7 @@ const RegistroPagosModal = ({ onHide, cotizacion }) => {
                 <i 
                     className="pi pi-times" 
                     style={{ marginBottom: "1rem", cursor:"pointer" }}
-                    onClick={onHide}>
+                    onClick={loading ? undefined : onHide}>
                 </i>
             </div>
             <div className='registro-pagos-modal-body'>

@@ -447,13 +447,9 @@ export default function CotizacionForm() {
       const payload = { 
         costo: costoFinal, 
         precioUtilidad: precioUtilidad, 
-        precioVenta: precioVenta 
+        precioVenta: precioVenta ,
+        saldo: precioVenta - (Number(detalle?.adelanto) || 0)
       };
-      
-      if ((Number(detalle?.adelanto) || 0) === 0) {
-        payload.saldo = precioVenta;
-      } 
-      
       new UpdateCotizacion().execute(cotizacionId, payload);
     }
   }, [costoFinal, precioUtilidad, precioVenta]);

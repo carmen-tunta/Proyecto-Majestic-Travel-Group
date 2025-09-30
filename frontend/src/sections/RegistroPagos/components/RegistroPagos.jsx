@@ -92,7 +92,7 @@ const RegistroPagos = () => {
                 rows={rows}
                 totalRecords={totalRecords}
                 onPage={onPageChange}
-                // loading={loading || searchLoading}
+                loading={loading || searchLoading}
             >
                 <Column 
                     field="cliente.nombre" 
@@ -138,7 +138,7 @@ const RegistroPagos = () => {
                     style={{ width: '8%' }}>
                 </Column>
                 <Column 
-                    field="" 
+                    field="saldo" 
                     header="Saldo USD" 
                     style={{ width: '7%' }}>
                 </Column>
