@@ -19,12 +19,28 @@ const BandejaSolicitud = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const [totalRecords, setTotalRecords] = useState(0);
   const [expandedRows, setExpandedRows] = useState({});
+  const [currentTime, setCurrentTime] = useState(() => {
+    // Inicializar con hora de Perú
+    const peruTime = new Date().toLocaleString('en-US', { timeZone: 'America/Lima' });
+    return new Date(peruTime);
+  });
   const overlayRef = useRef(null);
 
   // Cargar datos del backend
   useEffect(() => {
     loadQuoteRequests();
   }, [currentPage]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Actualizar tiempo cada minuto para el contador de expiración
+  useEffect(() => {
+    const interval = setInterval(() => {
+      // Usar hora de Perú
+      const peruTime = new Date().toLocaleString('en-US', { timeZone: 'America/Lima' });
+      setCurrentTime(new Date(peruTime));
+    }, 60000); // Actualizar cada 60 segundos (1 minuto)
+
+    return () => clearInterval(interval);
+  }, []);
 
   const loadQuoteRequests = async () => {
     try {
@@ -48,7 +64,8 @@ const BandejaSolicitud = () => {
         agente: request.agentId ? `Agente ${request.agentId}` : '',
         venceEn: calculateExpiration(request.createdAt),
         estado: mapStatus(request.status),
-        servicios: request.services?.map(s => s.service?.name) || []
+        servicios: request.services?.map(s => s.service?.name) || [],
+        createdAt: request.createdAt // Agregar para el template de expiración
       })) || [];
 
       console.log('Mapped requests:', mappedRequests);
@@ -77,7 +94,8 @@ const BandejaSolicitud = () => {
   const formatDateTime = (dateString) => {
     if (!dateString) return 'Sin fecha';
     const date = new Date(dateString);
-    return date.toLocaleString('es-ES', {
+    return date.toLocaleString('es-PE', {
+      timeZone: 'America/Lima',
       weekday: 'short',
       day: 'numeric',
       month: 'short',
@@ -89,14 +107,40 @@ const BandejaSolicitud = () => {
 
   const calculateExpiration = (createdAt) => {
     if (!createdAt) return 'N/A';
-    const created = new Date(createdAt);
-    const now = new Date();
-    const diffMinutes = Math.floor((now - created) / (1000 * 60));
     
-    if (diffMinutes >= 60) {
+    // Convertir ambas fechas a hora de Perú para cálculo correcto
+    const created = new Date(createdAt);
+    const now = new Date(currentTime);
+    
+    // Convertir a hora de Perú (America/Lima)
+    const createdPeru = new Date(created.toLocaleString('en-US', { timeZone: 'America/Lima' }));
+    const nowPeru = new Date(now.toLocaleString('en-US', { timeZone: 'America/Lima' }));
+    
+    const diffMinutes = Math.floor((nowPeru - createdPeru) / (1000 * 60));
+    
+    // Debug: ver qué está pasando con las fechas
+    console.log('Expiration calculation (Perú):', {
+      createdAt: createdAt,
+      createdPeru: createdPeru,
+      nowPeru: nowPeru,
+      diffMinutes: diffMinutes
+    });
+    
+    // 45 minutos por defecto
+    const totalMinutes = 45;
+    
+    // Si la fecha de creación es futura o hay error, mostrar tiempo completo
+    if (diffMinutes < 0 || diffMinutes > totalMinutes) {
+      console.log('Fecha futura o error, usando tiempo completo');
+      return `${totalMinutes} min.`;
+    }
+    
+    const remainingMinutes = totalMinutes - diffMinutes;
+    
+    if (remainingMinutes <= 0) {
       return '0 min.';
     } else {
-      return `${60 - diffMinutes} min.`;
+      return `${remainingMinutes} min.`;
     }
   };
 
@@ -109,6 +153,24 @@ const BandejaSolicitud = () => {
       'sin_respuesta': 'Sin respuesta'
     };
     return statusMap[status] || status;
+  };
+
+  const expirationTemplate = (rowData) => {
+    const expiration = calculateExpiration(rowData.createdAt);
+    const minutes = parseInt(expiration.replace(' min.', '').replace('N/A', '0'));
+    
+    const getExpirationClass = (mins) => {
+      if (mins === 0) return 'expiration-expired';
+      if (mins <= 5) return 'expiration-critical';
+      if (mins <= 15) return 'expiration-warning';
+      return 'expiration-normal';
+    };
+
+    return (
+      <div className={`expiration-badge ${getExpirationClass(minutes)}`}>
+        {expiration}
+      </div>
+    );
   };
 
 
@@ -246,7 +308,7 @@ const BandejaSolicitud = () => {
           <Column field="fechaViaje" header="Fecha probable de viaje" />
           <Column field="fechaSolicitud" header="Fecha solicitada" />
           <Column field="agente" header="Agente" />
-          <Column field="venceEn" header="Vence en" />
+          <Column field="venceEn" header="Vence en" body={expirationTemplate} />
           <Column field="estado" header="Estado Solicitud" body={estadoTemplate} />
           <Column body={actionTemplate} header="" style={{ width: '50px' }} />
           </DataTable>
