@@ -1,5 +1,5 @@
 class GetAllRegistroPago {
-  constructor({ registroPagoRepository }) {
+  constructor( registroPagoRepository ) {
     this.registroPagoRepository = registroPagoRepository;
   }
 

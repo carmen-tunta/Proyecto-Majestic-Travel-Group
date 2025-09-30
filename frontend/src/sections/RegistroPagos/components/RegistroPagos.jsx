@@ -1,5 +1,5 @@
 import { Button } from "primereact/button";
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import useSearch from "../../../hooks/useSearch";
@@ -10,6 +10,7 @@ import GetAllCotizaciones from "../../../modules/Cotizacion/application/GetAllCo
 import { useModal } from "../../../contexts/ModalContext";
 import RegistroPagosModal from "./RegistroPagosModal";
 import "../styles/RegistroPagos.css"
+import { useNavigate } from "react-router-dom";
 
 const RegistroPagos = () => {
     const cotizacionRepo = new CotizacionRepository();
@@ -24,6 +25,7 @@ const RegistroPagos = () => {
     const [first, setFirst] = useState(0);
     const [rows, setRows] = useState(10);
     const [totalRecords, setTotalRecords] = useState(0);
+    const navigate = useNavigate();
 
     const fetchData = async (page, pageSize) => {
         try {
@@ -73,7 +75,7 @@ const RegistroPagos = () => {
                 label="Reporte" 
                 size='small' 
                 outlined
-                onClick={() => undefined}/>
+                onClick={() => navigate('/registro-pagos/reporte')}/>
         </div>
 
         <div className='registro-pagos-search'>
