@@ -15,6 +15,7 @@ import UpdateDocument from "../../../../modules/Tarifario/application/UpdateDocu
 
 
 const Documents = ({ tarifario }) => {
+    const baseUrl = process.env.REACT_APP_API_URL;
     const [loading, setLoading] = useState(false);
     const [documents, setDocuments] = useState([]);
     const [selectedDocument, setSelectedDocument] = useState(null);
@@ -206,7 +207,7 @@ const Documents = ({ tarifario }) => {
                                     title="Vista previa" 
                                     style={{ marginRight: '10px', cursor:"pointer"}}
                                     onClick={loading ? undefined : () => {
-                                        window.open(`http://localhost:3080/${rowData.documentPath}`, '_blank');
+                                        window.open(`${baseUrl}/${rowData.documentPath}`, '_blank');
                                     }}
                                 ></i>
                                 <i 

@@ -11,7 +11,7 @@ const getAuthHeaders = () => {
 
 export class ComponentsTemplateRepository {
   constructor() {
-    this.baseUrl = 'http://localhost:3080/components';
+    this.baseUrl = `${process.env.REACT_APP_API_URL}/components`;
   }
 
   // Obtener todos los componentes con paginación
