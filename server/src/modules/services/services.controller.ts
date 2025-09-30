@@ -1,4 +1,5 @@
 import { Controller, Get, Post, Body, Param, Put, Delete, Query, BadRequestException } from '@nestjs/common';
+import { Public } from '../auth/decorators/public.decorator';
 import { ServicesService } from './services.service';
 import { Service } from './entities/service.entity';
 
@@ -11,6 +12,7 @@ export class ServicesController {
     return this.servicesService.create(data);
   }
 
+  @Public()
   @Get()
     async findAll(
       @Query('page') page: string, 
@@ -29,6 +31,7 @@ export class ServicesController {
     }
 
 
+  @Public()
   @Get('search')
   async searchServices(@Query('name') name: string) {
     if (!name || name.trim() === '') {

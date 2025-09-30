@@ -23,6 +23,7 @@ import { TarifarioDocumentsModule } from '../tarifarioDocuments/tarifarioDocumen
 import { CotizacionModule } from '../cotizacion/cotizacion.module';
 import { PasajerosModule } from '../pasajeros/pasajeros.module';
 import { RegistroPagoModule } from '../registroPago/registroPago.module';
+import { QuoteRequestsModule } from '../quote-requests/quote-requests.module';
 
 @Module({
  
@@ -47,6 +48,7 @@ import { RegistroPagoModule } from '../registroPago/registroPago.module';
             CotizacionModule,
             PasajerosModule,
             RegistroPagoModule
+            QuoteRequestsModule
           ],
 
   controllers: [AppController],

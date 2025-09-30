@@ -10,8 +10,16 @@ const getAuthHeaders = () => {
 };
 
 class ServiceRepository {
-    async getAllServices(limit = '') {
-        const response = await fetch(`${apiUrl}${limit}`, {
+    async getAllServices({ page = 0, limit = 10 } = {}) {
+        const response = await fetch(`${apiUrl}?page=${page}&limit=${limit}`, {
+            headers: getAuthHeaders()
+        });
+        return await response.json(); // { data, total, page, limit }
+    }
+
+    // Para páginas públicas como PlanYourTrip
+    async getPublicServices(limit = 6) {
+        const response = await fetch(`${apiUrl}?page=0&limit=${limit}`, {
             headers: getAuthHeaders()
         });
         return await response.json();

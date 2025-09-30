@@ -9,8 +9,14 @@ export class UsersController {
 
   @Public()
   @Post('register')
-  async createUser(@Body() createUserDto: { username: string; password: string; email: string }): Promise<User> {
-    return await this.usersService.create(createUserDto.username, createUserDto.password, createUserDto.email);
+  async createUser(@Body() createUserDto: { username: string; password: string; email: string; nombre?: string; area?: string }): Promise<User> {
+    return await this.usersService.create(
+      createUserDto.username,
+      createUserDto.password,
+      createUserDto.email,
+      createUserDto.nombre,
+      createUserDto.area,
+    );
   }
 
   @Get()

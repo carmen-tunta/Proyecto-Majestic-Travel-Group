@@ -11,7 +11,7 @@ export class UsersService {
     private usersRepository: Repository<User>,
   ) {}
 
-  async create(username: string, password: string, email: string): Promise<User> {
+  async create(username: string, password: string, email: string, nombre?: string, area?: string): Promise<User> {
     // Hashear la contraseña
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(password, saltRounds);
@@ -21,6 +21,8 @@ export class UsersService {
       username,
       password: hashedPassword,
       email: email,
+      nombre: nombre?.trim() || null,
+      area: area?.trim() || null,
     });
 
     // Guardar en la base de datos
