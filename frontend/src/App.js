@@ -23,6 +23,7 @@ import RegistroPagos from './sections/RegistroPagos/components/RegistroPagos';
 import Reporte from './sections/RegistroPagos/components/Reporte';
 import PlanYourTrip from './sections/Public/components/PlanYourTrip';
 import ThankYou from './sections/Public/components/ThankYou';
+import BandejaSolicitud from './sections/BandejaSolicitud/components/BandejaSolicitud';
 
 function AppContent() {
   const location = useLocation();
@@ -54,6 +55,11 @@ function AppContent() {
           <Route path="/plan-your-trip/thank-you" element={<ThankYou />} />
           
           {/* Rutas protegidas - solo para usuarios autenticados */}
+          <Route path="/bandeja-solicitud" element={
+            <ProtectedRoute>
+              <BandejaSolicitud />
+            </ProtectedRoute>
+          } />
           <Route path="/itinerario" element={
             <ProtectedRoute>
               <Itinerario />
