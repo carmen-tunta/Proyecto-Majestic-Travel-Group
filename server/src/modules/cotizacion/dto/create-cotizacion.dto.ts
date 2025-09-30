@@ -70,4 +70,12 @@ export class CreateCotizacionDto {
   @IsOptional()
   @IsInt()
   precioVenta?: number;
+  
+  @IsOptional()
+  @IsInt()
+  adelanto?: number;
+
+  @IsOptional()
+  @IsInt()
+  saldo?: number;
 }

@@ -128,9 +128,13 @@ const RegistroPagos = () => {
                     field="precioVenta" 
                     header="Precio venta USD" 
                     style={{ width: '9%' }}>
-                </Column><Column 
-                    field="" 
+                </Column><Column  
                     header="Adelanto USD" 
+                    body={(rowData) => (
+                        <span>
+                            {rowData.adelanto ? Number(rowData.adelanto).toFixed(2) : '1.00'}
+                        </span>
+                    )}
                     style={{ width: '8%' }}>
                 </Column>
                 <Column 

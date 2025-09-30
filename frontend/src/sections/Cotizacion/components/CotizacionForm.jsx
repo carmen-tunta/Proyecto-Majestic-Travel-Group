@@ -444,7 +444,17 @@ export default function CotizacionForm() {
 
   useEffect(() => {
     if (cotizacionId) {
-      new UpdateCotizacion().execute(cotizacionId, { costo: costoFinal, precioUtilidad: precioUtilidad, precioVenta: precioVenta });
+      const payload = { 
+        costo: costoFinal, 
+        precioUtilidad: precioUtilidad, 
+        precioVenta: precioVenta 
+      };
+      
+      if ((Number(detalle?.adelanto) || 0) === 0) {
+        payload.saldo = precioVenta;
+      } 
+      
+      new UpdateCotizacion().execute(cotizacionId, payload);
     }
   }, [costoFinal, precioUtilidad, precioVenta]);
 

@@ -61,6 +61,12 @@ export class Cotizacion {
   @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
   precioVenta: number;
 
+  @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
+  adelanto: number;
+
+  @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
+  saldo: number;
+
   @OneToMany(() => RegistroPago, (registroPago) => registroPago.cotizacion, { cascade: true })
   registroPagos: RegistroPago[];
 

@@ -10,6 +10,8 @@ import RegistroPagoRepository from '../../../modules/RegistroPagos/repository/Re
 import GetRegistroPagoByCotizacionId from '../../../modules/RegistroPagos/application/GetRegistroPagoByCotizacionId';
 import CreateRegistroPago from '../../../modules/RegistroPagos/application/CreateRegistroPago';
 import DeleteRegistroPago from '../../../modules/RegistroPagos/application/DeleteResgistroPago';
+import { Calendar } from 'primereact/calendar';
+import { InputNumber } from 'primereact/inputnumber';
 
 const RegistroPagosModal = ({ onHide, cotizacion }) => {
     const rpRepo = new RegistroPagoRepository();
@@ -44,11 +46,6 @@ const RegistroPagosModal = ({ onHide, cotizacion }) => {
     }
 
     const handleSaveRegistroPago = async () => {
-        if (!fecha.trim() || !monto.trim()) {
-            showNotification('Completa todos los campos correctamente.', 'error');
-            return;
-        }
-
         try {
             setLoading(true);
             await createRp.execute({
@@ -106,7 +103,7 @@ const RegistroPagosModal = ({ onHide, cotizacion }) => {
             </div>
             <div className='registro-pagos-modal-body'>
                 <FloatLabel style={{width: '10rem'}}>
-                    <InputText 
+                    <Calendar 
                         id="fecha" 
                         className="p-inputtext-sm" 
                         value={fecha} 
@@ -116,12 +113,12 @@ const RegistroPagosModal = ({ onHide, cotizacion }) => {
                     <label htmlFor="fecha">Fecha de pago</label>
                 </FloatLabel>
                 <FloatLabel style={{width: '7rem'}}>
-                    <InputText 
-                        id="monto" 
-                        className="p-inputtext-sm" 
-                        value={monto} 
-                        onChange={e => setMonto(e.target.value)}
-                        required 
+                    <InputNumber
+                        id="monto"
+                        className="p-inputtext-sm"
+                        value={monto}
+                        onValueChange={e => setMonto(e.value)}
+                        required
                     />
                     <label htmlFor="monto">Monto</label>
                 </FloatLabel>
