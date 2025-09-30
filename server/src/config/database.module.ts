@@ -25,6 +25,7 @@ import { Cotizacion } from 'src/modules/cotizacion/entities/cotizacion.entity';
 import { CotizacionServicio } from 'src/modules/cotizacion/entities/cotizacion-servicio.entity';
 import { CotizacionServicioComponente } from 'src/modules/cotizacion/entities/cotizacion-servicio-componente.entity';
 import { Pasajero } from 'src/modules/pasajeros/entities/pasajero.entity';
+import { RegistroPago } from 'src/modules/registroPago/entities/registroPago.entity';
 import { QuoteRequest } from 'src/modules/quote-requests/entities/quote-request.entity';
 import { QuoteRequestService } from 'src/modules/quote-requests/entities/quote-request-service.entity';
 
@@ -60,6 +61,7 @@ import { QuoteRequestService } from 'src/modules/quote-requests/entities/quote-r
                   CotizacionServicio,
                   CotizacionServicioComponente,
                   Pasajero,
+                  RegistroPago
                   QuoteRequest,
                   QuoteRequestService
                 ], // Aquí se agregarán las entidades

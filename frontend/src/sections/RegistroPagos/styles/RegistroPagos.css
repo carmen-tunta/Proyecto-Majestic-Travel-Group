@@ -1,0 +1,43 @@
+.registro-pagos {
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    padding: 0rem 4rem 2rem 2rem;
+}
+
+.registro-pagos-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.registro-pagos-search {
+    margin-bottom: 2rem;
+}
+
+.registro-pagos-table .p-datatable-thead > tr > th {
+  color: #ffffff;
+  font-weight: normal;
+  border: none;
+}
+
+.registro-pagos-table .p-datatable-tbody > tr > td {
+  border: none;
+  padding: 15px;
+}
+
+.registro-pagos-table .p-datatable-tbody > tr:nth-child(odd) > td {
+  background: #fff;
+}
+
+.registro-pagos-table .p-datatable-tbody > tr:nth-child(even) > td {
+  background: var(--blue-100);
+}
+
+.registro-pagos-footer {
+    margin-top: 1rem;
+    display: flex;
+    justify-content: center;
+    color: rgb(175, 175, 175);
+}

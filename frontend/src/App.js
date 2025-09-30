@@ -19,6 +19,8 @@ import ClientPage from './sections/Clientes/components/ClientPage';
 import Services from './sections/Services/components/Services';
 import Cotizaciones from './sections/Cotizacion/components/Cotizaciones';
 import CotizacionForm from './sections/Cotizacion/components/CotizacionForm';
+import RegistroPagos from './sections/RegistroPagos/components/RegistroPagos';
+import Reporte from './sections/RegistroPagos/components/Reporte';
 import PlanYourTrip from './sections/Public/components/PlanYourTrip';
 import ThankYou from './sections/Public/components/ThankYou';
 
@@ -110,6 +112,16 @@ function AppContent() {
           <Route path="/clientes/:id" element={
             <ProtectedRoute>
               <ClientPage />
+            </ProtectedRoute>
+          } />
+          <Route path="/registro-pagos" element={
+            <ProtectedRoute>
+              <RegistroPagos />
+            </ProtectedRoute>
+          } />
+          <Route path="/registro-pagos/reporte" element={
+            <ProtectedRoute>
+              <Reporte />
             </ProtectedRoute>
           } />
         </Routes>

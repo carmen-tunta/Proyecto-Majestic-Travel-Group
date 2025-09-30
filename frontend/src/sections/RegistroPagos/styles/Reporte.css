@@ -1,0 +1,39 @@
+.reporte {
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    padding: 0rem 4rem 2rem 2rem;
+}
+
+.reporte-buscador {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    margin-top: 2rem;
+}
+
+.reporte-table {
+    border: 1px solid #f0f0f0;
+}
+
+.reporte-table .p-datatable-thead > tr > th {
+    background: var(--surface-b);
+    color: var(--surface-700);
+    font-weight: 600;
+    border: none;
+}
+
+.reporte-table .p-datatable-tbody > tr > td {
+  border: none;
+  padding: 15px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+
+.reporte-footer {
+    margin-top: 1rem;
+    display: flex;
+    justify-content: center;
+    color: rgb(175, 175, 175);
+}
+

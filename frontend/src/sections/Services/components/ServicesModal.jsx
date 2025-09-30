@@ -23,6 +23,7 @@ import GetServiceImagesByServiceId from '../../../modules/Service/application/Ge
 import DeleteImageFromService from '../../../modules/Service/application/DeleteImageFromService';
 
 const ServicesModal = ({ onHide, service }) => {
+    const baseUrl = process.env.REACT_APP_API_URL;
     const peruCities = ["Lima", "Cusco", "Arequipa", "Trujillo", "Iquitos", "Puno", "Chiclayo", "Piura", "Huaraz", "Nazca"];
     const serviceRepository = new ServiceRepository();
     const updateService = new UpdateService(serviceRepository);
@@ -238,7 +239,7 @@ const ServicesModal = ({ onHide, service }) => {
                         .map((img, idx) => (
                             <div key={idx} className='service-image'>
                                 <img
-                                    src={img.imagePath ? `http://localhost:3080/${img.imagePath}` : img.url}
+                                    src={img.imagePath ? `${baseUrl}/${img.imagePath}` : img.url}
                                     alt={`Imagen de servicio ${idx}`}
                                 />
                                 <i 
