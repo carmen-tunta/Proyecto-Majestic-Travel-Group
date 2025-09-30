@@ -201,6 +201,68 @@
   margin: 0;
 }
 
+/* Expanded Row Content */
+.expanded-content {
+  padding: 16px;
+  background-color: #f8f9fa;
+  border-top: 1px solid #dee2e6;
+  text-align: left;
+  width: 100%;
+  display: block;
+}
+
+.services-section {
+  text-align: left;
+}
+
+.services-section h4 {
+  margin: 0 0 12px 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #495057;
+  text-align: left;
+}
+
+.servicios-info {
+  text-align: left;
+  margin-left: 0;
+}
+
+.servicio-item {
+  color: #6c757d;
+  font-size: 13px;
+  margin-bottom: 4px;
+  line-height: 1.4;
+  padding-left: 0;
+  text-align: left;
+}
+
+/* Row Expansion Icon */
+.p-datatable .p-datatable-tbody > tr > td:first-child {
+  text-align: center;
+  cursor: pointer;
+}
+
+.p-datatable .p-datatable-tbody > tr > td:first-child .p-row-toggler {
+  color: #6c757d;
+  transition: transform 0.2s ease;
+}
+
+.p-datatable .p-datatable-tbody > tr.p-datatable-row-expansion-expanded > td:first-child .p-row-toggler {
+  transform: rotate(90deg);
+}
+
+/* Expanded row cell */
+.p-datatable .p-datatable-tbody > tr > td.p-datatable-row-expansion {
+  padding: 0;
+  text-align: left;
+}
+
+.p-datatable .p-datatable-tbody > tr > td.p-datatable-row-expansion .expanded-content {
+  width: 100%;
+  box-sizing: border-box;
+}
+
 /* Action Menu */
 .action-menu {
   display: flex;

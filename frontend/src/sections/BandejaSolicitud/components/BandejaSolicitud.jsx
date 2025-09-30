@@ -18,12 +18,13 @@ const BandejaSolicitud = () => {
   const [error, setError] = useState('');
   const [currentPage, setCurrentPage] = useState(0);
   const [totalRecords, setTotalRecords] = useState(0);
+  const [expandedRows, setExpandedRows] = useState({});
   const overlayRef = useRef(null);
 
   // Cargar datos del backend
   useEffect(() => {
     loadQuoteRequests();
-  }, [currentPage]);
+  }, [currentPage]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const loadQuoteRequests = async () => {
     try {
@@ -50,6 +51,7 @@ const BandejaSolicitud = () => {
         servicios: request.services?.map(s => s.service?.name) || []
       })) || [];
 
+      console.log('Mapped requests:', mappedRequests);
       setRequests(mappedRequests);
       setTotalRecords(result.total || 0);
     } catch (err) {
@@ -130,13 +132,28 @@ const BandejaSolicitud = () => {
 
   const serviciosTemplate = (rowData) => {
     if (!rowData.servicios || rowData.servicios.length === 0) {
-      return null;
+      return (
+        <div className="servicios-info">
+          <div className="servicio-item">No hay servicios solicitados</div>
+        </div>
+      );
     }
     return (
       <div className="servicios-info">
         {rowData.servicios.map((servicio, index) => (
           <div key={index} className="servicio-item">• {servicio}</div>
         ))}
+      </div>
+    );
+  };
+
+  const rowExpansionTemplate = (data) => {
+    return (
+      <div className="expanded-content">
+        <div className="services-section">
+          <h4>Servicios solicitados:</h4>
+          {serviciosTemplate(data)}
+        </div>
       </div>
     );
   };
@@ -214,7 +231,16 @@ const BandejaSolicitud = () => {
             paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink"
             currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} solicitudes"
             emptyMessage="No hay solicitudes disponibles"
+            expandedRows={expandedRows}
+            onRowToggle={(e) => {
+              console.log('Row toggle event:', e);
+              setExpandedRows(e.data);
+            }}
+            rowExpansionTemplate={rowExpansionTemplate}
+            dataKey="id"
+            expandableRowGroups={false}
           >
+          <Column expander style={{ width: '3rem' }} />
           <Column field="cliente" header="Cliente" body={clienteTemplate} />
           <Column field="email" header="Correo" body={emailTemplate} />
           <Column field="fechaViaje" header="Fecha probable de viaje" />
@@ -223,7 +249,6 @@ const BandejaSolicitud = () => {
           <Column field="venceEn" header="Vence en" />
           <Column field="estado" header="Estado Solicitud" body={estadoTemplate} />
           <Column body={actionTemplate} header="" style={{ width: '50px' }} />
-          <Column field="servicios" header="" body={serviciosTemplate} style={{ display: 'none' }} />
           </DataTable>
         )}
       </div>
