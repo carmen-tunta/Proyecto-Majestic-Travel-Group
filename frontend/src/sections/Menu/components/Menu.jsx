@@ -22,7 +22,7 @@ const Menu = () => {
                 <img src="logo_mtg.png" alt="Logo" />
             </div>
             <div className="menu-links">
-                <Button label="Principal" text size="small" icon="pi pi-home"/>
+                <Button label="Bandeja de solicitud" text size="small" icon="pi pi-home" onClick={() => navigate('/bandeja-solicitud')}/>
                 <Button label="Clientes" text size="small" icon="pi pi-users" onClick={() => navigate('/clientes')} />
                 <Button label="Cotización" text size="small" icon="pi pi-money-bill" onClick={() => navigate('/cotizaciones')}/>
                 <Button label="Itinerario" text size="small" icon="pi pi-file"/>

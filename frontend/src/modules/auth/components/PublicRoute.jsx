@@ -21,9 +21,9 @@ const PublicRoute = ({ children }) => {
     );
   }
 
-  // Si está autenticado, redirigir al itinerario
+  // Si está autenticado, redirigir a la bandeja de solicitud
   if (isAuthenticated) {
-    return <Navigate to="/itinerario" replace />;
+    return <Navigate to="/bandeja-solicitud" replace />;
   }
 
   // Si no está autenticado, mostrar el componente (login, recover password, etc.)
