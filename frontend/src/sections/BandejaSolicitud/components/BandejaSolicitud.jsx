@@ -229,7 +229,8 @@ const BandejaSolicitud = () => {
         estado: mapStatus(request.status),
         servicios: request.services?.map(s => s.service?.name) || [],
         createdAt: request.createdAt, // Agregar para el template de expiración
-        agentId: request.agentId // Agregar para los botones de acción
+        agentId: request.agentId, // Agregar para los botones de acción
+        status: request.status // Agregar el status original para condicionales
       })) || [];
 
       console.log('Mapped requests:', mappedRequests);
@@ -328,6 +329,72 @@ const BandejaSolicitud = () => {
   };
 
   const expirationTemplate = (rowData) => {
+    // Si el estado es 'en_progreso' (Atendiendo) o estados finales, mostrar "En progreso" o estado correspondiente
+    if (rowData.status === 'en_progreso') {
+      return (
+        <div style={{ 
+          padding: '6px 12px', 
+          borderRadius: '12px', 
+          backgroundColor: '#d1ecf1', 
+          color: '#0c5460',
+          fontSize: '12px',
+          fontWeight: '500',
+          textAlign: 'center'
+        }}>
+          En progreso
+        </div>
+      );
+    }
+    
+    if (rowData.status === 'cotizando') {
+      return (
+        <div style={{ 
+          padding: '6px 12px', 
+          borderRadius: '12px', 
+          backgroundColor: '#d4edda', 
+          color: '#155724',
+          fontSize: '12px',
+          fontWeight: '500',
+          textAlign: 'center'
+        }}>
+          Cotizado
+        </div>
+      );
+    }
+    
+    if (rowData.status === 'sin_respuesta') {
+      return (
+        <div style={{ 
+          padding: '6px 12px', 
+          borderRadius: '12px', 
+          backgroundColor: '#f8d7da', 
+          color: '#721c24',
+          fontSize: '12px',
+          fontWeight: '500',
+          textAlign: 'center'
+        }}>
+          Sin respuesta
+        </div>
+      );
+    }
+    
+    if (rowData.status === 'liberado') {
+      return (
+        <div style={{ 
+          padding: '6px 12px', 
+          borderRadius: '12px', 
+          backgroundColor: '#fff3cd', 
+          color: '#856404',
+          fontSize: '12px',
+          fontWeight: '500',
+          textAlign: 'center'
+        }}>
+          Liberado
+        </div>
+      );
+    }
+    
+    // Si está en 'recibido' (Asignado), mostrar el contador
     return <ExpirationCounter createdAt={rowData.createdAt} />;
   };
 
@@ -352,7 +419,8 @@ const BandejaSolicitud = () => {
       updateRequestInList(requestId, {
         agentId: null,
         agente: '',
-        estado: mapStatus(result.status)
+        estado: mapStatus(result.status),
+        status: result.status
       });
       setError('');
     } catch (error) {
@@ -379,7 +447,8 @@ const BandejaSolicitud = () => {
       updateRequestInList(requestId, {
         agentId: result.agentId,
         agente: result.agent ? result.agent.username : '',
-        estado: mapStatus(result.status)
+        estado: mapStatus(result.status),
+        status: result.status
       });
       setError('');
       setLastFailedAction(null);
@@ -407,7 +476,8 @@ const BandejaSolicitud = () => {
       updateRequestInList(requestId, {
         agentId: null,
         agente: '',
-        estado: mapStatus(result.status)
+        estado: mapStatus(result.status),
+        status: result.status
       });
       setError('');
     } catch (error) {
@@ -434,7 +504,8 @@ const BandejaSolicitud = () => {
       updateRequestInList(requestId, {
         agentId: null,
         agente: '',
-        estado: mapStatus(result.status)
+        estado: mapStatus(result.status),
+        status: result.status
       });
       setError('');
     } catch (error) {
@@ -468,7 +539,8 @@ const BandejaSolicitud = () => {
           const repository = new QuoteRequestRepository();
           const result = await repository.markAsAttending(requestId);
           updateRequestInList(requestId, {
-            estado: mapStatus(result.status)
+            estado: mapStatus(result.status),
+            status: result.status
           });
           setError('');
         } catch (error) {
