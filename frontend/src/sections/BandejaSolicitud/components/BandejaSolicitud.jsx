@@ -1,58 +1,69 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { OverlayPanel } from 'primereact/overlaypanel';
-import { useRef } from 'react';
 import { ProgressSpinner } from 'primereact/progressspinner';
 import QuoteRequestRepository from '../../../modules/QuoteRequest/repository/QuoteRequestRepository';
 import GetAllQuoteRequests from '../../../modules/QuoteRequest/application/GetAllQuoteRequests';
 import '../styles/BandejaSolicitud.css';
 
 // Componente separado para el contador que se actualiza automáticamente
-const ExpirationCounter = ({ createdAt, currentTime }) => {
-  const expiration = useMemo(() => {
-    if (!createdAt) return 'N/A';
+const ExpirationCounter = ({ createdAt }) => {
+  const [currentTime, setCurrentTime] = useState(() => new Date());
+
+  // Actualizar cada minuto
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 60000); // 60 segundos (1 minuto)
+
+    return () => clearInterval(interval);
+  }, []);
+
+  const calculateExpiration = () => {
+    if (!createdAt) {
+      console.log('⚠️ No hay createdAt');
+      return { text: 'N/A', minutes: 0 };
+    }
     
-    // Convertir ambas fechas a hora de Perú para cálculo correcto
-    const created = new Date(createdAt);
-    const now = new Date(currentTime);
+    // Parsear la fecha. MySQL guarda en hora local del servidor (Perú)
+    let timestamp = createdAt;
+    if (typeof createdAt === 'string' && createdAt.includes(' ') && !createdAt.includes('T')) {
+      timestamp = createdAt.replace(' ', 'T');
+    }
     
-    // Convertir a hora de Perú (America/Lima)
-    const createdPeru = new Date(created.toLocaleString('en-US', { timeZone: 'America/Lima' }));
-    const nowPeru = new Date(now.toLocaleString('en-US', { timeZone: 'America/Lima' }));
+    // Crear fecha asumiendo que es hora de Perú
+    const created = new Date(timestamp);
+    const now = currentTime;
     
-    const diffMinutes = Math.floor((nowPeru - createdPeru) / (1000 * 60));
+    // Calcular diferencia en minutos
+    const diffMinutes = Math.floor((now - created) / (1000 * 60));
     
-    // Debug: ver qué está pasando con las fechas
-    console.log('ExpirationCounter calculation (Perú):', {
+    console.log('🕐 ExpirationCounter (Perú Time):', {
       createdAt: createdAt,
-      createdPeru: createdPeru,
-      nowPeru: nowPeru,
-      diffMinutes: diffMinutes,
-      currentTime: currentTime
+      created: created.toString(),
+      now: now.toString(),
+      diffMinutes: diffMinutes
     });
     
     // 45 minutos por defecto
     const totalMinutes = 45;
-    
-    // Si la fecha de creación es futura o hay error, mostrar tiempo completo
-    if (diffMinutes < 0 || diffMinutes > totalMinutes) {
-      console.log('Fecha futura o error, usando tiempo completo');
-      return `${totalMinutes} min.`;
-    }
-    
     const remainingMinutes = totalMinutes - diffMinutes;
     
     if (remainingMinutes <= 0) {
-      return '0 min.';
-    } else {
-      return `${remainingMinutes} min.`;
+      return { text: '0 min.', minutes: 0 };
     }
-  }, [createdAt, currentTime]);
+    
+    if (remainingMinutes > totalMinutes) {
+      return { text: `${totalMinutes} min.`, minutes: totalMinutes };
+    }
+    
+    return { text: `${remainingMinutes} min.`, minutes: remainingMinutes };
+  };
 
-  const minutes = parseInt(expiration.replace(' min.', '').replace('N/A', '0'));
+  const { text, minutes } = calculateExpiration();
   
   const getExpirationClass = (mins) => {
     if (mins === 0) return 'expiration-expired';
@@ -63,7 +74,7 @@ const ExpirationCounter = ({ createdAt, currentTime }) => {
 
   return (
     <div className={`expiration-badge ${getExpirationClass(minutes)}`}>
-      {expiration}
+      {text}
     </div>
   );
 };
@@ -170,11 +181,6 @@ const BandejaSolicitud = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const [totalRecords, setTotalRecords] = useState(0);
   const [expandedRows, setExpandedRows] = useState({});
-  const [currentTime, setCurrentTime] = useState(() => {
-    // Inicializar con hora de Perú
-    const peruTime = new Date().toLocaleString('en-US', { timeZone: 'America/Lima' });
-    return new Date(peruTime);
-  });
   const [currentUserId, setCurrentUserId] = useState(null);
   const [loadingActions, setLoadingActions] = useState(new Set());
   const [lastFailedAction, setLastFailedAction] = useState(null);
@@ -199,17 +205,6 @@ const BandejaSolicitud = () => {
     loadQuoteRequests();
   }, [currentPage]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Actualizar tiempo cada minuto para el contador de expiración
-  useEffect(() => {
-    const interval = setInterval(() => {
-      // Usar hora de Perú
-      const peruTime = new Date().toLocaleString('en-US', { timeZone: 'America/Lima' });
-      setCurrentTime(new Date(peruTime));
-    }, 60000); // Actualizar cada 60 segundos (1 minuto)
-
-    return () => clearInterval(interval);
-  }, []);
-
   const loadQuoteRequests = async () => {
     try {
       setLoading(true);
@@ -223,7 +218,7 @@ const BandejaSolicitud = () => {
       const mappedRequests = result.data?.map(request => ({
         id: request.id,
         cliente: request.passengerName,
-        pais: request.client?.pais || 'N/A',
+        pais: request.client?.pais || request.countryName || (request.countryCode ? getCountryFromCode(request.countryCode) : 'N/A'),
         telefono: `${request.countryCode} ${request.whatsapp}`,
         email: request.email,
         mensaje: request.message || 'Sin mensaje adicional',
@@ -248,11 +243,42 @@ const BandejaSolicitud = () => {
     }
   };
 
+  // Helper para obtener país desde código telefónico
+  const getCountryFromCode = (code) => {
+    const countryMap = {
+      '+34': 'España',
+      '+51': 'Perú',
+      '+1': 'Estados Unidos',
+      '+52': 'México',
+      '+54': 'Argentina',
+      '+56': 'Chile',
+      '+57': 'Colombia',
+      '+58': 'Venezuela',
+      '+591': 'Bolivia',
+      '+593': 'Ecuador',
+      '+595': 'Paraguay',
+      '+598': 'Uruguay',
+      '+55': 'Brasil',
+      '+44': 'Reino Unido',
+      '+33': 'Francia',
+      '+49': 'Alemania',
+      '+39': 'Italia',
+      '+41': 'Suiza'
+    };
+    return countryMap[code] || 'N/A';
+  };
+
   // Funciones helper para formatear datos
   const formatDate = (dateString) => {
     if (!dateString) return 'Sin fecha';
-    const date = new Date(dateString);
-    return date.toLocaleDateString('es-ES', {
+    // Parsear timestamp como UTC y mostrar en hora de Lima
+    let timestamp = dateString;
+    if (typeof dateString === 'string' && dateString.includes(' ') && !dateString.includes('T')) {
+      timestamp = dateString.replace(' ', 'T') + 'Z'; // Forzar UTC
+    }
+    const date = new Date(timestamp);
+    return date.toLocaleDateString('es-PE', {
+      timeZone: 'America/Lima',
       weekday: 'short',
       day: 'numeric',
       month: 'short',
@@ -262,7 +288,21 @@ const BandejaSolicitud = () => {
 
   const formatDateTime = (dateString) => {
     if (!dateString) return 'Sin fecha';
-    const date = new Date(dateString);
+    // Parsear timestamp. Si viene sin zona (MySQL), tratarlo como UTC
+    let timestamp = dateString;
+    if (typeof dateString === 'string') {
+      // Formato MySQL: "YYYY-MM-DD HH:mm:ss" → añadir Z para UTC
+      if (dateString.includes(' ') && !dateString.includes('T') && !dateString.includes('Z')) {
+        timestamp = dateString.replace(' ', 'T') + 'Z';
+      }
+      // Formato ISO sin Z: "YYYY-MM-DDTHH:mm:ss" → añadir Z
+      else if (dateString.includes('T') && !dateString.includes('Z') && !dateString.includes('+')) {
+        timestamp = dateString + 'Z';
+      }
+    }
+    const date = new Date(timestamp);
+    
+    // Mostrar en hora de Lima (UTC-5)
     return date.toLocaleString('es-PE', {
       timeZone: 'America/Lima',
       weekday: 'short',
@@ -270,7 +310,8 @@ const BandejaSolicitud = () => {
       month: 'short',
       year: '2-digit',
       hour: '2-digit',
-      minute: '2-digit'
+      minute: '2-digit',
+      hour12: true
     });
   };
 
@@ -287,7 +328,7 @@ const BandejaSolicitud = () => {
   };
 
   const expirationTemplate = (rowData) => {
-    return <ExpirationCounter createdAt={rowData.createdAt} currentTime={currentTime} />;
+    return <ExpirationCounter createdAt={rowData.createdAt} />;
   };
 
   // Función optimizada para actualizar solo una solicitud específica

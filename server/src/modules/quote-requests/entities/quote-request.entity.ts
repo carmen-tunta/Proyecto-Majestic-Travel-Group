@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 import { Client } from '../../clients/entities/client.entity';
 import { QuoteRequestService } from './quote-request-service.entity';
 import { User } from '../../users/entities/user.entity';
@@ -47,10 +47,10 @@ export class QuoteRequest {
   @Column({ type: 'text', default: 'public_web' })
   source: string;
 
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
 
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', onUpdate: 'CURRENT_TIMESTAMP' })
+  @UpdateDateColumn({ type: 'timestamp' })
   updatedAt: Date;
 
   @OneToMany(() => QuoteRequestService, (qrs) => qrs.quoteRequest, { cascade: true })
