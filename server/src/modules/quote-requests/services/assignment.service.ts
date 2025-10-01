@@ -48,9 +48,9 @@ export class AssignmentService {
     // 4. Asignar al primer agente (menor carga)
     const assignedAgent = availableAgents[0];
 
-    // 5. Actualizar la solicitud
+    // 5. Actualizar la solicitud (mantener estado 'recibido' cuando se asigna automáticamente)
     request.agentId = assignedAgent.id;
-    request.status = 'en_progreso';
+    // Estado se mantiene como 'recibido' hasta que el agente lo tome
 
     // 6. Actualizar el contador del agente
     assignedAgent.assignedRequestsCount += 1;
@@ -60,10 +60,10 @@ export class AssignmentService {
     await this.usersRepo.save(assignedAgent);
     await this.qrRepo.save(request);
 
-    // 8. Retornar la solicitud actualizada
+    // 8. Retornar la solicitud actualizada con relación del agente
     const updatedRequest = await this.qrRepo.findOne({
       where: { id: requestId },
-      relations: ['client', 'services', 'services.service']
+      relations: ['client', 'services', 'services.service', 'agent']
     });
     
     if (!updatedRequest) {
@@ -78,13 +78,13 @@ export class AssignmentService {
    */
   async releaseRequest(requestId: number, agentId: number): Promise<QuoteRequest> {
     return await this.dataSource.transaction(async (manager) => {
-      // 1. Verificar y actualizar la solicitud en una sola consulta
+      // 1. Verificar y actualizar la solicitud en una sola consulta (estado 'liberado')
       const updateResult = await manager
         .createQueryBuilder()
         .update(QuoteRequest)
         .set({ 
           agentId: null, 
-          status: 'recibido' 
+          status: 'liberado' 
         })
         .where('id = :requestId AND agentId = :agentId', { requestId, agentId })
         .execute();

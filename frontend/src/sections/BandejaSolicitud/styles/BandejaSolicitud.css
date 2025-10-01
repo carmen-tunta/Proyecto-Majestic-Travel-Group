@@ -141,6 +141,21 @@
   color: #856404;
 }
 
+.estado-asignado {
+  background-color: #cfe2ff;
+  color: #084298;
+}
+
+.estado-cotizando {
+  background-color: #d1ecf1;
+  color: #0c5460;
+}
+
+.estado-sin-respuesta {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
 .estado-default {
   background-color: #e2e3e5;
   color: #383d41;

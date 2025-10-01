@@ -318,7 +318,7 @@ const BandejaSolicitud = () => {
 
   const mapStatus = (status) => {
     const statusMap = {
-      'recibido': 'Solicitado',
+      'recibido': 'Asignado',
       'en_progreso': 'Atendiendo',
       'cotizando': 'Cotizando',
       'liberado': 'Liberado',
@@ -555,9 +555,11 @@ const BandejaSolicitud = () => {
   const estadoTemplate = (rowData) => {
     const getEstadoClass = (estado) => {
       switch (estado) {
+        case 'Asignado': return 'estado-asignado';
         case 'Atendiendo': return 'estado-atendiendo';
+        case 'Cotizando': return 'estado-cotizando';
+        case 'Sin respuesta': return 'estado-sin-respuesta';
         case 'Liberado': return 'estado-liberado';
-        case 'Solicitado': return 'estado-solicitado';
         default: return 'estado-default';
       }
     };
