@@ -593,6 +593,13 @@ const BandejaSolicitud = () => {
             placeholder="Buscar"
             className="search-input"
           />
+          <Button 
+            icon="pi pi-refresh" 
+            onClick={loadQuoteRequests}
+            className="p-button-rounded p-button-text"
+            tooltip="Actualizar"
+            tooltipOptions={{ position: 'bottom' }}
+          />
         </div>
       </div>
 

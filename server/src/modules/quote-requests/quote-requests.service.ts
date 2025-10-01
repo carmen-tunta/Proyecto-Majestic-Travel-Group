@@ -97,6 +97,7 @@ export class QuoteRequestsService {
       take: limit,
       order: { id: 'DESC' },
     });
+    
     return { data, total, page, limit };
   }
 
