@@ -43,4 +43,19 @@ export class User {
 
   @Column({ nullable: true, type: 'datetime' })
   resetPasswordExpires: Date | null;
+
+  @Column({ 
+    type: 'enum', 
+    enum: ['asignado', 'libre'], 
+    default: 'libre',
+    comment: 'Estado de asignación del agente'
+  })
+  assignmentStatus: 'asignado' | 'libre';
+
+  @Column({ 
+    type: 'int', 
+    default: 0,
+    comment: 'Cantidad de solicitudes asignadas al agente'
+  })
+  assignedRequestsCount: number;
 }
