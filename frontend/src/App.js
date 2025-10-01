@@ -23,11 +23,12 @@ import RegistroPagos from './sections/RegistroPagos/components/RegistroPagos';
 import Reporte from './sections/RegistroPagos/components/Reporte';
 import PlanYourTrip from './sections/Public/components/PlanYourTrip';
 import ThankYou from './sections/Public/components/ThankYou';
+import PortadaMenu from './sections/Services/components/Portada/PortadaMenu';
 
 function AppContent() {
   const location = useLocation();
   const { isModalOpen } = useModal();
-  const hideMenu = location.pathname === '/forgot-password' || location.pathname === '/'|| location.pathname === '/reset-password' || location.pathname === '/plan-your-trip' || location.pathname === '/plan-your-trip/thank-you';
+  const hideMenu = location.pathname === '/forgot-password' || location.pathname === '/'|| location.pathname === '/reset-password' || location.pathname === '/plan-your-trip' || location.pathname === '/plan-your-trip/thank-you' || location.pathname === '/servicios/portada';
   return (
     <>
       {!hideMenu && <Menu />}
@@ -122,6 +123,11 @@ function AppContent() {
           <Route path="/registro-pagos/reporte" element={
             <ProtectedRoute>
               <Reporte />
+            </ProtectedRoute>
+          } />
+          <Route path="/servicios/portada" element={
+            <ProtectedRoute>
+              <PortadaMenu />
             </ProtectedRoute>
           } />
         </Routes>

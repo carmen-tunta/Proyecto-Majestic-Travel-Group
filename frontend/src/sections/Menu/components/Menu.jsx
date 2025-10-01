@@ -25,7 +25,6 @@ const Menu = () => {
                 <Button label="Principal" text size="small" icon="pi pi-home"/>
                 <Button label="Clientes" text size="small" icon="pi pi-users" onClick={() => navigate('/clientes')} />
                 <Button label="Cotización" text size="small" icon="pi pi-money-bill" onClick={() => navigate('/cotizaciones')}/>
-                <Button label="Itinerario" text size="small" icon="pi pi-file"/>
                 <Button label="Proveedores" text size="small" icon="pi pi-users" onClick={() => navigate('/proveedores')} />
                 <Button label="Registro de pagos" text size="small" icon="pi pi-credit-card" onClick={() => navigate('/registro-pagos')} />
                 <Button label="Plantilla itineraria" text size="small" icon="pi pi-list" onClick={() => navigate('/itinerario')} />
