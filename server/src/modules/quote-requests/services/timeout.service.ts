@@ -27,14 +27,14 @@ export class TimeoutService {
   async checkExpiredAssignments() {
     try {
       // Buscar solicitudes en estado 'recibido' (asignadas pero no tomadas)
-      // que fueron creadas hace más de 45 minutos
+      // que fueron asignadas hace más de 45 minutos
       const fortyFiveMinutesAgo = new Date(Date.now() - 45 * 60 * 1000); // 45 minutos
 
       const expiredRequests = await this.qrRepo.find({
         where: {
           status: 'recibido',
           // agentId: Not(IsNull()), // Solo si tiene agente asignado (debe tener agente)
-          createdAt: LessThan(fortyFiveMinutesAgo),
+          assignedAt: LessThan(fortyFiveMinutesAgo), // Usar assignedAt en lugar de createdAt
         },
         relations: ['agent'],
       });
@@ -129,13 +129,14 @@ export class TimeoutService {
           );
         }
 
-        // 4. Asignar al nuevo agente
+        // 4. Asignar al nuevo agente (con nueva hora de asignación)
         const updateResult = await manager
           .createQueryBuilder()
           .update('quote_requests')
           .set({ 
             agentId: nextAgent.id, 
-            status: 'recibido' 
+            status: 'recibido',
+            assignedAt: () => 'CURRENT_TIMESTAMP' // Reiniciar el contador de 45 minutos
           })
           .where('id = :requestId', { requestId })
           .execute();

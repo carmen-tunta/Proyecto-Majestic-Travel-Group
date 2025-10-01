@@ -10,7 +10,7 @@ import GetAllQuoteRequests from '../../../modules/QuoteRequest/application/GetAl
 import '../styles/BandejaSolicitud.css';
 
 // Componente separado para el contador que se actualiza automáticamente
-const ExpirationCounter = ({ createdAt }) => {
+const ExpirationCounter = ({ assignedAt }) => {
   const [currentTime, setCurrentTime] = useState(() => new Date());
 
   // Actualizar cada minuto
@@ -23,30 +23,28 @@ const ExpirationCounter = ({ createdAt }) => {
   }, []);
 
   const calculateExpiration = () => {
-    if (!createdAt) {
-      console.log('⚠️ No hay createdAt');
+    if (!assignedAt) {
       return { text: 'N/A', minutes: 0 };
     }
     
-    // Parsear la fecha. MySQL guarda en hora local del servidor (Perú)
-    let timestamp = createdAt;
-    if (typeof createdAt === 'string' && createdAt.includes(' ') && !createdAt.includes('T')) {
-      timestamp = createdAt.replace(' ', 'T');
+    // Parsear la fecha de asignación. MySQL guarda en UTC
+    let timestamp = assignedAt;
+    if (typeof assignedAt === 'string') {
+      // Formato MySQL: "YYYY-MM-DD HH:mm:ss" → añadir Z para UTC
+      if (assignedAt.includes(' ') && !assignedAt.includes('T') && !assignedAt.includes('Z')) {
+        timestamp = assignedAt.replace(' ', 'T') + 'Z';
+      }
+      // Formato ISO sin Z: "YYYY-MM-DDTHH:mm:ss" → añadir Z
+      else if (assignedAt.includes('T') && !assignedAt.includes('Z') && !assignedAt.includes('+')) {
+        timestamp = assignedAt + 'Z';
+      }
     }
     
-    // Crear fecha asumiendo que es hora de Perú
-    const created = new Date(timestamp);
+    const assigned = new Date(timestamp);
     const now = currentTime;
     
     // Calcular diferencia en minutos
-    const diffMinutes = Math.floor((now - created) / (1000 * 60));
-    
-    console.log('🕐 ExpirationCounter (Perú Time):', {
-      createdAt: createdAt,
-      created: created.toString(),
-      now: now.toString(),
-      diffMinutes: diffMinutes
-    });
+    const diffMinutes = Math.floor((now - assigned) / (1000 * 60));
     
     // 45 minutos por defecto
     const totalMinutes = 45;
@@ -224,7 +222,8 @@ const BandejaSolicitud = () => {
         venceEn: '45 min.', // Se calculará dinámicamente en el template
         estado: mapStatus(request.status),
         servicios: request.services?.map(s => s.service?.name) || [],
-        createdAt: request.createdAt, // Agregar para el template de expiración
+        createdAt: request.createdAt, // Mantener para referencia
+        assignedAt: request.assignedAt, // Usar assignedAt para el contador
         agentId: request.agentId, // Agregar para los botones de acción
         status: request.status // Agregar el status original para condicionales
       })) || [];
@@ -390,8 +389,8 @@ const BandejaSolicitud = () => {
       );
     }
     
-    // Si está en 'recibido' (Asignado), mostrar el contador
-    return <ExpirationCounter createdAt={rowData.createdAt} />;
+    // Si está en 'recibido' (Asignado), mostrar el contador usando assignedAt
+    return <ExpirationCounter assignedAt={rowData.assignedAt} />;
   };
 
   // Función optimizada para actualizar solo una solicitud específica

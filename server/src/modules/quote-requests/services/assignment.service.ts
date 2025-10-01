@@ -50,6 +50,7 @@ export class AssignmentService {
 
     // 5. Actualizar la solicitud (mantener estado 'recibido' cuando se asigna automáticamente)
     request.agentId = assignedAgent.id;
+    request.assignedAt = new Date(); // Establecer hora de asignación
     // Estado se mantiene como 'recibido' hasta que el agente lo tome
 
     // 6. Actualizar el contador del agente

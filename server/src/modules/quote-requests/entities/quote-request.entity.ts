@@ -53,6 +53,9 @@ export class QuoteRequest {
   @UpdateDateColumn({ type: 'timestamp' })
   updatedAt: Date;
 
+  @Column({ type: 'timestamp', nullable: true })
+  assignedAt: Date | null;
+  
   @OneToMany(() => QuoteRequestService, (qrs) => qrs.quoteRequest, { cascade: true })
   services: QuoteRequestService[];
 
