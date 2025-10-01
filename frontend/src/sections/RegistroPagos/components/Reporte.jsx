@@ -15,6 +15,7 @@ const Reporte = () => {
 
     const [desde, setDesde] = useState(null);
     const [hasta, setHasta] = useState(null);
+    const [reporteFiltrado, setReporteFiltrado] = useState([]);
     const showNotification = useNotification();
 
     const [reporte, setReporte] = useState([]);
@@ -33,6 +34,41 @@ const Reporte = () => {
         });
 
         
+    const filtrarPorFechas = () => {
+        if (!desde && !hasta) {
+            setReporteFiltrado(reporte);
+            return;
+        }
+        const filtrado = reporte.filter(registro => {
+            if (!registro.fecha) return false;
+            const fechaRegistroStr = registro.fecha;            
+            let fechaDesdeStr, fechaHastaStr;
+            if (desde) {
+                const desdeDate = new Date(desde);
+                fechaDesdeStr = `${desdeDate.getFullYear()}-${String(desdeDate.getMonth() + 1).padStart(2, '0')}-${String(desdeDate.getDate()).padStart(2, '0')}`;
+            }
+            if (hasta) {
+                const hastaDate = new Date(hasta);
+                fechaHastaStr = `${hastaDate.getFullYear()}-${String(hastaDate.getMonth() + 1).padStart(2, '0')}-${String(hastaDate.getDate()).padStart(2, '0')}`;
+            }
+            if (desde && !hasta) {
+                return fechaRegistroStr >= fechaDesdeStr;
+            }
+            if (!desde && hasta) {
+                return fechaRegistroStr <= fechaHastaStr;
+            }
+            if (desde && hasta) {
+                return fechaRegistroStr >= fechaDesdeStr && fechaRegistroStr <= fechaHastaStr;
+            }
+            return true;
+        });
+        setReporteFiltrado(filtrado);
+        };
+        useEffect(() => {
+            filtrarPorFechas();
+    }, [desde, hasta, reporte]);
+
+
     const handleDesdeChange = (e) => {
         const nuevaDesde = e.target.value;
         setDesde(nuevaDesde);
@@ -55,7 +91,6 @@ const Reporte = () => {
         try {
             setLoading(true);
             const data = await rpGetAll.execute();
-            console.log(data);
             setReporte(data);
         } catch (error) {
             console.error("Error fetching data:", error);
@@ -73,6 +108,11 @@ const Reporte = () => {
         <div className="reporte">
             <div className='reporte-header'>
                 <h2>Reporte de registro de pagos</h2>
+                {(desde || hasta) && (
+                    <p style={{ color: '#666', fontSize: '0.9rem' }}>
+                        Mostrando {reporteFiltrado.length} de {reporte.length} registros
+                    </p>
+                )}
             </div>
 
             <div className="reporte-buscador">
@@ -104,19 +144,19 @@ const Reporte = () => {
                 <DataTable 
                     className="reporte-table" 
                     size="small" 
-                    value={reporte} 
+                    value={reporteFiltrado} 
                     tableStyle={{ minWidth: '60%' }}
                     emptyMessage="No hay registros"
                     loading={loading}
                 >
                     <Column 
-                        field="cotizacion.nombreCotizacion" 
-                        header="Nombre" 
+                        field="cotizacion.cliente.nombre" 
+                        header="Nombre de cliente" 
                         style={{ width: '18%' }}>    
                     </Column>
                     <Column 
-                        field="nota" 
-                        header="Nota (?)" 
+                        field="cotizacion.nombreCotizacion" 
+                        header="Nombre de cotizacion" 
                         style={{ width: '21%' }}>
                     </Column>
                     <Column 
