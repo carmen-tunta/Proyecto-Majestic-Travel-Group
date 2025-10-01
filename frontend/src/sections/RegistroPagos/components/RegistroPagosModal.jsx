@@ -176,6 +176,7 @@ const RegistroPagosModal = ({ onHide, cotizacion }) => {
                 />
             </div>
             <DataTable 
+                className='registro-pagos-modal-table'
                 value={registroPago}
                 loading={loading}
                 emptyMessage="No hay registros de pago"

@@ -103,9 +103,10 @@ const ActionButton = ({ rowData, currentUserId, loadingActions, onAction }) => {
           {isAssignedToCurrentUser && (
             <Button
               label="Atendiendo"
-              icon="pi pi-check"
+              icon={loadingActions.has(`attending-${rowData.id}`) ? "pi pi-spinner pi-spin" : "pi pi-check"}
               text
               className="action-button"
+              disabled={loadingActions.has(`attending-${rowData.id}`)}
               onClick={() => handleActionClick('atendiendo')}
             />
           )}
@@ -177,6 +178,7 @@ const BandejaSolicitud = () => {
   const [currentUserId, setCurrentUserId] = useState(null);
   const [loadingActions, setLoadingActions] = useState(new Set());
   const [lastFailedAction, setLastFailedAction] = useState(null);
+  const [globalActionLoading, setGlobalActionLoading] = useState(false);
 
   // Obtener ID del usuario actual
   useEffect(() => {
@@ -301,6 +303,7 @@ const BandejaSolicitud = () => {
   const handleReleaseRequest = async (requestId) => {
     const actionKey = `release-${requestId}`;
     setLoadingActions(prev => new Set([...prev, actionKey]));
+    setGlobalActionLoading(true);
     
     try {
       const repository = new QuoteRequestRepository();
@@ -310,6 +313,7 @@ const BandejaSolicitud = () => {
         agente: '',
         estado: mapStatus(result.status)
       });
+      setError('');
     } catch (error) {
       console.error('Error al liberar solicitud:', error);
       setError('Error al liberar solicitud: ' + error.message);
@@ -319,12 +323,14 @@ const BandejaSolicitud = () => {
         newSet.delete(actionKey);
         return newSet;
       });
+      setGlobalActionLoading(false);
     }
   };
 
   const handleTakeRequest = async (requestId) => {
     const actionKey = `take-${requestId}`;
     setLoadingActions(prev => new Set([...prev, actionKey]));
+    setGlobalActionLoading(true);
     
     try {
       const repository = new QuoteRequestRepository();
@@ -334,6 +340,8 @@ const BandejaSolicitud = () => {
         agente: result.agent ? result.agent.username : '',
         estado: mapStatus(result.status)
       });
+      setError('');
+      setLastFailedAction(null);
     } catch (error) {
       console.error('Error al tomar solicitud:', error);
       setError('Error al tomar solicitud: ' + error.message);
@@ -344,36 +352,61 @@ const BandejaSolicitud = () => {
         newSet.delete(actionKey);
         return newSet;
       });
+      setGlobalActionLoading(false);
     }
   };
 
   const handleMarkAsQuoting = async (requestId) => {
+    const actionKey = `quoting-${requestId}`;
+    setLoadingActions(prev => new Set([...prev, actionKey]));
+    setGlobalActionLoading(true);
     try {
       const repository = new QuoteRequestRepository();
       const result = await repository.markAsQuoting(requestId, currentUserId);
       updateRequestInList(requestId, {
-        agentId: null, // Ya no está asignada
+        agentId: null,
         agente: '',
         estado: mapStatus(result.status)
       });
+      setError('');
     } catch (error) {
       console.error('Error al marcar como cotizando:', error);
       setError('Error al marcar como cotizando: ' + error.message);
+      setLastFailedAction({ type: 'cotizando', requestId });
+    } finally {
+      setLoadingActions(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(actionKey);
+        return newSet;
+      });
+      setGlobalActionLoading(false);
     }
   };
 
   const handleMarkAsNoResponse = async (requestId) => {
+    const actionKey = `noresp-${requestId}`;
+    setLoadingActions(prev => new Set([...prev, actionKey]));
+    setGlobalActionLoading(true);
     try {
       const repository = new QuoteRequestRepository();
       const result = await repository.markAsNoResponse(requestId, currentUserId);
       updateRequestInList(requestId, {
-        agentId: null, // Ya no está asignada
+        agentId: null,
         agente: '',
         estado: mapStatus(result.status)
       });
+      setError('');
     } catch (error) {
       console.error('Error al marcar como sin respuesta:', error);
       setError('Error al marcar como sin respuesta: ' + error.message);
+      setLastFailedAction({ type: 'sin_respuesta', requestId });
+    } finally {
+      setLoadingActions(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(actionKey);
+        return newSet;
+      });
+      setGlobalActionLoading(false);
     }
   };
 
@@ -386,6 +419,31 @@ const BandejaSolicitud = () => {
       case 'take':
         await handleTakeRequest(requestId);
         break;
+      case 'atendiendo': {
+        const actionKey = `attending-${requestId}`;
+        setLoadingActions(prev => new Set([...prev, actionKey]));
+        setGlobalActionLoading(true);
+        try {
+          const repository = new QuoteRequestRepository();
+          const result = await repository.markAsAttending(requestId);
+          updateRequestInList(requestId, {
+            estado: mapStatus(result.status)
+          });
+          setError('');
+        } catch (error) {
+          console.error('Error al marcar como atendiendo:', error);
+          setError('Error al marcar como atendiendo: ' + error.message);
+          setLastFailedAction({ type: 'atendiendo', requestId });
+        } finally {
+          setLoadingActions(prev => {
+            const newSet = new Set(prev);
+            newSet.delete(actionKey);
+            return newSet;
+          });
+          setGlobalActionLoading(false);
+        }
+        break;
+      }
       case 'cotizando':
         await handleMarkAsQuoting(requestId);
         break;
@@ -495,7 +553,7 @@ const BandejaSolicitud = () => {
         </div>
       </div>
 
-      <div className="bandeja-content">
+      <div className="bandeja-content" style={{ position: 'relative' }}>
         {loading && (
           <div className="loading-container">
             <ProgressSpinner />
@@ -546,6 +604,20 @@ const BandejaSolicitud = () => {
           <Column field="estado" header="Estado Solicitud" body={estadoTemplate} />
           <Column body={actionTemplate} header="" style={{ width: '50px' }} />
           </DataTable>
+        )}
+
+        {globalActionLoading && (
+          <div style={{
+            position: 'absolute', inset: 0,
+            background: 'rgba(255,255,255,0.6)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            zIndex: 5
+          }}>
+            <div style={{ textAlign: 'center' }}>
+              <ProgressSpinner style={{ width: 40, height: 40 }} />
+              <div style={{ marginTop: 8, color: '#334155', fontWeight: 600 }}>Aplicando cambio...</div>
+            </div>
+          </div>
         )}
       </div>
     </div>

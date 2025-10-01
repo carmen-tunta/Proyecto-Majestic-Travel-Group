@@ -141,7 +141,7 @@ export class AssignmentService {
       const updateResult = await manager
         .createQueryBuilder()
         .update(QuoteRequest)
-        .set({ status })
+        .set({ status, agentId: null })
         .where('id = :requestId AND agentId = :agentId', { requestId, agentId })
         .execute();
 
@@ -201,6 +201,7 @@ export class AssignmentService {
         throw new NotFoundException(`QuoteRequest with ID ${requestId} not found`);
       }
 
+      // Permitir tomar si está sin agente o si proviene de estados cotizando/sin_respuesta (donde ya dejamos agentId en null)
       if (request.agentId) {
         throw new Error('La solicitud ya está asignada a otro agente');
       }

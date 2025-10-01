@@ -102,6 +102,18 @@ class QuoteRequestRepository {
             return await response.json();
         }
 
+        async markAsAttending(id) {
+            const response = await fetch(`${apiUrl}/${id}`, {
+                method: 'PUT',
+                headers: getAuthHeaders(),
+                body: JSON.stringify({ status: 'en_progreso' })
+            });
+            if (!response.ok) {
+                throw new Error('Error al marcar como atendiendo');
+            }
+            return await response.json();
+        }
+
         async getAgentsAssignmentStatus() {
             const response = await fetch(`${apiUrl}/agents/assignment-status`, {
                 headers: getAuthHeaders()
