@@ -107,10 +107,6 @@ const ActionButton = ({ rowData, currentUserId, loadingActions, onAction }) => {
       
       <OverlayPanel ref={overlayRef} appendTo={typeof document !== 'undefined' ? document.body : undefined}>
         <div className="action-menu">
-          {!hasAgent && currentUserId && (
-            <div className="menu-title">Tomar solicitud</div>
-          )}
-          
           {isAssignedToCurrentUser && (
             <Button
               label="Atendiendo"
