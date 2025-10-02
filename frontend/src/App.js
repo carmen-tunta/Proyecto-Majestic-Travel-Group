@@ -12,6 +12,7 @@ import Tarifario from './sections/Proveedores/components/Tarifario/Tarifario';
 import { NotificationProvider } from './sections/Notification/NotificationContext';
 import { AuthProvider } from './modules/auth/context/AuthContext';
 import ProtectedRoute from './modules/auth/components/ProtectedRoute';
+import PermissionRoute from './modules/auth/components/PermissionRoute';
 import PublicRoute from './modules/auth/components/PublicRoute';
 import { ModalProvider, useModal } from './contexts/ModalContext';
 import Clientes from './sections/Clientes/components/Clientes';
@@ -57,84 +58,84 @@ function AppContent() {
           
           {/* Rutas protegidas - solo para usuarios autenticados */}
           <Route path="/bandeja-solicitud" element={
-            <ProtectedRoute>
+            <PermissionRoute moduleCode="BANDEJA_SOLICITUD">
               <BandejaSolicitud />
-            </ProtectedRoute>
+            </PermissionRoute>
           } />
           <Route path="/itinerario" element={
-            <ProtectedRoute>
+            <PermissionRoute moduleCode="ITINERARIO">
               <Itinerario />
-            </ProtectedRoute>
+            </PermissionRoute>
           } />
           <Route path="/componentes" element={
-            <ProtectedRoute>
+            <PermissionRoute moduleCode="COMPONENTES">
               <Componentes />
-            </ProtectedRoute>
+            </PermissionRoute>
           } />
           <Route path="/servicios" element={
-            <ProtectedRoute>
+            <PermissionRoute moduleCode="SERVICIOS">
               <Services />
-            </ProtectedRoute>
+            </PermissionRoute>
           } />
           <Route path="/proveedores" element={
-            <ProtectedRoute>
+            <PermissionRoute moduleCode="PROVEEDORES">
               <Proveedores />
-            </ProtectedRoute>
+            </PermissionRoute>
           } />
           <Route path="/cotizaciones" element={
-            <ProtectedRoute>
+            <PermissionRoute moduleCode="COTIZACION">
               <Cotizaciones />
-            </ProtectedRoute>
+            </PermissionRoute>
           } />
           <Route path="/cotizaciones/nuevo" element={
-            <ProtectedRoute>
+            <PermissionRoute moduleCode="COTIZACION">
               <CotizacionForm />
-            </ProtectedRoute>
+            </PermissionRoute>
           } />
           <Route path="/cotizaciones/:id" element={
-            <ProtectedRoute>
+            <PermissionRoute moduleCode="COTIZACION">
               <CotizacionForm />
-            </ProtectedRoute>
+            </PermissionRoute>
           } />
           <Route path="/proveedores/detalles" element={
-            <ProtectedRoute>
+            <PermissionRoute moduleCode="PROVEEDORES">
               <DetallesProveedores />
-            </ProtectedRoute>
+            </PermissionRoute>
           } />
           <Route path="/proveedores/tarifario" element={
-            <ProtectedRoute>
+            <PermissionRoute moduleCode="PROVEEDORES">
               <Tarifario />
-            </ProtectedRoute>
+            </PermissionRoute>
           } />
           <Route path="/clientes" element={
-            <ProtectedRoute>
+            <PermissionRoute moduleCode="CLIENTES">
               <Clientes />
-            </ProtectedRoute>
+            </PermissionRoute>
           } />
           <Route path="/clientes/nuevo" element={
-            <ProtectedRoute>
+            <PermissionRoute moduleCode="CLIENTES">
               <ClientPage />
-            </ProtectedRoute>
+            </PermissionRoute>
           } />
           <Route path="/clientes/:id" element={
-            <ProtectedRoute>
+            <PermissionRoute moduleCode="CLIENTES">
               <ClientPage />
-            </ProtectedRoute>
+            </PermissionRoute>
           } />
           <Route path="/registro-pagos" element={
-            <ProtectedRoute>
+            <PermissionRoute moduleCode="REGISTRO_PAGOS">
               <RegistroPagos />
-            </ProtectedRoute>
+            </PermissionRoute>
           } />
           <Route path="/registro-pagos/reporte" element={
-            <ProtectedRoute>
+            <PermissionRoute moduleCode="REGISTRO_PAGOS">
               <Reporte />
-            </ProtectedRoute>
+            </PermissionRoute>
           } />
           <Route path="/permisos" element={
-            <ProtectedRoute>
+            <PermissionRoute moduleCode="USUARIOS">
               <Permisos />
-            </ProtectedRoute>
+            </PermissionRoute>
           } />
         </Routes>
       </div>

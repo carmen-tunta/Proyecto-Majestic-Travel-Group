@@ -2,7 +2,8 @@ const API_BASE_URL = process.env.REACT_APP_API_URL;
 
 // Función helper para obtener headers con autenticación
 const getAuthHeaders = () => {
-  const token = localStorage.getItem('authToken');
+  // Usar sessionStorage para sesiones independientes por pestaña.
+  const token = sessionStorage.getItem('authToken') || localStorage.getItem('authToken');
   return {
     'Content-Type': 'application/json',
     ...(token && { 'Authorization': `Bearer ${token}` })
@@ -269,6 +270,20 @@ export const apiService = {
       if (!res.ok) throw new Error('Error al revocar permisos');
       return await res.json();
     } catch (e) { throw new Error(e.message || 'Error revocar permisos'); }
+  },
+
+  // Permisos del usuario actual (para menú dinámico)
+  async getMyPermissions() {
+    try {
+      const res = await fetch(`${API_BASE_URL}/permissions/me`, { headers: getAuthHeaders() });
+      if (!res.ok) throw new Error('Error al obtener mis permisos');
+      return await res.json(); // { modules: [ { module, actions: [] } ] }
+    } catch (e) { throw new Error(e.message || 'Error mis permisos'); }
+  },
+
+  hasView(modulesPerms, moduleCode) {
+    if (!modulesPerms) return false;
+    return modulesPerms.some(m => m.module === moduleCode && m.actions.includes('VIEW'));
   },
 
   // Cotizaciones

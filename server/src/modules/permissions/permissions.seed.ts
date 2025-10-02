@@ -68,6 +68,39 @@ const MODULES: Record<string, { label?: string; actions: [string, string, string
       ['EDIT', 'Editar plantilla itineraria'],
       ['DELETE', 'Eliminar plantilla itineraria']
     ]
+  },
+  PROVEEDORES: {
+    label: 'Proveedores',
+    actions: [
+      ['VIEW', 'Ver proveedores'],
+      ['CREATE', 'Crear proveedor'],
+      ['EDIT', 'Editar proveedor'],
+      ['DELETE', 'Eliminar proveedor']
+    ]
+  },
+  REGISTRO_PAGOS: {
+    label: 'Registro de pagos',
+    actions: [
+      ['VIEW', 'Ver registros de pagos'],
+      ['CREATE', 'Crear registro de pago'],
+      ['EDIT', 'Editar registro de pago'],
+      ['DELETE', 'Eliminar registro de pago']
+    ]
+  },
+  REPORTES: {
+    label: 'Reportes',
+    actions: [
+      ['VIEW', 'Ver reportes'],
+      ['EXPORT', 'Exportar reportes']
+    ]
+  },
+  BANDEJA_SOLICITUD: {
+    label: 'Bandeja de solicitud',
+    actions: [
+      ['VIEW', 'Ver bandeja de solicitud'],
+      ['ASSIGN', 'Asignar solicitud'],
+      ['PROCESS', 'Procesar solicitud']
+    ]
   }
 };
 
