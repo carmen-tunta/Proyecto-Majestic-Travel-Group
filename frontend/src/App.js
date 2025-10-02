@@ -21,6 +21,7 @@ import Cotizaciones from './sections/Cotizacion/components/Cotizaciones';
 import CotizacionForm from './sections/Cotizacion/components/CotizacionForm';
 import RegistroPagos from './sections/RegistroPagos/components/RegistroPagos';
 import Reporte from './sections/RegistroPagos/components/Reporte';
+import Permisos from './sections/Permisos/components/Permisos';
 import PlanYourTrip from './sections/Public/components/PlanYourTrip';
 import ThankYou from './sections/Public/components/ThankYou';
 import BandejaSolicitud from './sections/BandejaSolicitud/components/BandejaSolicitud';
@@ -128,6 +129,11 @@ function AppContent() {
           <Route path="/registro-pagos/reporte" element={
             <ProtectedRoute>
               <Reporte />
+            </ProtectedRoute>
+          } />
+          <Route path="/permisos" element={
+            <ProtectedRoute>
+              <Permisos />
             </ProtectedRoute>
           } />
         </Routes>

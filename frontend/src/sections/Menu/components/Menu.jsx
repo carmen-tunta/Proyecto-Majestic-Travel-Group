@@ -36,7 +36,7 @@ const Menu = () => {
                 <Button label="Reportes" text size="small" icon="pi pi-list-check"/>
             </div>
             <div className="menu-options">
-                <Button label="Permisos" text size="small" icon="pi pi-lock"/>
+                <Button label="Permisos" text size="small" icon="pi pi-lock" onClick={() => navigate('/permisos')} />
                 <Button label="Cerrar sesión" text size="small" icon="pi pi-sign-out" onClick={handleLogout}/>
             </div>
         </div>

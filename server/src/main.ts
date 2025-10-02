@@ -18,7 +18,9 @@ async function bootstrap() {
   app.use('/images-service', express.static(path.join(process.cwd(), 'uploads/images-service')));
   app.use('/documents-tarifario', express.static(path.join(process.cwd(), 'uploads/documents-tarifario')));
 
-  await app.listen(process.env.BACK_HOST || 3080);
+  const port = Number(process.env.PORT) || Number(process.env.BACK_PORT) || Number(process.env.BACK_HOST) || 3080;
+  await app.listen(port);
+  console.log(`Backend escuchando en http://localhost:${port}`);
 } 
 
 bootstrap();

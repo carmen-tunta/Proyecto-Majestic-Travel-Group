@@ -25,6 +25,7 @@ import { CotizacionModule } from '../cotizacion/cotizacion.module';
 import { PasajerosModule } from '../pasajeros/pasajeros.module';
 import { RegistroPagoModule } from '../registroPago/registroPago.module';
 import { QuoteRequestsModule } from '../quote-requests/quote-requests.module';
+import { PermissionsModule } from '../permissions/permissions.module';
 
 @Module({
  
@@ -51,7 +52,8 @@ import { QuoteRequestsModule } from '../quote-requests/quote-requests.module';
             CotizacionModule,
             PasajerosModule,
             RegistroPagoModule,
-            QuoteRequestsModule
+            QuoteRequestsModule,
+            PermissionsModule
           ],
 
   controllers: [AppController],

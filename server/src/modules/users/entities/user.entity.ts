@@ -58,4 +58,18 @@ export class User {
     comment: 'Cantidad de solicitudes asignadas al agente'
   })
   assignedRequestsCount: number;
+
+  @Column({
+    type: 'enum',
+    enum: ['activo', 'suspendido'],
+    default: 'activo',
+    comment: 'Estado de acceso del usuario al sistema'
+  })
+  status: 'activo' | 'suspendido';
+
+  @CreateDateColumn({ type: 'datetime', comment: 'Fecha de creación del usuario' })
+  createdAt: Date;
+
+  @UpdateDateColumn({ type: 'datetime', comment: 'Última actualización' })
+  updatedAt: Date;
 }
