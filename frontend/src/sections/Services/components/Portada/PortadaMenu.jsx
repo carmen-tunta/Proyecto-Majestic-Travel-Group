@@ -5,6 +5,7 @@ import { TabMenu } from "primereact/tabmenu";
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { FloatLabel } from 'primereact/floatlabel';
+import TituloPortada from './TituloPortada';
 
 const PortadaMenu = () => {
     const navigate = useNavigate();
@@ -62,9 +63,7 @@ const PortadaMenu = () => {
 
         </div>
         {activeIndex === 0 && (
-                <div>
-                    Portada
-                </div>
+                <TituloPortada service={service} />
             )}
             {activeIndex === 1 && (
                 <div>

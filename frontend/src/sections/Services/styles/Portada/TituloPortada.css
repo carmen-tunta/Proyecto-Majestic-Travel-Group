@@ -1,0 +1,92 @@
+.portada-container {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 0;
+}
+
+.portada-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: var(--bg-portada-centro-image);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: 1;
+    filter: blur(2px) brightness(0.7);
+    z-index: -1;
+}
+
+.titulo-portada-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1;
+    
+}
+
+.titulo-portada {
+    font-size: 3rem;
+    font-weight: bold;
+    text-align: center;
+    color: black;
+    /* text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.8); */
+}
+
+.portada-container .icono-titulo {
+    position: absolute;
+    top: 25px;
+    right: -25px;
+    margin-bottom: 1rem;
+    color: var(--surface-500);
+    cursor: pointer;
+}
+
+.portada-container .icono-imagen {
+    position: absolute;
+    top: 60%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1;
+    color: var(--surface-500);
+    cursor: pointer;
+}
+
+.editor-container {
+    position: absolute;
+    top: 20%;
+    right: 5%;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 0.5rem;
+    background-color: #fff;
+    width: 20rem;
+    height: 12rem;
+}
+
+.editor-actions {
+    position: absolute;
+    right: 10px;
+    bottom: 5px;
+}
+
+.editor-container .ql-toolbar.ql-snow {
+    border: none;
+    border-bottom: 1px solid #ccc;
+    font-size: 1px;
+}
+
+.editor-container .ql-toolbar .ql-image,
+.editor-container .ql-toolbar .ql-code-block,
+.editor-container .ql-toolbar .ql-link,
+.editor-container .ql-toolbar .ql-clean{
+    display: none !important;
+}
