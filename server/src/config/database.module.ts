@@ -28,6 +28,7 @@ import { Pasajero } from 'src/modules/pasajeros/entities/pasajero.entity';
 import { RegistroPago } from 'src/modules/registroPago/entities/registroPago.entity';
 import { QuoteRequest } from 'src/modules/quote-requests/entities/quote-request.entity';
 import { QuoteRequestService } from 'src/modules/quote-requests/entities/quote-request-service.entity';
+import { Portada } from 'src/modules/services/entities/portada.entity';
 
 
 @Module({
@@ -63,7 +64,8 @@ import { QuoteRequestService } from 'src/modules/quote-requests/entities/quote-r
                   Pasajero,
                   RegistroPago,
                   QuoteRequest,
-                  QuoteRequestService
+                  QuoteRequestService,
+                  Portada
                 ], // Aquí se agregarán las entidades
 
       synchronize: true, // Cambia a true solo en desarrollo

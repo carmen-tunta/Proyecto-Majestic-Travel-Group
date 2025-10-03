@@ -1,6 +1,7 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToMany, JoinTable } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToMany, JoinTable, OneToOne } from 'typeorm';
 import { Component } from '../../components/entities/component.entity';
 import { ServiceImage } from 'src/modules/serviceImages/entities/serviceImages.entity';
+import { Portada } from './portada.entity';
 
 @Entity('services')
 export class Service {
@@ -22,4 +23,10 @@ export class Service {
 
   @OneToMany(() => ServiceImage, image => image.service, { cascade: true })
   images: ServiceImage[];
+
+  @OneToOne(() => Portada, portada => portada.service, { 
+    cascade: true,
+    nullable: true
+  })
+  portada: Portada;
 }
