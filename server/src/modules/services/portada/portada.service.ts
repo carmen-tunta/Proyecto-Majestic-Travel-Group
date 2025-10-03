@@ -24,10 +24,6 @@ export class PortadaService {
         const existingPortada = await this.getPortadaByServiceId(serviceId);
         
         if (existingPortada) {
-            // Si existe, actualizar
-            console.log(`Portada ya existe para servicio ${serviceId}, actualizando...`);
-            
-            // Filtrar propiedades undefined
             const filteredData = Object.keys(data).reduce((acc, key) => {
                 if (data[key] !== undefined && data[key] !== null) {
                     acc[key] = data[key];

@@ -4,7 +4,7 @@ class CreateOrUpdatePortada {
     }
 
     async execute(serviceId, data, file) {
-        return await this.repository.CreateOrUpdatePortada(serviceId, data, file);
+        return await this.repository.createOrUpdatePortada(serviceId, data, file);
     }
 }
 
