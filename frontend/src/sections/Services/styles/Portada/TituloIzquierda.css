@@ -1,0 +1,41 @@
+.titulo-izquierda {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+
+}
+
+.titulo-izquierda .izquierda {
+    display: flex;
+    flex-direction: column;
+    width: 50vw;
+    height: 100%;
+    padding: 3rem;
+    border-right: 3px dotted rgb(230, 230, 230);
+}
+
+.titulo-izquierda .izquierda .titulo {
+    font-size: 2rem;
+    margin-left: 1.5rem;
+}
+
+.titulo-izquierda .izquierda .contenido {
+    background-color: var(--blue-100);
+    padding: 2rem;
+    margin-top: 1rem;
+    border-radius: 10px;
+}
+
+.titulo-izquierda .imagen {
+    width: 50vw;
+    height: 100%;
+}
+
+.titulo-izquierda .imagen .icono-imagen {
+    position: relative;
+    top: 50%;
+    left: 50%;
+    color: var(--surface-400);
+    cursor: pointer;
+}
