@@ -136,7 +136,7 @@ const TituloPortada = ({ service }) => {
                 </div>
             )}
             {showEditor && (
-                <div className="editor-container">
+                <div className="editor-centro editor-container">
                     <Editor
                         value={editorContent} 
                         onTextChange={(e) => setEditorContent(e.htmlValue)}

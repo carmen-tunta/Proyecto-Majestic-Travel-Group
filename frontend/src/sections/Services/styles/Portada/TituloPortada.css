@@ -60,7 +60,7 @@
     cursor: pointer;
 }
 
-.editor-container {
+.editor-centro.editor-container {
     position: absolute;
     top: 20%;
     right: 5%;
