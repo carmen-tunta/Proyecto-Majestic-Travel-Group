@@ -59,51 +59,39 @@ class ServicePortadaRepository {
         return await response.json();
     }
 
-    //  async createPortada(data, file) {
-    //     const formData = new FormData();
-    //     if (file) { formData.append('file', file); }
-    //     Object.entries(data).forEach(([key, value]) => {
-    //         formData.append(key, value);
-    //     });
-    //     const token = localStorage.getItem('authToken');
-    //     const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
-    //     const response = await fetch(`${apiUrl}`, {
-    //         method: "POST",
-    //         headers,
-    //         body: formData
-    //     });
-    //     if (!response.ok) throw new Error('Error al subir la imagen');
-    //     return await response.json();
-    // }
+    async uploadLeftImage(serviceId, file) {
+        const formData = new FormData();
+        formData.append('file', file);
 
-    // async updatePortada(id, data, file) {
-    //     const formData = new FormData();
-        
-    //     // Agregar archivo si existe
-    //     if (file) {
-    //         formData.append('file', file);
-    //     }
-        
-    //     // Agregar datos de la portada
-    //     Object.entries(data).forEach(([key, value]) => {
-    //         if (value !== undefined && value !== null) {
-    //             formData.append(key, value);
-    //         }
-    //     });
+        const token = localStorage.getItem('authToken');
+        const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
 
-    //     const token = localStorage.getItem('authToken');
-    //     const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
+        const response = await fetch(`${apiUrl}/${serviceId}/imagen-izquierda`, {
+            method: "PUT",
+            headers,
+            body: formData
+        });
 
-    //     const response = await fetch(`${apiUrl}/${id}`, { // Ruta corregida
-    //         method: "PUT",
-    //         headers,
-    //         body: formData
-    //     });
-        
-    //     if (!response.ok) throw new Error('Error al actualizar la portada');
-    //     return await response.json();
-    // }
+        if (!response.ok) throw new Error('Error al subir la imagen izquierda');
+        return await response.json();
+    }
 
+    async uploadLeftSmallImage(serviceId, file) {
+        const formData = new FormData();
+        formData.append('file', file);
+
+        const token = localStorage.getItem('authToken');
+        const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
+
+        const response = await fetch(`${apiUrl}/${serviceId}/imagen-contenido-izquierda`, {
+            method: "PUT",
+            headers,
+            body: formData
+        });
+
+        if (!response.ok) throw new Error('Error al subir la imagenp pequeña izquierda');
+        return await response.json();
+    }
 }
 
 export default ServicePortadaRepository;
