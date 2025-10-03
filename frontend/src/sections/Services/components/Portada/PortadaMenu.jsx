@@ -14,9 +14,6 @@ const PortadaMenu = () => {
 
     const [activeIndex, setActiveIndex] = useState(0);
 
-    console.log('Servicio recibido en PortadaMenu:', service);
-
-
     return (
         <>
         <div className="portada-menu">

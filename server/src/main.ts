@@ -17,6 +17,7 @@ async function bootstrap() {
   const path = require('path');
   app.use('/images-service', express.static(path.join(process.cwd(), 'uploads/images-service')));
   app.use('/documents-tarifario', express.static(path.join(process.cwd(), 'uploads/documents-tarifario')));
+  app.use('/images-portada', express.static(path.join(process.cwd(), 'uploads/images-portada')));
 
   await app.listen(process.env.BACK_HOST || 3080);
 } 
