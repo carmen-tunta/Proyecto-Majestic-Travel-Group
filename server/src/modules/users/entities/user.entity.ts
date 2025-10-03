@@ -73,6 +73,4 @@ export class User {
   @UpdateDateColumn({ type: 'datetime', comment: 'Última actualización' })
   updatedAt: Date;
 
-  @Column({ type: 'int', default: 0, comment: 'Versión de permisos (incrementa cuando se otorgan o revocan acciones)' })
-  permissionsVersion: number;
 }

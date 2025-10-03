@@ -11,9 +11,7 @@ import DetallesProveedores from './sections/Proveedores/components/DetallesProve
 import Tarifario from './sections/Proveedores/components/Tarifario/Tarifario';
 import { NotificationProvider } from './sections/Notification/NotificationContext';
 import { AuthProvider } from './modules/auth/context/AuthContext';
-import { PermissionsProvider } from './contexts/PermissionsContext';
 import ProtectedRoute from './modules/auth/components/ProtectedRoute';
-import PermissionRoute from './modules/auth/components/PermissionRoute';
 import PublicRoute from './modules/auth/components/PublicRoute';
 import { ModalProvider, useModal } from './contexts/ModalContext';
 import Clientes from './sections/Clientes/components/Clientes';
@@ -23,7 +21,6 @@ import Cotizaciones from './sections/Cotizacion/components/Cotizaciones';
 import CotizacionForm from './sections/Cotizacion/components/CotizacionForm';
 import RegistroPagos from './sections/RegistroPagos/components/RegistroPagos';
 import Reporte from './sections/RegistroPagos/components/Reporte';
-import Permisos from './sections/Permisos/components/Permisos';
 import PlanYourTrip from './sections/Public/components/PlanYourTrip';
 import ThankYou from './sections/Public/components/ThankYou';
 import BandejaSolicitud from './sections/BandejaSolicitud/components/BandejaSolicitud';
@@ -58,86 +55,21 @@ function AppContent() {
           <Route path="/plan-your-trip/thank-you" element={<ThankYou />} />
           
           {/* Rutas protegidas - solo para usuarios autenticados */}
-          <Route path="/bandeja-solicitud" element={
-            <PermissionRoute moduleCode="BANDEJA_SOLICITUD">
-              <BandejaSolicitud />
-            </PermissionRoute>
-          } />
-          <Route path="/itinerario" element={
-            <PermissionRoute moduleCode="ITINERARIO">
-              <Itinerario />
-            </PermissionRoute>
-          } />
-          <Route path="/componentes" element={
-            <PermissionRoute moduleCode="COMPONENTES">
-              <Componentes />
-            </PermissionRoute>
-          } />
-          <Route path="/servicios" element={
-            <PermissionRoute moduleCode="SERVICIOS">
-              <Services />
-            </PermissionRoute>
-          } />
-          <Route path="/proveedores" element={
-            <PermissionRoute moduleCode="PROVEEDORES">
-              <Proveedores />
-            </PermissionRoute>
-          } />
-          <Route path="/cotizaciones" element={
-            <PermissionRoute moduleCode="COTIZACION">
-              <Cotizaciones />
-            </PermissionRoute>
-          } />
-          <Route path="/cotizaciones/nuevo" element={
-            <PermissionRoute moduleCode="COTIZACION">
-              <CotizacionForm />
-            </PermissionRoute>
-          } />
-          <Route path="/cotizaciones/:id" element={
-            <PermissionRoute moduleCode="COTIZACION">
-              <CotizacionForm />
-            </PermissionRoute>
-          } />
-          <Route path="/proveedores/detalles" element={
-            <PermissionRoute moduleCode="PROVEEDORES">
-              <DetallesProveedores />
-            </PermissionRoute>
-          } />
-          <Route path="/proveedores/tarifario" element={
-            <PermissionRoute moduleCode="PROVEEDORES">
-              <Tarifario />
-            </PermissionRoute>
-          } />
-          <Route path="/clientes" element={
-            <PermissionRoute moduleCode="CLIENTES">
-              <Clientes />
-            </PermissionRoute>
-          } />
-          <Route path="/clientes/nuevo" element={
-            <PermissionRoute moduleCode="CLIENTES">
-              <ClientPage />
-            </PermissionRoute>
-          } />
-          <Route path="/clientes/:id" element={
-            <PermissionRoute moduleCode="CLIENTES">
-              <ClientPage />
-            </PermissionRoute>
-          } />
-          <Route path="/registro-pagos" element={
-            <PermissionRoute moduleCode="REGISTRO_PAGOS">
-              <RegistroPagos />
-            </PermissionRoute>
-          } />
-          <Route path="/registro-pagos/reporte" element={
-            <PermissionRoute moduleCode="REGISTRO_PAGOS">
-              <Reporte />
-            </PermissionRoute>
-          } />
-          <Route path="/permisos" element={
-            <PermissionRoute moduleCode="USUARIOS">
-              <Permisos />
-            </PermissionRoute>
-          } />
+          <Route path="/bandeja-solicitud" element={<ProtectedRoute><BandejaSolicitud /></ProtectedRoute>} />
+          <Route path="/itinerario" element={<ProtectedRoute><Itinerario /></ProtectedRoute>} />
+          <Route path="/componentes" element={<ProtectedRoute><Componentes /></ProtectedRoute>} />
+          <Route path="/servicios" element={<ProtectedRoute><Services /></ProtectedRoute>} />
+          <Route path="/proveedores" element={<ProtectedRoute><Proveedores /></ProtectedRoute>} />
+          <Route path="/cotizaciones" element={<ProtectedRoute><Cotizaciones /></ProtectedRoute>} />
+          <Route path="/cotizaciones/nuevo" element={<ProtectedRoute><CotizacionForm /></ProtectedRoute>} />
+          <Route path="/cotizaciones/:id" element={<ProtectedRoute><CotizacionForm /></ProtectedRoute>} />
+          <Route path="/proveedores/detalles" element={<ProtectedRoute><DetallesProveedores /></ProtectedRoute>} />
+          <Route path="/proveedores/tarifario" element={<ProtectedRoute><Tarifario /></ProtectedRoute>} />
+          <Route path="/clientes" element={<ProtectedRoute><Clientes /></ProtectedRoute>} />
+          <Route path="/clientes/nuevo" element={<ProtectedRoute><ClientPage /></ProtectedRoute>} />
+          <Route path="/clientes/:id" element={<ProtectedRoute><ClientPage /></ProtectedRoute>} />
+          <Route path="/registro-pagos" element={<ProtectedRoute><RegistroPagos /></ProtectedRoute>} />
+          <Route path="/registro-pagos/reporte" element={<ProtectedRoute><Reporte /></ProtectedRoute>} />
         </Routes>
       </div>
 
@@ -148,15 +80,13 @@ function AppContent() {
 function App() {
   return (
     <AuthProvider>
-      <PermissionsProvider>
-        <ModalProvider>
-          <NotificationProvider>
-            <Router>
-              <AppContent />
-            </Router>
-          </NotificationProvider>
-        </ModalProvider>
-      </PermissionsProvider>
+      <ModalProvider>
+        <NotificationProvider>
+          <Router>
+            <AppContent />
+          </Router>
+        </NotificationProvider>
+      </ModalProvider>
     </AuthProvider>
   );
 }

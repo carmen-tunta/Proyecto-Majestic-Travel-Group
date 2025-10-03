@@ -211,7 +211,7 @@ export const apiService = {
     }
   },
 
-  // USUARIOS / PERMISOS
+  // USUARIOS (administración básica)
   async createUserAdmin(payload) { // { username, email, nombre, area, status? }
     try {
       const response = await fetch(`${API_BASE_URL}/users/register`, {
@@ -238,52 +238,6 @@ export const apiService = {
       if (!res.ok) throw new Error('Error al resetear contraseña');
       return await res.json(); // { userId, newPassword }
     } catch (e) { throw new Error(e.message || 'Error reset password'); }
-  },
-  async listPermissionModules() {
-    try {
-      const res = await fetch(`${API_BASE_URL}/permissions/modules`, { headers: getAuthHeaders() });
-      if (!res.ok) throw new Error('Error al obtener módulos');
-      return await res.json();
-    } catch (e) { throw new Error(e.message || 'Error módulos'); }
-  },
-  async getUserPermissions(userId) {
-    try {
-      const res = await fetch(`${API_BASE_URL}/permissions/user/${userId}`, { headers: getAuthHeaders() });
-      if (!res.ok) throw new Error('Error al obtener permisos');
-      return await res.json();
-    } catch (e) { throw new Error(e.message || 'Error permisos usuario'); }
-  },
-  async grantUserPermissions(userId, actionIds) {
-    try {
-      const res = await fetch(`${API_BASE_URL}/permissions/user/${userId}/grant`, {
-        method: 'POST', headers: getAuthHeaders(), body: JSON.stringify({ actionIds })
-      });
-      if (!res.ok) throw new Error('Error al asignar permisos');
-      return await res.json();
-    } catch (e) { throw new Error(e.message || 'Error asignar permisos'); }
-  },
-  async revokeUserPermissions(userId, actionIds) {
-    try {
-      const res = await fetch(`${API_BASE_URL}/permissions/user/${userId}/revoke`, {
-        method: 'POST', headers: getAuthHeaders(), body: JSON.stringify({ actionIds })
-      });
-      if (!res.ok) throw new Error('Error al revocar permisos');
-      return await res.json();
-    } catch (e) { throw new Error(e.message || 'Error revocar permisos'); }
-  },
-
-  // Permisos del usuario actual (para menú dinámico)
-  async getMyPermissions(includeEmpty = true) {
-    try {
-      const res = await fetch(`${API_BASE_URL}/permissions/me?includeEmpty=${includeEmpty}`, { headers: getAuthHeaders() });
-      if (!res.ok) throw new Error('Error al obtener mis permisos');
-      return await res.json(); // { modules: [ { module, actions: [] } ] }
-    } catch (e) { throw new Error(e.message || 'Error mis permisos'); }
-  },
-
-  hasView(modulesPerms, moduleCode) {
-    if (!modulesPerms) return false;
-    return modulesPerms.some(m => m.module === moduleCode && m.actions.includes('VIEW'));
   },
 
   // Cotizaciones
