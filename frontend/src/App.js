@@ -11,6 +11,7 @@ import DetallesProveedores from './sections/Proveedores/components/DetallesProve
 import Tarifario from './sections/Proveedores/components/Tarifario/Tarifario';
 import { NotificationProvider } from './sections/Notification/NotificationContext';
 import { AuthProvider } from './modules/auth/context/AuthContext';
+import { PermissionsProvider } from './contexts/PermissionsContext';
 import ProtectedRoute from './modules/auth/components/ProtectedRoute';
 import PermissionRoute from './modules/auth/components/PermissionRoute';
 import PublicRoute from './modules/auth/components/PublicRoute';
@@ -147,13 +148,15 @@ function AppContent() {
 function App() {
   return (
     <AuthProvider>
-      <ModalProvider>
-        <NotificationProvider>
-          <Router>
-            <AppContent />
-          </Router>
-        </NotificationProvider>
-      </ModalProvider>
+      <PermissionsProvider>
+        <ModalProvider>
+          <NotificationProvider>
+            <Router>
+              <AppContent />
+            </Router>
+          </NotificationProvider>
+        </ModalProvider>
+      </PermissionsProvider>
     </AuthProvider>
   );
 }

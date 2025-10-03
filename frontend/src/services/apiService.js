@@ -273,9 +273,9 @@ export const apiService = {
   },
 
   // Permisos del usuario actual (para menú dinámico)
-  async getMyPermissions() {
+  async getMyPermissions(includeEmpty = true) {
     try {
-      const res = await fetch(`${API_BASE_URL}/permissions/me`, { headers: getAuthHeaders() });
+      const res = await fetch(`${API_BASE_URL}/permissions/me?includeEmpty=${includeEmpty}`, { headers: getAuthHeaders() });
       if (!res.ok) throw new Error('Error al obtener mis permisos');
       return await res.json(); // { modules: [ { module, actions: [] } ] }
     } catch (e) { throw new Error(e.message || 'Error mis permisos'); }

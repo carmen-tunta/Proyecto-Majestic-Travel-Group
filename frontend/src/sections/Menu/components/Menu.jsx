@@ -6,31 +6,14 @@ import { useAuth } from "../../../modules/auth/context/AuthContext";
 import { useModal } from "../../../contexts/ModalContext";
 import { useEffect, useState } from 'react';
 import { apiService } from '../../../services/apiService';
+import { usePermissions } from '../../../contexts/PermissionsContext';
 
 
 const Menu = () => {
     const navigate = useNavigate();
     const { logout } = useAuth();
     const { isModalOpen } = useModal();
-    const [loadingPerms, setLoadingPerms] = useState(true);
-    const [myModules, setMyModules] = useState([]); // array de { module, actions }
-
-    useEffect(() => {
-        let mounted = true;
-        (async () => {
-            try {
-                const data = await apiService.getMyPermissions();
-                if (mounted) setMyModules(data.modules || []);
-            } catch (e) {
-                // si falla, mantenemos lista vacía (oculta todo lo protegido)
-                if (mounted) setMyModules([]);
-            } finally {
-                if (mounted) setLoadingPerms(false);
-            }
-        })();
-        return () => { mounted = false; };
-    }, []);
-
+    const { modules: myModules, loading: loadingPerms } = usePermissions();
     const canView = (code) => apiService.hasView(myModules, code);
     const noAccess = (code) => !loadingPerms && !canView(code);
 

@@ -117,6 +117,24 @@ export class PermissionsSeed implements OnModuleInit {
         await this.permService.ensureAction(code, action, label, description);
       }
     }
+    // Baseline para usuario admin: asignar todos los VIEW si no tiene permisos aún
+    try {
+      const adminUser = await this.permService['userRepo'].findOne({ where: { username: 'admin' } });
+      if (adminUser) {
+        const existing = await this.permService.getUserPermissions(adminUser.id);
+        if (existing.length === 0) {
+          // Obtener todas las acciones VIEW
+            const modules = await this.permService.listModulesWithActions();
+            const viewIds = modules.flatMap(m => m.actions.filter(a => a.action === 'VIEW').map(a => a.id));
+            if (viewIds.length) {
+              await this.permService.grantPermissions(adminUser.id, viewIds);
+              this.logger.log(`Asignados ${viewIds.length} permisos VIEW base al usuario admin`);
+            }
+        }
+      }
+    } catch (e) {
+      this.logger.error('Error asignando baseline a admin', e as any);
+    }
     this.logger.log('Permissions seed ensured');
   }
 }

@@ -53,10 +53,6 @@ const Permisos = () => {
     try { 
       const perms = await apiService.getUserPermissions(user.id); 
       setUserPerms(perms); 
-      // Auto-grant full set ONLY if usuario nuevo (sin ningún permiso asignado)
-      if (perms.length === 0) {
-        await ensureAllGranted(user, perms);
-      }
     } catch (e) { 
       toast.current?.show({ severity:'error', summary:'Error', detail:e.message }); 
     }
@@ -101,20 +97,21 @@ const Permisos = () => {
     return userPerms.some(p => p.action.module.code === moduleCode && p.action.action === actionCode);
   };
 
-  const ensureAllGranted = async (user, currentPerms) => {
-    if (!user || !modules.length) return;
-    // gather all action ids from modules
-    const allActionIds = modules.flatMap(m => m.actions.map(a => a.id));
-    const existingIds = new Set((currentPerms || []).map(p => p.action.id));
-    const missing = allActionIds.filter(id => !existingIds.has(id));
-    if (missing.length) {
-      try {
-        await apiService.grantUserPermissions(user.id, missing);
-        const refreshed = await apiService.getUserPermissions(user.id);
-        setUserPerms(refreshed);
-      } catch (e) {
-        // silencioso
-      }
+  const assignAllToUser = async () => {
+    if (!selectedUser) return;
+    if (authUser && selectedUser.id === authUser.id) {
+      toast.current?.show({ severity:'warn', summary:'No permitido', detail:'No puedes auto-asignarte masivamente.' });
+      return;
+    }
+    const confirmMsg = window.confirm('¿Asignar TODAS las acciones de TODOS los módulos a este usuario?');
+    if (!confirmMsg) return;
+    try {
+      const allActionIds = modules.flatMap(m => m.actions.map(a => a.id));
+      await apiService.grantUserPermissions(selectedUser.id, allActionIds);
+      await loadUserPerms(selectedUser);
+      toast.current?.show({ severity:'success', summary:'Permisos asignados', detail:'Se asignaron todas las acciones.' });
+    } catch (e) {
+      toast.current?.show({ severity:'error', summary:'Error', detail:e.message });
     }
   };
 
@@ -163,6 +160,7 @@ const Permisos = () => {
             <div style={{ display:'flex', gap:8 }}>
               <Button text icon="pi pi-arrow-left" label="Usuarios" size='small' onClick={() => { setActiveIndex(0); setSelectedUser(null); }} />
               <Button text icon="pi pi-refresh" size='small' onClick={() => loadUserPerms(selectedUser)} />
+              <Button text icon="pi pi-check-square" size='small' label="Asignar todos" onClick={assignAllToUser} disabled={!modules.length} />
             </div>
           </div>
           <div style={{ marginBottom: '0.5rem', fontWeight:600 }}>{selectedUser.nombre || selectedUser.username}</div>

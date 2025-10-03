@@ -50,6 +50,8 @@ export class PermissionsService {
 
     if (toInsert.length) {
       await this.userPermRepo.save(toInsert.map(a => this.userPermRepo.create({ user, action: a })));
+      // Incrementar versión de permisos del usuario
+      await this.userRepo.update(userId, { permissionsVersion: () => 'permissionsVersion + 1' });
     }
 
     return this.userPermRepo.find({ where: { user: { id: userId } }, relations: ['action', 'action.module'] });
@@ -60,6 +62,7 @@ export class PermissionsService {
     const toRemove = perms.filter(p => actionIds.includes(p.action.id));
     if (toRemove.length) {
       await this.userPermRepo.remove(toRemove);
+      await this.userRepo.update(userId, { permissionsVersion: () => 'permissionsVersion + 1' });
     }
     return { removed: toRemove.length };
   }
