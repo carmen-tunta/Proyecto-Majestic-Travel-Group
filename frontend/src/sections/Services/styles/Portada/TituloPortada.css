@@ -20,13 +20,13 @@
     background-position: center;
     background-repeat: no-repeat;
     opacity: 1;
-    filter: blur(2px) brightness(0.7);
+    filter: brightness(0.6);
     z-index: -1;
 }
 
 .titulo-portada-container {
     position: absolute;
-    top: 50%;
+    top: 35%;
     left: 50%;
     transform: translate(-50%, -50%);
     z-index: 1;
@@ -46,17 +46,17 @@
     top: 25px;
     right: -25px;
     margin-bottom: 1rem;
-    color: var(--surface-500);
+    color: var(--surface-400);
     cursor: pointer;
 }
 
 .portada-container .icono-imagen {
     position: absolute;
-    top: 60%;
+    top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     z-index: 1;
-    color: var(--surface-500);
+    color: var(--surface-400);
     cursor: pointer;
 }
 
@@ -67,7 +67,7 @@
     border: 1px solid #ccc;
     border-radius: 8px;
     padding: 0.5rem;
-    background-color: #fff;
+    background-color: #ffffff;
     width: 20rem;
     height: 12rem;
 }
@@ -89,4 +89,16 @@
 .editor-container .ql-toolbar .ql-link,
 .editor-container .ql-toolbar .ql-clean{
     display: none !important;
+}
+
+.editor-container .ql-editor {
+    color: black !important;
+    background: transparent !important;
+    font-family: inherit;
+}
+
+.editor-container .ql-editor p,
+.editor-container .ql-editor div,
+.editor-container .ql-editor span {
+    color: black !important;
 }

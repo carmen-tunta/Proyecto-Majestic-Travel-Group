@@ -15,7 +15,7 @@ const TituloPortada = ({ service }) => {
         if (container) {
             const backgroundImage = service?.backgroundImage 
                 ? `url(${service.backgroundImage})` 
-                : `url(${process.env.PUBLIC_URL}/logo_mtg.png)`;
+                : `url(${process.env.PUBLIC_URL}/mp.jpg)`;
             
             container.style.setProperty('--bg-portada-centro-image', backgroundImage);
         }
