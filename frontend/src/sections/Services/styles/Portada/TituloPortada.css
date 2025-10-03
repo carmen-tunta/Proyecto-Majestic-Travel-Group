@@ -99,7 +99,10 @@
 
 .editor-container .ql-editor p,
 .editor-container .ql-editor div,
-.editor-container .ql-editor span {
+.editor-container .ql-editor span,
+.editor-container .ql-editor strong,
+.editor-container .ql-editor em,
+.editor-container .ql-editor u {
     color: black !important;
 }
 

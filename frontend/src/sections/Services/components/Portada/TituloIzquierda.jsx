@@ -19,7 +19,7 @@ const TituloIzquierda = ({ service }) => {
     useEffect(() => {
         const container = document.querySelector('.imagen');
             if (container) {
-                const backgroundImage = `url(http://localhost:3080/images-portada/1759466498068_service6_portada.jpeg)`;
+                const backgroundImage = `url(http://localhost:3080/images-portada/6/1759527067991_service6_portada.jpeg)`;
                 container.style.setProperty('--bg-portada-izquierda-imagen', backgroundImage);
             }
     }, [service]);
