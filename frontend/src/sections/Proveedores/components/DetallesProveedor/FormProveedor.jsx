@@ -61,6 +61,16 @@ const FormProveedor = ({proveedor}) => {
 
 
     const handleSave = async () => {
+        // Validar campos obligatorios
+        if (!name || name.trim() === '') {
+            showNotification('El nombre del proveedor es obligatorio', 'error');
+            return;
+        }
+        if (!serviceType || serviceType.trim() === '') {
+            showNotification('El tipo de servicio es obligatorio', 'error');
+            return;
+        }
+
         setLoading(true);
         try {
             if (proveedorState && proveedorState.id) {
@@ -124,14 +134,13 @@ const FormProveedor = ({proveedor}) => {
                             onChange={e => setName(e.target.value)}
                             required 
                         />
-                        <label htmlFor="name">Nombre del proveedor</label>
+                        <label htmlFor="name">Nombre del proveedor <span style={{ color: 'red' }}>*</span></label>
                     </FloatLabel>
                     <FloatLabel>
                         <InputText 
                             id="legal" 
                             value={legalName}
                             onChange={e => setLegalName(e.target.value)}
-                            required 
                         />
                         <label htmlFor="legal">Representante legal</label>
                     </FloatLabel>
@@ -143,7 +152,7 @@ const FormProveedor = ({proveedor}) => {
                             onChange={e => setServiceType(e.value)}
                             required
                         />
-                        <label htmlFor="serviceType">Tipo de servicio</label>
+                        <label htmlFor="serviceType">Tipo de servicio <span style={{ color: 'red' }}>*</span></label>
                     </FloatLabel>
                     <FloatLabel>
                         <Dropdown
@@ -151,7 +160,6 @@ const FormProveedor = ({proveedor}) => {
                             value={city}
                             options={peruCities}
                             onChange={e => setCity(e.value)}
-                            required
                         />
                         <label htmlFor="city">Ciudad</label>
                     </FloatLabel>
@@ -160,7 +168,6 @@ const FormProveedor = ({proveedor}) => {
                             id="whatsapp" 
                             value={whatsapp}
                             onChange={e => setWhatsapp(e.target.value)}
-                            required 
                         />
                         <label htmlFor="whatsapp">WhatsApp</label>
                     </FloatLabel>
@@ -169,7 +176,6 @@ const FormProveedor = ({proveedor}) => {
                             id="mail" 
                             value={mail}
                             onChange={e => setMail(e.target.value)}
-                            required 
                         />
                         <label htmlFor="mail">Correo</label>
                     </FloatLabel>
@@ -180,7 +186,6 @@ const FormProveedor = ({proveedor}) => {
                             onChange={e => setLanguage(e.value.join(','))}
                             options={["Español", "Inglés", "Francés", "Alemán", "Italiano", "Chino", "Japonés", "Ruso", "Portugués"]}
                             display="chip"
-                            required
                         />
                         <label htmlFor="language">Idioma</label>
                     </FloatLabel>
@@ -193,7 +198,6 @@ const FormProveedor = ({proveedor}) => {
                             value={documentType}
                             options={["CI", "Pasaporte", "RUC", "Otros"]}
                             onChange={e => setDocumentType(e.value)}
-                            required
                         />
                         <label htmlFor="documentType">Tipo de documento</label>
                     </FloatLabel>
@@ -202,7 +206,6 @@ const FormProveedor = ({proveedor}) => {
                             id="documentNumber" 
                             value={documentNumber}
                             onChange={e => setDocumentNumber(e.target.value)}
-                            required 
                         />
                         <label htmlFor="documentNumber">Número de documento</label>
                     </FloatLabel>
@@ -211,7 +214,6 @@ const FormProveedor = ({proveedor}) => {
                             id="direction" 
                             value={direction}
                             onChange={e => setDirection(e.target.value)}
-                            required 
                         />
                         <label htmlFor="direction">Dirección</label>
                     </FloatLabel>
@@ -222,7 +224,6 @@ const FormProveedor = ({proveedor}) => {
                             onChange={e => setBirthDate(e.value)}
                             dateFormat="D dd M y"
                             locale="es"
-                            required
                         />
                         <label htmlFor="birthdate">Fecha de nacimiento</label>
                     </FloatLabel>
