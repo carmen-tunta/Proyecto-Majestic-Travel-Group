@@ -126,6 +126,40 @@ class ServicePortadaRepository {
         if (!response.ok) throw new Error('Error al subir la imagen pequeña derecha');
         return await response.json();
     }
+
+    async uploadRightDoble(serviceId, file) {
+        const formData = new FormData();
+        formData.append('file', file);
+
+        const token = localStorage.getItem('authToken');
+        const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
+
+        const response = await fetch(`${apiUrl}/${serviceId}/imagen-doble-derecha`, {
+            method: "PUT",
+            headers,
+            body: formData
+        });
+
+        if (!response.ok) throw new Error('Error al subir la imagen doble derecha');
+        return await response.json();
+    }
+
+    async uploadLeftDoble(serviceId, file) {
+        const formData = new FormData();
+        formData.append('file', file);
+
+        const token = localStorage.getItem('authToken');
+        const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
+
+        const response = await fetch(`${apiUrl}/${serviceId}/imagen-doble-izquierda`, {
+            method: "PUT",
+            headers,
+            body: formData
+        });
+
+        if (!response.ok) throw new Error('Error al subir la imagen doble izquierda');
+        return await response.json();
+    }
 }
 
 export default ServicePortadaRepository;

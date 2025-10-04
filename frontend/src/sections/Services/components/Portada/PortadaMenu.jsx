@@ -8,6 +8,7 @@ import { FloatLabel } from 'primereact/floatlabel';
 import TituloPortada from './TituloPortada';
 import TituloIzquierda from './TituloIzquierda';
 import TituloDerecha from './TituloDerecha';
+import TituloDoble from './TituloDoble';
 
 const PortadaMenu = () => {
     const navigate = useNavigate();
@@ -71,9 +72,7 @@ const PortadaMenu = () => {
                 <TituloIzquierda service={service} />
             )}
             {activeIndex === 3 && (
-                <div>
-                    Doble
-                </div>
+                <TituloDoble service={service} />
             )}
             {activeIndex === 4 && (
                 <div>

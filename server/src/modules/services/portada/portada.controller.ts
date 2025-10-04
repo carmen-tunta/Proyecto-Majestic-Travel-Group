@@ -225,7 +225,7 @@ export class PortadaController {
         });
     }
 
-    @Put(':serviceId/imagen-contenido-derecha')
+    @Put(':serviceId/imagen-doble-derecha')
     @UseInterceptors(FileInterceptor('file', { 
         fileFilter: imageFileFilter,
         limits: { fileSize: 10 * 1024 * 1024 }
@@ -249,7 +249,7 @@ export class PortadaController {
         });
     }
 
-    @Put(':serviceId/imagen-contenido-derecha')
+    @Put(':serviceId/imagen-doble-izquierda')
     @UseInterceptors(FileInterceptor('file', { 
         fileFilter: imageFileFilter,
         limits: { fileSize: 10 * 1024 * 1024 }
