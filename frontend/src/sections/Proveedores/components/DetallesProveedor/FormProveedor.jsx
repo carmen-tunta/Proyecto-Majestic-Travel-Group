@@ -16,11 +16,11 @@ import UpdateProveedor from "../../../../modules/Proveedores/application/UpdateP
 import "../../styles/DetallesProveedores.css"
 
 
-const FormProveedor = ({proveedor}) => {
+const FormProveedor = ({proveedor, setProveedorState, setActiveIndex}) => {
     const proveedoresRepository = new ProveedoresRepository();
     const createProveedor = new CreateProveedor(proveedoresRepository);
     const updateProveedor = new UpdateProveedor(proveedoresRepository);
-    const [proveedorState, setProveedorState] = useState(proveedor || null);
+    const [localProveedorState, setLocalProveedorState] = useState(proveedor || null);
 
     const { showNotification } = useNotification();
     const [loading, setLoading] = useState(false);
@@ -43,21 +43,21 @@ const FormProveedor = ({proveedor}) => {
             clear: 'Limpiar'
         });
 
-    const [name, setName] = useState(proveedorState ? proveedorState.name : '');
-    const [legalName, setLegalName] = useState(proveedorState ? proveedorState.legal : '');
-    const [serviceType, setServiceType] = useState(proveedorState ? proveedorState.serviceType : '');
-    const [city, setCity] = useState(proveedorState ? proveedorState.city : '');
-    const [whatsapp, setWhatsapp] = useState(proveedorState ? proveedorState.whatsapp : '');
-    const [mail, setMail] = useState(proveedorState ? proveedorState.mail : '');
-    const [language, setLanguage] = useState(proveedorState && typeof proveedorState.languages === 'string' ? proveedorState.languages : '');
-    const [documentType, setDocumentType] = useState(proveedorState ? proveedorState.documentType : '');
-    const [documentNumber, setDocumentNumber] = useState(proveedorState ? proveedorState.documentNumber : '');
-    const [direction, setDirection] = useState(proveedorState ? proveedorState.direction : '');
-    const [birthDate, setBirthDate] = useState(proveedorState && proveedorState.birthdate ? parseLocalDate(proveedorState.birthdate) : null);
-    const [gender, setGender] = useState(proveedorState ? proveedorState.gender : '');
+    const [name, setName] = useState(localProveedorState ? localProveedorState.name : '');
+    const [legalName, setLegalName] = useState(localProveedorState ? localProveedorState.legal : '');
+    const [serviceType, setServiceType] = useState(localProveedorState ? localProveedorState.serviceType : '');
+    const [city, setCity] = useState(localProveedorState ? localProveedorState.city : '');
+    const [whatsapp, setWhatsapp] = useState(localProveedorState ? localProveedorState.whatsapp : '');
+    const [mail, setMail] = useState(localProveedorState ? localProveedorState.mail : '');
+    const [language, setLanguage] = useState(localProveedorState && typeof localProveedorState.languages === 'string' ? localProveedorState.languages : '');
+    const [documentType, setDocumentType] = useState(localProveedorState ? localProveedorState.documentType : '');
+    const [documentNumber, setDocumentNumber] = useState(localProveedorState ? localProveedorState.documentNumber : '');
+    const [direction, setDirection] = useState(localProveedorState ? localProveedorState.direction : '');
+    const [birthDate, setBirthDate] = useState(localProveedorState && localProveedorState.birthdate ? parseLocalDate(localProveedorState.birthdate) : null);
+    const [gender, setGender] = useState(localProveedorState ? localProveedorState.gender : '');
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    const [registrationDate, setRegistrationDate] = useState(proveedorState && proveedorState.registrationDate ? parseLocalDate(proveedorState.registrationDate) : today);
+    const [registrationDate, setRegistrationDate] = useState(localProveedorState && localProveedorState.registrationDate ? parseLocalDate(localProveedorState.registrationDate) : today);
 
 
     const handleSave = async () => {
@@ -73,9 +73,9 @@ const FormProveedor = ({proveedor}) => {
 
         setLoading(true);
         try {
-            if (proveedorState && proveedorState.id) {
+            if (localProveedorState && localProveedorState.id) {
                 const proveedorActualizado = await updateProveedor.execute({
-                    ...proveedorState,
+                    ...localProveedorState,
                     name: name,
                     legal: legalName,
                     serviceType: serviceType,
@@ -90,7 +90,8 @@ const FormProveedor = ({proveedor}) => {
                     gender: gender,
                     registrationDate: registrationDate
                 });
-                setProveedorState(proveedorActualizado);
+                setLocalProveedorState(proveedorActualizado);
+                if (setProveedorState) setProveedorState(proveedorActualizado);
                 showNotification('Proveedor actualizado con éxito!', 'success');
             } else {
                 const nuevoProveedor = await createProveedor.execute({
@@ -108,8 +109,16 @@ const FormProveedor = ({proveedor}) => {
                     gender: gender.trim(),
                     registrationDate: registrationDate
                 });
-                setProveedorState(nuevoProveedor);
+                setLocalProveedorState(nuevoProveedor);
+                if (setProveedorState) setProveedorState(nuevoProveedor);
                 showNotification('Proveedor registrado con éxito!', 'success');
+                
+                // Cambiar a la pestaña de Medio de contacto después de crear
+                if (setActiveIndex) {
+                    setTimeout(() => {
+                        setActiveIndex(1);
+                    }, 500); // Pequeño delay para que se vea la notificación
+                }
             }
         } catch (error) {
             showNotification('Error al guardar el proveedor', 'error');
@@ -263,7 +272,7 @@ const FormProveedor = ({proveedor}) => {
 
             <div className="details-button">
                 <Button 
-                    label={proveedorState && proveedorState.id ? "Guardar cambios" : "Guardar para continuar"}
+                    label={localProveedorState && localProveedorState.id ? "Guardar cambios" : "Guardar para continuar"}
                     text 
                     disabled={loading} 
                     onClick={handleSave}

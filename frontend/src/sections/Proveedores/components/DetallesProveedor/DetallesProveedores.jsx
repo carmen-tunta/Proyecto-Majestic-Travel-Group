@@ -46,6 +46,8 @@ const DetallesProveedores = () => {
             {activeIndex === 0 && (
                 <FormProveedor
                     proveedor={proveedorState}
+                    setProveedorState={setProveedorState}
+                    setActiveIndex={setActiveIndex}
                 />
             )}
             {activeIndex === 1 && (
