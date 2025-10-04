@@ -11,6 +11,11 @@ export class ProveedoresController {
        return this.proveedoresService.findAll();
    }
 
+   @Get('search')
+   searchProveedores(@Query('q') query: string) {
+       return this.proveedoresService.search(query);
+   }
+
    @Post()
    createProveedor(@Body() data: Partial<Proveedores>) {
        return this.proveedoresService.create(data);
