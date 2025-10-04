@@ -26,6 +26,7 @@ interface CreatePortadaDto {
     tituloDobleIzquierda?: string;
     contenidoDobleIzquierda?: string;
     tituloContacto?: string;
+    contenidoContacto?: string;
 }
 
 @Controller('service-portada')
@@ -94,6 +95,7 @@ export class PortadaController {
             contenidoDobleIzquierda: data.contenidoDobleIzquierda,
 
             tituloContacto: data.tituloContacto,
+            contenidoContacto: data.contenidoContacto,
             ...(imagenCentro && { imagenCentro })
         };
 

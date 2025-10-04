@@ -21,7 +21,9 @@ const ContactoPortada = ({service}) => {
 
     const [showEditor, setShowEditor] = useState(false);
     const [editorContent, setEditorContent] = useState(titulo);
+    const [tipoEdicion, setTipoEdicion] = useState(null);
     const [loading, setLoading] = useState(false);
+    const [detectedLinks, setDetectedLinks] = useState([]);
 
     const portadaRepo = new ServicePortadaRepository();
     const getPortada = new GetPortadaByServiceId(portadaRepo);
@@ -35,6 +37,7 @@ const ContactoPortada = ({service}) => {
             const result = await getPortada.execute(service.id);
             if (result) {
                 setTitulo(result.tituloContacto || 'Título');
+                setContacto(result.contenidoContacto || 'Contacto');
                 setImagen(result.imagenContacto || null);
             }
         } catch (error) {
@@ -60,6 +63,27 @@ const ContactoPortada = ({service}) => {
             }
     }, [imagen]);
 
+    useEffect(() => {
+        const extractLinks = () => {
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = contacto;
+            const links = tempDiv.querySelectorAll('a');
+            
+            const linkData = Array.from(links).map((link, index) => ({
+                id: index,
+                url: link.href,
+                text: link.textContent,
+                icon: detectLinkType(link.href)
+            }));
+            
+            setDetectedLinks(linkData);
+        };
+        
+        if (contacto && contacto !== 'Contacto') {
+            extractLinks();
+        }
+    }, [contacto]);
+
     const handleEditarTitulo = () => {
         setTitulo(editorContent);
         setShowEditor(false);
@@ -67,6 +91,16 @@ const ContactoPortada = ({service}) => {
             updatePortada.execute(service.id, { tituloContacto: editorContent }, null);
         } catch (error) {
             console.error('Error al actualizar el título de la portada:', error);
+        }
+    }
+
+    const handleEditarContacto = () => {
+        setContacto(editorContent);
+        setShowEditor(false);
+        try {
+            updatePortada.execute(service.id, { contenidoContacto: editorContent }, null);
+        } catch (error) {
+            console.error('Error al actualizar la información de contacto de la portada:', error);
         }
     }
 
@@ -98,8 +132,17 @@ const ContactoPortada = ({service}) => {
         }
     };
 
-    const handleEditOpen = () => {
-        setEditorContent(titulo);
+    const handleEditOpen = (tipo) => {
+        if (tipo === 'titulo') {
+            setEditorContent(titulo);
+        }
+        else if (tipo === 'contacto') {
+            setEditorContent(contacto);
+        }
+        else if (tipo === 'links') {
+            setEditorContent(links);
+        }
+        setTipoEdicion(tipo);
         setShowEditor(true);
     };
 
@@ -109,6 +152,54 @@ const ContactoPortada = ({service}) => {
         }
     };
 
+    const handleAccept = () => {
+        if (tipoEdicion === 'titulo') {
+            handleEditarTitulo();
+        } else if (tipoEdicion === 'contacto') {
+            handleEditarContacto();
+        } else if (tipoEdicion === 'links') {
+            setLinks(editorContent);
+        }
+        setShowEditor(false);
+        setEditorContent('');
+        setTipoEdicion(null);
+    }
+
+    const detectLinkType = (url) => {
+        if (!url) return null;
+        
+        const lowerUrl = url.toLowerCase();
+        
+        if (lowerUrl.includes('whatsapp') || lowerUrl.includes('wa.me')) {
+            return 'pi pi-whatsapp';
+        }
+        if (lowerUrl.includes('maps.google') || lowerUrl.includes('goo.gl/maps') || lowerUrl.includes('maps.app.goo.gl')) {
+            return 'pi pi-map-marker';
+        }
+        if (lowerUrl.includes('facebook.com') || lowerUrl.includes('fb.com')) {
+            return 'pi pi-facebook';
+        }
+        if (lowerUrl.includes('instagram.com')) {
+            return 'pi pi-instagram';
+        }
+        if (lowerUrl.includes('twitter.com') || lowerUrl.includes('x.com')) {
+            return 'pi pi-twitter';
+        }
+        if (lowerUrl.includes('youtube.com') || lowerUrl.includes('youtu.be')) {
+            return 'pi pi-youtube';
+        }
+        if (lowerUrl.includes('linkedin.com')) {
+            return 'pi pi-linkedin';
+        }
+        if (lowerUrl.includes('mailto:')) {
+            return 'pi pi-envelope';
+        }
+        if (lowerUrl.includes('tel:')) {
+            return 'pi pi-phone';
+        }
+        return 'pi pi-external-link';
+    };
+
     return (
         <>
             {loading ? (
@@ -116,12 +207,41 @@ const ContactoPortada = ({service}) => {
                 : (
                 <div className="contacto-portada-container" onClick={handleClose}>
                     <div className="contacto-content">
-                        <div className="titulo-container">
-                            <i className="pi pi-pencil icono-titulo" onClick={handleEditOpen}></i>
-                            <div 
-                                className="titulo"
-                                dangerouslySetInnerHTML={{ __html: titulo }}
-                            ></div>
+                        <div>
+                            <div className="titulo-container">
+                                <div 
+                                    className="titulo"
+                                    dangerouslySetInnerHTML={{ __html: titulo }}
+                                ></div>
+                                <i className="pi pi-pencil icono-titulo" onClick={() => handleEditOpen('titulo')}></i>
+                            </div>
+                            <div className="contacto-container">
+                                <div 
+                                    className="contacto"
+                                    dangerouslySetInnerHTML={{ __html: contacto }}    
+                                ></div>
+                                <i className="pi pi-pencil icono-contacto" onClick={() => handleEditOpen('contacto')}></i>    
+                            </div>
+                        </div>
+                        <div className="links">
+                            {detectedLinks.length > 0 ? (
+                                <div className="links-icons">
+                                    {detectedLinks.map((link) => (
+                                        <a 
+                                            key={link.id}
+                                            href={link.url}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="link-icon"
+                                            title={link.text}
+                                        >
+                                            <i className={link.icon}></i>
+                                        </a>
+                                    ))}
+                                </div>
+                            ) : (
+                                <span>Links</span>
+                            )}
                         </div>
                     </div>
                     <i 
@@ -143,7 +263,7 @@ const ContactoPortada = ({service}) => {
                 </div>
             )}
             {showEditor && (
-                <div className="editor-centro editor-container">
+                <div className="editor-contacto editor-container">
                     <Editor
                         value={editorContent} 
                         onTextChange={(e) => setEditorContent(e.htmlValue)}
@@ -153,7 +273,7 @@ const ContactoPortada = ({service}) => {
                             outlined
                             size='small'
                             label="Aceptar" 
-                            onClick={handleEditarTitulo}
+                            onClick={handleAccept}
                             className="accept-button editor-actions"
                         />
                 </div>

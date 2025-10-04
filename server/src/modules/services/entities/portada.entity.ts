@@ -67,6 +67,9 @@ export class Portada {
   @Column({ type: 'longtext', comment: 'Imagen de la página contacto', nullable: true })
   imagenContacto: string;
 
+  @Column({ type: 'longtext', comment: 'Información de contacto', nullable: true })
+  contenidoContacto: string;
+
 
   @OneToOne(() => Service, service => service.portada)
   @JoinColumn()

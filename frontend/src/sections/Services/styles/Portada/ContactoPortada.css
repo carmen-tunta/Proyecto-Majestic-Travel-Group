@@ -27,18 +27,63 @@
 
 .contacto-portada-container .contacto-content {
     position: absolute;
-    left: 8vw;
-    bottom: 20vw;
+    left: 7vw;
+    bottom: 10vw;
+    display: flex;
+    flex-direction: row;
+    gap: 5rem;
+    align-items: end;
+    justify-content: center;
+}
+
+.contacto-portada-container .titulo-container {
+    width: fit-content;
+    position: relative;
 }
 
 .contacto-portada-container .titulo {
     font-size: 3rem;
     font-weight: bold;
-    text-align: center;
     color: black;
+    width: fit-content;
+}
+
+.contacto-portada-container .contacto-content .contacto {
+    color: white;
+    font-size: 1.2rem;
+    margin-top: 1rem;
+    background-color: rgba(255,255,255,0.15);
+    min-height: 17vh;
+    min-width: 25vw;
+    max-width: 35vw;
+    padding: 10px;
+    font-weight: 100;
+}
+
+.contacto-portada-container .contacto-container {
+    width: fit-content;
+    position: relative;
+}
+
+
+.contacto-portada-container .contacto-content .links {
+    color: white;
+    font-size: 1.2rem;
+    background-color: rgba(255,255,255,0.15);
+    padding: 10px;
+    font-weight: 100;
 }
 
 .contacto-portada-container .icono-titulo {
+    position: absolute;
+    top: 25px;
+    right: -25px;
+    margin-bottom: 1rem;
+    color: var(--surface-400);
+    cursor: pointer;
+}
+
+.contacto-portada-container .icono-contacto {
     position: absolute;
     top: 25px;
     right: -25px;
@@ -57,6 +102,49 @@
     cursor: pointer;
 }
 
-.contacto-portada-container .titulo p {
+.contacto-portada-container .titulo p,
+.contacto-portada-container .contacto p,
+.contacto-portada-container .links p {
     margin: 0;
+}
+
+.editor-contacto.editor-container {
+    position: absolute;
+    bottom: 20%;
+    left: 50%;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 0.5rem;
+    background-color: #ffffff;
+    width: 20rem;
+    height: 12rem;
+}
+
+.editor-contacto.editor-container .ql-toolbar .ql-link{
+    display: inline-block !important;
+}
+
+.contacto-portada-container .links-icons {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.contacto-portada-container .link-icon {
+    text-decoration: none;
+    text-align: center;
+}
+
+.contacto-portada-container .link-icon .pi{
+    color: rgb(66, 66, 66);
+    font-size: 1.2rem;
+    transition: color 0.3s ease;
+    text-decoration: none;
+    background-color: rgb(255, 255, 255);
+    padding: 7px;
+    border-radius: 100px;
+}
+
+.contacto-portada-container .link-icon:hover {
+    color: var(--primary-color);
 }
