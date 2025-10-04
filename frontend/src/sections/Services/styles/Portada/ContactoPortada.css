@@ -1,0 +1,44 @@
+.contacto-portada-container {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 0;
+}
+
+
+
+
+.contacto-portada-container .contacto-content {
+    position: absolute;
+    left: 8rem;
+    bottom: 15rem;
+}
+
+.contacto-portada-container .titulo {
+    font-size: 3rem;
+    font-weight: bold;
+    text-align: center;
+    color: black;
+}
+
+.contacto-portada-container .icono-titulo {
+    position: absolute;
+    top: 25px;
+    right: -25px;
+    margin-bottom: 1rem;
+    color: var(--surface-400);
+    cursor: pointer;
+}
+
+.contacto-portada-container .icono-imagen {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1;
+    color: var(--surface-400);
+    cursor: pointer;
+}

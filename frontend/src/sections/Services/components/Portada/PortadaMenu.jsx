@@ -9,6 +9,7 @@ import TituloPortada from './TituloPortada';
 import TituloIzquierda from './TituloIzquierda';
 import TituloDerecha from './TituloDerecha';
 import TituloDoble from './TituloDoble';
+import ContactoPortada from './ContactoPortada';
 
 const PortadaMenu = () => {
     const navigate = useNavigate();
@@ -75,9 +76,7 @@ const PortadaMenu = () => {
                 <TituloDoble service={service} />
             )}
             {activeIndex === 4 && (
-                <div>
-                    Contacto
-                </div>
+                <ContactoPortada service={service} />
             )}
         </>
     );
