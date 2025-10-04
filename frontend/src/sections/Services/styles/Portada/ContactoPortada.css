@@ -148,3 +148,19 @@
 .contacto-portada-container .link-icon:hover {
     color: var(--primary-color);
 }
+
+.contacto-portada-container .contacto .link-content-icon {
+    margin-right: 0.5rem;
+    font-size: 1rem;
+    text-decoration: none;
+}
+
+.contacto-portada-container .contacto a {
+    text-decoration: underline;
+    display: inline-flex;
+    align-items: center;
+}
+
+.contacto-portada-container .contacto p {
+    margin-bottom: 7px;
+}

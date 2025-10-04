@@ -24,6 +24,7 @@ const ContactoPortada = ({service}) => {
     const [tipoEdicion, setTipoEdicion] = useState(null);
     const [loading, setLoading] = useState(false);
     const [detectedLinks, setDetectedLinks] = useState([]);
+    const [processedContacto, setProcessedContacto] = useState('Contacto');
 
     const portadaRepo = new ServicePortadaRepository();
     const getPortada = new GetPortadaByServiceId(portadaRepo);
@@ -81,6 +82,9 @@ const ContactoPortada = ({service}) => {
         
         if (contacto && contacto !== 'Contacto') {
             extractLinks();
+            setProcessedContacto(processContactoWithIcons(contacto));
+        } else {
+            setProcessedContacto(contacto);
         }
     }, [contacto]);
 
@@ -200,6 +204,27 @@ const ContactoPortada = ({service}) => {
         return 'pi pi-external-link';
     };
 
+    const processContactoWithIcons = (htmlContent) => {
+        if (!htmlContent || htmlContent === 'Contacto') return htmlContent;
+        
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = htmlContent;
+        const links = tempDiv.querySelectorAll('a');
+        
+        links.forEach((link) => {
+            const icon = detectLinkType(link.href);
+            if (icon) {
+                const iconElement = document.createElement('i');
+                const linkColor = link.style.color || getComputedStyle(link).color;
+                iconElement.className = `${icon} link-content-icon`;
+                iconElement.style.color = linkColor;
+                link.parentNode.insertBefore(iconElement, link);
+            }
+        });
+        
+        return tempDiv.innerHTML;
+    };
+
     return (
         <>
             {loading ? (
@@ -218,7 +243,7 @@ const ContactoPortada = ({service}) => {
                             <div className="contacto-container">
                                 <div 
                                     className="contacto"
-                                    dangerouslySetInnerHTML={{ __html: contacto }}    
+                                    dangerouslySetInnerHTML={{ __html: processedContacto }}    
                                 ></div>
                                 <i className="pi pi-pencil icono-contacto" onClick={() => handleEditOpen('contacto')}></i>    
                             </div>
