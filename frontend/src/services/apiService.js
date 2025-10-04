@@ -86,6 +86,21 @@ export const apiService = {
     }
   },
 
+  // Buscar proveedores por nombre
+  async searchProveedores(query) {
+    try {
+      const response = await fetch(`${API_BASE_URL}/proveedores/search?q=${encodeURIComponent(query)}`, {
+        headers: getAuthHeaders()
+      });
+      if (!response.ok) {
+        throw new Error('Error al buscar proveedores');
+      }
+      return await response.json();
+    } catch (error) {
+      throw new Error(error.message || 'Error al buscar proveedores');
+    }
+  },
+
   // Buscador único para los recursos
   async universalSearch(resource, query) {
     switch (resource) {
@@ -97,6 +112,8 @@ export const apiService = {
         return this.searchItineraryTemplates(query);
       case 'clients':
         return this.searchClients(query);
+      case 'proveedores':
+        return this.searchProveedores(query);
       default:
         throw new Error('Recurso no soportado');
     }

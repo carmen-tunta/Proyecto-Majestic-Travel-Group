@@ -62,9 +62,16 @@ const Services = () => {
         loadServices();
     }, []);
 
-    const handleModalClose = () => {
+    const handleModalClose = (shouldReload = false) => {
+        // Cerrar modal inmediatamente
         setShowModal(false);
-        loadServices();
+        
+        if (shouldReload) {
+            // Recargar después de que el modal se haya cerrado
+            setTimeout(() => {
+                loadServices();
+            }, 100);
+        }
     };
 
     const rowExpansionTemplate = (service) => (

@@ -8,37 +8,27 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
-  background: white;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 1rem;
 }
 
-.bandeja-header h1 {
+.bandeja-header h2 {
   margin: 0;
   color: #2c3e50;
-  font-size: 24px;
+  font-size: 1.5rem;
   font-weight: 600;
 }
 
 .bandeja-search {
-  display: flex;
-  align-items: center;
+  margin-bottom: 1.5rem;
+  max-width: 400px;
 }
 
-.search-input {
-  width: 300px;
-  padding: 10px 15px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  font-size: 14px;
+.bandeja-search .p-input-icon-left {
+  width: 100%;
 }
 
-.search-input:focus {
-  outline: none;
-  border-color: #007bff;
-  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+.bandeja-search .p-input-icon-left input {
+  width: 100%;
 }
 
 .bandeja-content {

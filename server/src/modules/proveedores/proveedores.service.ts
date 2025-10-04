@@ -20,6 +20,19 @@ export class ProveedoresService {
     return this.proveedoresRepository.find();
   }
 
+  async search(query: string): Promise<Proveedores[]> {
+    if (!query || query.trim() === '') {
+      return this.findAll();
+    }
+    return this.proveedoresRepository
+      .createQueryBuilder('proveedor')
+      .where('LOWER(proveedor.name) LIKE LOWER(:query)', { query: `%${query}%` })
+      .orWhere('LOWER(proveedor.legal) LIKE LOWER(:query)', { query: `%${query}%` })
+      .orWhere('LOWER(proveedor.serviceType) LIKE LOWER(:query)', { query: `%${query}%` })
+      .orWhere('LOWER(proveedor.city) LIKE LOWER(:query)', { query: `%${query}%` })
+      .getMany();
+  }
+
   async findById(id: string): Promise<Proveedores | null> {
     return this.proveedoresRepository.findOne({ where: { id: parseInt(id, 10) } });
   }

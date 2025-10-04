@@ -309,10 +309,13 @@
     padding: 6px 8px;
     /* border: 1px solid #cfd6e4; */
     border-radius: 6px;
+    text-align: right !important;
 }
 
 /* Right-align InputNumber values */
-.price-input input {
+.price-input,
+.price-input input,
+.p-inputnumber .price-input {
     text-align: right !important;
 }
 
