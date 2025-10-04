@@ -92,6 +92,40 @@ class ServicePortadaRepository {
         if (!response.ok) throw new Error('Error al subir la imagenp pequeña izquierda');
         return await response.json();
     }
+
+    async uploadRightImage(serviceId, file) {
+        const formData = new FormData();
+        formData.append('file', file);
+
+        const token = localStorage.getItem('authToken');
+        const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
+
+        const response = await fetch(`${apiUrl}/${serviceId}/imagen-derecha`, {
+            method: "PUT",
+            headers,
+            body: formData
+        });
+
+        if (!response.ok) throw new Error('Error al subir la imagen derecha');
+        return await response.json();
+    }
+
+    async uploadRightSmallImage(serviceId, file) {
+        const formData = new FormData();
+        formData.append('file', file);
+
+        const token = localStorage.getItem('authToken');
+        const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
+
+        const response = await fetch(`${apiUrl}/${serviceId}/imagen-contenido-derecha`, {
+            method: "PUT",
+            headers,
+            body: formData
+        });
+
+        if (!response.ok) throw new Error('Error al subir la imagen pequeña derecha');
+        return await response.json();
+    }
 }
 
 export default ServicePortadaRepository;

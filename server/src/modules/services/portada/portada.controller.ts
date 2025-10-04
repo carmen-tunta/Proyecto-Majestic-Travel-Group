@@ -128,10 +128,7 @@ export class PortadaController {
         if (!file) {
             throw new BadRequestException('No se proporcionó archivo de imagen');
         }
-
-        // Obtener la portada existente
         const existingPortada = await this.portadaService.getPortadaByServiceId(serviceId);
-        
         if (!existingPortada) {
             throw new BadRequestException(`No existe una portada para el servicio con ID ${serviceId}`);
         }
@@ -160,10 +157,60 @@ export class PortadaController {
         if (!existingPortada) {
             throw new BadRequestException(`No existe una portada para el servicio con ID ${serviceId}`);
         }
+
         const imagenPequeniaIzquierda = this.createImageUrl(serviceId, file, existingPortada.imagenPequeniaIzquierda, 'izquierda_pequenia');
 
         return this.portadaService.updatePortada(existingPortada.id.toString(), {
             imagenPequeniaIzquierda
+        });
+    }
+
+    @Put(':serviceId/imagen-derecha')
+    @UseInterceptors(FileInterceptor('file', { 
+        fileFilter: imageFileFilter,
+        limits: { fileSize: 10 * 1024 * 1024 }
+    }))
+    async updateImagenDerecha(
+        @Param('serviceId') serviceId: number,
+        @UploadedFile() file: MulterFile
+    ): Promise<PortadaEntity | null> {
+        if (!file) {
+            throw new BadRequestException('No se proporcionó archivo de imagen');
+        }
+        const existingPortada = await this.portadaService.getPortadaByServiceId(serviceId);
+        if (!existingPortada) {
+            throw new BadRequestException(`No existe una portada para el servicio con ID ${serviceId}`);
+        }
+
+        const imagenDerecha = this.createImageUrl(serviceId, file, existingPortada.imagenDerecha, 'derecha');
+
+        return this.portadaService.updatePortada(existingPortada.id.toString(), {
+            imagenDerecha
+        });
+    }
+
+
+    @Put(':serviceId/imagen-contenido-derecha')
+    @UseInterceptors(FileInterceptor('file', { 
+        fileFilter: imageFileFilter,
+        limits: { fileSize: 10 * 1024 * 1024 }
+    }))
+    async updateImagenPequeniaDerecha(
+        @Param('serviceId') serviceId: number,
+        @UploadedFile() file: MulterFile
+    ): Promise<PortadaEntity | null> {
+        if (!file) {
+            throw new BadRequestException('No se proporcionó archivo de imagen');
+        }
+        const existingPortada = await this.portadaService.getPortadaByServiceId(serviceId);
+        if (!existingPortada) {
+            throw new BadRequestException(`No existe una portada para el servicio con ID ${serviceId}`);
+        }
+
+        const imagenPequeniaDerecha = this.createImageUrl(serviceId, file, existingPortada.imagenPequeniaDerecha, 'derecha_pequenia');
+
+        return this.portadaService.updatePortada(existingPortada.id.toString(), {
+            imagenPequeniaDerecha
         });
     }
 
