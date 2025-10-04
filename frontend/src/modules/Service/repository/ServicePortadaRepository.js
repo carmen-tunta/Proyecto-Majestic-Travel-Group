@@ -160,6 +160,23 @@ class ServicePortadaRepository {
         if (!response.ok) throw new Error('Error al subir la imagen doble izquierda');
         return await response.json();
     }
+
+    async uploadImageContact(serviceId, file) {
+        const formData = new FormData();
+        formData.append('file', file);
+
+        const token = localStorage.getItem('authToken');
+        const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
+
+        const response = await fetch(`${apiUrl}/${serviceId}/imagen-contacto`, {
+            method: "PUT",
+            headers,
+            body: formData
+        });
+
+        if (!response.ok) throw new Error('Error al subir la imagen de contacto');
+        return await response.json();
+    }
 }
 
 export default ServicePortadaRepository;

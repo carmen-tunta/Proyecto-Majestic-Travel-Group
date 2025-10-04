@@ -8,13 +8,27 @@
     z-index: 0;
 }
 
-
+.contacto-portada-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: var(--bg-contacto-portada-image);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: 1;
+    filter: brightness(0.6);
+    z-index: -1;
+}
 
 
 .contacto-portada-container .contacto-content {
     position: absolute;
-    left: 8rem;
-    bottom: 15rem;
+    left: 8vw;
+    bottom: 20vw;
 }
 
 .contacto-portada-container .titulo {
@@ -41,4 +55,8 @@
     z-index: 1;
     color: var(--surface-400);
     cursor: pointer;
+}
+
+.contacto-portada-container .titulo p {
+    margin: 0;
 }

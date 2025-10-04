@@ -127,3 +127,8 @@
     width: 20rem;
     height: 12rem;
 }
+
+.titulo-doble .titulo p,
+.titulo-doble .contenido p {
+    margin: 0;
+}

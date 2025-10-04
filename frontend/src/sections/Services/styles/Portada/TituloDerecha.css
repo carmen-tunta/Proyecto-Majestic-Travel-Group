@@ -123,3 +123,8 @@
     width: 20rem;
     height: 12rem;
 }
+
+.titulo-derecha .titulo p,
+.titulo-derecha .contenido p {
+    margin: 0;
+}
