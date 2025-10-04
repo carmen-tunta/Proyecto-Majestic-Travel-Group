@@ -41,6 +41,26 @@ export class Portada {
   @Column({ type: 'longtext', comment: 'Imagen pequeña debajo del contenido de titulo derecha', nullable: true })
   imagenPequeniaDerecha: string;
 
+
+  @Column({ type: 'text', comment: 'Título del lado derecho', nullable: true })
+  tituloDobleDerecha: string;
+
+  @Column({ type: 'longtext', comment: 'Contenido del lado derecho', nullable: true })
+  contenidoDobleDerecha: string;
+
+  @Column({ type: 'longtext', comment: 'Imagen del lado derecho', nullable: true })
+  imagenDobleDerecha: string;
+
+  @Column({ type: 'text', comment: 'Título del lado izquierdo', nullable: true })
+  tituloDobleIzquierda: string;
+
+  @Column({ type: 'longtext', comment: 'Contenido del lado izquierdo', nullable: true })
+  contenidoDobleIzquierda: string;
+
+  @Column({ type: 'longtext', comment: 'Imagen del lado izquierdo', nullable: true })
+  imagenDobleIzquierda: string;
+  
+
   @OneToOne(() => Service, service => service.portada)
   @JoinColumn()
   service: Service;
