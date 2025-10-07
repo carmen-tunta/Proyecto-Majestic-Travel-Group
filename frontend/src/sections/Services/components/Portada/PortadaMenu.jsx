@@ -38,11 +38,37 @@ const PortadaMenu = () => {
 
             const pdfBlobs = [];
 
+            const waitForLoading = () => {
+                return new Promise((resolve) => {
+                    const checkLoading = () => {
+                        const loadingSpinner = document.querySelector('.spinner-portada-container');
+                        const progressSpinner = document.querySelector('.p-progress-spinner');
+                        
+                        if (!loadingSpinner && !progressSpinner) {
+                            resolve();
+                        } else {
+                            setTimeout(checkLoading, 100);
+                        }
+                    };
+                    checkLoading();
+                });
+            };
+
             for (let i = 0; i < pages.length; i++) {
                 console.log(`Generando ${pages[i].name}...`);
                 
                 setActiveIndex(pages[i].index);
-                await new Promise(resolve => setTimeout(resolve, 2000));
+                
+                await waitForLoading();
+                await new Promise(resolve => setTimeout(resolve, 500));
+                
+                const editarIcons = document.querySelectorAll('.pi-pencil');
+                const dbIcons = document.querySelectorAll('.pi-database');
+                const imageIcons = document.querySelectorAll('.pi-image');
+                
+                editarIcons.forEach(icon => icon.style.display = 'none');
+                dbIcons.forEach(icon => icon.style.display = 'none');
+                imageIcons.forEach(icon => icon.style.display = 'none');
                 
                 const element = document.querySelector(pages[i].selector);
                 
@@ -63,16 +89,17 @@ const PortadaMenu = () => {
                         jsPDF: { 
                             unit: 'px',
                             format: [window.innerWidth, window.innerHeight],
-                            orientation: 'landscape' // Cambiar de 'portrait' a 'landscape'
+                            orientation: 'landscape'
                         }
                     };
 
                     const pdfBlob = await html2pdf().set(opt).from(element).output('blob');
                     pdfBlobs.push(pdfBlob);
                 }
+                editarIcons.forEach(icon => icon.style.display = 'inline-block');
+                dbIcons.forEach(icon => icon.style.display = 'inline-block');
+                imageIcons.forEach(icon => icon.style.display = 'inline-block');
             }
-
-            // Combinar todos los PDFs en uno solo
             console.log('Combinando PDFs...');
             const mergedPdf = await PDFDocument.create();
 
@@ -83,7 +110,6 @@ const PortadaMenu = () => {
                 copiedPages.forEach((page) => mergedPdf.addPage(page));
             }
 
-            // Descargar el PDF combinado
             const pdfBytes = await mergedPdf.save();
             const blob = new Blob([pdfBytes], { type: 'application/pdf' });
             const url = URL.createObjectURL(blob);
