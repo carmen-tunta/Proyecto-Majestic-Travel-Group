@@ -73,9 +73,17 @@ const PortadaMenu = () => {
                 const element = document.querySelector(pages[i].selector);
                 
                 if (element) {
+                    window.scrollTo(0, 0);
+                    if (element.scrollTop !== undefined) {
+                        element.scrollTop = 0;
+                    }
+    
+                    await new Promise(resolve => setTimeout(resolve, 100));
+
+
                     const opt = {
                         margin: 0,
-                        image: { type: 'jpeg', quality: 0.98 },
+                        image: { type: 'jpg', quality: 0.99 },
                         html2canvas: { 
                             scale: 1,
                             useCORS: true,
@@ -84,13 +92,15 @@ const PortadaMenu = () => {
                             width: window.innerWidth,
                             height: window.innerHeight,
                             scrollX: 0,
-                            scrollY: 0
+                            scrollY: 0,
+                            windowWidth: window.innerWidth,
+                            windowHeight: window.innerHeight,
+                            letterRendering: true
                         },
                         jsPDF: { 
                             unit: 'px',
-                            format: [window.innerWidth, window.innerHeight],
-                            orientation: 'landscape'
-                        }
+                            format: [window.innerWidth, window.innerHeight], // Ajustar formato al contenido completo
+                            orientation: 'landscape'                        }
                     };
 
                     const pdfBlob = await html2pdf().set(opt).from(element).output('blob');
@@ -116,7 +126,7 @@ const PortadaMenu = () => {
             
             const link = document.createElement('a');
             link.href = url;
-            link.download = `portada-completa-${service?.serviceName || 'servicio'}.pdf`;
+            link.download = `portada-completa-${service?.name || 'servicio'}.pdf`;
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
