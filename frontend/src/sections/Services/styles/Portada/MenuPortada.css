@@ -13,6 +13,7 @@
     border-radius: 15px;
     padding: 0.1rem;
     z-index: 100;
+    gap: 5px;
 }
 
 .portada-menu .p-tabmenu {
@@ -76,8 +77,9 @@
     border: 1px solid var(--primary-color);
 }
 
-.p-dropdown-items > li {
+.portada-dropdown-panel .p-dropdown-items > li {
     padding: 0.5rem 0.75rem;
     font-size: 12px;
 }
+
 

@@ -41,8 +41,9 @@ const PortadaMenu = () => {
             <FloatLabel>
                 <Dropdown 
                     className='dropdown-menu'
+                    panelClassName='portada-dropdown-panel'
                     id='idiomaOrigen'
-                    options={[]} 
+                    options={['Español', 'Inglés', 'Francés', 'Portugués', 'Italiano']} 
                 />
                 <label htmlFor="idiomaOrigen">Idioma origen</label>
             </FloatLabel>
@@ -50,8 +51,9 @@ const PortadaMenu = () => {
             <FloatLabel>
                 <Dropdown 
                     className='dropdown-menu'
+                    panelClassName='portada-dropdown-panel'
                     id='idiomaDestino' 
-                    options={[]} 
+                    options={['Español', 'Inglés', 'Francés', 'Portugués', 'Italiano']} 
                 />
                 <label htmlFor="idiomaDestino">Idioma destino</label>
             </FloatLabel>

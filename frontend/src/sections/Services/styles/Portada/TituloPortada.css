@@ -38,7 +38,7 @@
     font-weight: bold;
     text-align: center;
     color: black;
-    /* text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.8); */
+    font-family: inherit !important;
 }
 
 .portada-container .icono-titulo {
