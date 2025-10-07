@@ -45,6 +45,7 @@
     font-size: 3rem;
     font-weight: bold;
     color: black;
+    max-width: 40vw;
     width: fit-content;
 }
 
@@ -85,8 +86,16 @@
 
 .contacto-portada-container .icono-contacto {
     position: absolute;
-    top: 25px;
+    bottom: 25px;
     right: -25px;
+    margin-bottom: 1rem;
+    color: var(--surface-400);
+    cursor: pointer;
+}
+.contacto-portada-container .icono-db {
+    position: absolute;
+    bottom: 25px;
+    right: -50px;
     margin-bottom: 1rem;
     color: var(--surface-400);
     cursor: pointer;

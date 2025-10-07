@@ -9,6 +9,8 @@ import ServicePortadaRepository from "../../../../modules/Service/repository/Ser
 import GetPortadaByServiceId from "../../../../modules/Service/application/GetPortadaByServiceId";
 import CreateOrUpdatePortada from "../../../../modules/Service/application/CreateOrUpdatePortada";
 import uploadImageContact from "../../../../modules/Service/application/UploadImageContact";
+import AgregarPlantillaItinerario from "./AgregarPlantillaItinerario";
+import { useModal } from "../../../../contexts/ModalContext";
 
 const ContactoPortada = ({service}) => {
     const baseUrl = process.env.REACT_APP_API_URL;
@@ -25,6 +27,8 @@ const ContactoPortada = ({service}) => {
     const [loading, setLoading] = useState(false);
     const [detectedLinks, setDetectedLinks] = useState([]);
     const [processedContacto, setProcessedContacto] = useState('Contacto');
+    const [showModal, setShowModal] = useState(false);
+    const { setIsModalOpen } = useModal();
 
     const portadaRepo = new ServicePortadaRepository();
     const getPortada = new GetPortadaByServiceId(portadaRepo);
@@ -225,6 +229,26 @@ const ContactoPortada = ({service}) => {
         return tempDiv.innerHTML;
     };
 
+    const handleModalOpen = () => {
+        setShowModal(true);
+        setIsModalOpen(true);
+    };
+
+    const handleModalClose = () => {
+        setShowModal(false);
+        setIsModalOpen(false);
+    };
+
+    const handleTemplateSelected = (template) => {
+        try {
+            updatePortada.execute(service.id, { tituloContacto:template.templateTitle, contenidoContacto: template.description }, null);
+            setContacto(template.description);
+            setTitulo(template.templateTitle);
+        } catch (error) {
+            console.error('Error al actualizar el contenido de la portada con la plantilla:', error);
+        }
+    };
+
     return (
         <>
             {loading ? (
@@ -245,7 +269,12 @@ const ContactoPortada = ({service}) => {
                                     className="contacto"
                                     dangerouslySetInnerHTML={{ __html: processedContacto }}    
                                 ></div>
-                                <i className="pi pi-pencil icono-contacto" onClick={() => handleEditOpen('contacto')}></i>    
+                                <i className="pi pi-pencil icono-contacto" onClick={() => handleEditOpen('contacto')}></i>
+                                <i 
+                                    className="pi pi-database icono-db"
+                                    style={{marginLeft: '10px'}}
+                                    onClick={handleModalOpen}
+                                ></i>    
                             </div>
                         </div>
                         <div className="links">
@@ -302,6 +331,13 @@ const ContactoPortada = ({service}) => {
                             className="accept-button editor-actions"
                         />
                 </div>
+            )}
+
+            {showModal &&(
+                <AgregarPlantillaItinerario
+                    onHide={handleModalClose}
+                    onSelectTemplate={handleTemplateSelected}
+                />
             )}
         </>
     );

@@ -9,6 +9,8 @@ import { ProgressSpinner } from 'primereact/progressspinner';
 import { FileUpload } from 'primereact/fileupload';
 import UploadRightImage from '../../../../modules/Service/application/UploadRightImage';
 import UploadRightSmallImage from '../../../../modules/Service/application/UploadRightSmallImages';
+import AgregarPlantillaItinerario from './AgregarPlantillaItinerario';
+import { useModal } from '../../../../contexts/ModalContext';
 
 
 const TituloDerecha = ({ service }) => {
@@ -20,6 +22,8 @@ const TituloDerecha = ({ service }) => {
     const [editorContent, setEditorContent] = useState('');
     const [loading, setLoading] = useState(false);
     const [tipoEdicion, setTipoEdicion] = useState(null);
+    const [showModal, setShowModal] = useState(false);
+    const { setIsModalOpen } = useModal();
 
     const [titulo, setTitulo] = useState('Título');
     const [imagenDerecha, setImagenDerecha] = useState(null);
@@ -32,7 +36,7 @@ const TituloDerecha = ({ service }) => {
     const uploadRightImage = new UploadRightImage(portadaRepo);
     const uploadRightSmallImage = new UploadRightSmallImage(portadaRepo);
 
-
+    
     const fetchData = async () => {
         try {
             setLoading(true);
@@ -175,6 +179,27 @@ const TituloDerecha = ({ service }) => {
         }
     };
 
+    const handleModalOpen = () => {
+        setShowModal(true);
+        setIsModalOpen(true);
+    };
+
+    const handleModalClose = () => {
+        setShowModal(false);
+        setIsModalOpen(false);
+    };
+
+    const handleTemplateSelected = (template) => {
+        console.log('Template seleccionado:', template.description);
+        try {
+            updatePortada.execute(service.id, { tituloDerecha:template.templateTitle, contenidoDerecha: template.description }, null);
+            setContenido(template.description);
+            setTitulo(template.templateTitle);
+        } catch (error) {
+            console.error('Error al actualizar el contenido de la portada con la plantilla:', error);
+        }
+    };
+
 
     return (
         <>
@@ -213,6 +238,11 @@ const TituloDerecha = ({ service }) => {
                                 handleEditOpen('titulo');
                             }}
                         ></i>
+                        <i 
+                        className="pi pi-database icono-editar"
+                        style={{marginLeft: '10px'}}
+                        onClick={handleModalOpen}
+                    ></i>
                     </div>
                     <div className="contenido-container">
                         <div 
@@ -264,6 +294,13 @@ const TituloDerecha = ({ service }) => {
                             className="accept-button editor-actions"
                         />
                 </div>
+            )}
+
+            {showModal &&(
+                <AgregarPlantillaItinerario 
+                    onHide={handleModalClose}
+                    onSelectTemplate={handleTemplateSelected}
+                />
             )}
         </>
     );

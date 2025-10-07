@@ -9,6 +9,8 @@ import { ProgressSpinner } from 'primereact/progressspinner';
 import { FileUpload } from 'primereact/fileupload';
 import uploadRightDoble from '../../../../modules/Service/application/UploadRightDoble';
 import uploadLeftDoble from '../../../../modules/Service/application/UploadLeftDoble';
+import { useModal } from '../../../../contexts/ModalContext';
+import AgregarPlantillaItinerario from './AgregarPlantillaItinerario';
 
 
 const TituloDoble = ({ service }) => {
@@ -27,6 +29,9 @@ const TituloDoble = ({ service }) => {
     const [contenidoIzquierda, setContenidoIzquierda] = useState('Contenido');
     const [imagenDerecha, setImagenDerecha] = useState(null);
     const [imagenIzquierda, setImagenIzquierda] = useState(null);
+    const [lado, setLado] = useState('');
+    const [showModal, setShowModal] = useState(false);
+    const { setIsModalOpen } = useModal();
 
     const portadaRepo = new ServicePortadaRepository();
     const getPortada = new GetPortadaByServiceId(portadaRepo);
@@ -208,6 +213,37 @@ const TituloDoble = ({ service }) => {
         }
     };
 
+    const handleModalOpen = () => {
+        setShowModal(true);
+        setIsModalOpen(true);
+    };
+
+    const handleModalClose = () => {
+        setShowModal(false);
+        setIsModalOpen(false);
+        setLado('');
+    };
+
+    const handleTemplateSelectedDerecha = (template) => {
+        try {
+            updatePortada.execute(service.id, { tituloDobleDerecha:template.templateTitle, contenidoDobleDerecha: template.description }, null);
+            setContenidoDerecha(template.description);
+            setTituloDerecha(template.templateTitle);
+        } catch (error) {
+            console.error('Error al actualizar el contenido de la portada con la plantilla:', error);
+        }
+    };
+
+    const handleTemplateSelectedIzquierda = (template) => {
+        try {
+            updatePortada.execute(service.id, { tituloDobleIzquierda:template.templateTitle, contenidoDobleIzquierda: template.description }, null);
+            setContenidoIzquierda(template.description);
+            setTituloIzquierda(template.templateTitle);
+        } catch (error) {
+            console.error('Error al actualizar el contenido de la portada con la plantilla:', error);
+        }
+    };
+
 
     return (
         <>
@@ -227,6 +263,11 @@ const TituloDoble = ({ service }) => {
                                 e.stopPropagation();
                                 handleEditOpen('titulo-izquierda');
                             }}
+                        ></i>
+                        <i 
+                            className="pi pi-database icono-editar"
+                            style={{marginLeft: '10px'}}
+                            onClick={() => {handleModalOpen(); setLado('izquierda');}}
                         ></i>
                     </div>
                     <div className="contenido-container">
@@ -273,6 +314,11 @@ const TituloDoble = ({ service }) => {
                                 e.stopPropagation();
                                 handleEditOpen('titulo-derecha');
                             }}
+                        ></i>
+                        <i 
+                            className="pi pi-database icono-editar"
+                            style={{marginLeft: '10px'}}
+                            onClick={() => {handleModalOpen(); setLado('derecha');}}
                         ></i>
                     </div>
                     <div className="contenido-container">
@@ -325,6 +371,13 @@ const TituloDoble = ({ service }) => {
                             className="accept-button editor-actions"
                         />
                 </div>
+            )}
+
+            {showModal &&(
+                <AgregarPlantillaItinerario
+                    onHide={handleModalClose}
+                    onSelectTemplate={lado === 'derecha' ? handleTemplateSelectedDerecha : handleTemplateSelectedIzquierda}
+                />
             )}
         </>
     );
