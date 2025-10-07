@@ -10,7 +10,7 @@
 .titulo-doble .izquierda {
     display: flex;
     flex-direction: column;
-    min-width: 45vw;
+    min-width: 49vw;
     max-width: 50vw;
     height: 100%;
     padding: 3rem;

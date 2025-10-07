@@ -51,7 +51,6 @@ const TituloDoble = ({ service }) => {
                 setTituloIzquierda(result.tituloDobleIzquierda || 'Título');
                 setImagenIzquierda(result.imagenDobleIzquierda || null);
                 setContenidoIzquierda(result.contenidoDobleIzquierda || 'Contenido');
-                console.log('Portada doble cargada:', result.imagenDobleDerecha);
             }
         } catch (error) {
             console.error('Error al obtener la portada:', error);
