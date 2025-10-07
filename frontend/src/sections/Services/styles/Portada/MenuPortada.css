@@ -1,0 +1,85 @@
+.portada-menu {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    flex-direction: row;
+    position: fixed;
+    bottom: 1rem;
+    left: 7.5%;
+    right: 7.5%;
+    width: 85%;
+    background-color: var(--surface-b);
+    box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    border-radius: 15px;
+    padding: 0.1rem;
+    z-index: 100;
+    gap: 5px;
+}
+
+.portada-menu .p-tabmenu {
+    padding: 0;
+    margin: 0;
+    height: auto;
+    background-color: transparent;
+}
+
+.portada-menu .p-tabmenu .p-tabmenu-nav {
+    background-color: transparent;
+    border: none;   
+}
+
+.portada-menu .p-tabmenu .p-tabmenu-nav .p-tabmenuitem .p-menuitem-link {
+    border-radius: 15px;
+    background: transparent;
+    font-weight: normal;
+    font-size: 12px;
+}
+
+.portada-menu .p-button-label {
+    font-weight: normal;
+    font-size: 12px;
+}
+
+.portada-menu button > .pi-google {
+    color: white;
+}
+
+.portada-menu .p-tabmenu .p-tabmenu-nav .p-tabmenuitem .p-menuitem-link:hover {
+    background-color: var(--blue-50);
+}
+
+.portada-menu .p-tabmenu .p-tabmenu-nav .p-tabmenuitem.p-highlight .p-menuitem-link {
+    background: var(--blue-100);
+    border-radius: 15px;
+    border: none;
+}
+
+.portada-menu .p-tabmenu .p-tabmenuitem .p-menuitem-link {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.portada-menu .p-tabmenu .p-tabmenuitem .p-menuitem-icon {
+    margin-right: 0 !important;
+    margin-bottom: 0.25rem;
+}
+
+.portada-menu .p-float-label {
+    font-size: 12px;
+
+}
+
+.portada-menu .dropdown-menu {
+    width: 8rem;
+    font-size: 12px;
+    height: 2.25rem;
+    border: 1px solid var(--primary-color);
+}
+
+.portada-dropdown-panel .p-dropdown-items > li {
+    padding: 0.5rem 0.75rem;
+    font-size: 12px;
+}
+
+

@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
 import { Service } from './entities/service.entity';
 import { Component } from '../components/entities/component.entity';
+import { Portada } from './entities/portada.entity';
 
 @Injectable()
 export class ServicesService {
@@ -11,12 +12,27 @@ export class ServicesService {
     private serviceRepository: Repository<Service>,
     @InjectRepository(Component)
     private componentRepository: Repository<Component>,
+    @InjectRepository(Portada)
+    private portadaRepository: Repository<Portada>,
   ) { }
 
   async create(data: Partial<Service> & { componentIds?: number[] }): Promise<Service> {
     const { componentIds, ...serviceData } = data;
     // 1) guardar el servicio primero para obtener ID
     const saved = await this.serviceRepository.save(this.serviceRepository.create(serviceData));
+    
+    try {
+      const defaultPortada = this.portadaRepository.create({
+        titulo: '', // Título vacío
+        imagenCentro: '', // Sin imagen
+        serviceId: saved.id // Asociar con el servicio recién creado
+      });
+      await this.portadaRepository.save(defaultPortada);
+      console.log(`Portada creada automáticamente para servicio ID: ${saved.id}`);
+    } catch (error) {
+      console.warn(`Error al crear portada automática para servicio ${saved.id}:`, error);
+      // No fallar el proceso si la portada no se puede crear
+    }
     // 2) asignar componentes (lado dueño: Service con @JoinTable)
     if (componentIds && componentIds.length > 0) {
       const components = await this.componentRepository.findBy({ id: In(componentIds) });

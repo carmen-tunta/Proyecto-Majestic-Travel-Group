@@ -32,7 +32,6 @@ const Menu = () => {
                 {has('BANDEJA_SOLICITUD','VIEW') && <Button label="Bandeja de solicitud" text size="small" icon="pi pi-home" onClick={() => navigate('/bandeja-solicitud')} />}
                 {has('CLIENTES','VIEW') && <Button label="Clientes" text size="small" icon="pi pi-users" onClick={() => navigate('/clientes')} />}
                 {has('COTIZACION','VIEW') && <Button label="Cotización" text size="small" icon="pi pi-money-bill" onClick={() => navigate('/cotizaciones')} />}
-                {has('ITINERARIO','VIEW') && <Button label="Itinerario" text size="small" icon="pi pi-file" onClick={() => navigate('/itinerario')} />}
                 {has('PROVEEDORES','VIEW') && <Button label="Proveedores" text size="small" icon="pi pi-users" onClick={() => navigate('/proveedores')} />}
                 {has('REGISTRO_PAGOS','VIEW') && <Button label="Registro de pagos" text size="small" icon="pi pi-credit-card" onClick={() => navigate('/registro-pagos')} />}
                 {has('PLANTILLA_ITINERARIO','VIEW') && <Button label="Plantilla itineraria" text size="small" icon="pi pi-list" onClick={() => navigate('/itinerario')} />}

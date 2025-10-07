@@ -28,6 +28,7 @@ import { Pasajero } from 'src/modules/pasajeros/entities/pasajero.entity';
 import { RegistroPago } from 'src/modules/registroPago/entities/registroPago.entity';
 import { QuoteRequest } from 'src/modules/quote-requests/entities/quote-request.entity';
 import { QuoteRequestService } from 'src/modules/quote-requests/entities/quote-request-service.entity';
+import { Portada } from 'src/modules/services/entities/portada.entity';
 import { AppModuleEntity } from '../modules/permissions/entities/app-module.entity';
 import { ModuleAction } from '../modules/permissions/entities/module-action.entity';
 import { UserPermission } from '../modules/permissions/entities/user-permission.entity';
@@ -46,34 +47,33 @@ import { UserPermission } from '../modules/permissions/entities/user-permission.
 
       
 
-      entities: [
-        User,
-        ItineraryTemplate,
-        Component,
-        Service,
-        Client,
-        clientesContact,
-        Proveedores,
-        ProveedorContact,
-        Tarifario,
-        TarifaComponent,
-        TarifaColumn,
-        TarifaPrices,
-        TarifaIncrement,
-        ServiceImage,
-        TarifarioDocuments,
-        Cotizacion,
-        CotizacionServicio,
-        CotizacionServicioComponente,
-        Pasajero,
-        RegistroPago,
-        QuoteRequest,
-        QuoteRequestService,
-        // Permisos
-        AppModuleEntity,
-        ModuleAction,
-        UserPermission
-      ], // Entidades registradas
+      entities: [User, 
+                  ItineraryTemplate, 
+                  Component, 
+                  Service, 
+                  Client, 
+                  clientesContact,        
+                  Proveedores, 
+                  ProveedorContact,
+                  Tarifario,
+                  TarifaComponent,
+                  TarifaColumn,
+                  TarifaPrices,
+                  TarifaIncrement,
+                  ServiceImage,
+                  TarifarioDocuments,
+                  Cotizacion,
+                  CotizacionServicio,
+                  CotizacionServicioComponente,
+                  Pasajero,
+                  RegistroPago,
+                  QuoteRequest,
+                  QuoteRequestService,
+                  Portada,
+                  AppModuleEntity,
+                  ModuleAction,
+                  UserPermission
+                ], // Aquí se agregarán las entidades
 
       synchronize: true, // Cambia a true solo en desarrollo
     }),
