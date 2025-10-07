@@ -1,6 +1,6 @@
 import { CanActivate, ExecutionContext, Injectable, ForbiddenException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { PERMISSION_KEY } from '../decorators/require-permission.decorator';
+import { PERMISSION_KEY } from '../decorators/require-permissions.decorator';
 import { PermissionsService } from '../../permissions/permissions.service';
 
 @Injectable()
@@ -18,17 +18,20 @@ export class PermissionsGuard implements CanActivate {
     const user = request.user; // set by JWT guard
     if (!user) return false;
 
-    const perms = await this.permService.getUserPermissions(user.sub || user.id);
-    const flat = perms.map(p => ({ mod: p.action.module.code, act: p.action.action }));
+    const userId = user.sub || user.id;
+    if (await this.permService.isAdmin(userId)) return true;
 
-    // Construir sets por módulo
+    const perms = await this.permService.getUserPermissions(userId);
+    const flat = perms
+      .filter(p => p.action && p.action.module)
+      .map(p => ({ mod: p.action.module.code, act: p.action.action }));
+
     const moduleActions: Record<string, Set<string>> = {};
     for (const p of flat) {
       if (!moduleActions[p.mod]) moduleActions[p.mod] = new Set();
       moduleActions[p.mod].add(p.act);
     }
 
-    // 1. Validar requeridos directos
     const hasAll = required.every(r => {
       const [mod, act] = r.split(':');
       return moduleActions[mod]?.has(act);
@@ -37,7 +40,6 @@ export class PermissionsGuard implements CanActivate {
       throw new ForbiddenException('No tiene permisos para esta acción');
     }
 
-    // 2. Regla: cualquier acción distinta de VIEW exige tener VIEW del mismo módulo
     for (const r of required) {
       const [mod, act] = r.split(':');
       if (act !== 'VIEW') {
@@ -47,7 +49,6 @@ export class PermissionsGuard implements CanActivate {
       }
     }
 
-    // 3. (Defensivo) Si un módulo no tiene ninguna acción asignada pero se pide algo, negar
     for (const r of required) {
       const [mod] = r.split(':');
       if (!moduleActions[mod] || moduleActions[mod].size === 0) {

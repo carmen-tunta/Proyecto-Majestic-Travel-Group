@@ -28,9 +28,9 @@ import { Pasajero } from 'src/modules/pasajeros/entities/pasajero.entity';
 import { RegistroPago } from 'src/modules/registroPago/entities/registroPago.entity';
 import { QuoteRequest } from 'src/modules/quote-requests/entities/quote-request.entity';
 import { QuoteRequestService } from 'src/modules/quote-requests/entities/quote-request-service.entity';
-import { AppModuleEntity } from '../modules/permissions/entities/module.entity';
-import { ModuleAction } from '../modules/permissions/entities/moduleAction.entity';
-import { UserPermission } from '../modules/permissions/entities/userPermission.entity';
+import { AppModuleEntity } from '../modules/permissions/entities/app-module.entity';
+import { ModuleAction } from '../modules/permissions/entities/module-action.entity';
+import { UserPermission } from '../modules/permissions/entities/user-permission.entity';
 
 
 @Module({

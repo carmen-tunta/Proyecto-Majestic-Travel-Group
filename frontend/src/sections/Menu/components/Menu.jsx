@@ -4,35 +4,19 @@ import { Button } from "primereact/button";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../../modules/auth/context/AuthContext";
 import { useModal } from "../../../contexts/ModalContext";
-import { useEffect, useState } from 'react';
-import { apiService } from '../../../services/apiService';
+import { usePermissions } from '../../../contexts/PermissionsContext';
 
 
 const Menu = () => {
     const navigate = useNavigate();
     const { logout } = useAuth();
     const { isModalOpen } = useModal();
-    const [loadingPerms, setLoadingPerms] = useState(true);
-    const [myModules, setMyModules] = useState([]); // array de { module, actions }
-
-    useEffect(() => {
-        let mounted = true;
-        (async () => {
-            try {
-                const data = await apiService.getMyPermissions();
-                if (mounted) setMyModules(data.modules || []);
-            } catch (e) {
-                // si falla, mantenemos lista vacía (oculta todo lo protegido)
-                if (mounted) setMyModules([]);
-            } finally {
-                if (mounted) setLoadingPerms(false);
-            }
-        })();
-        return () => { mounted = false; };
-    }, []);
-
-    const canView = (code) => apiService.hasView(myModules, code);
-    const noAccess = (code) => !loadingPerms && !canView(code);
+    const { has, isAdmin } = usePermissions();
+    // Debug en montaje
+    if (process.env.NODE_ENV !== 'production') {
+        // eslint-disable-next-line no-console
+        console.debug('[Menu] isAdmin:', isAdmin);
+    }
 
     const handleLogout = () => {
         logout();
@@ -45,20 +29,19 @@ const Menu = () => {
                 <img src="logo_mtg.png" alt="Logo" />
             </div>
             <div className="menu-links">
-                <Button label="Bandeja de solicitud" text size="small" icon="pi pi-home" onClick={() => canView('BANDEJA_SOLICITUD')&&navigate('/bandeja-solicitud')} disabled={noAccess('BANDEJA_SOLICITUD')} tooltip={noAccess('BANDEJA_SOLICITUD')? 'Sin acceso (asigne VIEW en Permisos)' : undefined} />
-                <Button label="Clientes" text size="small" icon="pi pi-users" onClick={() => canView('CLIENTES')&&navigate('/clientes')} disabled={noAccess('CLIENTES')} tooltip={noAccess('CLIENTES')? 'Sin acceso' : undefined} />
-                <Button label="Cotización" text size="small" icon="pi pi-money-bill" onClick={() => canView('COTIZACION')&&navigate('/cotizaciones')} disabled={noAccess('COTIZACION')} tooltip={noAccess('COTIZACION')? 'Sin acceso' : undefined} />
-                <Button label="Itinerario" text size="small" icon="pi pi-file" onClick={() => canView('ITINERARIO')&&navigate('/itinerario')} disabled={noAccess('ITINERARIO')} tooltip={noAccess('ITINERARIO')? 'Sin acceso' : undefined} />
-                <Button label="Proveedores" text size="small" icon="pi pi-users" onClick={() => canView('PROVEEDORES')&&navigate('/proveedores')} disabled={noAccess('PROVEEDORES')} tooltip={noAccess('PROVEEDORES')? 'Sin acceso' : undefined} />
-                <Button label="Registro de pagos" text size="small" icon="pi pi-credit-card" onClick={() => canView('REGISTRO_PAGOS')&&navigate('/registro-pagos')} disabled={noAccess('REGISTRO_PAGOS')} tooltip={noAccess('REGISTRO_PAGOS')? 'Sin acceso' : undefined} />
-                <Button label="Plantilla itineraria" text size="small" icon="pi pi-list" onClick={() => canView('PLANTILLA_ITINERARIA')&&navigate('/itinerario')} disabled={noAccess('PLANTILLA_ITINERARIA')} tooltip={noAccess('PLANTILLA_ITINERARIA')? 'Sin acceso' : undefined} />
-                <Button label="Servicios" text size="small" icon="pi pi-flag" onClick={() => canView('SERVICIOS')&&navigate('/servicios')} disabled={noAccess('SERVICIOS')} tooltip={noAccess('SERVICIOS')? 'Sin acceso' : undefined} />
-                <Button label="Componentes" text size="small" icon="pi pi-book" onClick={() => canView('COMPONENTES')&&navigate('/componentes')} disabled={noAccess('COMPONENTES')} tooltip={noAccess('COMPONENTES')? 'Sin acceso' : undefined} />
-                <Button label="Reportes" text size="small" icon="pi pi-list-check" onClick={() => canView('REPORTES')&&navigate('/reportes')} disabled={noAccess('REPORTES')} tooltip={noAccess('REPORTES')? 'Sin acceso' : undefined} />
-                {loadingPerms && <span style={{fontSize: '11px', opacity: 0.6}}>Cargando permisos...</span>}
+                {has('BANDEJA_SOLICITUD','VIEW') && <Button label="Bandeja de solicitud" text size="small" icon="pi pi-home" onClick={() => navigate('/bandeja-solicitud')} />}
+                {has('CLIENTES','VIEW') && <Button label="Clientes" text size="small" icon="pi pi-users" onClick={() => navigate('/clientes')} />}
+                {has('COTIZACION','VIEW') && <Button label="Cotización" text size="small" icon="pi pi-money-bill" onClick={() => navigate('/cotizaciones')} />}
+                {has('ITINERARIO','VIEW') && <Button label="Itinerario" text size="small" icon="pi pi-file" onClick={() => navigate('/itinerario')} />}
+                {has('PROVEEDORES','VIEW') && <Button label="Proveedores" text size="small" icon="pi pi-users" onClick={() => navigate('/proveedores')} />}
+                {has('REGISTRO_PAGOS','VIEW') && <Button label="Registro de pagos" text size="small" icon="pi pi-credit-card" onClick={() => navigate('/registro-pagos')} />}
+                {has('PLANTILLA_ITINERARIO','VIEW') && <Button label="Plantilla itineraria" text size="small" icon="pi pi-list" onClick={() => navigate('/itinerario')} />}
+                {has('SERVICIOS','VIEW') && <Button label="Servicios" text size="small" icon="pi pi-flag" onClick={() => navigate('/servicios')} />}
+                {has('COMPONENTES','VIEW') && <Button label="Componentes" text size="small" icon="pi pi-book" onClick={() => navigate('/componentes')} />}
+                {has('REPORTES','VIEW') && <Button label="Reportes" text size="small" icon="pi pi-list-check" onClick={() => navigate('/reportes')} />}
             </div>
             <div className="menu-options">
-                <Button label="Permisos" text size="small" icon="pi pi-lock" onClick={() => canView('USUARIOS')&&navigate('/permisos')} disabled={noAccess('USUARIOS')} tooltip={noAccess('USUARIOS')? 'Sin acceso' : undefined} />
+                {isAdmin && <Button label="Permisos" text size="small" icon="pi pi-lock" onClick={() => navigate('/permisos')} />}
                 <Button label="Cerrar sesión" text size="small" icon="pi pi-sign-out" onClick={handleLogout}/>
             </div>
         </div>

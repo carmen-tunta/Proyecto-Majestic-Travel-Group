@@ -1,265 +1,267 @@
-import { useEffect, useState } from 'react';
+// (Componente completo más abajo)
+import React, { useEffect, useState, useRef } from 'react';
 import { TabView, TabPanel } from 'primereact/tabview';
-import { Button } from 'primereact/button';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
+import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
 import { Dropdown } from 'primereact/dropdown';
 import { InputText } from 'primereact/inputtext';
 import { Toast } from 'primereact/toast';
-import { apiService } from '../../../services/apiService';
-import { ProgressSpinner } from 'primereact/progressspinner';
 import { Checkbox } from 'primereact/checkbox';
-import { useRef } from 'react';
-import '../../Proveedores/styles/Proveedores.css';
+import { ProgressSpinner } from 'primereact/progressspinner';
+import { apiService } from '../../../services/apiService';
 import { useAuth } from '../../../modules/auth/context/AuthContext';
+import { usePermissions } from '../../../contexts/PermissionsContext';
 
-const ESTADOS = [
-  { label: 'Activo', value: 'activo' },
-  { label: 'Suspendido', value: 'suspendido' }
-];
+// Opciones de estado (combobox crear usuario)
+const ESTADOS = [ { label:'Activo', value:'activo'}, { label:'Suspendido', value:'suspendido'} ];
+
+// Formatea fecha estilo: Jue 25 set 25
+function formatSpanishDate(dateStr) {
+  if (!dateStr) return '';
+  const date = new Date(dateStr);
+  let formatted = date.toLocaleDateString('es-ES', { weekday:'short', day:'2-digit', month:'short', year:'2-digit' });
+  return formatted
+    .replace(/,/g,'')
+    .split(' ')
+    .map(w => w.charAt(0).toUpperCase()+w.slice(1))
+    .join(' ');
+}
 
 const Permisos = () => {
+  // Tabs
   const [activeIndex, setActiveIndex] = useState(0);
+
+  // Usuarios
   const [users, setUsers] = useState([]);
   const [loadingUsers, setLoadingUsers] = useState(false);
-  const [modules, setModules] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
-  const [userPerms, setUserPerms] = useState([]);
+
+  // Permisos / módulos
+  const [modules, setModules] = useState([]); // [{ id, code, name, actions:[{id, action, label}] }]
+  const [userPerms, setUserPerms] = useState([]); // [{ action: { id, action, module:{ code } } }]
   const [loadingPerms, setLoadingPerms] = useState(false);
-  const [showNewUser, setShowNewUser] = useState(false);
-  const [formUser, setFormUser] = useState({ nombre:'', email:'', area:'', username:'', status:'activo' });
-  const [creatingUser, setCreatingUser] = useState(false);
+  const [loadingModules, setLoadingModules] = useState(false);
+
+  // Nuevo usuario
+  const [showNew, setShowNew] = useState(false);
+  const [creating, setCreating] = useState(false);
+  const [form, setForm] = useState({ nombre:'', email:'', area:'', username:'', status:'activo' });
+
   const { user: authUser } = useAuth();
+  const { isAdmin } = usePermissions();
   const toast = useRef();
 
+  // Carga usuarios
   const loadUsers = async () => {
     setLoadingUsers(true);
-    try {
-      const data = await apiService.getUsers();
-      setUsers(data);
-    } catch (e) {
-      toast.current?.show({ severity:'error', summary:'Error', detail:e.message });
-    } finally { setLoadingUsers(false); }
+    try { setUsers(await apiService.getUsers()); }
+    catch(e){ toast.current?.show({ severity:'error', summary:'Error', detail:e.message }); }
+    finally { setLoadingUsers(false); }
   };
 
+  // Carga módulos definidos
   const loadModules = async () => {
-    try { setModules(await apiService.listPermissionModules()); } catch (e) { /* ignore */ }
+    setLoadingModules(true);
+    try { setModules(await apiService.listPermissionModules()); }
+    catch(e){ /* noop */ }
+    finally { setLoadingModules(false); }
   };
 
+  // Carga permisos de un usuario
   const loadUserPerms = async (user) => {
     if (!user) return;
     setLoadingPerms(true);
-    try { 
-      const perms = await apiService.getUserPermissions(user.id); 
-      setUserPerms(perms); 
-      // Auto-grant full set ONLY if usuario nuevo (sin ningún permiso asignado)
-      if (perms.length === 0) {
-        await ensureAllGranted(user, perms);
-      }
-    } catch (e) { 
-      toast.current?.show({ severity:'error', summary:'Error', detail:e.message }); 
-    }
+    try { setUserPerms(await apiService.getUserPermissions(user.id)); }
+    catch(e){ toast.current?.show({ severity:'error', summary:'Error', detail:e.message }); }
     finally { setLoadingPerms(false); }
   };
 
+  // Efectos inicial / cuando cambia usuario
   useEffect(() => { loadUsers(); loadModules(); }, []);
-  useEffect(() => { loadUserPerms(selectedUser); }, [selectedUser]);
+  useEffect(() => { if (selectedUser) loadUserPerms(selectedUser); }, [selectedUser]);
 
-  const openNewUser = () => { setFormUser({ nombre:'', email:'', area:'', username:'', status:'activo' }); setShowNewUser(true); };
+  // Helpers
+  const userHasAction = (moduleCode, actionCode) => userPerms.some(p => p.action.module.code === moduleCode && p.action.action === actionCode);
 
-  const handleCreateUser = async () => {
-    setCreatingUser(true);
-    try {
-      const payload = { username: formUser.username, email: formUser.email, nombre: formUser.nombre, area: formUser.area, status: formUser.status };
-      const { user, rawPassword } = await apiService.createUserAdmin(payload);
-      toast.current?.show({ severity:'success', summary:'Usuario creado', detail: rawPassword ? `Contraseña: ${rawPassword}` : 'Creado' });
-      setShowNewUser(false); loadUsers();
-    } catch (e) { toast.current?.show({ severity:'error', summary:'Error', detail:e.message }); }
-    finally { setCreatingUser(false); }
-  };
-
+  // Toggle acción individual
   const toggleAction = async (actionObj, checked) => {
     if (!selectedUser) return;
+    if (!isAdmin) {
+      toast.current?.show({ severity:'warn', summary:'Solo administradores', detail:'No tienes permisos para modificar.' });
+      return;
+    }
     if (authUser && selectedUser.id === authUser.id) {
-      toast.current?.show({ severity:'warn', summary:'Acción no permitida', detail:'No puedes modificar tus propios permisos.' });
+      toast.current?.show({ severity:'warn', summary:'No permitido', detail:'No puedes modificar tus propios permisos.' });
       return;
     }
     try {
-      if (checked) {
-        await apiService.grantUserPermissions(selectedUser.id, [actionObj.id]);
+      if (checked) await apiService.grantUserPermissions(selectedUser.id, [actionObj.id]);
+      else await apiService.revokeUserPermissions(selectedUser.id, [actionObj.id]);
+      loadUserPerms(selectedUser);
+    } catch(e){ toast.current?.show({ severity:'error', summary:'Error', detail:e.message }); }
+  };
+
+  // Ocultar módulo (revoca todas) o mostrar (activa todas inicialmente)
+  const toggleHideModule = async (moduleObj, hide) => {
+    if (!selectedUser) return;
+    if (!isAdmin) {
+      toast.current?.show({ severity:'warn', summary:'Solo administradores', detail:'No tienes permisos para modificar.' });
+      return;
+    }
+    if (authUser && selectedUser.id === authUser.id) {
+      toast.current?.show({ severity:'warn', summary:'No permitido', detail:'No puedes modificar tu propio módulo.' });
+      return;
+    }
+    const actionIds = moduleObj.actions.map(a => a.id);
+    try {
+      if (hide) await apiService.revokeUserPermissions(selectedUser.id, actionIds);
+      else await apiService.grantUserPermissions(selectedUser.id, actionIds); // activa todo; luego puede desmarcar granular
+      loadUserPerms(selectedUser);
+    } catch(e){ toast.current?.show({ severity:'error', summary:'Error', detail:e.message }); }
+  };
+
+  // Activar módulo (similar a mostrar) / desactivar (revocar todas)
+  const toggleActivateModule = async (moduleObj, activate) => {
+    if (!selectedUser) return;
+    if (!isAdmin) {
+      toast.current?.show({ severity:'warn', summary:'Solo administradores', detail:'No tienes permisos para modificar.' });
+      return;
+    }
+    if (authUser && selectedUser.id === authUser.id) {
+      toast.current?.show({ severity:'warn', summary:'No permitido', detail:'No puedes modificar tu propio módulo.' });
+      return;
+    }
+    const actionIds = moduleObj.actions.map(a => a.id);
+    try {
+      if (activate) {
+        // Solo asigna las que faltan para no tocar selecciones existentes (aunque al activar desde oculto se habían revocado todas)
+        const missing = actionIds.filter(id => !userPerms.some(p => p.action.id === id));
+        if (missing.length) await apiService.grantUserPermissions(selectedUser.id, missing);
       } else {
-        await apiService.revokeUserPermissions(selectedUser.id, [actionObj.id]);
+        await apiService.revokeUserPermissions(selectedUser.id, actionIds);
       }
       loadUserPerms(selectedUser);
-    } catch (e) {
-      toast.current?.show({ severity:'error', summary:'Error', detail:e.message });
-    }
+    } catch(e){ toast.current?.show({ severity:'error', summary:'Error', detail:e.message }); }
   };
 
-  const userHasAction = (moduleCode, actionCode) => {
-    return userPerms.some(p => p.action.module.code === moduleCode && p.action.action === actionCode);
+  // Crear usuario
+  const openNew = () => { setForm({ nombre:'', email:'', area:'', username:'', status:'activo' }); setShowNew(true); };
+  const createUser = async () => {
+    setCreating(true);
+    try {
+      const payload = { ...form };
+      const { user, rawPassword } = await apiService.createUserAdmin(payload);
+      toast.current?.show({ severity:'success', summary:'Usuario creado', detail: rawPassword ? `Contraseña: ${rawPassword}` : 'Creado' });
+      setShowNew(false); loadUsers();
+    } catch(e){ toast.current?.show({ severity:'error', summary:'Error', detail:e.message }); }
+    finally { setCreating(false); }
   };
 
-  const ensureAllGranted = async (user, currentPerms) => {
-    if (!user || !modules.length) return;
-    // gather all action ids from modules
-    const allActionIds = modules.flatMap(m => m.actions.map(a => a.id));
-    const existingIds = new Set((currentPerms || []).map(p => p.action.id));
-    const missing = allActionIds.filter(id => !existingIds.has(id));
-    if (missing.length) {
-      try {
-        await apiService.grantUserPermissions(user.id, missing);
-        const refreshed = await apiService.getUserPermissions(user.id);
-        setUserPerms(refreshed);
-      } catch (e) {
-        // silencioso
-      }
-    }
-  };
-
+  // Tabla Usuarios
   const UsersTab = (
-    <div className="proveedores">
-      <div className='proveedores-header'>
-        <h2>Usuarios</h2>
-        <Button icon="pi pi-plus" label="Nuevo" size='small' outlined onClick={openNewUser} />
+    <div style={{ padding:'0.25rem 0.5rem' }}>
+      <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', margin:'0 0 .75rem 0' }}>
+        <h2 style={{ fontSize:20, margin:0 }}>Permisos</h2>
+  {isAdmin && <Button icon="pi pi-plus" label="Nuevo" size='small' outlined onClick={openNew} />}
       </div>
-      <div className="card">
-        <DataTable 
-          value={users} 
-          className="proveedores-table" 
-          size='small' 
-          loading={loadingUsers} 
-          emptyMessage="No hay usuarios"
-          onRowClick={(e) => { setSelectedUser(e.data); setActiveIndex(1); }}
-          rowClassName={() => ({ 'row-clickable': true })}
-          style={{ cursor:'pointer' }}
-        >
-          <Column field="nombre" header="Nombres" style={{ width:'15%' }} />
-          <Column field="email" header="Correo" style={{ width:'18%' }} />
-          <Column field="area" header="Area" style={{ width:'15%' }} />
-          <Column field="username" header="Usuario" style={{ width:'12%' }} />
-          <Column header="Fecha registrada" style={{ width:'18%' }} body={row => {
-            if (!row.createdAt) return '';
-            const date = new Date(row.createdAt);
-            let formatted = date.toLocaleDateString('es-ES', {
-              weekday: 'short', day: '2-digit', month: 'short', year: 'numeric'
-            });
-            formatted = formatted.replace(/,/g, '').split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
-            return formatted;
-          }} />
-          <Column header="Estado" body={row => row.status === 'activo' ? 'Activo' : 'Suspendido'} style={{ width:'12%' }} />
+      <div className="card" style={{ borderRadius:8 }}>
+        <DataTable value={users} loading={loadingUsers} size='small' emptyMessage="No hay usuarios" onRowClick={e => { setSelectedUser(e.data); setActiveIndex(1); }} style={{ cursor:'pointer' }}>
+          <Column field="nombre" header="Nombres" style={{ width:'18%' }} body={r => <span style={{ fontWeight:500 }}>{r.nombre}</span>} />
+            <Column field="email" header="Correo" style={{ width:'22%' }} />
+            <Column field="area" header="Area" style={{ width:'16%' }} />
+            <Column field="username" header="Usuario" style={{ width:'14%' }} />
+            <Column header="Fecha registrada" style={{ width:'18%' }} body={r => formatSpanishDate(r.createdAt)} />
+            <Column header="Estado" style={{ width:'12%' }} body={r => r.status === 'activo' ? 'Activo' : 'Suspendido'} />
         </DataTable>
       </div>
     </div>
   );
 
+  // Tabla Permisos
   const PermsTab = (
-    <div className="proveedores">
+    <div style={{ padding:'0.25rem 0.5rem' }}>
       {selectedUser ? (
         <>
-          <div className='proveedores-header'>
-            <h2>Permisos</h2>
-            <div style={{ display:'flex', gap:8 }}>
-              <Button text icon="pi pi-arrow-left" label="Usuarios" size='small' onClick={() => { setActiveIndex(0); setSelectedUser(null); }} />
-              <Button text icon="pi pi-refresh" size='small' onClick={() => loadUserPerms(selectedUser)} />
-            </div>
+          <h2 style={{ fontSize:20, margin:'0 0 .25rem 0' }}>Permisos</h2>
+          <div style={{ margin:'0 0 .75rem 0', color:'#555', fontSize:14 }}>
+            <div style={{ fontWeight:600 }}>{selectedUser.nombre || selectedUser.username}</div>
+            <div>{selectedUser.area || ''}</div>
           </div>
-          <div style={{ marginBottom: '0.5rem', fontWeight:600 }}>{selectedUser.nombre || selectedUser.username}</div>
-          <div className='card' style={{ padding:0 }}>
-            {loadingPerms ? (
-              <div style={{ display:'flex', justifyContent:'center', padding:'2rem' }}><ProgressSpinner style={{ width:40, height:40 }} /></div>
+          <div className='card' style={{ borderRadius:8, padding:0 }}>
+            {(loadingModules || loadingPerms) ? (
+              <div style={{ display:'flex', justifyContent:'center', padding:'2.5rem' }}>
+                <ProgressSpinner style={{ width:40, height:40 }} />
+              </div>
             ) : (
-              <div style={{ maxHeight:'62vh', overflowY:'auto' }}>
+              <div style={{ maxHeight:'60vh', overflowY:'auto' }}>
                 <table style={{ width:'100%', borderCollapse:'collapse', fontSize:14 }}>
                   <thead style={{ position:'sticky', top:0, background:'#fff', zIndex:2 }}>
                     <tr style={{ textAlign:'left' }}>
-                      <th style={{ padding:'12px 16px', width:'26%' }}>Módulo</th>
-                      <th style={{ padding:'12px 8px', width:'12%' }}>Ocultar</th>
-                      <th style={{ padding:'12px 8px', width:'12%' }}>Activar</th>
-                      <th style={{ padding:'12px 8px', width:'18%' }}>Fecha actualizada</th>
+                      <th style={{ padding:'12px 16px', width:'40%' }}>Módulo</th>
+                      <th style={{ padding:'12px 8px', width:'15%' }}>Ocultar</th>
+                      <th style={{ padding:'12px 8px', width:'15%' }}>Activar</th>
                     </tr>
                   </thead>
                   <tbody>
+                    {modules.length === 0 && (
+                      <tr>
+                        <td colSpan={3} style={{ padding:'2rem', textAlign:'center', color:'#777' }}>
+                          No hay módulos de permisos cargados. Verifica que el backend haya ejecutado el seed.
+                        </td>
+                      </tr>
+                    )}
                     {modules.map(m => {
-                      const actions = m.actions;
-                      const viewAction = actions.find(a => a.action === 'VIEW');
+                      // Mantener solo acciones importantes y en orden
+                      const order = ['VIEW','CREATE','EDIT','DELETE','EXPORT','ASSIGN'];
+                      const labelMap = { VIEW:'Ver', CREATE:'Crear', EDIT:'Editar', DELETE:'Eliminar', EXPORT:'Exportar', ASSIGN:'Asignar' };
+                      const actions = (m.actions || [])
+                        .filter(a => order.includes(a.action))
+                        .sort((a,b) => order.indexOf(a.action) - order.indexOf(b.action))
+                        .map(a => ({ ...a, uiLabel: a.label || labelMap[a.action] || a.action }));
+
+                      if (actions.length === 0) return null; // omitir módulos sin acciones relevantes
                       const hasAny = actions.some(a => userHasAction(m.code, a.action));
-                      const allActive = actions.every(a => userHasAction(m.code, a.action));
-                      const isHidden = !hasAny; // oculto cuando no tiene ninguna acción
+                      const hidden = !hasAny; // Ocultar cuando no tiene ninguna acción
+                      const activarChecked = hasAny; // Según screenshot: activar marc ado aunque no todas las acciones estén activas
                       const actionIds = actions.map(a => a.id);
                       return (
-                        <>
-                          <tr key={`mod-${m.id}`} style={{ borderTop:'1px solid #eee' }}>
-                            <td style={{ padding:'12px 16px', fontWeight:600 }}>{m.name}</td>
+                        <React.Fragment key={m.id}>
+                          <tr style={{ borderTop:'1px solid #eee' }}>
+                            <td style={{ padding:'12px 16px', fontWeight:600 }}>{m.nombre || m.name || m.code}</td>
                             <td style={{ padding:'12px 8px' }}>
-                              {viewAction && (
-                                <Checkbox 
-                                  inputId={`hide-${m.id}`}
-                                  checked={isHidden}
-                                  disabled={authUser && selectedUser.id === authUser.id}
-                                  onChange={async (e) => {
-                                    if (!actions.length) return;
-                                    if (authUser && selectedUser.id === authUser.id) {
-                                      toast.current?.show({ severity:'warn', summary:'No permitido', detail:'No puedes ocultar tu propio módulo.' });
-                                      return;
-                                    }
-                                    try {
-                                      if (e.checked) {
-                                        // Ocultar => revocar TODAS las acciones del módulo
-                                        await apiService.revokeUserPermissions(selectedUser.id, actionIds);
-                                      } else {
-                                        // Mostrar => asignar TODAS las acciones (estado base full access)
-                                        await apiService.grantUserPermissions(selectedUser.id, actionIds);
-                                      }
-                                      loadUserPerms(selectedUser);
-                                    } catch (err) { toast.current?.show({ severity:'error', summary:'Error', detail: err.message }); }
-                                  }}
-                                />
-                              )}
-                            </td>
-                            <td style={{ padding:'12px 8px' }}>
-                              <Checkbox 
-                                inputId={`activate-${m.id}`}
-                                checked={allActive && !isHidden}
-                                disabled={authUser && selectedUser.id === authUser.id}
-                                onChange={async (e) => {
-                                  if (authUser && selectedUser.id === authUser.id) {
-                                    toast.current?.show({ severity:'warn', summary:'No permitido', detail:'No puedes modificar tu propio módulo.' });
-                                    return;
-                                  }
-                                  try {
-                                    if (e.checked) {
-                                      // activar todos los que falten
-                                      const missing = actionIds.filter(id => !userPerms.some(p => p.action.id === id));
-                                      if (missing.length) await apiService.grantUserPermissions(selectedUser.id, missing);
-                                    } else {
-                                      // desactivar = revocar todas (equivalente a ocultar)
-                                      await apiService.revokeUserPermissions(selectedUser.id, actionIds);
-                                    }
-                                    loadUserPerms(selectedUser);
-                                  } catch (err) { toast.current?.show({ severity:'error', summary:'Error', detail: err.message }); }
-                                }}
+                              <Checkbox
+                                inputId={`hide-${m.id}`}
+                                checked={hidden}
+                                disabled={!isAdmin || (authUser && selectedUser.id === authUser.id)}
+                                onChange={e => toggleHideModule(m, e.checked)}
                               />
                             </td>
-                            <td style={{ padding:'12px 8px', color:'#555' }}>{/* Fecha dummy por ahora: se podría guardar por acción */}{formatModuleDate()}</td>
+                            <td style={{ padding:'12px 8px' }}>
+                              <Checkbox
+                                inputId={`activate-${m.id}`}
+                                checked={activarChecked}
+                                disabled={!isAdmin || (authUser && selectedUser.id === authUser.id)}
+                                onChange={e => toggleActivateModule(m, e.checked)}
+                              />
+                            </td>
                           </tr>
                           {actions.map(a => (
                             <tr key={a.id} style={{ background:'#fafafa' }}>
-                              <td style={{ padding:'8px 32px' }}>{a.label}</td>
+                              <td style={{ padding:'8px 32px' }}>{a.uiLabel}</td>
                               <td style={{ padding:'8px 8px' }}></td>
                               <td style={{ padding:'8px 8px' }}>
-                                <Checkbox 
-                                  inputId={`act-${a.id}`} 
-                                  checked={userHasAction(m.code, a.action)} 
-                                  disabled={authUser && selectedUser.id === authUser.id}
-                                  onChange={e => toggleAction(a, e.checked)} 
+                                <Checkbox
+                                  inputId={`act-${a.id}`}
+                                  checked={userHasAction(m.code, a.action)}
+                                  disabled={!isAdmin || (authUser && selectedUser.id === authUser.id)}
+                                  onChange={e => toggleAction(a, e.checked)}
                                 />
                               </td>
-                              <td></td>
                             </tr>
                           ))}
-                        </>
+                        </React.Fragment>
                       );
                     })}
                   </tbody>
@@ -269,51 +271,45 @@ const Permisos = () => {
           </div>
         </>
       ) : (
-        <div style={{ color:'#666' }}>Selecciona un usuario en la pestaña Usuarios.</div>
+        <div style={{ color:'#666', padding:'2rem 0' }}>Selecciona un usuario en la pestaña Usuarios.</div>
       )}
     </div>
   );
 
-  function formatModuleDate() {
-    const date = new Date();
-    let formatted = date.toLocaleDateString('es-ES', { weekday:'short', day:'2-digit', month:'short', year:'numeric' });
-    return formatted.replace(/,/g,'').split(' ').map(w=>w.charAt(0).toUpperCase()+w.slice(1)).join(' ');
-  }
-
   return (
-    <div style={{ padding: '0 2rem 2rem 2rem' }}>
+    <div style={{ padding:'1rem 1.5rem' }}>
       <Toast ref={toast} />
       <TabView activeIndex={activeIndex} onTabChange={e => setActiveIndex(e.index)}>
         <TabPanel header="Usuarios">{UsersTab}</TabPanel>
         <TabPanel header="Permisos">{PermsTab}</TabPanel>
       </TabView>
 
-      <Dialog header="Nuevo Usuario" visible={showNewUser} style={{ width: '30rem' }} onHide={() => setShowNewUser(false)} modal>
+      <Dialog header="Nuevo Usuario" visible={showNew} style={{ width:'30rem' }} onHide={() => setShowNew(false)} modal>
         <div className='p-fluid' style={{ display:'flex', flexDirection:'column', gap:12 }}>
-          <span className="p-float-label">
-            <InputText id='nombre' value={formUser.nombre} onChange={e => setFormUser(f => ({ ...f, nombre: e.target.value }))} />
+          <span className='p-float-label'>
+            <InputText id='nombre' value={form.nombre} onChange={e=> setForm(f=>({...f, nombre:e.target.value}))} />
             <label htmlFor='nombre'>Nombres</label>
           </span>
-          <span className="p-float-label">
-            <InputText id='email' value={formUser.email} onChange={e => setFormUser(f => ({ ...f, email: e.target.value }))} />
+          <span className='p-float-label'>
+            <InputText id='email' value={form.email} onChange={e=> setForm(f=>({...f, email:e.target.value}))} />
             <label htmlFor='email'>Correo</label>
           </span>
-          <span className="p-float-label">
-            <InputText id='area' value={formUser.area} onChange={e => setFormUser(f => ({ ...f, area: e.target.value }))} />
+          <span className='p-float-label'>
+            <InputText id='area' value={form.area} onChange={e=> setForm(f=>({...f, area:e.target.value}))} />
             <label htmlFor='area'>Área</label>
           </span>
-          <span className="p-float-label">
-            <InputText id='username' value={formUser.username} onChange={e => setFormUser(f => ({ ...f, username: e.target.value }))} />
+          <span className='p-float-label'>
+            <InputText id='username' value={form.username} onChange={e=> setForm(f=>({...f, username:e.target.value}))} />
             <label htmlFor='username'>Usuario</label>
           </span>
-          <span className="p-float-label">
-            <Dropdown id='status' value={formUser.status} options={ESTADOS} onChange={e => setFormUser(f => ({ ...f, status: e.value }))} optionLabel='label' optionValue='value' />
+          <span className='p-float-label'>
+            <Dropdown id='status' value={form.status} options={ESTADOS} onChange={e=> setForm(f=>({...f, status:e.value}))} optionLabel='label' optionValue='value' />
             <label htmlFor='status'>Estado</label>
           </span>
         </div>
-        <div style={{ display:'flex', justifyContent:'flex-end', marginTop:24, gap:8 }}>
-          <Button label='Cancelar' text onClick={() => setShowNewUser(false)} />
-          <Button label='Guardar' icon='pi pi-check' loading={creatingUser} onClick={handleCreateUser} />
+        <div style={{ display:'flex', justifyContent:'flex-end', marginTop:20, gap:8 }}>
+          <Button label='Cancelar' text onClick={()=> setShowNew(false)} />
+          <Button label='Guardar' icon='pi pi-check' loading={creating} onClick={createUser} />
         </div>
       </Dialog>
     </div>

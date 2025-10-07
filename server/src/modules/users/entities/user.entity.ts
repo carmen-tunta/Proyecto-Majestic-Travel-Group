@@ -72,4 +72,13 @@ export class User {
 
   @UpdateDateColumn({ type: 'datetime', comment: 'Última actualización' })
   updatedAt: Date;
+
+  // Versión de permisos (para invalidar cache en frontend)
+  @Column({ type: 'int', default: 0, comment: 'Incrementa cuando cambian los permisos del usuario' })
+  permissionsVersion: number;
+
+  // Flag para administradores de permisos
+  @Column({ type: 'boolean', default: false, comment: 'Indica si el usuario es administrador' })
+  isAdmin: boolean;
+
 }

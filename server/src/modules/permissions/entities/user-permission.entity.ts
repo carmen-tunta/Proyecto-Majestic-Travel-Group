@@ -1,9 +1,9 @@
 import { Entity, PrimaryGeneratedColumn, ManyToOne, Unique, CreateDateColumn } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
-import { ModuleAction } from './moduleAction.entity';
+import { ModuleAction } from './module-action.entity';
 
 @Entity('user_permissions')
-@Unique(['user', 'action'])
+@Unique(['user','action'])
 export class UserPermission {
   @PrimaryGeneratedColumn()
   id: number;
