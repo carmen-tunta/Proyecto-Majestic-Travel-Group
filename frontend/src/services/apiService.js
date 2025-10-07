@@ -1,8 +1,9 @@
-const API_BASE_URL = process.env.REACT_APP_API_URL;
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:3080';
 
 // Función helper para obtener headers con autenticación
 const getAuthHeaders = () => {
   // Usar sessionStorage para sesiones independientes por pestaña.
+  // Preferir sessionStorage (usado por multiSession) y luego localStorage como fallback
   const token = sessionStorage.getItem('authToken') || localStorage.getItem('authToken');
   return {
     'Content-Type': 'application/json',
@@ -377,3 +378,82 @@ export const apiService = {
   },
 
 };
+
+// Permisos (administración y consulta)
+// Nota: Se exportan como propiedades del mismo objeto para mantener un único punto de acceso
+apiService.getMyPermissions = async function(includeEmpty = true) {
+  try {
+    const response = await fetch(`${API_BASE_URL}/permissions/me?includeEmpty=${includeEmpty ? 'true' : 'false'}`, {
+      headers: getAuthHeaders()
+    });
+    if (!response.ok) {
+      const msg = await response.text();
+      throw new Error(msg || 'Error al obtener mis permisos');
+    }
+    return await response.json(); // { version, modules, flat, isAdmin }
+  } catch (error) {
+    throw new Error(error.message || 'Error al obtener mis permisos');
+  }
+};
+
+apiService.listPermissionModules = async function() {
+  try {
+    const response = await fetch(`${API_BASE_URL}/permissions/modules`, {
+      headers: getAuthHeaders()
+    });
+    if (!response.ok) throw new Error('Error al listar módulos');
+    return await response.json();
+  } catch (error) {
+    throw new Error(error.message || 'Error al listar módulos');
+  }
+};
+
+apiService.getUserPermissions = async function(userId) {
+  try {
+    const response = await fetch(`${API_BASE_URL}/permissions/user/${userId}`, {
+      headers: getAuthHeaders()
+    });
+    if (!response.ok) {
+      const msg = await response.text();
+      throw new Error(msg || 'Error al obtener permisos de usuario');
+    }
+    return await response.json();
+  } catch (error) {
+    throw new Error(error.message || 'Error al obtener permisos de usuario');
+  }
+};
+
+apiService.grantUserPermissions = async function(userId, actionIds) {
+  try {
+    const response = await fetch(`${API_BASE_URL}/permissions/user/${userId}/grant`, {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: JSON.stringify({ actionIds })
+    });
+    if (!response.ok) {
+      const msg = await response.text();
+      throw new Error(msg || 'Error al otorgar permisos');
+    }
+    return await response.json();
+  } catch (error) {
+    throw new Error(error.message || 'Error al otorgar permisos');
+  }
+};
+
+apiService.revokeUserPermissions = async function(userId, actionIds) {
+  try {
+    const response = await fetch(`${API_BASE_URL}/permissions/user/${userId}/revoke`, {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: JSON.stringify({ actionIds })
+    });
+    if (!response.ok) {
+      const msg = await response.text();
+      throw new Error(msg || 'Error al revocar permisos');
+    }
+    return await response.json();
+  } catch (error) {
+    throw new Error(error.message || 'Error al revocar permisos');
+  }
+};
+

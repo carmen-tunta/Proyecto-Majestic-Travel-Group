@@ -12,6 +12,8 @@ import { ServicesModule } from '../services/services.module';
 import { ClientsModule } from '../clients/clients.module';
 import { ContactClientsModule } from '../contact-clients/contact-clients.module';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { PermissionsModule } from '../permissions/permissions.module';
+import { PermissionsGuard } from '../auth/guards/permissions.guard';
 import { ProveedoresModule } from '../proveedores/proveedores.module';
 import { ProveedorContactModule } from '../proveedor-contact/proveedor-contact.module';
 import { TarifarioModule } from '../tarifario/tarifario.module';
@@ -52,6 +54,7 @@ import { QuoteRequestsModule } from '../quote-requests/quote-requests.module';
             PasajerosModule,
             RegistroPagoModule,
             QuoteRequestsModule,
+            PermissionsModule,
           ],
 
   controllers: [AppController],
@@ -60,6 +63,10 @@ import { QuoteRequestsModule } from '../quote-requests/quote-requests.module';
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: PermissionsGuard,
     },
   ],
 })

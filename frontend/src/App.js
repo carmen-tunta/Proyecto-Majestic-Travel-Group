@@ -14,6 +14,7 @@ import { AuthProvider } from './modules/auth/context/AuthContext';
 import ProtectedRoute from './modules/auth/components/ProtectedRoute';
 import PublicRoute from './modules/auth/components/PublicRoute';
 import { ModalProvider, useModal } from './contexts/ModalContext';
+import { PermissionsProvider } from './contexts/PermissionsContext';
 import Clientes from './sections/Clientes/components/Clientes';
 import ClientPage from './sections/Clientes/components/ClientPage';
 import Services from './sections/Services/components/Services';
@@ -24,6 +25,7 @@ import Reporte from './sections/RegistroPagos/components/Reporte';
 import PlanYourTrip from './sections/Public/components/PlanYourTrip';
 import ThankYou from './sections/Public/components/ThankYou';
 import BandejaSolicitud from './sections/BandejaSolicitud/components/BandejaSolicitud';
+import Permisos from './sections/Permisos/components/Permisos';
 
 function AppContent() {
   const location = useLocation();
@@ -70,6 +72,7 @@ function AppContent() {
           <Route path="/clientes/:id" element={<ProtectedRoute><ClientPage /></ProtectedRoute>} />
           <Route path="/registro-pagos" element={<ProtectedRoute><RegistroPagos /></ProtectedRoute>} />
           <Route path="/registro-pagos/reporte" element={<ProtectedRoute><Reporte /></ProtectedRoute>} />
+          <Route path="/permisos" element={<ProtectedRoute><Permisos /></ProtectedRoute>} />
         </Routes>
       </div>
 
@@ -80,13 +83,15 @@ function AppContent() {
 function App() {
   return (
     <AuthProvider>
-      <ModalProvider>
-        <NotificationProvider>
-          <Router>
-            <AppContent />
-          </Router>
-        </NotificationProvider>
-      </ModalProvider>
+      <PermissionsProvider>
+        <ModalProvider>
+          <NotificationProvider>
+            <Router>
+              <AppContent />
+            </Router>
+          </NotificationProvider>
+        </ModalProvider>
+      </PermissionsProvider>
     </AuthProvider>
   );
 }
