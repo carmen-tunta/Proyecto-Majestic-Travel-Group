@@ -43,4 +43,42 @@ export class User {
 
   @Column({ nullable: true, type: 'datetime' })
   resetPasswordExpires: Date | null;
+
+  @Column({ 
+    type: 'enum', 
+    enum: ['asignado', 'libre'], 
+    default: 'libre',
+    comment: 'Estado de asignación del agente'
+  })
+  assignmentStatus: 'asignado' | 'libre';
+
+  @Column({ 
+    type: 'int', 
+    default: 0,
+    comment: 'Cantidad de solicitudes asignadas al agente'
+  })
+  assignedRequestsCount: number;
+
+  @Column({
+    type: 'enum',
+    enum: ['activo', 'suspendido'],
+    default: 'activo',
+    comment: 'Estado de acceso del usuario al sistema'
+  })
+  status: 'activo' | 'suspendido';
+
+  @CreateDateColumn({ type: 'datetime', comment: 'Fecha de creación del usuario' })
+  createdAt: Date;
+
+  @UpdateDateColumn({ type: 'datetime', comment: 'Última actualización' })
+  updatedAt: Date;
+
+  // Versión de permisos (para invalidar cache en frontend)
+  @Column({ type: 'int', default: 0, comment: 'Incrementa cuando cambian los permisos del usuario' })
+  permissionsVersion: number;
+
+  // Flag para administradores de permisos
+  @Column({ type: 'boolean', default: false, comment: 'Indica si el usuario es administrador' })
+  isAdmin: boolean;
+
 }

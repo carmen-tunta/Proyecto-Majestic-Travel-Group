@@ -29,7 +29,7 @@ function Login() {
       
       // Usar el contexto de autenticación
       login(response.user, response.token);
-      navigate('/itinerario');
+      navigate('/bandeja-solicitud');
       
     } catch (error) {
       showNotification(error.message || 'Error en la autenticación', 'error');

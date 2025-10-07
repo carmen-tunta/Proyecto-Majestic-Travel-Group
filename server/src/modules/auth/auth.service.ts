@@ -14,8 +14,12 @@ export class AuthService {
 
   async validateUser(username: string, password: string): Promise<any> {
     const user = await this.usersService.findByUsername(username);
-    
-    if (user && await bcrypt.compare(password, user.password)) {
+    if (!user) return null;
+    if (user.status === 'suspendido') {
+      // devolvemos null para que el controller decida mensaje genérico
+      return null;
+    }
+    if (await bcrypt.compare(password, user.password)) {
       const { password, ...result } = user;
       return result;
     }

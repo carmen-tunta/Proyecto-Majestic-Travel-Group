@@ -1,6 +1,7 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 import { Client } from '../../clients/entities/client.entity';
 import { QuoteRequestService } from './quote-request-service.entity';
+import { User } from '../../users/entities/user.entity';
 
 export type QuoteRequestStatus = 'recibido' | 'en_progreso' | 'cotizando' | 'liberado' | 'sin_respuesta';
 
@@ -40,12 +41,23 @@ export class QuoteRequest {
   @Column({ type: 'int', nullable: true })
   agentId: number | null;
 
+  @ManyToOne(() => User, { nullable: true, onDelete: 'SET NULL' })
+  agent: User | null;
+
   @Column({ type: 'text', default: 'public_web' })
   source: string;
 
+  @CreateDateColumn({ type: 'timestamp' })
+  createdAt: Date;
+
+  @UpdateDateColumn({ type: 'timestamp' })
+  updatedAt: Date;
+
+  @Column({ type: 'timestamp', nullable: true })
+  assignedAt: Date | null;
+  
   @OneToMany(() => QuoteRequestService, (qrs) => qrs.quoteRequest, { cascade: true })
   services: QuoteRequestService[];
-
 }
 
 

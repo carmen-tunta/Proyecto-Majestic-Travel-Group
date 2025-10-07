@@ -1,8 +1,10 @@
-const API_BASE_URL = process.env.REACT_APP_API_URL;
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:3080';
 
 // Función helper para obtener headers con autenticación
 const getAuthHeaders = () => {
-  const token = localStorage.getItem('authToken');
+  // Usar sessionStorage para sesiones independientes por pestaña.
+  // Preferir sessionStorage (usado por multiSession) y luego localStorage como fallback
+  const token = sessionStorage.getItem('authToken') || localStorage.getItem('authToken');
   return {
     'Content-Type': 'application/json',
     ...(token && { 'Authorization': `Bearer ${token}` })
@@ -85,6 +87,21 @@ export const apiService = {
     }
   },
 
+  // Buscar proveedores por nombre
+  async searchProveedores(query) {
+    try {
+      const response = await fetch(`${API_BASE_URL}/proveedores/search?q=${encodeURIComponent(query)}`, {
+        headers: getAuthHeaders()
+      });
+      if (!response.ok) {
+        throw new Error('Error al buscar proveedores');
+      }
+      return await response.json();
+    } catch (error) {
+      throw new Error(error.message || 'Error al buscar proveedores');
+    }
+  },
+
   // Buscador único para los recursos
   async universalSearch(resource, query) {
     switch (resource) {
@@ -96,6 +113,8 @@ export const apiService = {
         return this.searchItineraryTemplates(query);
       case 'clients':
         return this.searchClients(query);
+      case 'proveedores':
+        return this.searchProveedores(query);
       default:
         throw new Error('Recurso no soportado');
     }
@@ -208,6 +227,35 @@ export const apiService = {
     } catch (error) {
       throw new Error(error.message || 'Error al actualizar cliente');
     }
+  },
+
+  // USUARIOS (administración básica)
+  async createUserAdmin(payload) { // { username, email, nombre, area, status? }
+    try {
+      const response = await fetch(`${API_BASE_URL}/users/register`, {
+        method: 'POST',
+        headers: getAuthHeaders(),
+        body: JSON.stringify(payload)
+      });
+      if (!response.ok) throw new Error('Error al crear usuario');
+      return await response.json(); // { user, rawPassword? }
+    } catch (e) { throw new Error(e.message || 'Error al crear usuario'); }
+  },
+  async updateUserStatus(userId, status) {
+    try {
+      const res = await fetch(`${API_BASE_URL}/users/${userId}/status`, {
+        method: 'PATCH', headers: getAuthHeaders(), body: JSON.stringify({ status })
+      });
+      if (!res.ok) throw new Error('Error al actualizar estado');
+      return await res.json();
+    } catch (e) { throw new Error(e.message || 'Error actualizando estado'); }
+  },
+  async resetUserPassword(userId) {
+    try {
+      const res = await fetch(`${API_BASE_URL}/users/${userId}/reset-password`, { method: 'POST', headers: getAuthHeaders() });
+      if (!res.ok) throw new Error('Error al resetear contraseña');
+      return await res.json(); // { userId, newPassword }
+    } catch (e) { throw new Error(e.message || 'Error reset password'); }
   },
 
   // Cotizaciones
@@ -347,3 +395,82 @@ export const apiService = {
   },
 
 };
+
+// Permisos (administración y consulta)
+// Nota: Se exportan como propiedades del mismo objeto para mantener un único punto de acceso
+apiService.getMyPermissions = async function(includeEmpty = true) {
+  try {
+    const response = await fetch(`${API_BASE_URL}/permissions/me?includeEmpty=${includeEmpty ? 'true' : 'false'}`, {
+      headers: getAuthHeaders()
+    });
+    if (!response.ok) {
+      const msg = await response.text();
+      throw new Error(msg || 'Error al obtener mis permisos');
+    }
+    return await response.json(); // { version, modules, flat, isAdmin }
+  } catch (error) {
+    throw new Error(error.message || 'Error al obtener mis permisos');
+  }
+};
+
+apiService.listPermissionModules = async function() {
+  try {
+    const response = await fetch(`${API_BASE_URL}/permissions/modules`, {
+      headers: getAuthHeaders()
+    });
+    if (!response.ok) throw new Error('Error al listar módulos');
+    return await response.json();
+  } catch (error) {
+    throw new Error(error.message || 'Error al listar módulos');
+  }
+};
+
+apiService.getUserPermissions = async function(userId) {
+  try {
+    const response = await fetch(`${API_BASE_URL}/permissions/user/${userId}`, {
+      headers: getAuthHeaders()
+    });
+    if (!response.ok) {
+      const msg = await response.text();
+      throw new Error(msg || 'Error al obtener permisos de usuario');
+    }
+    return await response.json();
+  } catch (error) {
+    throw new Error(error.message || 'Error al obtener permisos de usuario');
+  }
+};
+
+apiService.grantUserPermissions = async function(userId, actionIds) {
+  try {
+    const response = await fetch(`${API_BASE_URL}/permissions/user/${userId}/grant`, {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: JSON.stringify({ actionIds })
+    });
+    if (!response.ok) {
+      const msg = await response.text();
+      throw new Error(msg || 'Error al otorgar permisos');
+    }
+    return await response.json();
+  } catch (error) {
+    throw new Error(error.message || 'Error al otorgar permisos');
+  }
+};
+
+apiService.revokeUserPermissions = async function(userId, actionIds) {
+  try {
+    const response = await fetch(`${API_BASE_URL}/permissions/user/${userId}/revoke`, {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: JSON.stringify({ actionIds })
+    });
+    if (!response.ok) {
+      const msg = await response.text();
+      throw new Error(msg || 'Error al revocar permisos');
+    }
+    return await response.json();
+  } catch (error) {
+    throw new Error(error.message || 'Error al revocar permisos');
+  }
+};
+

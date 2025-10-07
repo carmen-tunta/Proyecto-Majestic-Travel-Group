@@ -1,11 +1,13 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, forwardRef, Inject } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository, DeepPartial } from 'typeorm';
 import { QuoteRequest } from './entities/quote-request.entity';
 import { QuoteRequestService as QrServiceEntity } from './entities/quote-request-service.entity';
 import { CreateQuoteRequestDto } from './dto/create-quote-request.dto';
+import { UpdateQuoteRequestDto } from './dto/update-quote-request.dto';
 import { Client } from '../clients/entities/client.entity';
 import { Service } from '../services/entities/service.entity';
+import { AssignmentService } from './services/assignment.service';
 
 @Injectable()
 export class QuoteRequestsService {
@@ -14,6 +16,8 @@ export class QuoteRequestsService {
     @InjectRepository(QrServiceEntity) private qrsRepo: Repository<QrServiceEntity>,
     @InjectRepository(Client) private clientRepo: Repository<Client>,
     @InjectRepository(Service) private serviceRepo: Repository<Service>,
+    @Inject(forwardRef(() => AssignmentService))
+    private assignmentService: AssignmentService,
   ) {}
 
   async createFromPublic(dto: CreateQuoteRequestDto): Promise<QuoteRequest> {
@@ -66,23 +70,66 @@ export class QuoteRequestsService {
       }
     }
 
-    return this.findOne(savedQr.id);
+    // 4) Asignar automáticamente al agente disponible
+    try {
+      const assignedRequest = await this.assignmentService.assignRequestToAgent(savedQr.id);
+      return assignedRequest;
+    } catch (error) {
+      console.error('Error en asignación automática:', error);
+      // Si falla la asignación, retornar la solicitud sin asignar
+      return this.findOne(savedQr.id);
+    }
   }
 
   async findOne(id: number): Promise<QuoteRequest> {
-    const qr = await this.qrRepo.findOne({ where: { id }, relations: ['services', 'services.service', 'client'] });
+    const qr = await this.qrRepo.findOne({ 
+      where: { id }, 
+      relations: ['services', 'services.service', 'client', 'agent'] 
+    });
     if (!qr) throw new NotFoundException('QuoteRequest not found');
     return qr;
   }
 
   async findAll(page = 0, limit = 10) {
     const [data, total] = await this.qrRepo.findAndCount({
-      relations: ['client', 'services', 'services.service'],
+      relations: ['client', 'services', 'services.service', 'agent'],
       skip: page * limit,
       take: limit,
       order: { id: 'DESC' },
     });
+    
     return { data, total, page, limit };
+  }
+
+  async update(id: number, dto: UpdateQuoteRequestDto): Promise<QuoteRequest> {
+    // 1) Verificar que existe la solicitud
+    const existingRequest = await this.qrRepo.findOne({ 
+      where: { id },
+      relations: ['client', 'services', 'services.service']
+    });
+    
+    if (!existingRequest) {
+      throw new NotFoundException(`QuoteRequest with ID ${id} not found`);
+    }
+
+    // 2) Preparar datos para actualizar
+    const updateData: Partial<QuoteRequest> = {};
+    
+    if (dto.passengerName !== undefined) updateData.passengerName = dto.passengerName;
+    if (dto.email !== undefined) updateData.email = dto.email;
+    if (dto.countryCode !== undefined) updateData.countryCode = dto.countryCode;
+    if (dto.whatsapp !== undefined) updateData.whatsapp = dto.whatsapp;
+    if (dto.travelDate !== undefined) updateData.travelDate = dto.travelDate ? new Date(dto.travelDate) : null;
+    if (dto.message !== undefined) updateData.message = dto.message;
+    if (dto.status !== undefined) updateData.status = dto.status;
+    if (dto.agentId !== undefined) updateData.agentId = dto.agentId;
+    if (dto.source !== undefined) updateData.source = dto.source;
+
+    // 3) Actualizar la solicitud
+    await this.qrRepo.update(id, updateData);
+
+    // 4) Retornar la solicitud actualizada
+    return this.findOne(id);
   }
 }
 

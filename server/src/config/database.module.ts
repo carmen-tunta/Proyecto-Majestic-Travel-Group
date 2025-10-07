@@ -29,6 +29,9 @@ import { RegistroPago } from 'src/modules/registroPago/entities/registroPago.ent
 import { QuoteRequest } from 'src/modules/quote-requests/entities/quote-request.entity';
 import { QuoteRequestService } from 'src/modules/quote-requests/entities/quote-request-service.entity';
 import { Portada } from 'src/modules/services/entities/portada.entity';
+import { AppModuleEntity } from '../modules/permissions/entities/app-module.entity';
+import { ModuleAction } from '../modules/permissions/entities/module-action.entity';
+import { UserPermission } from '../modules/permissions/entities/user-permission.entity';
 
 
 @Module({
@@ -40,6 +43,7 @@ import { Portada } from 'src/modules/services/entities/portada.entity';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
+      timezone: 'Z', // Forzar UTC en conexión MySQL
 
       
 
@@ -65,7 +69,10 @@ import { Portada } from 'src/modules/services/entities/portada.entity';
                   RegistroPago,
                   QuoteRequest,
                   QuoteRequestService,
-                  Portada
+                  Portada,
+                  AppModuleEntity,
+                  ModuleAction,
+                  UserPermission
                 ], // Aquí se agregarán las entidades
 
       synchronize: true, // Cambia a true solo en desarrollo

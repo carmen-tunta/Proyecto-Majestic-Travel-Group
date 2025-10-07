@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { getActiveSession, setActiveSession, clearActiveSession, purgeStaleSessions } from '../utils/multiSession';
 
 const AuthContext = createContext();
 
@@ -16,20 +17,11 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Verificar si hay un token válido al cargar la aplicación
-    const token = localStorage.getItem('authToken');
-    const userData = localStorage.getItem('user');
-    
-    if (token && userData) {
-      try {
-        const parsedUser = JSON.parse(userData);
-        setUser(parsedUser);
-        setIsAuthenticated(true);
-      } catch (error) {
-        console.error('Error al parsear datos de usuario:', error);
-        localStorage.removeItem('authToken');
-        localStorage.removeItem('user');
-      }
+    purgeStaleSessions();
+    const { data } = getActiveSession();
+    if (data && data.token && data.user) {
+      setUser(data.user);
+      setIsAuthenticated(true);
     }
     setLoading(false);
   }, []);
@@ -37,15 +29,13 @@ export const AuthProvider = ({ children }) => {
   const login = (userData, token) => {
     setUser(userData);
     setIsAuthenticated(true);
-    localStorage.setItem('authToken', token);
-    localStorage.setItem('user', JSON.stringify(userData));
+    setActiveSession(token, userData);
   };
 
   const logout = () => {
     setUser(null);
     setIsAuthenticated(false);
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('user');
+    clearActiveSession();
   };
 
   const value = {

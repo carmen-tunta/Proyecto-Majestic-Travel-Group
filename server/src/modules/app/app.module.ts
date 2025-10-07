@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { APP_GUARD } from '@nestjs/core';
+import { ScheduleModule } from '@nestjs/schedule';
 import { DatabaseModule } from 'src/config/database.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -11,6 +12,8 @@ import { ServicesModule } from '../services/services.module';
 import { ClientsModule } from '../clients/clients.module';
 import { ContactClientsModule } from '../contact-clients/contact-clients.module';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { PermissionsModule } from '../permissions/permissions.module';
+import { PermissionsGuard } from '../auth/guards/permissions.guard';
 import { ProveedoresModule } from '../proveedores/proveedores.module';
 import { ProveedorContactModule } from '../proveedor-contact/proveedor-contact.module';
 import { TarifarioModule } from '../tarifario/tarifario.module';
@@ -29,7 +32,9 @@ import { PortadaModule } from '../services/portada/portada.module';
 @Module({
  
 
-  imports: [DatabaseModule, 
+  imports: [
+            ScheduleModule.forRoot(),
+            DatabaseModule, 
             UsersModule, 
             AuthModule, 
             ItineraryTemplateModule, 
@@ -50,7 +55,8 @@ import { PortadaModule } from '../services/portada/portada.module';
             PasajerosModule,
             RegistroPagoModule,
             QuoteRequestsModule,
-            PortadaModule
+            PortadaModule,
+            PermissionsModule,
           ],
 
   controllers: [AppController],
@@ -59,6 +65,10 @@ import { PortadaModule } from '../services/portada/portada.module';
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: PermissionsGuard,
     },
   ],
 })

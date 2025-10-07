@@ -52,7 +52,21 @@ const ServicesModal = ({ onHide, service }) => {
         setServiceCity(service?.city || '');
         setServiceComponents(service?.components || []);
         setImages(service?.images || []);
+        setNewImages([]); // Resetear nuevas imágenes
+        setDeletedImages([]); // Resetear imágenes eliminadas
+        setLoading(false); // Resetear loading al abrir/cambiar servicio
     }, [service]);
+
+    const handleCancel = () => {
+        // Resetear todos los estados antes de cerrar
+        setLoading(false);
+        setNewImages([]);
+        setDeletedImages([]);
+        setSelectedComponent(null);
+        setSearch('');
+        // Cerrar sin recargar
+        onHide(false);
+    };
 
     const handleSave = async () => {
         if (!serviceName.trim() || !serviceCity.trim()) {
@@ -97,7 +111,7 @@ const ServicesModal = ({ onHide, service }) => {
             }
             showNotification('Servicio creado con éxito!', 'success');
         }
-        onHide();
+        onHide(true); // Indicar que se guardaron cambios
         } catch (error) {
             showNotification('Error al guardar el servicio', 'error');
         } finally {
@@ -193,7 +207,7 @@ const ServicesModal = ({ onHide, service }) => {
                     <i 
                         className="pi pi-times" 
                         style={{ marginBottom: "1rem", cursor:"pointer" }}
-                        onClick={loading ? () => undefined : onHide}
+                        onClick={loading ? () => undefined : handleCancel}
                     >
                     </i>
                 </div>
@@ -338,7 +352,7 @@ const ServicesModal = ({ onHide, service }) => {
                         size='small' 
                         outlined
                         className='p-button-secondary'
-                        onClick={onHide}
+                        onClick={handleCancel}
                         disabled={loading}
                     />
                     <Button 

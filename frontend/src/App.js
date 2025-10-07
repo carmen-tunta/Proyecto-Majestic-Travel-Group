@@ -14,6 +14,7 @@ import { AuthProvider } from './modules/auth/context/AuthContext';
 import ProtectedRoute from './modules/auth/components/ProtectedRoute';
 import PublicRoute from './modules/auth/components/PublicRoute';
 import { ModalProvider, useModal } from './contexts/ModalContext';
+import { PermissionsProvider } from './contexts/PermissionsContext';
 import Clientes from './sections/Clientes/components/Clientes';
 import ClientPage from './sections/Clientes/components/ClientPage';
 import Services from './sections/Services/components/Services';
@@ -24,6 +25,8 @@ import Reporte from './sections/RegistroPagos/components/Reporte';
 import PlanYourTrip from './sections/Public/components/PlanYourTrip';
 import ThankYou from './sections/Public/components/ThankYou';
 import PortadaMenu from './sections/Services/components/Portada/PortadaMenu';
+import BandejaSolicitud from './sections/BandejaSolicitud/components/BandejaSolicitud';
+import Permisos from './sections/Permisos/components/Permisos';
 
 function AppContent() {
   const location = useLocation();
@@ -55,81 +58,23 @@ function AppContent() {
           <Route path="/plan-your-trip/thank-you" element={<ThankYou />} />
           
           {/* Rutas protegidas - solo para usuarios autenticados */}
-          <Route path="/itinerario" element={
-            <ProtectedRoute>
-              <Itinerario />
-            </ProtectedRoute>
-          } />
-          <Route path="/componentes" element={
-            <ProtectedRoute>
-              <Componentes />
-            </ProtectedRoute>
-          } />
-          <Route path="/servicios" element={
-            <ProtectedRoute>
-              <Services />
-            </ProtectedRoute>
-          } />
-          <Route path="/proveedores" element={
-            <ProtectedRoute>
-              <Proveedores />
-            </ProtectedRoute>
-          } />
-          <Route path="/cotizaciones" element={
-            <ProtectedRoute>
-              <Cotizaciones />
-            </ProtectedRoute>
-          } />
-          <Route path="/cotizaciones/nuevo" element={
-            <ProtectedRoute>
-              <CotizacionForm />
-            </ProtectedRoute>
-          } />
-          <Route path="/cotizaciones/:id" element={
-            <ProtectedRoute>
-              <CotizacionForm />
-            </ProtectedRoute>
-          } />
-          <Route path="/proveedores/detalles" element={
-            <ProtectedRoute>
-              <DetallesProveedores />
-            </ProtectedRoute>
-          } />
-          <Route path="/proveedores/tarifario" element={
-            <ProtectedRoute>
-              <Tarifario />
-            </ProtectedRoute>
-          } />
-          <Route path="/clientes" element={
-            <ProtectedRoute>
-              <Clientes />
-            </ProtectedRoute>
-          } />
-          <Route path="/clientes/nuevo" element={
-            <ProtectedRoute>
-              <ClientPage />
-            </ProtectedRoute>
-          } />
-          <Route path="/clientes/:id" element={
-            <ProtectedRoute>
-              <ClientPage />
-            </ProtectedRoute>
-          } />
-          <Route path="/registro-pagos" element={
-            <ProtectedRoute>
-              <RegistroPagos />
-            </ProtectedRoute>
-          } />
-          <Route path="/registro-pagos/reporte" element={
-            <ProtectedRoute>
-              <Reporte />
-            </ProtectedRoute>
-          } />
-          <Route path="/servicios/portada" element={
-            <ProtectedRoute>
-              <PortadaMenu />
-            </ProtectedRoute>
-          } />
+          <Route path="/bandeja-solicitud" element={<ProtectedRoute><BandejaSolicitud /></ProtectedRoute>} />
+          <Route path="/itinerario" element={<ProtectedRoute><Itinerario /></ProtectedRoute>} />
+          <Route path="/componentes" element={<ProtectedRoute><Componentes /></ProtectedRoute>} />
+          <Route path="/servicios" element={<ProtectedRoute><Services /></ProtectedRoute>} />
+          <Route path="/proveedores" element={<ProtectedRoute><Proveedores /></ProtectedRoute>} />
+          <Route path="/cotizaciones" element={<ProtectedRoute><Cotizaciones /></ProtectedRoute>} />
+          <Route path="/cotizaciones/nuevo" element={<ProtectedRoute><CotizacionForm /></ProtectedRoute>} />
+          <Route path="/cotizaciones/:id" element={<ProtectedRoute><CotizacionForm /></ProtectedRoute>} />
+          <Route path="/proveedores/detalles" element={<ProtectedRoute><DetallesProveedores /></ProtectedRoute>} />
+          <Route path="/proveedores/tarifario" element={<ProtectedRoute><Tarifario /></ProtectedRoute>} />
+          <Route path="/clientes" element={<ProtectedRoute><Clientes /></ProtectedRoute>} />
+          <Route path="/clientes/nuevo" element={<ProtectedRoute><ClientPage /></ProtectedRoute>} />
+          <Route path="/clientes/:id" element={<ProtectedRoute><ClientPage /></ProtectedRoute>} />
+          <Route path="/registro-pagos" element={<ProtectedRoute><RegistroPagos /></ProtectedRoute>} />
+          <Route path="/registro-pagos/reporte" element={<ProtectedRoute><Reporte /></ProtectedRoute>} />
+          <Route path="/permisos" element={<ProtectedRoute><Permisos /></ProtectedRoute>} />
+          <Route path="/servicios/portada" element={<ProtectedRoute><PortadaMenu /></ProtectedRoute>} />
         </Routes>
       </div>
 
@@ -140,13 +85,15 @@ function AppContent() {
 function App() {
   return (
     <AuthProvider>
-      <ModalProvider>
-        <NotificationProvider>
-          <Router>
-            <AppContent />
-          </Router>
-        </NotificationProvider>
-      </ModalProvider>
+      <PermissionsProvider>
+        <ModalProvider>
+          <NotificationProvider>
+            <Router>
+              <AppContent />
+            </Router>
+          </NotificationProvider>
+        </ModalProvider>
+      </PermissionsProvider>
     </AuthProvider>
   );
 }
