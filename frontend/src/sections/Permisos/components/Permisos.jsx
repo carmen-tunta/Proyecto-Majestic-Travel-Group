@@ -50,7 +50,7 @@ const Permisos = () => {
   const [form, setForm] = useState({ nombre:'', email:'', area:'', username:'', status:'activo' });
 
   const { user: authUser } = useAuth();
-  const { isAdmin } = usePermissions();
+  const { isAdmin, refresh: refreshPerms } = usePermissions();
   const toast = useRef();
 
   // Carga usuarios
@@ -86,7 +86,7 @@ const Permisos = () => {
   const userHasAction = (moduleCode, actionCode) => userPerms.some(p => p.action.module.code === moduleCode && p.action.action === actionCode);
 
   // Toggle acción individual
-  const toggleAction = async (actionObj, checked) => {
+  const toggleAction = async (moduleObj, actionObj, checked) => {
     if (!selectedUser) return;
     if (!isAdmin) {
       toast.current?.show({ severity:'warn', summary:'Solo administradores', detail:'No tienes permisos para modificar.' });
@@ -97,9 +97,37 @@ const Permisos = () => {
       return;
     }
     try {
-      if (checked) await apiService.grantUserPermissions(selectedUser.id, [actionObj.id]);
-      else await apiService.revokeUserPermissions(selectedUser.id, [actionObj.id]);
-      loadUserPerms(selectedUser);
+      const moduleCode = moduleObj.code;
+      const actionCode = actionObj.action;
+      // Find view action id for this module (if exists)
+      const viewAction = (moduleObj.actions || []).find(a => a.action === 'VIEW');
+
+      if (checked) {
+        // If granting CREATE/EDIT/DELETE and VIEW not present, grant VIEW too
+        const idsToGrant = [actionObj.id];
+        if (actionCode !== 'VIEW' && viewAction && !userHasAction(moduleCode, 'VIEW')) {
+          idsToGrant.unshift(viewAction.id);
+        }
+        if (idsToGrant.length) await apiService.grantUserPermissions(selectedUser.id, idsToGrant);
+      } else {
+        // Unchecking
+        if (actionCode === 'VIEW') {
+          // If other actions exist, prevent removing VIEW until they are removed first
+          const othersActive = (moduleObj.actions || []).some(a => a.action !== 'VIEW' && userHasAction(moduleCode, a.action));
+          if (othersActive) {
+            toast.current?.show({ severity:'warn', summary:'Acción requerida', detail:'Desactiva primero Crear/Editar/Eliminar antes de quitar Ver.' });
+            return;
+          }
+          // safe to revoke VIEW
+          await apiService.revokeUserPermissions(selectedUser.id, [actionObj.id]);
+        } else {
+          // revoke only this action
+          await apiService.revokeUserPermissions(selectedUser.id, [actionObj.id]);
+        }
+      }
+      await loadUserPerms(selectedUser);
+      // notify global permissions context to refresh menus if changed
+      try { refreshPerms(); } catch (e) { /* noop */ }
     } catch(e){ toast.current?.show({ severity:'error', summary:'Error', detail:e.message }); }
   };
 
@@ -249,14 +277,14 @@ const Permisos = () => {
                           </tr>
                           {actions.map(a => (
                             <tr key={a.id} style={{ background:'#fafafa' }}>
-                              <td style={{ padding:'8px 32px' }}>{a.uiLabel}</td>
-                              <td style={{ padding:'8px 8px' }}></td>
-                              <td style={{ padding:'8px 8px' }}>
+                                  <td style={{ padding:'8px 32px' }}>{a.uiLabel}</td>
+                                  <td style={{ padding:'8px 8px' }}></td>
+                                  <td style={{ padding:'8px 8px' }}>
                                 <Checkbox
                                   inputId={`act-${a.id}`}
                                   checked={userHasAction(m.code, a.action)}
                                   disabled={!isAdmin || (authUser && selectedUser.id === authUser.id)}
-                                  onChange={e => toggleAction(a, e.checked)}
+                                      onChange={e => toggleAction(m, a, e.checked)}
                                 />
                               </td>
                             </tr>

@@ -9,6 +9,7 @@ import ServiceRepository from '../../../modules/Service/repository/ServiceReposi
 import GetAllServices from '../../../modules/Service/application/GetAllServices';
 import { ProgressSpinner } from 'primereact/progressspinner';
 import ServiceModal from './ServicesModal';
+import { usePermissions } from '../../../contexts/PermissionsContext';
 import "../styles/Services.css"
 
 
@@ -24,6 +25,8 @@ const Services = () => {
     const [rows, setRows] = useState(10);
     const [totalRecords, setTotalRecords] = useState(0);
     const [expandedRows, setExpandedRows] = useState(null);
+
+    const { has } = usePermissions();
 
     const handleEdit = (service) => {
         setSelectedService(service);
@@ -89,6 +92,7 @@ const Services = () => {
                     size='small'
                     outlined
                     onClick={handleNew}
+                    disabled={!has('SERVICIOS','CREATE')}
                 />
             </div>
 
@@ -132,12 +136,14 @@ const Services = () => {
                         style={{ width: '6%' }}
                         body={rowData => (
                             <span style={{ display: 'flex', justifyContent: 'center' }}>
-                                <i
+                                {has('SERVICIOS','EDIT') && (
+                                  <i
                                     className="pi pi-pencil"
                                     title="Editar"
                                     style={{ cursor: "pointer" }}
                                     onClick={() => handleEdit(rowData)}
-                                ></i>
+                                  ></i>
+                                )}
                             </span>
                         )}
                     />
