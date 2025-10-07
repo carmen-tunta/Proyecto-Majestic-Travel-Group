@@ -2,7 +2,7 @@ import { Dropdown } from 'primereact/dropdown';
 import '../../styles/Portada/MenuPortada.css';
 import { Button } from "primereact/button";
 import { TabMenu } from "primereact/tabmenu";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { generatePath, useLocation, useNavigate } from "react-router-dom";
 import { FloatLabel } from 'primereact/floatlabel';
 import TituloPortada from './TituloPortada';
@@ -12,7 +12,9 @@ import TituloDoble from './TituloDoble';
 import ContactoPortada from './ContactoPortada';
 import html2pdf from 'html2pdf.js'
 import html2canvas from 'html2canvas';
-import { PDFDocument } from 'pdf-lib';;
+import { PDFDocument } from 'pdf-lib';import TranslationRepository from '../../../../modules/Translation/repository/TranslationRepository';
+import translateText from '../../../../modules/Translation/application/TranslateText';
+;
 
 const PortadaMenu = () => {
     const navigate = useNavigate();
@@ -20,6 +22,13 @@ const PortadaMenu = () => {
     const service = location.state?.service;
 
     const [activeIndex, setActiveIndex] = useState(0);
+
+    const [translating, setTranslating] = useState(false);
+    const [selectedSourceLanguage, setSelectedSourceLanguage] = useState(null);
+    const [selectedTargetLanguage, setSelectedTargetLanguage] = useState(null);
+
+    const translateRepo = new TranslationRepository();
+    const translate = new translateText(translateRepo);
 
     const generatePDF = async () => {
         const originalIndex = activeIndex;
@@ -47,7 +56,7 @@ const PortadaMenu = () => {
                         if (!loadingSpinner && !progressSpinner) {
                             resolve();
                         } else {
-                            setTimeout(checkLoading, 100);
+                            setTimeout(checkLoading, 200);
                         }
                     };
                     checkLoading();
@@ -77,8 +86,8 @@ const PortadaMenu = () => {
                     if (element.scrollTop !== undefined) {
                         element.scrollTop = 0;
                     }
-    
-                    await new Promise(resolve => setTimeout(resolve, 100));
+
+                    await new Promise(resolve => setTimeout(resolve, 500));
 
 
                     const opt = {
@@ -144,6 +153,286 @@ const PortadaMenu = () => {
         }
     };
 
+    const extractTextFromHTML = (html) => {
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = html;
+    
+    // Obtener todos los nodos de texto, pero mantener la estructura
+    const textNodes = [];
+    const walker = document.createTreeWalker(
+        tempDiv,
+        NodeFilter.SHOW_TEXT,
+        null,
+        false
+    );
+    
+    let node;
+    while (node = walker.nextNode()) {
+        const text = node.textContent.trim();
+        if (text && !text.includes('contenteditable="false"')) {
+            textNodes.push(text);
+        }
+    }
+    
+    return textNodes.join(' '); // Unir con espacios
+};
+
+const replaceTextInHTML = async (html, sourceLanguage, targetLanguage, translate) => {
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = html;
+    
+    // Encontrar solo nodos de texto que no estén dentro de elementos problemáticos
+    const walker = document.createTreeWalker(
+        tempDiv,
+        NodeFilter.SHOW_TEXT,
+        {
+            acceptNode: function(node) {
+                // Filtrar nodos de texto problemáticos
+                const parent = node.parentElement;
+                if (!parent) return NodeFilter.FILTER_REJECT;
+                
+                // Rechazar nodos dentro de elementos con clases problemáticas
+                if (parent.classList.contains('ql-ui') || 
+                    parent.classList.contains('link-content-icon') ||
+                    parent.tagName === 'I') {
+                    return NodeFilter.FILTER_REJECT;
+                }
+                
+                // Solo aceptar nodos con texto real
+                const text = node.textContent.trim();
+                if (text && text.length > 0) {
+                    return NodeFilter.FILTER_ACCEPT;
+                }
+                
+                return NodeFilter.FILTER_REJECT;
+            }
+        },
+        false
+    );
+    
+    const textNodes = [];
+    let node;
+    while (node = walker.nextNode()) {
+        textNodes.push(node);
+    }
+    
+    // Traducir cada nodo de texto individualmente
+    for (let textNode of textNodes) {
+        const originalText = textNode.textContent.trim();
+        if (originalText && originalText.length > 1) { // Ignorar texto de un solo caracter
+            try {
+                const translatedResult = await translate.execute(
+                    originalText,
+                    targetLanguage,
+                    sourceLanguage
+                );
+                
+                // Verificar que la traducción sea válida
+                if (translatedResult && 
+                    translatedResult.translatedText && 
+                    typeof translatedResult.translatedText === 'string') {
+                    textNode.textContent = translatedResult.translatedText;
+                } else {
+                    console.warn('Traducción inválida para:', originalText, translatedResult);
+                }
+            } catch (error) {
+                console.error('Error traduciendo:', originalText, error);
+            }
+        }
+    }
+    
+    return tempDiv.innerHTML;
+};
+
+    const translateAndGeneratePDF = async () => {
+    const originalIndex = activeIndex;
+    setTranslating(true);
+    
+    try {
+        const menu = document.querySelector('.portada-menu');
+        if (menu) menu.style.display = 'none';
+
+        const pages = [
+            { index: 0, selector: '.portada-container', name: 'Portada' },
+            { index: 1, selector: '.titulo-derecha', name: 'Titulo-Derecha' },
+            { index: 2, selector: '.titulo-izquierda', name: 'Titulo-Izquierda' },
+            { index: 3, selector: '.titulo-doble', name: 'Titulo-Doble' },
+            { index: 4, selector: '.contacto-portada-container', name: 'Contacto' }
+        ];
+
+        const pdfBlobs = [];
+        const waitForLoading = () => {
+            return new Promise((resolve) => {
+                const checkLoading = () => {
+                    const loadingSpinner = document.querySelector('.spinner-portada-container');
+                    const progressSpinner = document.querySelector('.p-progress-spinner');
+                    
+                    if (!loadingSpinner && !progressSpinner) {
+                        resolve();
+                    } else {
+                        setTimeout(checkLoading, 200);
+                    }
+                };
+                checkLoading();
+            });
+        };
+
+        for (let i = 0; i < pages.length; i++) {
+            console.log(`Traduciendo y generando ${pages[i].name}...`);
+            
+            setActiveIndex(pages[i].index);
+            await waitForLoading();
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
+            // Ocultar iconos
+            const editarIcons = document.querySelectorAll('.pi-pencil');
+            const dbIcons = document.querySelectorAll('.pi-database');
+            const imageIcons = document.querySelectorAll('.pi-image');
+            
+            editarIcons.forEach(icon => icon.style.display = 'none');
+            dbIcons.forEach(icon => icon.style.display = 'none');
+            imageIcons.forEach(icon => icon.style.display = 'none');
+            
+            const element = document.querySelector(pages[i].selector);
+            
+            if (element) {
+                // Encontrar elementos de texto para traducir
+                const titleElements = element.querySelectorAll('.titulo');
+                const contentElements = element.querySelectorAll('.contenido');
+                const contactElements = element.querySelectorAll('.contacto');
+                
+                const originalTexts = [];
+            
+                // Traducir títulos
+                for (let titleEl of titleElements) {
+                    const originalHTML = titleEl.innerHTML;
+                    if (originalHTML.trim()) {
+                        const translatedHTML = await replaceTextInHTML(
+                            originalHTML, 
+                            selectedSourceLanguage, 
+                            selectedTargetLanguage,
+                            translate
+                        );
+                        titleEl.innerHTML = translatedHTML;
+                        originalTexts.push({ element: titleEl, original: originalHTML });
+                    }
+                }
+
+                // Traducir contenido
+                for (let contentEl of contentElements) {
+                    const originalHTML = contentEl.innerHTML;
+                    if (originalHTML.trim()) {
+                        const translatedHTML = await replaceTextInHTML(
+                            originalHTML, 
+                            selectedSourceLanguage, 
+                            selectedTargetLanguage,
+                            translate
+                        );
+                        contentEl.innerHTML = translatedHTML;
+                        originalTexts.push({ element: contentEl, original: originalHTML });
+                    }
+                }
+
+                // Traducir contacto
+                for (let contactEl of contactElements) {
+                    const originalHTML = contactEl.innerHTML;
+                    if (originalHTML.trim()) {
+                        const translatedHTML = await replaceTextInHTML(
+                            originalHTML, 
+                            selectedSourceLanguage, 
+                            selectedTargetLanguage,
+                            translate
+                        );
+                        contactEl.innerHTML = translatedHTML;
+                        originalTexts.push({ element: contactEl, original: originalHTML });
+                    }
+                }
+                                
+                // Esperar un momento para que se rendericen los cambios
+                await new Promise(resolve => setTimeout(resolve, 500));
+                
+                // Resetear scroll
+                window.scrollTo(0, 0);
+                if (element.scrollTop !== undefined) {
+                    element.scrollTop = 0;
+                }
+                await new Promise(resolve => setTimeout(resolve, 500));
+
+                // Generar PDF con contenido traducido
+                const opt = {
+                    margin: 0,
+                    image: { type: 'jpg', quality: 0.99 },
+                    html2canvas: { 
+                        scale: 1,
+                        useCORS: true,
+                        allowTaint: true,
+                        backgroundColor: '#ffffff',
+                        width: window.innerWidth,
+                        height: window.innerHeight,
+                        scrollX: 0,
+                        scrollY: 0,
+                        windowWidth: window.innerWidth,
+                        windowHeight: window.innerHeight,
+                        letterRendering: true
+                    },
+                    jsPDF: { 
+                        unit: 'px',
+                        format: [window.innerWidth, window.innerHeight],
+                        orientation: 'landscape'
+                    }
+                };
+
+                const pdfBlob = await html2pdf().set(opt).from(element).output('blob');
+                pdfBlobs.push(pdfBlob);
+                
+                // Restaurar textos originales
+                originalTexts.forEach(({ element, original }) => {
+                    element.innerHTML = original;
+                });
+            }
+            
+            // Mostrar iconos de nuevo
+            editarIcons.forEach(icon => icon.style.display = 'inline-block');
+            dbIcons.forEach(icon => icon.style.display = 'inline-block');
+            imageIcons.forEach(icon => icon.style.display = 'inline-block');
+        }
+        
+        // Combinar PDFs traducidos
+        console.log('Combinando PDFs traducidos...');
+        const mergedPdf = await PDFDocument.create();
+
+        for (let i = 0; i < pdfBlobs.length; i++) {
+            const pdfBytes = await pdfBlobs[i].arrayBuffer();
+            const pdf = await PDFDocument.load(pdfBytes);
+            const copiedPages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
+            copiedPages.forEach((page) => mergedPdf.addPage(page));
+        }
+
+        const pdfBytes = await mergedPdf.save();
+        const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+        const url = URL.createObjectURL(blob);
+        
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `portada-${selectedTargetLanguage}-${service?.name || 'servicio'}.pdf`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+
+        console.log('PDF traducido generado exitosamente');
+        
+    } catch (error) {
+        console.error('Error generando PDF traducido:', error);
+    } finally {
+        setTranslating(false);
+        setActiveIndex(originalIndex);
+        
+        const menu = document.querySelector('.portada-menu');
+        if (menu) menu.style.display = 'flex';
+    }
+};
+
     return (
         <>
         <div className="portada-menu">
@@ -169,9 +458,24 @@ const PortadaMenu = () => {
                     className='dropdown-menu'
                     panelClassName='portada-dropdown-panel'
                     id='idiomaOrigen'
-                    options={['Español', 'Inglés', 'Francés', 'Portugués', 'Italiano']} 
+                    value={selectedSourceLanguage}
+                    onChange={(e) => setSelectedSourceLanguage(e.value)}
+                    options={[
+                        { label: 'Español', value: 'es' },
+                        { label: 'Inglés', value: 'en' },
+                        { label: 'Francés', value: 'fr' },
+                        { label: 'Portugués', value: 'pt' },
+                        { label: 'Italiano', value: 'it' }
+                    ]}
+                    optionLabel="label"
+                    optionValue="value"
                 />
-                <label htmlFor="idiomaOrigen">Idioma origen</label>
+                <label 
+                    className={`label-dropdown ${selectedSourceLanguage ? 'has-language-selection' : ''}`} 
+                    htmlFor="idiomaOrigen"
+                >
+                    Idioma origen
+                </label>
             </FloatLabel>
 
             <FloatLabel>
@@ -179,16 +483,33 @@ const PortadaMenu = () => {
                     className='dropdown-menu'
                     panelClassName='portada-dropdown-panel'
                     id='idiomaDestino' 
-                    options={['Español', 'Inglés', 'Francés', 'Portugués', 'Italiano']} 
+                    value={selectedTargetLanguage}
+                    onChange={(e) => setSelectedTargetLanguage(e.value)}
+                    options={[
+                        { label: 'Español', value: 'es' },
+                        { label: 'Inglés', value: 'en' },
+                        { label: 'Francés', value: 'fr' },
+                        { label: 'Portugués', value: 'pt' },
+                        { label: 'Italiano', value: 'it' }
+                    ]}
+                    optionLabel="label"
+                    optionValue="value"
                 />
-                <label htmlFor="idiomaDestino">Idioma destino</label>
+                <label 
+                    className={`label-dropdown ${selectedTargetLanguage ? 'has-language-selection' : ''}`} 
+                    htmlFor="idiomaDestino"
+                >
+                    Idioma destino
+                </label>
             </FloatLabel>
 
             <Button 
-                label="Traducir y descargar pdf" 
-                icon="pi pi-google"
+                label={translating ? "Traduciendo..." : "Traducir y descargar pdf"}
+                icon={translating ? "pi pi-spin pi-spinner" : "pi pi-google"}
                 size='small'
-                onClick={() => navigate(-1)} 
+                onClick={translateAndGeneratePDF}
+                disabled={translating || selectedSourceLanguage === selectedTargetLanguage || !selectedSourceLanguage || !selectedTargetLanguage}
+                loading={translating}
             />
 
             

@@ -82,4 +82,11 @@
     font-size: 12px;
 }
 
+.portada-menu .dropdown-menu .p-dropdown-label {
+    font-size: 12px;
+}
+
+.portada-menu .label-dropdown.has-language-selection {
+    margin-top: 1px;
+}
 

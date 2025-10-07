@@ -114,7 +114,7 @@ const TituloPortada = ({ service }) => {
                     <div className="titulo-portada-container">
                         <i className="pi pi-pencil icono-titulo" onClick={handleEditOpen}></i>
                         <div 
-                            className="titulo-portada"
+                            className="titulo"
                             dangerouslySetInnerHTML={{ __html: titulo }}
                         ></div>
                     </div>
