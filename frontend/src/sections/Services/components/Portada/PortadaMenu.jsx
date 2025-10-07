@@ -40,6 +40,7 @@ const PortadaMenu = () => {
             />
             <FloatLabel>
                 <Dropdown 
+                    className='dropdown-menu'
                     id='idiomaOrigen'
                     options={[]} 
                 />
@@ -48,6 +49,7 @@ const PortadaMenu = () => {
 
             <FloatLabel>
                 <Dropdown 
+                    className='dropdown-menu'
                     id='idiomaDestino' 
                     options={[]} 
                 />
