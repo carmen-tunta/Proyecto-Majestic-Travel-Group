@@ -28,7 +28,7 @@
 .contacto-portada-container .contacto-content {
     position: absolute;
     left: 7vw;
-    bottom: 10vw;
+    bottom: 8vw;
     display: flex;
     flex-direction: row;
     gap: 5rem;
@@ -45,7 +45,7 @@
     font-size: 3rem;
     font-weight: bold;
     color: black;
-    max-width: 40vw;
+    max-width: 35vw;
     width: fit-content;
 }
 
@@ -59,6 +59,7 @@
     max-width: 35vw;
     padding: 10px;
     font-weight: 100;
+    word-break: break-all;
 }
 
 .contacto-portada-container .contacto-container {
@@ -125,8 +126,19 @@
     border-radius: 8px;
     padding: 0.5rem;
     background-color: #ffffff;
-    width: 20rem;
-    height: 12rem;
+}
+
+.editor-contacto.editor-container > div{
+    width: 25rem;
+    min-height: 12rem;
+    max-width: 40rem;
+    max-height: 20rem;
+    overflow-y: auto;
+}
+
+.editor-contacto.editor-container .button-container {
+    max-width: 100%;
+    min-height: 3rem;
 }
 
 .editor-contacto.editor-container .ql-toolbar .ql-link{

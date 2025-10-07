@@ -239,10 +239,10 @@ const TituloDerecha = ({ service }) => {
                             }}
                         ></i>
                         <i 
-                        className="pi pi-database icono-editar"
-                        style={{marginLeft: '10px'}}
-                        onClick={handleModalOpen}
-                    ></i>
+                            className="pi pi-database icono-editar"
+                            style={{marginLeft: '10px'}}
+                            onClick={handleModalOpen}
+                        ></i>
                     </div>
                     <div className="contenido-container">
                         <div 
@@ -286,6 +286,7 @@ const TituloDerecha = ({ service }) => {
                         onTextChange={(e) => setEditorContent(e.htmlValue)}
                         style={{ border: 'none' }}
                     />
+                    <div className="button-container">
                         <Button
                             outlined
                             size='small'
@@ -293,6 +294,7 @@ const TituloDerecha = ({ service }) => {
                             onClick={handleAccept}
                             className="accept-button editor-actions"
                         />
+                    </div>
                 </div>
             )}
 

@@ -34,6 +34,7 @@ const PortadaMenu = () => {
             <Button 
                 label="Descargar pdf" 
                 icon="pi pi-file-pdf" 
+                size="small"
                 outlined
                 onClick={() => navigate(-1)} 
             />
@@ -56,7 +57,7 @@ const PortadaMenu = () => {
             <Button 
                 label="Traducir y descargar pdf" 
                 icon="pi pi-google"
-                
+                size='small'
                 onClick={() => navigate(-1)} 
             />
 
@@ -79,6 +80,8 @@ const PortadaMenu = () => {
                 <ContactoPortada service={service} />
             )}
         </>
+
+        
     );
     };
 

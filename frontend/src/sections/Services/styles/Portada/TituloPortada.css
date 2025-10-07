@@ -68,8 +68,19 @@
     border-radius: 8px;
     padding: 0.5rem;
     background-color: #ffffff;
-    width: 20rem;
-    height: 12rem;
+}
+
+.editor-centro.editor-container > div{
+    width: 25rem;
+    min-height: 12rem;
+    max-width: 40rem;
+    max-height: 20rem;
+    overflow-y: auto;
+}
+
+.editor-centro.editor-container .button-container {
+    max-width: 100%;
+    min-height: 3rem;
 }
 
 .editor-actions {

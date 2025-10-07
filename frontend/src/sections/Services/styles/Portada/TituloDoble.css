@@ -10,6 +10,7 @@
 .titulo-doble .izquierda {
     display: flex;
     flex-direction: column;
+    min-width: 45vw;
     max-width: 50vw;
     height: 100%;
     padding: 3rem;
@@ -50,7 +51,7 @@
 .titulo-doble .derecha .contenido-container .icono-editar,
 .titulo-doble .izquierda .contenido-container .icono-editar {
     left: 102%;
-    top: -5rem;
+    top: -75%;
 }
 
 .titulo-doble .derecha .titulo-container .icono-editar,
@@ -71,7 +72,7 @@
 .titulo-doble  .contenido-imagen-izquierda {
     position: relative;
     width: 100%;
-    height: 35%;
+    height: 35vh;
     overflow: hidden;
 }
 
@@ -108,27 +109,37 @@
 }
 
 .editor-derecha-doble.editor-container {
-    position: absolute;
     top: 15%;
     right: 5%;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    padding: 0.5rem;
-    background-color: #ffffff;
-    width: 20rem;
-    height: 12rem;
 }
 
 .editor-izquierda-doble.editor-container {
-    position: absolute;
     top: 15%;
     left: 20%;
+}
+
+.editor-derecha-doble.editor-container,
+.editor-izquierda-doble.editor-container {
+    position: absolute;
     border: 1px solid #ccc;
     border-radius: 8px;
     padding: 0.5rem;
     background-color: #ffffff;
-    width: 20rem;
-    height: 12rem;
+}
+
+.editor-derecha-doble.editor-container > div,
+.editor-izquierda-doble.editor-container > div{
+    width: 25rem;
+    min-height: 12rem;
+    max-width: 40rem;
+    max-height: 20rem;
+    overflow-y: auto;
+}
+
+.editor-derecha-doble.editor-container .button-container,
+.editor-izquierda-doble.editor-container .button-container {
+    max-width: 100%;
+    min-height: 3rem;
 }
 
 .titulo-doble .titulo p,

@@ -319,10 +319,12 @@ const ContactoPortada = ({service}) => {
             {showEditor && (
                 <div className="editor-contacto editor-container">
                     <Editor
+                        className="editor"
                         value={editorContent} 
                         onTextChange={(e) => setEditorContent(e.htmlValue)}
                         style={{ border: 'none' }}
                     />
+                    <div className="button-container">
                         <Button
                             outlined
                             size='small'
@@ -330,6 +332,7 @@ const ContactoPortada = ({service}) => {
                             onClick={handleAccept}
                             className="accept-button editor-actions"
                         />
+                    </div>
                 </div>
             )}
 
