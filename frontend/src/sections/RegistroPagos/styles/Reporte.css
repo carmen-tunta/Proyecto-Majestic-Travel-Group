@@ -29,11 +29,30 @@
   border-bottom: 1px solid #f0f0f0;
 }
 
-
 .reporte-footer {
-    margin-top: 1rem;
     display: flex;
-    justify-content: center;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+    padding: 1rem 3rem 0 1rem;
     color: rgb(175, 175, 175);
+}
+
+.reporte-footer .monto {
+    font-size: 0.8rem;
+    font-weight: 400;
+}
+
+.reporte-footer .adelanto-saldo {
+    display: flex;
+    flex-direction: column;
+    font-weight: 600;
+    width: 9rem;
+    color: var(--surface-500)
+}
+
+.reporte-footer .adelanto-saldo div {
+    display: flex;
+    justify-content: space-between;
 }
 

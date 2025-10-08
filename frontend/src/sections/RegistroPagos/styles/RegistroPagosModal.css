@@ -78,6 +78,7 @@
 
 .registro-pagos-modal-table {
     box-shadow: 0 0 7px rgba(0,0,0,0.15);
+    margin-top: 2rem;
 }
 
 .registro-pagos-modal-table .p-datatable-thead > tr > th {
