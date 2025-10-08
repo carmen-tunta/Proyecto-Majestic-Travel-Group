@@ -1,6 +1,8 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, OneToMany } from 'typeorm';
 import { Client } from '../../clients/entities/client.entity';
 import { RegistroPago } from 'src/modules/registroPago/entities/registroPago.entity';
+import { User } from '../../users/entities/user.entity';
+import { Pasajero } from '../../pasajeros/entities/pasajero.entity';
 
 @Entity('cotizacion')
 export class Cotizacion {
@@ -9,6 +11,9 @@ export class Cotizacion {
 
   @ManyToOne(() => Client, { nullable: false, eager: true })
   cliente: Client;
+
+  @ManyToOne(() => User, { nullable: true, eager: true })
+  creadoPor: User;
 
   @Column({ type: 'varchar', length: 100, nullable: true })
   nombreCotizacion: string;
@@ -69,5 +74,8 @@ export class Cotizacion {
 
   @OneToMany(() => RegistroPago, (registroPago) => registroPago.cotizacion, { cascade: true })
   registroPagos: RegistroPago[];
+
+  @OneToMany(() => Pasajero, (pasajero) => pasajero.cotizacion, { cascade: true })
+  pasajeros: Pasajero[];
 
 }

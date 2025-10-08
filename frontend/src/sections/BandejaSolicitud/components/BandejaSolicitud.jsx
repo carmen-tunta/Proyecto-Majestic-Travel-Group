@@ -89,7 +89,8 @@ const ActionButton = ({ rowData, currentUserId, loadingActions, onAction }) => {
 
   const isAssignedToCurrentUser = rowData.agentId === currentUserId;
   const hasAgent = rowData.agentId !== null && rowData.agentId !== undefined;
-  const noActionsAvailable = hasAgent && !isAssignedToCurrentUser;
+  const isCotizando = rowData.status === 'cotizando';
+  const noActionsAvailable = (hasAgent && !isAssignedToCurrentUser) || isCotizando;
 
   return (
     <>
@@ -106,7 +107,7 @@ const ActionButton = ({ rowData, currentUserId, loadingActions, onAction }) => {
       
       <OverlayPanel ref={overlayRef} appendTo={typeof document !== 'undefined' ? document.body : undefined}>
         <div className="action-menu">
-          {isAssignedToCurrentUser && (
+          {isAssignedToCurrentUser && !isCotizando && (
             <Button
               label="Atendiendo"
               icon={loadingActions.has(`attending-${rowData.id}`) ? "pi pi-spinner pi-spin" : "pi pi-check"}
@@ -117,7 +118,7 @@ const ActionButton = ({ rowData, currentUserId, loadingActions, onAction }) => {
             />
           )}
           
-          {isAssignedToCurrentUser && (
+          {isAssignedToCurrentUser && !isCotizando && (
             <Button
               label="Liberar"
               icon={loadingActions.has(`release-${rowData.id}`) ? "pi pi-spinner pi-spin" : "pi pi-unlock"}
@@ -128,7 +129,7 @@ const ActionButton = ({ rowData, currentUserId, loadingActions, onAction }) => {
             />
           )}
           
-          {isAssignedToCurrentUser && (
+          {isAssignedToCurrentUser && !isCotizando && (
             <Button
               label="Cotizando"
               icon="pi pi-dollar"
@@ -138,7 +139,7 @@ const ActionButton = ({ rowData, currentUserId, loadingActions, onAction }) => {
             />
           )}
           
-          {isAssignedToCurrentUser && (
+          {isAssignedToCurrentUser && !isCotizando && (
             <Button
               label="Sin respuesta"
               icon="pi pi-times"
@@ -148,7 +149,7 @@ const ActionButton = ({ rowData, currentUserId, loadingActions, onAction }) => {
             />
           )}
           
-          {!hasAgent && currentUserId && (
+          {!hasAgent && !isCotizando && currentUserId && (
             <Button
               label="Tomar solicitud"
               icon={loadingActions.has(`take-${rowData.id}`) ? "pi pi-spinner pi-spin" : "pi pi-hand"}

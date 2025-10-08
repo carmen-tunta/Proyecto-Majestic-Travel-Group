@@ -9,6 +9,7 @@ import { CotizacionServicioComponente } from './entities/cotizacion-servicio-com
 import { Service } from '../services/entities/service.entity';
 import { Component } from '../components/entities/component.entity';
 import { Proveedores } from '../proveedores/entities/proveedores.entity';
+import { User } from '../users/entities/user.entity';
 
 @Injectable()
 export class CotizacionService {
@@ -27,13 +28,25 @@ export class CotizacionService {
     private readonly componentRepo: Repository<Component>,
     @InjectRepository(Proveedores)
     private readonly proveedoresRepo: Repository<Proveedores>,
+    @InjectRepository(User)
+    private readonly userRepo: Repository<User>,
   ) {}
 
-  async create(createCotizacionDto: CreateCotizacionDto): Promise<Cotizacion> {
+  async create(createCotizacionDto: CreateCotizacionDto, userId?: number): Promise<Cotizacion> {
     const client = await this.clientRepository.findOne({ where: { id: createCotizacionDto.clienteId } });
     if (!client) {
       throw new NotFoundException('Cliente no encontrado');
     }
+
+    // Buscar el usuario si se proporciona userId
+    let user: User | undefined = undefined;
+    if (userId) {
+      const foundUser = await this.userRepo.findOne({ where: { id: userId } });
+      if (foundUser) {
+        user = foundUser;
+      }
+    }
+
     // Ensure numeroFile is assigned when not provided: sequential per year
     const anio = createCotizacionDto.anio;
     let numeroFile = createCotizacionDto.numeroFile;
@@ -47,22 +60,24 @@ export class CotizacionService {
     }
 
     const fechaViajeStr = this.toDateOnly(createCotizacionDto.fechaViaje);
+    
     const cotizacion = this.cotizacionRepository.create({
       ...createCotizacionDto,
       numeroFile,
       cliente: client,
-      // Guardar como fecha (date-only) evitando desfase por zona horaria
       fechaViaje: fechaViajeStr as any,
+      ...(user && { creadoPor: user }),
     });
+    
     return this.cotizacionRepository.save(cotizacion);
   }
 
   async findAll(): Promise<Cotizacion[]> {
-    return this.cotizacionRepository.find({ relations: ['cliente', 'registroPagos'] });
+    return this.cotizacionRepository.find({ relations: ['cliente', 'registroPagos', 'creadoPor', 'pasajeros'] });
   }
 
   async findOne(id: number): Promise<Cotizacion> {
-    const cotizacion = await this.cotizacionRepository.findOne({ where: { id }, relations: ['cliente'] });
+    const cotizacion = await this.cotizacionRepository.findOne({ where: { id }, relations: ['cliente', 'creadoPor', 'pasajeros'] });
     if (!cotizacion) {
       throw new NotFoundException('Cotización no encontrada');
     }
@@ -144,7 +159,10 @@ export class CotizacionService {
   // Obtener detalle de una cotización con servicios y componentes
   async getDetail(cotizacionId: number) {
     const cot = await this.findOne(cotizacionId);
-    const servicios = await this.cotizacionServicioRepo.find({ where: { cotizacion: { id: cotizacionId } as any } });
+    const servicios = await this.cotizacionServicioRepo.find({ 
+      where: { cotizacion: { id: cotizacionId } as any },
+      relations: ['service', 'componentes', 'componentes.component', 'componentes.proveedor']
+    });
     return { ...cot, servicios };
   }
 

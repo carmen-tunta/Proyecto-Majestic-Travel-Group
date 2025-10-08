@@ -11,13 +11,22 @@ const getAuthHeaders = () => {
 
 class TranslationRepository {
     async translateText(text, targetLanguage, sourceLanguage) {
-        const response = await fetch(apiUrl, {
-            method: "POST",
-            headers: getAuthHeaders(),
-            body: JSON.stringify({ text, target: targetLanguage, source: sourceLanguage }),
-        });
-        if (!response.ok) throw new Error('Error al traducir el texto');
-        return await response.json();
+        try {
+            const response = await fetch(apiUrl, {
+                method: "POST",
+                headers: getAuthHeaders(),
+                body: JSON.stringify({ text, target: targetLanguage, source: sourceLanguage }),
+            });
+            
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`Error al traducir el texto: ${response.status} - ${errorText}`);
+            }
+            
+            return await response.json();
+        } catch (error) {
+            throw error;
+        }
     }
 
     async detectLanguage(text) {
