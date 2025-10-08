@@ -145,20 +145,37 @@
   gap: 0.5rem;
 }
 
+.confirmacion-titulo-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
 .confirmacion-titulo-input {
   font-weight: 600;
-  font-size: 1rem;
-  width: 100%;
+  font-size: 1.125rem;
+  flex: 1;
+}
+
+.titulo-action-btn {
+  min-width: 2.5rem;
+  height: 2.5rem;
+}
+
+.titulo-action-btn .pi {
+  font-size: 1.125rem;
 }
 
 .confirmacion-contenido-input {
   width: 100%;
   min-height: 80px;
-  background-color: #e8f4fc;
+  background-color: white;
   border: 1px solid #ddd;
   padding: 0.5rem;
   font-size: 0.95rem;
-  resize: vertical;
+  resize: none;
+  height: auto;
+  overflow: hidden; /* evita scrollbar interno; combinado con autoResize */
 }
 
 .confirmacion-page-footer {

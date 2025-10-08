@@ -8,6 +8,7 @@ import { Dropdown } from 'primereact/dropdown';
 import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog';
 import { useNotification } from '../../Notification/NotificationContext';
 import { ProgressSpinner } from 'primereact/progressspinner';
+import PlantillaItinerarioModal from './PlantillaItinerarioModal';
 import '../styles/ConfirmacionReservaEditor.css';
 
 const ConfirmacionReserva = ({ cotizacionId, cotizacionData }) => {
@@ -33,11 +34,25 @@ const ConfirmacionReserva = ({ cotizacionId, cotizacionData }) => {
     { label: 'Alemán', value: 'Alemán' },
     { label: 'Portugués', value: 'Portugués' }
   ];
+  
+  // Modal de plantilla itinerario
+  const [showTemplateModal, setShowTemplateModal] = useState(false);
+  const [currentBlockId, setCurrentBlockId] = useState(null);
+  const [currentColumn, setCurrentColumn] = useState(null);
 
   // Cargar datos existentes
   useEffect(() => {
     loadConfirmacion();
   }, [cotizacionId]);
+
+  // Ajustar automáticamente la altura de los textareas
+  useEffect(() => {
+    const textareas = document.querySelectorAll('.confirmacion-contenido-input');
+    textareas.forEach(textarea => {
+      textarea.style.height = 'auto';
+      textarea.style.height = textarea.scrollHeight + 'px';
+    });
+  }, [editablePages, currentPageIndex]);
 
   const loadConfirmacion = async () => {
     if (!cotizacionId) return;
@@ -172,6 +187,15 @@ const ConfirmacionReserva = ({ cotizacionId, cotizacionData }) => {
         block[field] = value;
       }
       setEditablePages(updatedPages);
+      
+      // Ajustar altura del textarea después de actualizar
+      setTimeout(() => {
+        const textareas = document.querySelectorAll('.confirmacion-contenido-input');
+        textareas.forEach(textarea => {
+          textarea.style.height = 'auto';
+          textarea.style.height = textarea.scrollHeight + 'px';
+        });
+      }, 0);
     }
   };
 
@@ -280,6 +304,41 @@ const ConfirmacionReserva = ({ cotizacionId, cotizacionData }) => {
       showNotification('Error al traducir y generar PDF', 'error');
       setLoadingTranslate(false);
     }
+  };
+
+  const openTemplateModal = (blockId, column = null) => {
+    setCurrentBlockId(blockId);
+    setCurrentColumn(column);
+    setShowTemplateModal(true);
+  };
+
+  const closeTemplateModal = () => {
+    setShowTemplateModal(false);
+    setCurrentBlockId(null);
+    setCurrentColumn(null);
+  };
+
+  const handleTemplateSelected = (template) => {
+    if (!currentBlockId) return;
+    
+    const updatedPages = [...editablePages];
+    const block = updatedPages[currentPageIndex - 1].blocks.find(b => b.id === currentBlockId);
+    
+    if (block) {
+      if (currentColumn) {
+        // Para bloques dobles
+        block[currentColumn].titulo = template.templateTitle || '';
+        block[currentColumn].contenido = template.description || '';
+      } else {
+        // Para bloques simples
+        block.titulo = template.templateTitle || '';
+        block.contenido = template.description || '';
+      }
+      setEditablePages(updatedPages);
+      showNotification('Plantilla cargada correctamente', 'success');
+    }
+    
+    closeTemplateModal();
   };
 
   if (loadingData) {
@@ -441,25 +500,36 @@ const ConfirmacionReserva = ({ cotizacionId, cotizacionData }) => {
               
               {currentEditablePage && currentEditablePage.blocks.map((block) => (
                 <div key={block.id} className="confirmacion-block">
-                <Button
-                  icon="pi pi-times"
-                  className="p-button-rounded p-button-danger p-button-text confirmacion-block-delete"
-                  onClick={() => deleteBlock(block.id)}
-                  size="small"
-                />
                 
                 {block.type === 'row' && (
                   <div className="confirmacion-block-row">
-                    <InputText
-                      value={block.titulo}
-                      onChange={(e) => updateBlock(block.id, 'titulo', e.target.value)}
-                      className="confirmacion-titulo-input"
-                    />
+                    <div className="confirmacion-titulo-container">
+                      <InputText
+                        value={block.titulo}
+                        onChange={(e) => updateBlock(block.id, 'titulo', e.target.value)}
+                        className="confirmacion-titulo-input"
+                      />
+                      <Button
+                        icon="pi pi-database"
+                        className="p-button-text p-button-sm titulo-action-btn"
+                        onClick={() => openTemplateModal(block.id, null)}
+                        tooltip="Cargar desde plantilla"
+                        tooltipOptions={{ position: 'top' }}
+                      />
+                      <Button
+                        icon="pi pi-trash"
+                        className="p-button-text p-button-danger p-button-sm titulo-action-btn"
+                        onClick={() => deleteBlock(block.id)}
+                        tooltip="Eliminar bloque"
+                        tooltipOptions={{ position: 'top' }}
+                      />
+                    </div>
                     <InputTextarea
                       value={block.contenido}
                       onChange={(e) => updateBlock(block.id, 'contenido', e.target.value)}
                       className="confirmacion-contenido-input"
                       rows={3}
+                      autoResize
                     />
                   </div>
                 )}
@@ -467,29 +537,63 @@ const ConfirmacionReserva = ({ cotizacionId, cotizacionData }) => {
                 {block.type === 'double' && (
                   <div className="confirmacion-block-double">
                     <div className="confirmacion-block-column">
-                      <InputText
-                        value={block.col1.titulo}
-                        onChange={(e) => updateBlock(block.id, 'titulo', e.target.value, 'col1')}
-                        className="confirmacion-titulo-input"
-                      />
+                      <div className="confirmacion-titulo-container">
+                        <InputText
+                          value={block.col1.titulo}
+                          onChange={(e) => updateBlock(block.id, 'titulo', e.target.value, 'col1')}
+                          className="confirmacion-titulo-input"
+                        />
+                        <Button
+                          icon="pi pi-database"
+                          className="p-button-text p-button-sm titulo-action-btn"
+                          onClick={() => openTemplateModal(block.id, 'col1')}
+                          tooltip="Cargar desde plantilla"
+                          tooltipOptions={{ position: 'top' }}
+                        />
+                        <Button
+                          icon="pi pi-trash"
+                          className="p-button-text p-button-danger p-button-sm titulo-action-btn"
+                          onClick={() => deleteBlock(block.id)}
+                          tooltip="Eliminar bloque"
+                          tooltipOptions={{ position: 'top' }}
+                        />
+                      </div>
                       <InputTextarea
                         value={block.col1.contenido}
                         onChange={(e) => updateBlock(block.id, 'contenido', e.target.value, 'col1')}
                         className="confirmacion-contenido-input"
                         rows={3}
+                        autoResize
                       />
                     </div>
                     <div className="confirmacion-block-column">
-                      <InputText
-                        value={block.col2.titulo}
-                        onChange={(e) => updateBlock(block.id, 'titulo', e.target.value, 'col2')}
-                        className="confirmacion-titulo-input"
-                      />
+                      <div className="confirmacion-titulo-container">
+                        <InputText
+                          value={block.col2.titulo}
+                          onChange={(e) => updateBlock(block.id, 'titulo', e.target.value, 'col2')}
+                          className="confirmacion-titulo-input"
+                        />
+                        <Button
+                          icon="pi pi-database"
+                          className="p-button-text p-button-sm titulo-action-btn"
+                          onClick={() => openTemplateModal(block.id, 'col2')}
+                          tooltip="Cargar desde plantilla"
+                          tooltipOptions={{ position: 'top' }}
+                        />
+                        <Button
+                          icon="pi pi-trash"
+                          className="p-button-text p-button-danger p-button-sm titulo-action-btn"
+                          onClick={() => deleteBlock(block.id)}
+                          tooltip="Eliminar bloque"
+                          tooltipOptions={{ position: 'top' }}
+                        />
+                      </div>
                       <InputTextarea
                         value={block.col2.contenido}
                         onChange={(e) => updateBlock(block.id, 'contenido', e.target.value, 'col2')}
                         className="confirmacion-contenido-input"
                         rows={3}
+                        autoResize
                       />
                     </div>
                   </div>
@@ -565,6 +669,14 @@ const ConfirmacionReserva = ({ cotizacionId, cotizacionData }) => {
 
       {/* Diálogo de confirmación */}
       <ConfirmDialog />
+
+      {/* Modal de plantilla itinerario */}
+      {showTemplateModal && (
+        <PlantillaItinerarioModal
+          onHide={closeTemplateModal}
+          onSelectTemplate={handleTemplateSelected}
+        />
+      )}
     </div>
   );
 };
