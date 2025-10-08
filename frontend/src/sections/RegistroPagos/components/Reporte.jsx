@@ -8,10 +8,15 @@ import { Calendar } from "primereact/calendar";
 import { FloatLabel } from "primereact/floatlabel";
 import { addLocale } from "primereact/api";
 import { useNotification } from "../../Notification/NotificationContext";
+import CotizacionRepository from "../../../modules/Cotizacion/repository/CotizacionRepository";
+import GetAllCotizaciones from "../../../modules/Cotizacion/application/GetAllCotizaciones";
 
 const Reporte = () => {
     const rpRepo = new RegistroPagoRepository();
     const rpGetAll = new GetAllRegistroPago(rpRepo);
+
+    const cotizacionRepo = new CotizacionRepository();
+    const getAllCotizaciones = new GetAllCotizaciones(cotizacionRepo);
 
     const [desde, setDesde] = useState(null);
     const [hasta, setHasta] = useState(null);
@@ -39,31 +44,36 @@ const Reporte = () => {
             setReporteFiltrado(reporte);
             return;
         }
+        
         const filtrado = reporte.filter(registro => {
-            if (!registro.fecha) return false;
-            const fechaRegistroStr = registro.fecha;            
-            let fechaDesdeStr, fechaHastaStr;
-            if (desde) {
-                const desdeDate = new Date(desde);
-                fechaDesdeStr = `${desdeDate.getFullYear()}-${String(desdeDate.getMonth() + 1).padStart(2, '0')}-${String(desdeDate.getDate()).padStart(2, '0')}`;
+            if (!registro.registroPagos?.length) return false;
+            const fechaMasReciente = registro.registroPagos
+                .filter(rp => rp.fecha) // Solo fechas válidas
+                .map(rp => new Date(rp.fecha)) // Convertir a Date
+                .sort((a, b) => b - a)[0]; // Ordenar y tomar la primera (más reciente)
+            
+            if (!fechaMasReciente) return false;
+            
+            // Comparar fechas
+            const fechaReciente = fechaMasReciente.getTime();
+            const fechaDesde = desde ? new Date(desde).getTime() : null;
+            const fechaHasta = hasta ? new Date(hasta).getTime() : null;
+            console.log({fechaReciente, fechaDesde, fechaHasta});
+            if (fechaDesde && !fechaHasta) {
+                return fechaReciente >= fechaDesde;
             }
-            if (hasta) {
-                const hastaDate = new Date(hasta);
-                fechaHastaStr = `${hastaDate.getFullYear()}-${String(hastaDate.getMonth() + 1).padStart(2, '0')}-${String(hastaDate.getDate()).padStart(2, '0')}`;
+            if (!fechaDesde && fechaHasta) {
+                return fechaReciente <= fechaHasta;
             }
-            if (desde && !hasta) {
-                return fechaRegistroStr >= fechaDesdeStr;
+            if (fechaDesde && fechaHasta) {
+                return fechaReciente >= fechaDesde && fechaReciente <= fechaHasta;
             }
-            if (!desde && hasta) {
-                return fechaRegistroStr <= fechaHastaStr;
-            }
-            if (desde && hasta) {
-                return fechaRegistroStr >= fechaDesdeStr && fechaRegistroStr <= fechaHastaStr;
-            }
+            
             return true;
         });
+        
         setReporteFiltrado(filtrado);
-        };
+    };
         useEffect(() => {
             filtrarPorFechas();
     }, [desde, hasta, reporte]);
@@ -90,8 +100,10 @@ const Reporte = () => {
     const fetchData = async () => {
         try {
             setLoading(true);
-            const data = await rpGetAll.execute();
-            setReporte(data);
+            const data = await getAllCotizaciones.execute();
+            console.log('Fetched cotizaciones:', data);
+            const finalizedData = data.filter(cotizacion => cotizacion.estado === 'Finalizado');
+            setReporte(finalizedData);
         } catch (error) {
             console.error("Error fetching data:", error);
             setReporte([]);
@@ -103,6 +115,20 @@ const Reporte = () => {
     useEffect(() => {
         fetchData();
     }, []);
+
+    const calcularTotalAdelanto = () => {
+        return reporteFiltrado.reduce((acc, item) => {
+            const adelanto = Number(item.adelanto) || 0;
+            return acc + adelanto;
+        }, 0).toFixed(2);
+    };
+
+    const calcularTotalSaldo = () => {
+        return reporteFiltrado.reduce((acc, item) => {
+            const saldo = Number(item.saldo) || 0;
+            return acc + saldo;
+        }, 0).toFixed(2);
+    };
 
     return (
         <div className="reporte">
@@ -150,22 +176,22 @@ const Reporte = () => {
                     loading={loading}
                 >
                     <Column 
-                        field="cotizacion.cliente.nombre" 
+                        field="cliente.nombre" 
                         header="Nombre de cliente" 
                         style={{ width: '18%' }}>    
                     </Column>
                     <Column 
-                        field="cotizacion.nombreCotizacion" 
+                        field="nombreCotizacion" 
                         header="Nombre de cotizacion" 
                         style={{ width: '21%' }}>
                     </Column>
                     <Column 
-                        field="cotizacion.numeroFile" 
+                        field="numeroFile" 
                         header="File" 
                         style={{ width: '10%' }}>
                     </Column>
                     <Column 
-                        field="cotizacion.costo" 
+                        field="costo" 
                         header="Costo" 
                         style={{ width: '10%' }}>
                     </Column>
@@ -173,14 +199,14 @@ const Reporte = () => {
                         header="% Utilidad" 
                         body={(rowData) => (
                             <span>
-                                <span style={{color: '#c9c9c9ff'}}>{rowData.cotizacion.utilidad ? Number(rowData.cotizacion.utilidad).toFixed(0) : '0.00'}% </span>
-                                {rowData.cotizacion.precioUtilidad}
+                                <span style={{color: '#c9c9c9ff'}}>{rowData.utilidad ? Number(rowData.utilidad).toFixed(0) : '0.00'}% </span>
+                                {rowData.precioUtilidad}
                             </span>
                         )}
                         style={{ width: '13%' }}>
                     </Column>
                     <Column 
-                        field="cotizacion.precioVenta" 
+                        field="precioVenta" 
                         header="Precio venta" 
                         style={{ width: '11%' }}>
                     </Column><Column  
@@ -193,12 +219,20 @@ const Reporte = () => {
                         style={{ width: '10%' }}>
                     </Column>
                     <Column 
-                        field="cotizacion.saldo" 
+                        field="saldo" 
                         header="Saldo" 
                         style={{ width: '7%' }}>
                     </Column>
                 </DataTable>
-            </div>    
+            </div>  
+
+            <div className="reporte-footer">
+                <div className="monto">Monto expresados en USD</div>
+                <div className="adelanto-saldo">
+                    <div><span>Adelanto:</span> <span>{calcularTotalAdelanto()}</span></div>
+                    <div><span>Saldo: </span> <span>{calcularTotalSaldo()}</span></div>
+                </div>
+            </div>  
         </div>
     );
 };

@@ -13,6 +13,7 @@ import { useNavigate } from 'react-router-dom';
 import { usePermissions } from '../../../contexts/PermissionsContext';
 import TarifarioRepository from '../../../modules/Tarifario/repository/TarifarioRepository';
 import getTarifarioByIdProveedor from '../../../modules/Tarifario/application/GetTarifarioByIdProveedor';
+import GetAllTarifario from '../../../modules/Tarifario/application/GetAllTarifario';
 
 const Proveedores = () => {
     const proveedoresRepository = new ProveedoresRepository();
@@ -46,26 +47,16 @@ const Proveedores = () => {
         const page = Math.floor(event.first / event.rows);
         setFirst(event.first);
         setRows(event.rows);
-        loadProveedores(page, event.rows);
     };
+
+    const getAllTarifario = new GetAllTarifario(tarifarioRepository);
 
     const loadProveedores = async (page = 0, pageSize = 10) => {
         setLoading(true);
         try {
             const proveedorData = await getAllProveedores.execute(`?page=${page}&limit=${pageSize}`);
-            let proveedoresList = Array.isArray(proveedorData.data) ? proveedorData.data : (Array.isArray(proveedorData) ? proveedorData : []);
-            const proveedoresWithTarifario = await Promise.all(
-                proveedoresList.map(async (prov) => {
-                    // Aquí deberías tener un método para obtener el tarifario por proveedorId
-                    const tarifario = await getTarifarioById.execute(prov.id);
-                    // Si hay tarifario, toma el validityTo del primero
-                    return {
-                        ...prov,
-                        validityTo: tarifario && tarifario.length > 0 ? tarifario[0].validityTo : '',
-                    };
-                })
-            );
-            setProveedores(proveedoresWithTarifario);
+            const proveedoresList = Array.isArray(proveedorData.data) ? proveedorData.data : (Array.isArray(proveedorData) ? proveedorData : []);
+            setProveedores(proveedoresList);
             setTotalRecords(proveedorData.total || (Array.isArray(proveedorData) ? proveedorData.length : 0));
         } catch (error) {
             console.error('Error al obtener los proveedores:', error);
@@ -132,8 +123,8 @@ const Proveedores = () => {
                         field="validityTo" 
                         header="Vigencia" 
                         body={rowData => {
-                            if (!rowData.validityTo) return '';
-                            const date = new Date(rowData.validityTo);
+                            if (!rowData.tarifario?.validityTo) return '';
+                            const date = new Date(rowData.tarifario?.validityTo);
                             let formatted = date.toLocaleDateString('es-ES', {
                                 weekday: 'short',
                                 day: '2-digit',

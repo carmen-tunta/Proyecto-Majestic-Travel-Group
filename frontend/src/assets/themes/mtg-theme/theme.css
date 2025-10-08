@@ -7067,3 +7067,46 @@
     color: #ffffff;
   }
 }
+
+/* Estilos para alineación de Quill Editor */
+
+.ql-align-left {
+    text-align: left;
+}
+
+.ql-align-center {
+    text-align: center;
+}
+
+.ql-align-right {
+    text-align: right;
+}
+
+.ql-align-justify {
+    text-align: justify;
+}
+
+/* Estilos para elementos p dentro de contenido alineado */
+p.ql-align-left {
+    text-align: left;
+}
+
+p.ql-align-center {
+    text-align: center;
+}
+
+p.ql-align-right {
+    text-align: right;
+}
+
+p.ql-align-justify {
+    text-align: justify;
+}
+
+.ql-font-serif {
+    font-family: Georgia, Times, "Times New Roman", serif !important;
+}
+
+.ql-font-monospace {
+    font-family: Monaco, "Courier New", monospace !important;
+}

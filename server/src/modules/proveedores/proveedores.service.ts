@@ -17,7 +17,7 @@ export class ProveedoresService {
   }
 
   async findAll(): Promise<Proveedores[]> {
-    return this.proveedoresRepository.find();
+    return this.proveedoresRepository.find({ relations: ['tarifario'] });
   }
 
   async search(query: string): Promise<Proveedores[]> {

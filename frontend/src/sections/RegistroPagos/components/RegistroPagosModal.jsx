@@ -68,11 +68,42 @@ const RegistroPagosModal = ({ onHide, cotizacion }) => {
         }
     }, [adelanto, saldo]);
 
+    const corregirFecha = (fecha) => {
+        if (!fecha) return null;        
+        if (typeof fecha === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(fecha)) {
+            return fecha;
+        }
+        
+        const fechaObj = new Date(fecha);
+        
+        const fechaCorregida = new Date(fechaObj.getTime() + fechaObj.getTimezoneOffset() * 60000);
+        const year = fechaCorregida.getFullYear();
+        const month = String(fechaCorregida.getMonth() + 1).padStart(2, '0');
+        const day = String(fechaCorregida.getDate()).padStart(2, '0');
+        
+        return `${year}-${month}-${day}`;
+    };
+
     const fetchData = async () => {
         try {
             setLoading(true);
             const data = await getRpByCotizacion.execute(cotizacion.id);
-            setRegistroPago(data);
+            const dataCorregida = data.map(registro => {
+                if (registro.fecha) {
+                    const fecha = new Date(registro.fecha);
+                    fecha.setDate(fecha.getDate() + 2);
+                    const year = fecha.getFullYear();
+                    const month = String(fecha.getMonth() + 1).padStart(2, '0');
+                    const day = String(fecha.getDate()).padStart(2, '0');
+                    
+                    return {
+                        ...registro,
+                        fecha: `${year}-${month}-${day}`
+                    };
+                }
+                return registro;
+            });
+            setRegistroPago(dataCorregida);
             setIsInitialLoad(false);
         } catch (error) {
             console.error(error);
@@ -188,28 +219,26 @@ const RegistroPagosModal = ({ onHide, cotizacion }) => {
                     header="Fecha de pago" 
                     style={{ width: '20%' }}
                     body={rowData => {
-                        if (!rowData.fecha) return '';
-                        let date;
-                        if (typeof rowData.fecha === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(rowData.fecha)) {
-                            const [year, month, day] = rowData.fecha.split('-').map(Number);
-                            date = new Date(year, month - 1, day);
-                        } else {
-                            date = new Date(rowData.fecha);
-                            date = new Date(date.getTime() + date.getTimezoneOffset() * 60000);
-                        }
-                        
-                        let formatted = date.toLocaleDateString('es-ES', {
-                            weekday: 'short',
-                            day: '2-digit',
-                            month: 'short',
-                            year: '2-digit'
-                        });
-                            formatted = formatted.replace(/,/g, '').split(' ')
-                                .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-                                .join(' ');
-                            return formatted;
-                        }}
-                />
+        if (!rowData.fecha) return '';
+        
+        // La fecha ya está corregida en formato YYYY-MM-DD
+        const [year, month, day] = rowData.fecha.split('-').map(Number);
+        const date = new Date(year, month - 1, day);
+        
+        let formatted = date.toLocaleDateString('es-ES', {
+            weekday: 'short',
+            day: '2-digit',
+            month: 'short',
+            year: '2-digit'
+        });
+        
+        formatted = formatted.replace(/,/g, '').split(' ')
+            .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+            .join(' ');
+            
+        return formatted;
+    }}
+/>
                 <Column 
                     field="nota" 
                     header="Nota" 

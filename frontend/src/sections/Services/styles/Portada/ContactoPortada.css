@@ -185,3 +185,19 @@
 .contacto-portada-container .contacto p {
     margin-bottom: 7px;
 }
+
+.editor-contacto .ql-editing {
+    margin-left: 8rem;
+    margin-bottom: 3rem;
+    z-index: 9999 !important;
+    border-radius: 6px !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
+    padding: 8px 12px !important;
+}
+
+.editor-contacto .ql-editing input {
+    border: 1px solid #ddd !important;
+    padding: 4px 8px !important;
+    margin-right: 8px !important;
+    min-width: 180px !important;
+}
