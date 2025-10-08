@@ -11,12 +11,14 @@ import { ProgressSpinner } from 'primereact/progressspinner';
 import ServiceModal from './ServicesModal';
 import { usePermissions } from '../../../contexts/PermissionsContext';
 import "../styles/Services.css"
+import { useNavigate } from 'react-router-dom';
 
 
 const Services = () => {
     const serviceRepository = new ServiceRepository();
     const getAllServices = new GetAllServices(serviceRepository);
 
+    const navigate = useNavigate();
     const [services, setServices] = useState([]);
     const [loading, setLoading] = useState(true);
     const [showModal, setShowModal] = useState(false);
@@ -65,9 +67,16 @@ const Services = () => {
         loadServices();
     }, []);
 
-    const handleModalClose = () => {
+    const handleModalClose = (shouldReload = false) => {
+        // Cerrar modal inmediatamente
         setShowModal(false);
-        loadServices();
+        
+        if (shouldReload) {
+            // Recargar después de que el modal se haya cerrado
+            setTimeout(() => {
+                loadServices();
+            }, 100);
+        }
     };
 
     const rowExpansionTemplate = (service) => (
@@ -136,13 +145,21 @@ const Services = () => {
                         style={{ width: '6%' }}
                         body={rowData => (
                             <span style={{ display: 'flex', justifyContent: 'center' }}>
+                                {has('SERVICIOS','VIEW') && (
+                                    <i
+                                        className="pi pi-file"
+                                        title="Portada"
+                                        style={{ cursor: "pointer", marginRight: '10px' }}
+                                        onClick={() => navigate('/servicios/portada', { state: { service: rowData } })}
+                                    ></i>
+                                )}
                                 {has('SERVICIOS','EDIT') && (
-                                  <i
-                                    className="pi pi-pencil"
-                                    title="Editar"
-                                    style={{ cursor: "pointer" }}
-                                    onClick={() => handleEdit(rowData)}
-                                  ></i>
+                                    <i
+                                        className="pi pi-pencil"
+                                        title="Editar"
+                                        style={{ cursor: "pointer" }}
+                                        onClick={() => handleEdit(rowData)}
+                                    ></i>
                                 )}
                             </span>
                         )}

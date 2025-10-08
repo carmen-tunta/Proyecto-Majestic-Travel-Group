@@ -1,0 +1,187 @@
+.contacto-portada-container {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 0;
+}
+
+.contacto-portada-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: var(--bg-contacto-portada-image);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: 1;
+    filter: brightness(0.6);
+    z-index: -1;
+}
+
+
+.contacto-portada-container .contacto-content {
+    position: absolute;
+    left: 7vw;
+    bottom: 8vw;
+    display: flex;
+    flex-direction: row;
+    gap: 5rem;
+    align-items: end;
+    justify-content: center;
+}
+
+.contacto-portada-container .titulo-container {
+    width: fit-content;
+    position: relative;
+}
+
+.contacto-portada-container .titulo {
+    font-size: 3rem;
+    font-weight: bold;
+    color: black;
+    max-width: 35vw;
+    width: fit-content;
+}
+
+.contacto-portada-container .contacto-content .contacto {
+    color: white;
+    font-size: 1.2rem;
+    margin-top: 1rem;
+    background-color: rgba(255,255,255,0.15);
+    min-height: 17vh;
+    min-width: 25vw;
+    max-width: 35vw;
+    padding: 10px;
+    font-weight: 100;
+    word-break: break-all;
+}
+
+.contacto-portada-container .contacto-container {
+    width: fit-content;
+    position: relative;
+}
+
+
+.contacto-portada-container .contacto-content .links {
+    color: white;
+    font-size: 1.2rem;
+    background-color: rgba(255,255,255,0.15);
+    padding: 10px;
+    font-weight: 100;
+}
+
+.contacto-portada-container .icono-titulo {
+    position: absolute;
+    top: 25px;
+    right: -25px;
+    margin-bottom: 1rem;
+    color: var(--surface-400);
+    cursor: pointer;
+}
+
+.contacto-portada-container .icono-contacto {
+    position: absolute;
+    bottom: 25px;
+    right: -25px;
+    margin-bottom: 1rem;
+    color: var(--surface-400);
+    cursor: pointer;
+}
+.contacto-portada-container .icono-db {
+    position: absolute;
+    bottom: 25px;
+    right: -50px;
+    margin-bottom: 1rem;
+    color: var(--surface-400);
+    cursor: pointer;
+}
+
+.contacto-portada-container .icono-imagen {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1;
+    color: var(--surface-400);
+    cursor: pointer;
+}
+
+.contacto-portada-container .titulo p,
+.contacto-portada-container .contacto p,
+.contacto-portada-container .links p {
+    margin: 0;
+}
+
+.editor-contacto.editor-container {
+    position: absolute;
+    bottom: 20%;
+    left: 50%;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 0.5rem;
+    background-color: #ffffff;
+}
+
+.editor-contacto.editor-container > div{
+    width: 25rem;
+    min-height: 12rem;
+    max-width: 40rem;
+    max-height: 20rem;
+    overflow-y: auto;
+}
+
+.editor-contacto.editor-container .button-container {
+    max-width: 100%;
+    min-height: 3rem;
+}
+
+.editor-contacto.editor-container .ql-toolbar .ql-link{
+    display: inline-block !important;
+}
+
+.contacto-portada-container .links-icons {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.contacto-portada-container .link-icon {
+    text-decoration: none;
+    text-align: center;
+}
+
+.contacto-portada-container .link-icon .pi{
+    color: rgb(66, 66, 66);
+    font-size: 1.2rem;
+    transition: color 0.3s ease;
+    text-decoration: none;
+    background-color: rgb(255, 255, 255);
+    padding: 7px;
+    border-radius: 100px;
+}
+
+.contacto-portada-container .link-icon:hover {
+    color: var(--primary-color);
+}
+
+.contacto-portada-container .contacto .link-content-icon {
+    margin-right: 0.5rem;
+    font-size: 1rem;
+    text-decoration: none;
+}
+
+.contacto-portada-container .contacto a {
+    text-decoration: underline;
+    display: inline-flex;
+    align-items: center;
+}
+
+.contacto-portada-container .contacto p {
+    margin-bottom: 7px;
+}

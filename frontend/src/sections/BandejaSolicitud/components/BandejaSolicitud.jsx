@@ -1,10 +1,11 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { OverlayPanel } from 'primereact/overlaypanel';
 import { ProgressSpinner } from 'primereact/progressspinner';
+import SearchBar from '../../../components/SearchBar';
 import QuoteRequestRepository from '../../../modules/QuoteRequest/repository/QuoteRequestRepository';
 import GetAllQuoteRequests from '../../../modules/QuoteRequest/application/GetAllQuoteRequests';
 import '../styles/BandejaSolicitud.css';
@@ -179,6 +180,8 @@ const BandejaSolicitud = () => {
   const [loadingActions, setLoadingActions] = useState(new Set());
   const [lastFailedAction, setLastFailedAction] = useState(null);
   const [globalActionLoading, setGlobalActionLoading] = useState(false);
+  const [first, setFirst] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
 
   // Obtener ID del usuario actual
   useEffect(() => {
@@ -321,6 +324,20 @@ const BandejaSolicitud = () => {
       'sin_respuesta': 'Sin respuesta'
     };
     return statusMap[status] || status;
+  };
+
+  // Filtrar solicitudes por nombre de cliente
+  const filteredRequests = useMemo(() => {
+    if (!searchTerm) return requests;
+    return requests.filter((r) => 
+      r?.cliente?.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  }, [requests, searchTerm]);
+
+  const onPageChange = (event) => {
+    setFirst(event.first);
+    setRowsPerPage(event.rows);
+    setCurrentPage(event.page);
   };
 
   const expirationTemplate = (rowData) => {
@@ -652,22 +669,23 @@ const BandejaSolicitud = () => {
   return (
     <div className="bandeja-solicitud">
       <div className="bandeja-header">
-        <h1>Bandeja de solicitud</h1>
-        <div className="bandeja-search">
-          <InputText
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Buscar"
-            className="search-input"
-          />
-          <Button 
-            icon="pi pi-refresh" 
-            onClick={loadQuoteRequests}
-            className="p-button-rounded p-button-text"
-            tooltip="Actualizar"
-            tooltipOptions={{ position: 'bottom' }}
-          />
-        </div>
+        <h2>Bandeja de solicitud</h2>
+        <Button 
+          icon="pi pi-refresh" 
+          onClick={loadQuoteRequests}
+          size="small"
+          outlined
+          tooltip="Actualizar"
+          tooltipOptions={{ position: 'bottom' }}
+        />
+      </div>
+
+      <div className="bandeja-search">
+        <SearchBar 
+          value={searchTerm} 
+          onChange={setSearchTerm} 
+          placeholder="Buscar por nombre de cliente" 
+        />
       </div>
 
       <div className="bandeja-content" style={{ position: 'relative' }}>
@@ -691,14 +709,14 @@ const BandejaSolicitud = () => {
 
         {!loading && !error && (
           <DataTable
-            value={requests}
+            value={filteredRequests}
             className="requests-table"
             responsiveLayout="scroll"
             paginator
-            rows={10}
-            first={currentPage * 10}
-            totalRecords={totalRecords}
-            onPage={(e) => setCurrentPage(e.page)}
+            rows={rowsPerPage}
+            first={first}
+            totalRecords={filteredRequests.length}
+            onPage={onPageChange}
             paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink"
             currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} solicitudes"
             emptyMessage="No hay solicitudes disponibles"

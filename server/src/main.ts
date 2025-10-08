@@ -17,6 +17,7 @@ async function bootstrap() {
   const path = require('path');
   app.use('/images-service', express.static(path.join(process.cwd(), 'uploads/images-service')));
   app.use('/documents-tarifario', express.static(path.join(process.cwd(), 'uploads/documents-tarifario')));
+  app.use('/images-portada', express.static(path.join(process.cwd(), 'uploads/images-portada')));
 
   const port = parseInt(process.env.BACK_PORT || process.env.PORT || '3080', 10);
   await app.listen(port, '0.0.0.0');

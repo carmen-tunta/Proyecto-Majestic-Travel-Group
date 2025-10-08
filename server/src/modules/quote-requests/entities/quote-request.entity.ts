@@ -58,7 +58,6 @@ export class QuoteRequest {
   
   @OneToMany(() => QuoteRequestService, (qrs) => qrs.quoteRequest, { cascade: true })
   services: QuoteRequestService[];
-
 }
 
 
