@@ -32,7 +32,8 @@ const RegistroPagos = () => {
             setLoading(true);
             const data = await getAllCotizaciones.execute({ page, pageSize });
             setCotizaciones(data);
-            // setTotalRecords(total);
+            const finalizedData = data.filter(cotizacion => cotizacion.estado === 'Finalizado');
+            setCotizaciones(finalizedData);
 
         } catch (error) {
             console.error("Error fetching data:", error);
