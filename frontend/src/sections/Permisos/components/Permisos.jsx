@@ -1,5 +1,5 @@
 // (Componente completo más abajo)
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useMemo } from 'react';
 import { TabView, TabPanel } from 'primereact/tabview';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
@@ -11,6 +11,8 @@ import { Toast } from 'primereact/toast';
 import { Checkbox } from 'primereact/checkbox';
 import { ProgressSpinner } from 'primereact/progressspinner';
 import { apiService } from '../../../services/apiService';
+import './Permisos.css';
+import '../../Cotizacion/styles/PasajerosTab.css';
 import { useAuth } from '../../../modules/auth/context/AuthContext';
 import { usePermissions } from '../../../contexts/PermissionsContext';
 
@@ -84,6 +86,21 @@ const Permisos = () => {
 
   // Helpers
   const userHasAction = (moduleCode, actionCode) => userPerms.some(p => p.action.module.code === moduleCode && p.action.action === actionCode);
+
+  // Compute latest grantedAt per module from userPerms
+  const moduleUpdatedMap = useMemo(() => {
+    const map = {};
+    for (const p of userPerms || []) {
+      const mod = p?.action?.module?.code;
+      if (!mod) continue;
+      const dateStr = p?.grantedAt || p?.action?.grantedAt || null;
+      const ts = dateStr ? Date.parse(dateStr) : NaN;
+      if (!isNaN(ts)) {
+        if (!map[mod] || ts > map[mod]) map[mod] = ts;
+      }
+    }
+    return map;
+  }, [userPerms]);
 
   // Toggle acción individual
   const toggleAction = async (moduleObj, actionObj, checked) => {
@@ -189,20 +206,39 @@ const Permisos = () => {
 
   // Tabla Usuarios
   const UsersTab = (
-    <div style={{ padding:'0.25rem 0.5rem' }}>
-      <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', margin:'0 0 .75rem 0' }}>
-        <h2 style={{ fontSize:20, margin:0 }}>Permisos</h2>
-  {isAdmin && <Button icon="pi pi-plus" label="Nuevo" size='small' outlined onClick={openNew} />}
+    <div className="pasajeros-tab">
+      <div className="pasajeros-header">
+        <div className="pasajeros-title">
+          <h3 style={{ margin:0 }}>Usuarios</h3>
+          <p className="cotizacion-info">Administración de usuarios y sus permisos</p>
+        </div>
+        <div>
+          {isAdmin && (
+            <Button onClick={openNew} label="Nuevo" icon="pi pi-plus" outlined />
+          )}
+        </div>
       </div>
+
       <div className="card" style={{ borderRadius:8 }}>
-        <DataTable value={users} loading={loadingUsers} size='small' emptyMessage="No hay usuarios" onRowClick={e => { setSelectedUser(e.data); setActiveIndex(1); }} style={{ cursor:'pointer' }}>
-          <Column field="nombre" header="Nombres" style={{ width:'18%' }} body={r => <span style={{ fontWeight:500 }}>{r.nombre}</span>} />
+        <div style={{ padding: '12px' }}>
+          <DataTable
+            value={users}
+            loading={loadingUsers}
+            size='small'
+            emptyMessage="No hay usuarios"
+            onRowClick={e => { setSelectedUser(e.data); setActiveIndex(1); }}
+            paginator
+            rows={4}
+            style={{ cursor:'pointer' }}
+          >
+            <Column field="nombre" header="Nombres" style={{ width:'18%' }} body={r => <span style={{ fontWeight:500 }}>{r.nombre}</span>} />
             <Column field="email" header="Correo" style={{ width:'22%' }} />
             <Column field="area" header="Area" style={{ width:'16%' }} />
             <Column field="username" header="Usuario" style={{ width:'14%' }} />
             <Column header="Fecha registrada" style={{ width:'18%' }} body={r => formatSpanishDate(r.createdAt)} />
             <Column header="Estado" style={{ width:'12%' }} body={r => r.status === 'activo' ? 'Activo' : 'Suspendido'} />
-        </DataTable>
+          </DataTable>
+        </div>
       </div>
     </div>
   );
@@ -224,12 +260,13 @@ const Permisos = () => {
               </div>
             ) : (
               <div style={{ maxHeight:'60vh', overflowY:'auto' }}>
-                <table style={{ width:'100%', borderCollapse:'collapse', fontSize:14 }}>
-                  <thead style={{ position:'sticky', top:0, background:'#fff', zIndex:2 }}>
-                    <tr style={{ textAlign:'left' }}>
-                      <th style={{ padding:'12px 16px', width:'40%' }}>Módulo</th>
-                      <th style={{ padding:'12px 8px', width:'15%' }}>Ocultar</th>
-                      <th style={{ padding:'12px 8px', width:'15%' }}>Activar</th>
+                <table className='permisos-table' style={{ fontSize:14 }}>
+                  <thead>
+                    <tr>
+                      <th style={{ width:'38%' }}>Módulo</th>
+                      <th style={{ width:'14%' }}>Ocultar</th>
+                      <th style={{ width:'14%' }}>Activar</th>
+                      <th style={{ width:'20%' }}>Fecha actualizada</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -256,9 +293,9 @@ const Permisos = () => {
                       const actionIds = actions.map(a => a.id);
                       return (
                         <React.Fragment key={m.id}>
-                          <tr style={{ borderTop:'1px solid #eee' }}>
-                            <td style={{ padding:'12px 16px', fontWeight:600 }}>{m.nombre || m.name || m.code}</td>
-                            <td style={{ padding:'12px 8px' }}>
+                          <tr className='module-row'>
+                            <td className='permisos-module-name'>{m.nombre || m.name || m.code}</td>
+                            <td>
                               <Checkbox
                                 inputId={`hide-${m.id}`}
                                 checked={hidden}
@@ -274,12 +311,13 @@ const Permisos = () => {
                                 onChange={e => toggleActivateModule(m, e.checked)}
                               />
                             </td>
+                            <td className='permisos-updated'>{moduleUpdatedMap[m.code] ? formatSpanishDate(new Date(moduleUpdatedMap[m.code])) : ''}</td>
                           </tr>
                           {actions.map(a => (
-                            <tr key={a.id} style={{ background:'#fafafa' }}>
-                                  <td style={{ padding:'8px 32px' }}>{a.uiLabel}</td>
-                                  <td style={{ padding:'8px 8px' }}></td>
-                                  <td style={{ padding:'8px 8px' }}>
+                            <tr key={a.id} className='action-row'>
+                              <td className='permisos-subaction'>{a.uiLabel}</td>
+                              <td></td>
+                              <td>
                                 <Checkbox
                                   inputId={`act-${a.id}`}
                                   checked={userHasAction(m.code, a.action)}
@@ -287,6 +325,7 @@ const Permisos = () => {
                                       onChange={e => toggleAction(m, a, e.checked)}
                                 />
                               </td>
+                              <td></td>
                             </tr>
                           ))}
                         </React.Fragment>
