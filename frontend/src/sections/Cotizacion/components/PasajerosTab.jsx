@@ -7,9 +7,11 @@ import DeletePasajero from '../../../modules/Pasajeros/application/DeletePasajer
 import '../styles/PasajerosTab.css';
 import { Button } from 'primereact/button';
 import { ConfirmDialog } from 'primereact/confirmdialog';
+import { usePermissions } from '../../contexts/PermissionsContext';
 
 export default function PasajerosTab({ cotizacionId, cotizacionNombre }) {
   const { showNotification } = useNotification();
+  const { has } = usePermissions();
   
   const [pasajeros, setPasajeros] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -110,10 +112,11 @@ export default function PasajerosTab({ cotizacionId, cotizacionNombre }) {
           </p>
         </div>
         <Button 
-          onClick={handleCreatePasajero}
+          onClick={() => has('COTIZACION','CREATE') && handleCreatePasajero()}
           label='Nuevo'
           icon='pi pi-plus'
           outlined
+          disabled={!has('COTIZACION','CREATE')}
         />
       </div>
 
@@ -139,6 +142,7 @@ export default function PasajerosTab({ cotizacionId, cotizacionNombre }) {
                 <div className="pasajero-header">
                   <h4 className="pasajero-nombre">{pasajero.nombre}</h4>
                   <div className="pasajero-actions">
+                    {has('COTIZACION','EDIT') && (
                     <button
                       type="button"
                       className="action-btn edit-btn"
@@ -148,6 +152,8 @@ export default function PasajerosTab({ cotizacionId, cotizacionNombre }) {
                     >
                       <i className="pi pi-pencil"></i>
                     </button>
+                    )}
+                    {has('COTIZACION','DELETE') && (
                     <button
                       type="button"
                       className="action-btn delete-btn"
@@ -157,6 +163,7 @@ export default function PasajerosTab({ cotizacionId, cotizacionNombre }) {
                     >
                       <i className="pi pi-trash"></i>
                     </button>
+                    )}
                   </div>
                 </div>
                 

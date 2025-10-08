@@ -21,6 +21,7 @@ import ServiceImageRepository from '../../../modules/Service/repository/ServiceI
 import UploadServiceImage from '../../../modules/Service/application/UploadServiceImage';
 import GetServiceImagesByServiceId from '../../../modules/Service/application/GetServiceImagesByServiceId';
 import DeleteImageFromService from '../../../modules/Service/application/DeleteImageFromService';
+import { usePermissions } from '../../../contexts/PermissionsContext';
 
 const ServicesModal = ({ onHide, service }) => {
     const baseUrl = process.env.REACT_APP_API_URL;
@@ -35,6 +36,7 @@ const ServicesModal = ({ onHide, service }) => {
     const deleteImage = new DeleteImageFromService(serviceImageRepo);
 
     const {showNotification} = useNotification();
+    const { has } = usePermissions();
     const [loading, setLoading] = useState(false);
 
     const [serviceName, setServiceName] = useState(service?.name || '');
@@ -242,11 +244,13 @@ const ServicesModal = ({ onHide, service }) => {
                                     src={img.imagePath ? `${baseUrl}/${img.imagePath}` : img.url}
                                     alt={`Imagen de servicio ${idx}`}
                                 />
+                                {has('SERVICIOS','DELETE') && (
                                 <i 
                                     className="pi pi-times delete-image"
                                     onClick={loading ? () => undefined : () => handleDeleteImage(img)}
                                     title="Eliminar imagen"
                                 />
+                                )}
                             </div>
                         ))
                     }
@@ -261,7 +265,7 @@ const ServicesModal = ({ onHide, service }) => {
                                                     size='small' 
                                                     onClick={handleSaveComponent}
                                                     disabled={
-                                                        loading || (
+                                                        loading || !has('SERVICIOS','CREATE') || (
                                                             !selectedComponent && !results?.some(r => (r.componentName||'').toLowerCase() === (search||'').trim().toLowerCase())
                                                         )
                                                     }
@@ -319,12 +323,14 @@ const ServicesModal = ({ onHide, service }) => {
                             style={{ width: '6%' }}
                             body={rowData => (
                                 <span style={{ display: 'flex', justifyContent: 'center' }}>
+                                    {has('SERVICIOS','DELETE') && (
                                     <i 
                                         className="pi pi-trash"    
                                         title="Eliminar" 
                                         style={{color:'#gray', cursor:"pointer"}}
                                         onClick={() => { if (!loading) handleDeleteComponent(rowData); }}
                                     ></i>
+                                    )}
                                 </span>
                             )}
                         />
@@ -346,7 +352,7 @@ const ServicesModal = ({ onHide, service }) => {
                         size='small' 
                         className='p-button-primary'
                         onClick={handleSave}
-                        disabled={loading}
+                        disabled={loading || (service && service.id ? !has('SERVICIOS','EDIT') : !has('SERVICIOS','CREATE'))}
                         loading={loading}
                     />
                 </div>

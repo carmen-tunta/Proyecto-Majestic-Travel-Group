@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import GetAllCotizaciones from '../../../modules/Cotizacion/application/GetAllCotizaciones';
 import { Button } from 'primereact/button';
+import { usePermissions } from '../../../contexts/PermissionsContext';
 import '../styles/Cotizacion.css';
 import SearchBar from '../../../components/SearchBar';
 import { DataTable } from 'primereact/datatable';
@@ -10,6 +11,7 @@ import { ProgressSpinner } from 'primereact/progressspinner';
 
 export default function Cotizaciones() {
   const navigate = useNavigate();
+  const { has } = usePermissions();
   const [loading, setLoading] = useState(true);
   const [rows, setRows] = useState([]);
   const [q, setQ] = useState('');
@@ -70,7 +72,9 @@ export default function Cotizaciones() {
 
   const actionTemplate = (row) => (
     <span className="cotz-action">
+      {has('COTIZACION','VIEW') && (
       <i className="pi pi-arrow-right cotz-action-icon" title="Editar" onClick={() => navigate(`/cotizaciones/${row.id}`)} />
+      )}
     </span>
   );
 
@@ -103,7 +107,8 @@ export default function Cotizaciones() {
           label="Nuevo"
           size="small"
           outlined
-          onClick={() => navigate('/cotizaciones/nuevo')}
+          onClick={() => has('COTIZACION','CREATE') && navigate('/cotizaciones/nuevo')}
+          disabled={!has('COTIZACION','CREATE')}
         />
       </div>
 

@@ -11,6 +11,7 @@ import { useModal } from "../../../../contexts/ModalContext";
 
 import "../../styles/Tarifario/Incremento.css"
 import IncrementoModal from "./IncrementoModal";
+import { usePermissions } from '../../../../contexts/PermissionsContext';
 
 
 const Incremento = ({ tarifa }) => {
@@ -20,6 +21,7 @@ const Incremento = ({ tarifa }) => {
     const [loading, setLoading] = useState(true);
     const [visibleDialog, setVisibleDialog] = useState(false);
     const {showNotification} = useNotification();
+    const { has } = usePermissions();
 
     const { setIsModalOpen } = useModal();
     const [showModal, setShowModal] = useState(false);
@@ -94,7 +96,8 @@ const Incremento = ({ tarifa }) => {
                     label="Nuevo"
                     size='small'
                     outlined
-                    onClick={() => handleNew()}
+                    onClick={() => has('PROVEEDORES','CREATE') && handleNew()}
+                    disabled={!has('PROVEEDORES','CREATE')}
                 />
             </div>
             <div>
@@ -151,18 +154,22 @@ const Incremento = ({ tarifa }) => {
                         style={{ width: '10%' }}
                         body={rowData => (
                             <span style={{ display: 'flex', justifyContent: 'center' }}>
+                                {has('PROVEEDORES','EDIT') && (
                                 <i 
                                     className="pi pi-pencil"    
                                     title="Editar" 
                                     style={{ marginRight: '10px', cursor:"pointer"}}
                                     onClick={() => handleEdit(rowData)}
                                 ></i>
+                                )}
+                                {has('PROVEEDORES','DELETE') && (
                                 <i 
                                     className="pi pi-trash"    
                                     title="Eliminar" 
                                     style={{ cursor:"pointer" }}
                                     onClick={() => {setSelectedIncrement(rowData); setVisibleDialog(true);}}    
                                 ></i>
+                                )}
                             </span>
                         )}
                     />

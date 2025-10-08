@@ -13,6 +13,7 @@ import { NotificationProvider } from './sections/Notification/NotificationContex
 import { AuthProvider } from './modules/auth/context/AuthContext';
 import ProtectedRoute from './modules/auth/components/ProtectedRoute';
 import PublicRoute from './modules/auth/components/PublicRoute';
+import RequirePermission from './modules/auth/components/RequirePermission';
 import { ModalProvider, useModal } from './contexts/ModalContext';
 import { PermissionsProvider } from './contexts/PermissionsContext';
 import Clientes from './sections/Clientes/components/Clientes';
@@ -59,20 +60,20 @@ function AppContent() {
           {/* Rutas protegidas - solo para usuarios autenticados */}
           <Route path="/bandeja-solicitud" element={<ProtectedRoute><BandejaSolicitud /></ProtectedRoute>} />
           <Route path="/itinerario" element={<ProtectedRoute><Itinerario /></ProtectedRoute>} />
-          <Route path="/componentes" element={<ProtectedRoute><Componentes /></ProtectedRoute>} />
-          <Route path="/servicios" element={<ProtectedRoute><Services /></ProtectedRoute>} />
-          <Route path="/proveedores" element={<ProtectedRoute><Proveedores /></ProtectedRoute>} />
-          <Route path="/cotizaciones" element={<ProtectedRoute><Cotizaciones /></ProtectedRoute>} />
+          <Route path="/componentes" element={<ProtectedRoute><RequirePermission moduleCode={'COMPONENTES'}><Componentes /></RequirePermission></ProtectedRoute>} />
+          <Route path="/servicios" element={<ProtectedRoute><RequirePermission moduleCode={'SERVICIOS'}><Services /></RequirePermission></ProtectedRoute>} />
+          <Route path="/proveedores" element={<ProtectedRoute><RequirePermission moduleCode={'PROVEEDORES'}><Proveedores /></RequirePermission></ProtectedRoute>} />
+          <Route path="/cotizaciones" element={<ProtectedRoute><RequirePermission moduleCode={'COTIZACION'}><Cotizaciones /></RequirePermission></ProtectedRoute>} />
           <Route path="/cotizaciones/nuevo" element={<ProtectedRoute><CotizacionForm /></ProtectedRoute>} />
           <Route path="/cotizaciones/:id" element={<ProtectedRoute><CotizacionForm /></ProtectedRoute>} />
           <Route path="/proveedores/detalles" element={<ProtectedRoute><DetallesProveedores /></ProtectedRoute>} />
           <Route path="/proveedores/tarifario" element={<ProtectedRoute><Tarifario /></ProtectedRoute>} />
-          <Route path="/clientes" element={<ProtectedRoute><Clientes /></ProtectedRoute>} />
+          <Route path="/clientes" element={<ProtectedRoute><RequirePermission moduleCode={'CLIENTES'}><Clientes /></RequirePermission></ProtectedRoute>} />
           <Route path="/clientes/nuevo" element={<ProtectedRoute><ClientPage /></ProtectedRoute>} />
           <Route path="/clientes/:id" element={<ProtectedRoute><ClientPage /></ProtectedRoute>} />
-          <Route path="/registro-pagos" element={<ProtectedRoute><RegistroPagos /></ProtectedRoute>} />
+          <Route path="/registro-pagos" element={<ProtectedRoute><RequirePermission moduleCode={'REGISTRO_PAGOS'}><RegistroPagos /></RequirePermission></ProtectedRoute>} />
           <Route path="/registro-pagos/reporte" element={<ProtectedRoute><Reporte /></ProtectedRoute>} />
-          <Route path="/permisos" element={<ProtectedRoute><Permisos /></ProtectedRoute>} />
+          <Route path="/permisos" element={<ProtectedRoute><RequirePermission moduleCode={'PERMISOS'}><Permisos /></RequirePermission></ProtectedRoute>} />
         </Routes>
       </div>
 

@@ -197,8 +197,8 @@ const Permisos = () => {
     setCreating(true);
     try {
       const payload = { ...form };
-      const { user, rawPassword } = await apiService.createUserAdmin(payload);
-      toast.current?.show({ severity:'success', summary:'Usuario creado', detail: rawPassword ? `Contraseña: ${rawPassword}` : 'Creado' });
+  const { user } = await apiService.createUserAdmin(payload);
+  toast.current?.show({ severity:'success', summary:'Usuario creado', detail: 'Se ha creado el usuario correctamente. La contraseña fue enviada al correo.' });
       setShowNew(false); loadUsers();
     } catch(e){ toast.current?.show({ severity:'error', summary:'Error', detail:e.message }); }
     finally { setCreating(false); }

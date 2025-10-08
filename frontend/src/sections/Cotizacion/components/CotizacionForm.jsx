@@ -36,6 +36,7 @@ import { ProgressSpinner } from 'primereact/progressspinner';
 import { ConfirmDialog } from 'primereact/confirmdialog';
 import CotizacionRepository from '../../../modules/Cotizacion/repository/CotizacionRepository';
 // Modal de asignación de proveedores
+import { usePermissions } from '../../../contexts/PermissionsContext';
 
 // (formatFecha eliminado: ya usamos Calendar con locale 'es')
 
@@ -179,6 +180,8 @@ export default function CotizacionForm() {
       }
     })();
   }, [routeId]);
+
+  const { has } = usePermissions();
 
   useEffect(() => {
     const id = setTimeout(async () => {
@@ -551,7 +554,7 @@ export default function CotizacionForm() {
               <div className="label">Año: <b>{anio}</b></div>
               <div className="label">File: <b>{numeroFile || ''}</b></div>
               <div className="row-spacer"></div>
-              <button className="link-btn right-btn" onClick={onSave}>{cotizacionId ? 'Actualizar' : 'Guardar para continuar'}</button>
+              <button className="link-btn right-btn" onClick={onSave} disabled={cotizacionId ? !has('COTIZACION','EDIT') : !has('COTIZACION','CREATE')}>{cotizacionId ? 'Actualizar' : 'Guardar para continuar'}</button>
             </div>
 
             <div className="form-grid row1-grid">
@@ -681,16 +684,17 @@ export default function CotizacionForm() {
                       <>
                         <div className="cotz-service-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                            <i className="pi pi-trash" style={{ cursor: 'pointer'}} aria-label="Eliminar servicio"
-                              onClick={(e) => {
-                                if (loading) return;
-                                e.stopPropagation();
-                                setDialogType('service');
-                                setServiceToDelete(s.id);
-                                setVisibleDialog(true);
-                                // handleDeleteService(s.id);
-                              }} 
-                            />
+                            {has('COTIZACION','DELETE') && (
+                              <i className="pi pi-trash" style={{ cursor: 'pointer'}} aria-label="Eliminar servicio"
+                                onClick={(e) => {
+                                  if (loading) return;
+                                  e.stopPropagation();
+                                  setDialogType('service');
+                                  setServiceToDelete(s.id);
+                                  setVisibleDialog(true);
+                                }} 
+                              />
+                            )}
                             <div className="cotz-service-title">{s.service?.name}</div>
                           </div>
                           {selectedCS === s.id && <span className="cotz-select-hint">Seleccionado para agregar componentes</span>}
@@ -708,16 +712,17 @@ export default function CotizacionForm() {
                             <div key={rowData.id} className="componente-card" style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 8 }}>
                               
                               <div style={{ display: 'flex', alignItems: 'center', width: '25%' }}>
-                                <i style={{ width: '1.5rem', marginLeft: '2rem', cursor: 'pointer' }} className="pi pi-trash" 
-                                  onClick={(e) => {
-                                    if (loading) return;
-                                    e.stopPropagation();
-                                    setDialogType('component');
-                                    setComponentToDelete({ cscId: rowData.id, serviceId: s.id });
-                                    setVisibleDialog(true);
-                                    // handleDeleteComponent(rowData.id, s.id);
-                                  }}
-                                />
+                                {has('COTIZACION','DELETE') && (
+                                  <i style={{ width: '1.5rem', marginLeft: '2rem', cursor: 'pointer' }} className="pi pi-trash" 
+                                    onClick={(e) => {
+                                      if (loading) return;
+                                      e.stopPropagation();
+                                      setDialogType('component');
+                                      setComponentToDelete({ cscId: rowData.id, serviceId: s.id });
+                                      setVisibleDialog(true);
+                                    }}
+                                  />
+                                )}
                                 <div style={{ cursor: 'pointer' }} onClick={(e) => { e.stopPropagation(); openDateTimePicker(rowData); }}>
                                   {rowData.scheduledAt
                                     ? <span className="muted">{formatFechaHoraCorta(rowData.scheduledAt)}</span>
@@ -809,7 +814,7 @@ export default function CotizacionForm() {
                       inputClassName="p-inputtext"
                       disabled={loading || loadingCotizacion}
                     />
-                    <Button label="Agregar" className="p-button-outlined" onClick={onAdd} disabled={loading || loadingCotizacion} />
+                    <Button label="Agregar" className="p-button-outlined" onClick={onAdd} disabled={loading || loadingCotizacion || !has('COTIZACION','CREATE')} />
                     {isSearching && <span className="search-status">Buscando…</span>}
                   </div>
                 </div>

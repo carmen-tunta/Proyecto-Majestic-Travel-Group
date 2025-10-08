@@ -15,6 +15,7 @@ import CreateContact from '../../../modules/ClientesContacto/application/CreateC
 import UpdateContact from '../../../modules/ClientesContacto/application/UpdateContact';
 import DeleteContact from '../../../modules/ClientesContacto/application/DeleteContact';
 import '../styles/ClientPage.css';
+import { usePermissions } from '../../../contexts/PermissionsContext';
 
 // Configurar locale español para PrimeReact
 addLocale('es', {
@@ -320,6 +321,8 @@ const ClientPage = () => {
     setShowContactModal(true);
   };
 
+  const { has } = usePermissions();
+
   const handleEditContact = (contact) => {
     setEditingContact(contact);
     setContactFormData({
@@ -584,7 +587,7 @@ const ClientPage = () => {
         <div className="contact">
           <div className="contact-header">
             <h3>Datos de contacto</h3>
-            <Button icon="pi pi-plus" label="Nuevo" size="small" outlined onClick={handleNewContact} />
+            <Button icon="pi pi-plus" label="Nuevo" size="small" outlined onClick={() => has('CLIENTES','CREATE') && handleNewContact()} disabled={!has('CLIENTES','CREATE')} />
           </div>
           
           <div className="contact-table">
@@ -611,6 +614,7 @@ const ClientPage = () => {
                       <td>{contact.descripcion}</td>
                       <td>{contact.nota || '-'}</td>
                       <td className="contact-actions">
+                        {has('CLIENTES','EDIT') && (
                         <button
                           type="button"
                           className="contact-action-button contact-edit-button"
@@ -620,6 +624,8 @@ const ClientPage = () => {
                         >
                           <i className="pi pi-pencil" />
                         </button>
+                        )}
+                        {has('CLIENTES','DELETE') && (
                         <button
                           type="button"
                           className="contact-action-button contact-delete-button"
@@ -629,6 +635,7 @@ const ClientPage = () => {
                         >
                           <i className="pi pi-trash" />
                         </button>
+                        )}
                       </td>
                     </tr>
                   ))
