@@ -90,7 +90,7 @@ export class QuoteRequestsService {
     return qr;
   }
 
-  async findAll(page = 0, limit = 10) {
+  async findAll(page = 0, limit = 15) {
     const [data, total] = await this.qrRepo.findAndCount({
       relations: ['client', 'services', 'services.service', 'agent'],
       skip: page * limit,
@@ -98,7 +98,15 @@ export class QuoteRequestsService {
       order: { id: 'DESC' },
     });
     
-    return { data, total, page, limit };
+    return { 
+      data, 
+      total, 
+      page, 
+      limit,
+      totalPages: Math.ceil(total / limit),
+      hasNextPage: (page + 1) * limit < total,
+      hasPreviousPage: page > 0
+    };
   }
 
   async update(id: number, dto: UpdateQuoteRequestDto): Promise<QuoteRequest> {

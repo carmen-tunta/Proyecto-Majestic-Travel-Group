@@ -182,7 +182,7 @@ const BandejaSolicitud = () => {
   const [lastFailedAction, setLastFailedAction] = useState(null);
   const [globalActionLoading, setGlobalActionLoading] = useState(false);
   const [first, setFirst] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [rowsPerPage, setRowsPerPage] = useState(15);
 
   // Obtener ID del usuario actual
   useEffect(() => {
@@ -201,7 +201,7 @@ const BandejaSolicitud = () => {
   // Cargar datos del backend
   useEffect(() => {
     loadQuoteRequests();
-  }, [currentPage]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [currentPage, rowsPerPage]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const loadQuoteRequests = async () => {
     try {
@@ -210,7 +210,7 @@ const BandejaSolicitud = () => {
       
       const repository = new QuoteRequestRepository();
       const useCase = new GetAllQuoteRequests(repository);
-      const result = await useCase.execute(currentPage, 10);
+      const result = await useCase.execute(currentPage, rowsPerPage);
       
       // Mapear los datos del backend al formato esperado por el frontend
       const mappedRequests = result.data?.map(request => ({
@@ -334,6 +334,11 @@ const BandejaSolicitud = () => {
       r?.cliente?.toLowerCase().includes(searchTerm.toLowerCase())
     );
   }, [requests, searchTerm]);
+
+  // Calcular total de registros para paginación
+  const totalRecordsForPagination = useMemo(() => {
+    return searchTerm ? filteredRequests.length : totalRecords;
+  }, [searchTerm, filteredRequests.length, totalRecords]);
 
   const onPageChange = (event) => {
     setFirst(event.first);
@@ -716,7 +721,7 @@ const BandejaSolicitud = () => {
             paginator
             rows={rowsPerPage}
             first={first}
-            totalRecords={filteredRequests.length}
+            totalRecords={totalRecordsForPagination}
             onPage={onPageChange}
             paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink"
             currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} solicitudes"
