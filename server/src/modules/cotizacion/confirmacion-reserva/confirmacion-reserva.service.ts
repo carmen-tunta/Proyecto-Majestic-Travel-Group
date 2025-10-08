@@ -25,7 +25,8 @@ export class ConfirmacionReservaService {
     if (existing) {
       // Filtrar solo los campos definidos para actualizar
       const filteredData = Object.keys(data).reduce((acc, key) => {
-        if (data[key] !== undefined && data[key] !== null) {
+        // Permitir paginasEditables incluso si es null o vacío
+        if (key === 'paginasEditables' || (data[key] !== undefined && data[key] !== null)) {
           acc[key] = data[key];
         }
         return acc;

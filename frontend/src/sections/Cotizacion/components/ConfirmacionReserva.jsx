@@ -4,6 +4,8 @@ import { InputText } from 'primereact/inputtext';
 import { InputTextarea } from 'primereact/inputtextarea';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
+import { Dropdown } from 'primereact/dropdown';
+import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog';
 import { useNotification } from '../../Notification/NotificationContext';
 import { ProgressSpinner } from 'primereact/progressspinner';
 import '../styles/ConfirmacionReservaEditor.css';
@@ -12,14 +14,71 @@ const ConfirmacionReserva = ({ cotizacionId, cotizacionData }) => {
   const { showNotification } = useNotification();
   const [loading, setLoading] = useState(false);
   const [loadingData, setLoadingData] = useState(true);
+  const [loadingPdf, setLoadingPdf] = useState(false);
+  const [loadingTranslate, setLoadingTranslate] = useState(false);
   
   // Sistema de páginas: la primera es fija (confirmación), las demás son editables
   const [editablePages, setEditablePages] = useState([]);
   const [currentPageIndex, setCurrentPageIndex] = useState(0);
+  const [confirmacionId, setConfirmacionId] = useState(null);
+  
+  // Idiomas
+  const [idiomaOrigen, setIdiomaOrigen] = useState('Español');
+  const [idiomaDestino, setIdiomaDestino] = useState('Ingles');
+  
+  const idiomas = [
+    { label: 'Español', value: 'Español' },
+    { label: 'Inglés', value: 'Ingles' },
+    { label: 'Francés', value: 'Francés' },
+    { label: 'Alemán', value: 'Alemán' },
+    { label: 'Portugués', value: 'Portugués' }
+  ];
 
+  // Cargar datos existentes
   useEffect(() => {
-    setLoadingData(false);
-  }, [cotizacionId, cotizacionData]);
+    loadConfirmacion();
+  }, [cotizacionId]);
+
+  const loadConfirmacion = async () => {
+    if (!cotizacionId) return;
+    
+    setLoadingData(true);
+    try {
+      const authToken = localStorage.getItem('authToken') || sessionStorage.getItem('authToken');
+      
+      const response = await fetch(
+        `${process.env.REACT_APP_API_URL}/cotizacion/${cotizacionId}/confirmacion-reserva`,
+        {
+          headers: {
+            'Authorization': `Bearer ${authToken}`
+          }
+        }
+      );
+      
+      if (response.ok) {
+        const data = await response.json();
+        if (data) {
+          setConfirmacionId(data.id);
+          // Cargar páginas editables si existen
+          if (data.paginasEditables) {
+            try {
+              const pages = JSON.parse(data.paginasEditables);
+              setEditablePages(pages);
+              console.log('Páginas cargadas:', pages);
+            } catch (e) {
+              console.error('Error al parsear páginas editables:', e);
+            }
+          }
+        }
+      } else {
+        console.log('No hay confirmación guardada aún');
+      }
+    } catch (error) {
+      console.error('Error al cargar confirmación:', error);
+    } finally {
+      setLoadingData(false);
+    }
+  };
 
   const formatFecha = (date) => {
     if (!date) return '';
@@ -125,12 +184,101 @@ const ConfirmacionReserva = ({ cotizacionId, cotizacionData }) => {
   const handleSave = async () => {
     setLoading(true);
     try {
-      showNotification('Documento guardado correctamente', 'success');
+      const dataToSave = {
+        cotizacionId,
+        paginasEditables: JSON.stringify(editablePages)
+      };
+
+      // Obtener token de localStorage (donde se guarda actualmente)
+      const authToken = localStorage.getItem('authToken') || sessionStorage.getItem('authToken');
+
+      const response = await fetch(
+        `${process.env.REACT_APP_API_URL}/cotizacion/${cotizacionId}/confirmacion-reserva`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${authToken}`
+          },
+          body: JSON.stringify(dataToSave)
+        }
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        setConfirmacionId(data.id);
+        showNotification('Documento guardado correctamente', 'success');
+      } else {
+        const errorText = await response.text();
+        console.error('Error response:', errorText);
+        throw new Error(`Error al guardar: ${response.status}`);
+      }
     } catch (error) {
       console.error('Error:', error);
       showNotification('Error al guardar el documento', 'error');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const confirmDeletePage = () => {
+    if (currentPageIndex === 0 || editablePages.length === 0) return;
+    
+    confirmDialog({
+      message: '¿Estás seguro de que deseas eliminar esta página? Esta acción no se puede deshacer.',
+      header: 'Confirmar eliminación',
+      icon: 'pi pi-exclamation-triangle',
+      acceptLabel: 'Sí, eliminar',
+      rejectLabel: 'Cancelar',
+      acceptClassName: 'p-button-danger',
+      accept: () => {
+        const updatedPages = [...editablePages];
+        updatedPages.splice(currentPageIndex - 1, 1);
+        setEditablePages(updatedPages);
+        
+        // Ir a la página anterior
+        if (currentPageIndex > updatedPages.length) {
+          setCurrentPageIndex(Math.max(0, updatedPages.length));
+        }
+        
+        showNotification('Página eliminada correctamente', 'success');
+      },
+      reject: () => {
+        // No hacer nada si cancela
+      }
+    });
+  };
+
+  const handleDownloadPdf = async () => {
+    setLoadingPdf(true);
+    try {
+      // Aquí implementaremos la lógica de descarga de PDF
+      showNotification('Generando PDF...', 'info');
+      // TODO: Implementar generación de PDF
+      setTimeout(() => {
+        showNotification('PDF descargado correctamente', 'success');
+        setLoadingPdf(false);
+      }, 2000);
+    } catch (error) {
+      console.error('Error al descargar PDF:', error);
+      showNotification('Error al generar PDF', 'error');
+      setLoadingPdf(false);
+    }
+  };
+
+  const handleTranslateAndDownload = async () => {
+    setLoadingTranslate(true);
+    try {
+      showNotification('Traduciendo y generando PDF...', 'info');
+      // TODO: Implementar traducción y generación de PDF
+      setTimeout(() => {
+        showNotification('PDF traducido descargado correctamente', 'success');
+        setLoadingTranslate(false);
+      }, 3000);
+    } catch (error) {
+      console.error('Error al traducir:', error);
+      showNotification('Error al traducir y generar PDF', 'error');
+      setLoadingTranslate(false);
     }
   };
 
@@ -149,9 +297,50 @@ const ConfirmacionReserva = ({ cotizacionId, cotizacionData }) => {
 
   return (
     <div className="confirmacion-editor-container">
-      {/* Header con botón guardar */}
+      {/* Header con controles */}
       <div className="confirmacion-editor-header">
-        <h3>Confirmación de Reserva</h3>
+        <Button
+          label="Descargar pdf"
+          icon="pi pi-file-pdf"
+          className="p-button-outlined"
+          size="small"
+          onClick={handleDownloadPdf}
+          loading={loadingPdf}
+          disabled={loadingPdf || loadingTranslate}
+        />
+        
+        <div className="confirmacion-language-selector">
+          <label className="language-label">Idioma origen</label>
+          <Dropdown
+            value={idiomaOrigen}
+            options={idiomas}
+            onChange={(e) => setIdiomaOrigen(e.value)}
+            className="language-dropdown"
+            disabled={loadingTranslate}
+          />
+        </div>
+        
+        <div className="confirmacion-language-selector">
+          <label className="language-label">Idioma destino</label>
+          <Dropdown
+            value={idiomaDestino}
+            options={idiomas}
+            onChange={(e) => setIdiomaDestino(e.value)}
+            className="language-dropdown"
+            disabled={loadingTranslate}
+          />
+        </div>
+        
+        <Button
+          label="Traducir y descargar pdf"
+          icon="pi pi-globe"
+          className="p-button-info"
+          size="small"
+          onClick={handleTranslateAndDownload}
+          loading={loadingTranslate}
+          disabled={loadingPdf || loadingTranslate}
+        />
+        
         <Button
           label="Guardar"
           icon="pi pi-save"
@@ -159,6 +348,7 @@ const ConfirmacionReserva = ({ cotizacionId, cotizacionData }) => {
           onClick={handleSave}
           loading={loading}
           disabled={loading}
+          className="confirmacion-guardar-btn"
         />
       </div>
 
@@ -348,6 +538,14 @@ const ConfirmacionReserva = ({ cotizacionId, cotizacionData }) => {
           size="small"
           disabled={isFirstPage}
         />
+        <Button
+          icon="pi pi-trash"
+          label="Eliminar página"
+          onClick={confirmDeletePage}
+          className="p-button-outlined p-button-danger"
+          size="small"
+          disabled={isFirstPage || editablePages.length === 0}
+        />
       </div>
 
       {/* Indicador de páginas */}
@@ -364,6 +562,9 @@ const ConfirmacionReserva = ({ cotizacionId, cotizacionData }) => {
           ))}
         </div>
       )}
+
+      {/* Diálogo de confirmación */}
+      <ConfirmDialog />
     </div>
   );
 };

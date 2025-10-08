@@ -24,6 +24,7 @@ import { TarifarioDocuments } from 'src/modules/tarifarioDocuments/entities/tari
 import { Cotizacion } from 'src/modules/cotizacion/entities/cotizacion.entity';
 import { CotizacionServicio } from 'src/modules/cotizacion/entities/cotizacion-servicio.entity';
 import { CotizacionServicioComponente } from 'src/modules/cotizacion/entities/cotizacion-servicio-componente.entity';
+import { ConfirmacionReserva } from 'src/modules/cotizacion/entities/confirmacion-reserva.entity';
 import { Pasajero } from 'src/modules/pasajeros/entities/pasajero.entity';
 import { RegistroPago } from 'src/modules/registroPago/entities/registroPago.entity';
 import { QuoteRequest } from 'src/modules/quote-requests/entities/quote-request.entity';
@@ -65,6 +66,7 @@ import { UserPermission } from '../modules/permissions/entities/user-permission.
                   Cotizacion,
                   CotizacionServicio,
                   CotizacionServicioComponente,
+                  ConfirmacionReserva,
                   Pasajero,
                   RegistroPago,
                   QuoteRequest,

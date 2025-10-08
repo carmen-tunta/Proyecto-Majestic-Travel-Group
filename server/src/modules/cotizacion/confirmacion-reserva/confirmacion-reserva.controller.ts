@@ -26,33 +26,36 @@ interface CreateConfirmacionDto {
   estadoBooking?: string;
   direccion?: string;
   telefono?: string;
+  paginasEditables?: string;
   isDeleted?: boolean;
 }
 
-@Controller('confirmacion-reserva')
+@Controller('cotizacion/:cotizacionId/confirmacion-reserva')
 export class ConfirmacionReservaController {
   constructor(private readonly confirmacionReservaService: ConfirmacionReservaService) {}
 
-  @Get(':cotizacionId')
+  @Get()
   @RequirePermissions('COTIZACION:VIEW')
-  async getConfirmacion(@Param('cotizacionId') cotizacionId: number): Promise<ConfirmacionReservaEntity | null> {
-    return this.confirmacionReservaService.getByCotizacionId(cotizacionId);
+  async getConfirmacion(@Param('cotizacionId') cotizacionId: string): Promise<ConfirmacionReservaEntity | null> {
+    return this.confirmacionReservaService.getByCotizacionId(Number(cotizacionId));
   }
 
-  @Post(':cotizacionId')
+  @Post()
   @RequirePermissions('COTIZACION:EDIT')
   @UseInterceptors(FileInterceptor('file', { 
     fileFilter: imageFileFilter,
     limits: { fileSize: 10 * 1024 * 1024 }
   }))
   async createOrUpdateByCotizacionId(
-    @Param('cotizacionId') cotizacionId: number,
+    @Param('cotizacionId') cotizacionId: string,
     @Body() data: Partial<CreateConfirmacionDto>,
     @UploadedFile() file?: MulterFile
   ): Promise<ConfirmacionReservaEntity | null> {
     
+    const cotizacionIdNum = Number(cotizacionId);
+    
     let imagenLogo = '';
-    const existing = await this.confirmacionReservaService.getByCotizacionId(cotizacionId);
+    const existing = await this.confirmacionReservaService.getByCotizacionId(cotizacionIdNum);
     
     if (file) {
       const uploadDir = path.join(process.cwd(), `uploads/confirmacion-reserva/${cotizacionId}`);
@@ -95,28 +98,30 @@ export class ConfirmacionReservaController {
       estadoBooking: data.estadoBooking,
       direccion: data.direccion,
       telefono: data.telefono,
+      paginasEditables: data.paginasEditables,
       isDeleted: data.isDeleted,
       ...(imagenLogo && { imagenLogo })
     };
 
-    return this.confirmacionReservaService.createOrUpdate(cotizacionId, confirmacionData);
+    return this.confirmacionReservaService.createOrUpdate(cotizacionIdNum, confirmacionData);
   }
 
-  @Put(':cotizacionId/imagen-logo')
+  @Put('imagen-logo')
   @RequirePermissions('COTIZACION:EDIT')
   @UseInterceptors(FileInterceptor('file', { 
     fileFilter: imageFileFilter,
     limits: { fileSize: 10 * 1024 * 1024 }
   }))
   async updateImagenLogo(
-    @Param('cotizacionId') cotizacionId: number,
+    @Param('cotizacionId') cotizacionId: string,
     @UploadedFile() file: MulterFile
   ): Promise<ConfirmacionReservaEntity | null> {
     if (!file) {
       throw new BadRequestException('No se proporcionó archivo de imagen');
     }
 
-    const existing = await this.confirmacionReservaService.getByCotizacionId(cotizacionId);
+    const cotizacionIdNum = Number(cotizacionId);
+    const existing = await this.confirmacionReservaService.getByCotizacionId(cotizacionIdNum);
     if (!existing) {
       throw new BadRequestException(`No existe una confirmación de reserva para la cotización con ID ${cotizacionId}`);
     }

@@ -45,6 +45,9 @@ export class ConfirmacionReserva {
   @Column({ type: 'text', comment: 'Teléfono de contacto adicional', nullable: true })
   telefono: string;
 
+  @Column({ type: 'longtext', comment: 'Páginas editables en formato JSON', nullable: true })
+  paginasEditables: string;
+
   @Column({ type: 'boolean', default: false, comment: 'Indica si la confirmación está eliminada lógicamente' })
   isDeleted: boolean;
 
