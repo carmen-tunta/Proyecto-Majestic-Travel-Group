@@ -12,6 +12,8 @@ import PlantillaItinerarioModal from './PlantillaItinerarioModal';
 import '../styles/ConfirmacionReservaEditor.css';
 import html2pdf from 'html2pdf.js';
 import { PDFDocument } from 'pdf-lib';
+import TranslationRepository from '../../../modules/Translation/repository/TranslationRepository';
+import translateText from '../../../modules/Translation/application/TranslateText';
 
 const ConfirmacionReserva = ({ cotizacionId, cotizacionData }) => {
   const { showNotification } = useNotification();
@@ -25,22 +27,27 @@ const ConfirmacionReserva = ({ cotizacionId, cotizacionData }) => {
   const [currentPageIndex, setCurrentPageIndex] = useState(0);
   const [confirmacionId, setConfirmacionId] = useState(null);
   
-  // Idiomas
-  const [idiomaOrigen, setIdiomaOrigen] = useState('Español');
-  const [idiomaDestino, setIdiomaDestino] = useState('Ingles');
+  // Idiomas (códigos ISO como en Portada)
+  const [idiomaOrigen, setIdiomaOrigen] = useState('es');
+  const [idiomaDestino, setIdiomaDestino] = useState('en');
   
   const idiomas = [
-    { label: 'Español', value: 'Español' },
-    { label: 'Inglés', value: 'Ingles' },
-    { label: 'Francés', value: 'Francés' },
-    { label: 'Alemán', value: 'Alemán' },
-    { label: 'Portugués', value: 'Portugués' }
+    { label: 'Español', value: 'es' },
+    { label: 'Inglés', value: 'en' },
+    { label: 'Francés', value: 'fr' },
+    { label: 'Alemán', value: 'de' },
+    { label: 'Portugués', value: 'pt' },
+    { label: 'Italiano', value: 'it' }
   ];
+
+  const translateRepo = new TranslationRepository();
+  const translate = new translateText(translateRepo);
   
   // Modal de plantilla itinerario
   const [showTemplateModal, setShowTemplateModal] = useState(false);
   const [currentBlockId, setCurrentBlockId] = useState(null);
   const [currentColumn, setCurrentColumn] = useState(null);
+  const [renderKey, setRenderKey] = useState(0);
 
   // Cargar datos existentes
   useEffect(() => {
@@ -404,18 +411,345 @@ const ConfirmacionReserva = ({ cotizacionId, cotizacionData }) => {
     }
   };
 
+  // Función para traducir texto dentro de HTML (igual que Portada)
+  const replaceTextInHTML = async (html, sourceLanguage, targetLanguage, translateInstance) => {
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = html;
+
+    const walker = document.createTreeWalker(
+      tempDiv,
+      NodeFilter.SHOW_TEXT,
+      {
+        acceptNode: function (node) {
+          const parent = node.parentElement;
+          if (!parent) return NodeFilter.FILTER_REJECT;
+          if (parent.tagName === 'I' || parent.classList.contains('pi')) {
+            return NodeFilter.FILTER_REJECT;
+          }
+          const text = node.textContent.trim();
+          if (text && text.length > 0) {
+            return NodeFilter.FILTER_ACCEPT;
+          }
+          return NodeFilter.FILTER_REJECT;
+        }
+      },
+      false
+    );
+
+    const textNodes = [];
+    let node;
+    // eslint-disable-next-line no-cond-assign
+    while (node = walker.nextNode()) {
+      textNodes.push(node);
+    }
+
+    // Función para verificar si un texto necesita traducción
+    const shouldTranslate = (text) => {
+      // No traducir si es muy corto
+      if (text.length <= 2) return false;
+      
+      // No traducir si son solo números, fechas o caracteres especiales
+      if (/^[\d\s\-\/\.\:]+$/.test(text)) return false;
+      
+      // No traducir si son solo símbolos o caracteres especiales
+      if (/^[^\w\s]+$/.test(text)) return false;
+      
+      // No traducir URLs, emails, teléfonos
+      if (/^(https?:\/\/|www\.|@|\+?\d+[\s\-\(\)]*\d+)/.test(text)) return false;
+      
+      return true;
+    };
+
+    // Traducir cada nodo de texto
+    // eslint-disable-next-line no-restricted-syntax
+    for (const textNode of textNodes) {
+      const originalText = textNode.textContent.trim();
+      if (originalText && shouldTranslate(originalText)) {
+        try {
+          // eslint-disable-next-line no-await-in-loop
+          const translatedResult = await translateInstance.execute(
+            originalText,
+            targetLanguage,
+            sourceLanguage
+          );
+          if (
+            translatedResult &&
+            translatedResult.translatedText &&
+            typeof translatedResult.translatedText === 'string'
+          ) {
+            textNode.textContent = translatedResult.translatedText;
+          }
+        } catch (error) {
+          // Mantener el texto original si hay error en la traducción
+        }
+      }
+    }
+    return tempDiv.innerHTML;
+  };
+
   const handleTranslateAndDownload = async () => {
     setLoadingTranslate(true);
+    const originalIndex = currentPageIndex;
+    const total = 1 + editablePages.length;
+    const hiddenElements = [];
+
+    const hideElement = (selector) => {
+      const nodes = document.querySelectorAll(selector);
+      nodes.forEach((n) => {
+        hiddenElements.push({ node: n, display: n.style.display });
+        n.style.display = 'none';
+      });
+    };
+
     try {
-      showNotification('Traduciendo y generando PDF...', 'info');
-      // TODO: Implementar traducción y generación de PDF
-      setTimeout(() => {
-        showNotification('PDF traducido descargado correctamente', 'success');
-        setLoadingTranslate(false);
-      }, 3000);
+      // Ocultar controles e iconos
+      hideElement('.confirmacion-editor-header');
+      hideElement('.confirmacion-controls');
+      hideElement('.confirmacion-pages-indicator');
+      hideElement('.titulo-action-btn');
+
+      const pdfBlobs = [];
+
+      // Procesar cada página individualmente
+      for (let i = 0; i < total; i++) {
+        
+        // Crear HTML de la página específica manualmente
+        let pageHTML = '';
+        
+        if (i === 0) {
+          // Página 1: Confirmación de reserva (fija)
+          pageHTML = `
+            <div class="confirmacion-page-content">
+              <div class="confirmacion-header-principal">
+                <div class="confirmacion-logo-container">
+                  <img src="/logo_grande.png" alt="Logo" class="confirmacion-logo" />
+                </div>
+                <div class="confirmacion-titulo-container">
+                  <h2>Confirmación de Reserva</h2>
+                </div>
+                <div class="confirmacion-estado-container">
+                  <div class="estado-label">Estado del booking</div>
+                  <div class="estado-value">Confirmado</div>
+                </div>
+              </div>
+              
+              <div class="confirmacion-info-section">
+                <div class="confirmacion-info-column">
+                  <div class="info-row">
+                    <span class="info-label">Nombre:</span>
+                    <span class="info-value">${cotizacionData?.cliente?.nombre || ''}</span>
+                  </div>
+                  <div class="info-row">
+                    <span class="info-label">Agencia:</span>
+                    <span class="info-value">${cotizacionData?.agencia || ''}</span>
+                  </div>
+                  <div class="info-row">
+                    <span class="info-label">Fecha de viaje:</span>
+                    <span class="info-value">${cotizacionData?.fechaViaje ? formatFecha(new Date(cotizacionData.fechaViaje)) : ''}</span>
+                  </div>
+                </div>
+                <div class="confirmacion-info-column">
+                  <div class="info-row">
+                    <span class="info-label">Booking por:</span>
+                    <span class="info-value">${cotizacionData?.creadoPor?.nombre || cotizacionData?.creadoPor?.username || ''}</span>
+                  </div>
+                  <div class="info-row">
+                    <span class="info-label">Whatsapp:</span>
+                    <span class="info-value">${cotizacionData?.cliente?.whatsapp || ''}</span>
+                  </div>
+                  <div class="info-row">
+                    <span class="info-label">Correo:</span>
+                    <span class="info-value">${cotizacionData?.creadoPor?.email || ''}</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="confirmacion-pasajeros">
+                <h4>${cotizacionData?.nroPax || 1} Pasajero${(cotizacionData?.nroPax || 1) > 1 ? 's' : ''}</h4>
+                <ul>
+                  ${cotizacionData?.pasajeros && cotizacionData.pasajeros.length > 0 
+                    ? cotizacionData.pasajeros.map(pasajero => `<li>${pasajero.nombre}</li>`).join('')
+                    : Array.from({ length: cotizacionData?.nroPax || 1 }, (_, idx) => 
+                        `<li>Nombre del pasajero ${idx + 1}</li>`).join('')
+                  }
+                </ul>
+              </div>
+              
+              <div class="confirmacion-itinerario">
+                <h4>Itinerario</h4>
+                <table>
+                  <thead>
+                    <tr>
+                      <th>DÍA</th>
+                      <th>FECHA</th>
+                      <th>SERVICIOS/ACTIVIDADES</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    ${getItinerario().map(item => `
+                      <tr>
+                        <td>${item.dia}</td>
+                        <td>${item.fecha}</td>
+                        <td>${item.actividad}</td>
+                      </tr>
+                    `).join('')}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div class="confirmacion-page-footer">
+              <div class="footer-item">
+                <i class="pi pi-map-marker"></i>
+                <span>Calle Garcilaso - Nro 265 / Oficina 10 - Segundo Piso. Cusco Perú</span>
+              </div>
+              <div class="footer-item">
+                <i class="pi pi-whatsapp"></i>
+                <span>+51 912 920 103</span>
+              </div>
+            </div>
+          `;
+        } else {
+          // Páginas editables
+          const editablePage = editablePages[i - 1];
+          if (!editablePage) continue;
+          
+          pageHTML = `
+            <div class="confirmacion-page-content">
+              <div class="confirmacion-logo-container">
+                <img src="/logo_grande.png" alt="Logo" class="confirmacion-logo" />
+              </div>
+              ${editablePage.blocks.map(block => {
+                if (block.type === 'row') {
+                  return `
+                    <div class="confirmacion-block-row">
+                      <div class="confirmacion-title-export">${block.titulo}</div>
+                      <div class="confirmacion-text-export">${block.contenido}</div>
+                    </div>
+                  `;
+                } else if (block.type === 'double') {
+                  return `
+                    <div class="confirmacion-block-double">
+                      <div class="confirmacion-block-column">
+                        <div class="confirmacion-title-export">${block.col1.titulo}</div>
+                        <div class="confirmacion-text-export">${block.col1.contenido}</div>
+                      </div>
+                      <div class="confirmacion-block-column">
+                        <div class="confirmacion-title-export">${block.col2.titulo}</div>
+                        <div class="confirmacion-text-export">${block.col2.contenido}</div>
+                      </div>
+                    </div>
+                  `;
+                }
+                return '';
+              }).join('')}
+            </div>
+            <div class="confirmacion-page-footer">
+              <div class="footer-item">
+                <i class="pi pi-map-marker"></i>
+                <span>Calle Garcilaso - Nro 265 / Oficina 10 - Segundo Piso. Cusco Perú</span>
+              </div>
+              <div class="footer-item">
+                <i class="pi pi-whatsapp"></i>
+                <span>+51 912 920 103</span>
+              </div>
+            </div>
+          `;
+        }
+
+        // Crear elemento temporal para la traducción
+        const tempDiv = document.createElement('div');
+        tempDiv.className = 'confirmacion-page confirmacion-export';
+        tempDiv.innerHTML = pageHTML;
+        document.body.appendChild(tempDiv);
+
+
+        // Traducir el HTML de la página
+        // eslint-disable-next-line no-await-in-loop
+        const translatedHTML = await replaceTextInHTML(
+          tempDiv.innerHTML,
+          idiomaOrigen,
+          idiomaDestino,
+          translate
+        );
+        tempDiv.innerHTML = translatedHTML;
+
+        // Esperar a que se aplique la traducción
+        // eslint-disable-next-line no-await-in-loop
+        await new Promise((r) => setTimeout(r, 300));
+
+        // Generar PDF de esta página específica
+        const width = 816;
+        const height = tempDiv.scrollHeight || tempDiv.offsetHeight || 1056;
+
+        const opt = {
+          margin: 0,
+          image: { type: 'jpg', quality: 0.98 },
+          html2canvas: {
+            scale: 2,
+            useCORS: true,
+            allowTaint: true,
+            backgroundColor: '#ffffff'
+          },
+          jsPDF: {
+            unit: 'px',
+            format: [width, height],
+            orientation: 'portrait'
+          }
+        };
+
+        // eslint-disable-next-line no-await-in-loop
+        const pdfBlob = await html2pdf().set(opt).from(tempDiv).output('blob');
+        pdfBlobs.push(pdfBlob);
+
+        // Limpiar elemento temporal
+        document.body.removeChild(tempDiv);
+      }
+
+      // Combinar PDFs
+      const mergedPdf = await PDFDocument.create();
+      
+      // eslint-disable-next-line no-restricted-syntax
+      for (let idx = 0; idx < pdfBlobs.length; idx++) {
+        const blob = pdfBlobs[idx];
+        // eslint-disable-next-line no-await-in-loop
+        const bytes = await blob.arrayBuffer();
+        // eslint-disable-next-line no-await-in-loop
+        const src = await PDFDocument.load(bytes);
+        const indices = src.getPageIndices();
+        
+        // Solo copiar la primera página de cada blob
+        // eslint-disable-next-line no-await-in-loop
+        const [pageCopied] = await mergedPdf.copyPages(src, [indices[0] || 0]);
+        mergedPdf.addPage(pageCopied);
+      }
+
+      const mergedBytes = await mergedPdf.save();
+      const downloadBlob = new Blob([mergedBytes], { type: 'application/pdf' });
+      const url = URL.createObjectURL(downloadBlob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `confirmacion-${idiomaDestino}-${cotizacionData?.cliente?.nombre || 'documento'}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+
+      showNotification('PDF traducido descargado correctamente', 'success');
     } catch (error) {
-      console.error('Error al traducir:', error);
+      console.error('Error al traducir y generar PDF:', error);
       showNotification('Error al traducir y generar PDF', 'error');
+    } finally {
+      // Restaurar UI
+      hiddenElements.forEach(({ node, display }) => {
+        node.style.display = display;
+      });
+      
+      // Limpiar clases de exportación
+      const page2 = document.querySelector('.confirmacion-page');
+      if (page2) page2.className = page2.className.replace('confirmacion-export', '').trim();
+      
+      setCurrentPageIndex(originalIndex);
+      setRenderKey(prev => prev + 1);
       setLoadingTranslate(false);
     }
   };
@@ -526,7 +860,7 @@ const ConfirmacionReserva = ({ cotizacionId, cotizacionData }) => {
       </div>
 
       {/* Página actual */}
-      <div className="confirmacion-page">
+      <div key={renderKey} className="confirmacion-page">
         {/* Contenido */}
         <div className="confirmacion-page-content">
           {isFirstPage ? (
