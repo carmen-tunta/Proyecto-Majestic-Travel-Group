@@ -385,6 +385,18 @@ export default function CotizacionForm() {
 
   }, [clientQuery]);
 
+  // Si el estado cambia a algo diferente de "Finalizado" y estamos en la pestaña de confirmación, volver a la primera pestaña
+
+  useEffect(() => {
+
+    if (activeIndex === 2 && form.estado !== 'Finalizado') {
+
+      setActiveIndex(0);
+
+    }
+
+  }, [form.estado, activeIndex]);
+
 
 
   // AutoComplete completeMethod for search suggestions (PrimeReact)
@@ -1027,7 +1039,8 @@ export default function CotizacionForm() {
 
     { label: 'Nombre de pasajeros', disabled: !cotizacionId },
 
-    { label: 'Confirmación de reserva', disabled: !cotizacionId },
+    // Solo mostrar 'Confirmación de reserva' si el estado es 'Finalizado'
+    ...(form.estado === 'Finalizado' ? [{ label: 'Confirmación de reserva', disabled: !cotizacionId }] : []),
   ];
 
 
@@ -1687,7 +1700,7 @@ export default function CotizacionForm() {
       )}
 
 
-      {activeIndex === 2 && cotizacionId && (
+      {activeIndex === 2 && cotizacionId && form.estado === 'Finalizado' && (
         <ConfirmacionReserva
           cotizacionId={cotizacionId}
           cotizacionData={detalle}
