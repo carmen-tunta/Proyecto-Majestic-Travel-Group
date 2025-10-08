@@ -7,6 +7,7 @@ const TAB_SESSION_ID_KEY = 'tabSessionId'; // sessionStorage key for current tab
 function loadAllSessions() {
   try {
     const raw = localStorage.getItem(SESSIONS_KEY);
+    
     if (!raw) return {};
     return JSON.parse(raw) || {};
   } catch {
@@ -14,9 +15,11 @@ function loadAllSessions() {
   }
 }
 
-function saveAllSessions(map) {
+function saveAllSessions(map, id) {
   try {
     localStorage.setItem(SESSIONS_KEY, JSON.stringify(map));
+    localStorage.setItem('authToken', map[id].token);
+    localStorage.setItem('user', JSON.stringify(map[id].user));
   } catch {
     // ignore
   }
@@ -41,7 +44,7 @@ export function setActiveSession(token, user) {
   const id = getOrCreateTabSessionId();
   const all = loadAllSessions();
   all[id] = { token, user, updatedAt: new Date().toISOString() };
-  saveAllSessions(all);
+  saveAllSessions(all, id);
   // also maintain backwards compatibility for old logic (optional)
   sessionStorage.setItem('authToken', token);
   sessionStorage.setItem('user', JSON.stringify(user));
@@ -51,9 +54,11 @@ export function clearActiveSession() {
   const id = getOrCreateTabSessionId();
   const all = loadAllSessions();
   delete all[id];
-  saveAllSessions(all);
+  saveAllSessions(all, id);
   sessionStorage.removeItem('authToken');
   sessionStorage.removeItem('user');
+  localStorage.removeItem('authToken');
+  localStorage.removeItem('user');
 }
 
 export function listSessions() {

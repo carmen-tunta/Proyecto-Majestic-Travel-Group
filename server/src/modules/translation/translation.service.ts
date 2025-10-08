@@ -1,12 +1,18 @@
 import { Injectable } from '@nestjs/common';
-import { Translate } from '@google-cloud/translate/build/src/v2';
+
+// The package exports the REST/legacy v2 API under the `v2` namespace.
+// Importing from internal build paths breaks TypeScript resolution (TS2307),
+// so require the package at runtime and use the v2 namespace. We keep
+// a loose `any` type for the client to avoid depending on internal typings.
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const { v2: TranslateV2 } = require('@google-cloud/translate');
 
 @Injectable()
 export class TranslationService {
-  private translate: Translate;
+  private translate: any;
 
   constructor() {
-    this.translate = new Translate({
+    this.translate = new TranslateV2.Translate({
       projectId: process.env.GOOGLE_CLOUD_PROJECT_ID,
       keyFilename: process.env.GOOGLE_APPLICATION_CREDENTIALS,
     });
