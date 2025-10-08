@@ -344,7 +344,7 @@ const Permisos = () => {
   );
 
   return (
-    <div style={{ padding:'1rem 1.5rem' }}>
+    <div className="permisos-component" style={{ padding:'1rem 1.5rem' }}>
       <Toast ref={toast} />
       <TabView activeIndex={activeIndex} onTabChange={e => setActiveIndex(e.index)}>
         <TabPanel header="Usuarios">{UsersTab}</TabPanel>

@@ -7,7 +7,7 @@ import DeletePasajero from '../../../modules/Pasajeros/application/DeletePasajer
 import '../styles/PasajerosTab.css';
 import { Button } from 'primereact/button';
 import { ConfirmDialog } from 'primereact/confirmdialog';
-import { usePermissions } from '../../contexts/PermissionsContext';
+import { usePermissions } from '../../../contexts/PermissionsContext';
 
 export default function PasajerosTab({ cotizacionId, cotizacionNombre }) {
   const { showNotification } = useNotification();

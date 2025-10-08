@@ -40,42 +40,42 @@
   white-space: nowrap;
 }
 
-/* DataTable / Users table styling to mimic Pasajeros table in screenshot */
-.p-datatable {
+/* DataTable / Users table styling to mimic Pasajeros table in screenshot (scoped to Permisos) */
+.permisos-component .p-datatable {
   border-radius: 8px;
   overflow: hidden;
 }
-.p-datatable .p-datatable-thead > tr > th {
+.permisos-component .p-datatable .p-datatable-thead > tr > th {
   background: #fafafa;
   color: #555;
   font-weight: 600;
   border-bottom: 1px solid #eee;
 }
-.p-datatable .p-datatable-tbody > tr {
+.permisos-component .p-datatable .p-datatable-tbody > tr {
   background: #fff;
   border-bottom: 1px solid #f0f0f0;
 }
-.p-datatable .p-datatable-tbody > tr:hover {
+.permisos-component .p-datatable .p-datatable-tbody > tr:hover {
   background: #fbfbfb;
 }
-.p-datatable .p-paginator {
+.permisos-component .p-datatable .p-paginator {
   display: flex;
   justify-content: center;
   padding: 1rem 0;
 }
-.card {
+.permisos-component .card {
   border-radius: 8px;
   box-shadow: 0 0 0 1px rgba(0,0,0,0.02);
 }
 
-/* Small adjustments for cell text to match screenshot */
-.p-datatable td, .p-datatable th {
+/* Small adjustments for cell text to match screenshot (scoped) */
+.permisos-component .p-datatable td, .permisos-component .p-datatable th {
   padding: 14px 18px !important;
   font-size: 14px;
   color: #333;
 }
 
-/* Make paginator simple small style */
-.p-paginator .p-paginator-pages .p-paginator-page {
+/* Make paginator simple small style (scoped) */
+.permisos-component .p-paginator .p-paginator-pages .p-paginator-page {
   margin: 0 6px;
 }
