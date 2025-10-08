@@ -10,6 +10,8 @@ import { useNotification } from '../../Notification/NotificationContext';
 import { ProgressSpinner } from 'primereact/progressspinner';
 import PlantillaItinerarioModal from './PlantillaItinerarioModal';
 import '../styles/ConfirmacionReservaEditor.css';
+import html2pdf from 'html2pdf.js';
+import { PDFDocument } from 'pdf-lib';
 
 const ConfirmacionReserva = ({ cotizacionId, cotizacionData }) => {
   const { showNotification } = useNotification();
@@ -275,17 +277,129 @@ const ConfirmacionReserva = ({ cotizacionId, cotizacionData }) => {
 
   const handleDownloadPdf = async () => {
     setLoadingPdf(true);
+    const originalIndex = currentPageIndex;
+    const total = 1 + editablePages.length;
+    const hiddenElements = [];
+
+    const hideElement = (selector) => {
+      const nodes = document.querySelectorAll(selector);
+      nodes.forEach((n) => {
+        hiddenElements.push({ node: n, display: n.style.display });
+        n.style.display = 'none';
+      });
+    };
+
     try {
-      // Aquí implementaremos la lógica de descarga de PDF
-      showNotification('Generando PDF...', 'info');
-      // TODO: Implementar generación de PDF
-      setTimeout(() => {
-        showNotification('PDF descargado correctamente', 'success');
-        setLoadingPdf(false);
-      }, 2000);
+      // Ocultar controles e iconos antes de capturar
+      hideElement('.confirmacion-editor-header');
+      hideElement('.confirmacion-controls');
+      hideElement('.confirmacion-pages-indicator');
+      hideElement('.titulo-action-btn');
+
+      // Añadir modo export a la página para ver solo texto
+      const page = document.querySelector('.confirmacion-page');
+      const pagePrevClass = page?.className || '';
+      if (page) page.className = `${pagePrevClass} confirmacion-export`;
+
+      const pdfBlobs = [];
+
+      for (let i = 0; i < total; i++) {
+        setCurrentPageIndex(i);
+        // esperar render
+        // eslint-disable-next-line no-await-in-loop
+        await new Promise((r) => setTimeout(r, 400));
+
+        const element = document.querySelector('.confirmacion-page');
+        if (!element) continue;
+
+        // Reemplazar inputs/textarea por nodos de texto temporales para respetar saltos
+        const replacements = [];
+        element.querySelectorAll('.confirmacion-titulo-input').forEach((inp) => {
+          const div = document.createElement('div');
+          div.className = 'confirmacion-title-export';
+          div.textContent = inp.value || inp.getAttribute('value') || '';
+          inp.parentNode.insertBefore(div, inp);
+          replacements.push({ original: inp, replacement: div });
+          inp.style.display = 'none';
+        });
+        element.querySelectorAll('.confirmacion-contenido-input').forEach((ta) => {
+          const div = document.createElement('div');
+          div.className = 'confirmacion-text-export';
+          div.textContent = ta.value || ta.textContent || '';
+          ta.parentNode.insertBefore(div, ta);
+          replacements.push({ original: ta, replacement: div });
+          ta.style.display = 'none';
+        });
+
+        // Tamaño base carta (ancho fijo). Altura según contenido para evitar áreas vacías
+        const width = 816;
+        const height = element.scrollHeight || element.offsetHeight || 1056;
+
+        const opt = {
+          margin: 0,
+          image: { type: 'jpg', quality: 0.98 },
+          html2canvas: {
+            scale: 2,
+            useCORS: true,
+            allowTaint: true,
+            backgroundColor: '#ffffff'
+          },
+          jsPDF: {
+            unit: 'px',
+            format: [width, height],
+            orientation: 'portrait'
+          }
+        };
+
+        // eslint-disable-next-line no-await-in-loop
+        const pdfBlob = await html2pdf().set(opt).from(element).output('blob');
+        pdfBlobs.push(pdfBlob);
+
+        // Restaurar inputs/textarea
+        replacements.forEach(({ original, replacement }) => {
+          original.style.display = '';
+          replacement.remove();
+        });
+      }
+
+      // Combinar páginas (forzando 1 página por captura para evitar páginas en blanco)
+      const mergedPdf = await PDFDocument.create();
+      // eslint-disable-next-line no-restricted-syntax
+      for (const blob of pdfBlobs) {
+        // eslint-disable-next-line no-await-in-loop
+        const bytes = await blob.arrayBuffer();
+        // eslint-disable-next-line no-await-in-loop
+        const src = await PDFDocument.load(bytes);
+        const indices = src.getPageIndices();
+        // Solo copiar la primera página de cada blob para evitar páginas vacías adicionales
+        // eslint-disable-next-line no-await-in-loop
+        const [page] = await mergedPdf.copyPages(src, [indices[0] || 0]);
+        mergedPdf.addPage(page);
+      }
+
+      const mergedBytes = await mergedPdf.save();
+      const downloadBlob = new Blob([mergedBytes], { type: 'application/pdf' });
+      const url = URL.createObjectURL(downloadBlob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `confirmacion-reserva-${cotizacionData?.cliente?.nombre || 'documento'}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+
+      showNotification('PDF descargado correctamente', 'success');
     } catch (error) {
       console.error('Error al descargar PDF:', error);
       showNotification('Error al generar PDF', 'error');
+    } finally {
+      // Restaurar UI
+      hiddenElements.forEach(({ node, display }) => {
+        node.style.display = display;
+      });
+      const page2 = document.querySelector('.confirmacion-page');
+      if (page2) page2.className = page2.className.replace('confirmacion-export', '').trim();
+      setCurrentPageIndex(originalIndex);
       setLoadingPdf(false);
     }
   };

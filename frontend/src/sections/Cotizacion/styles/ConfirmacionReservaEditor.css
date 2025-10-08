@@ -50,9 +50,10 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
-  width: 100%;
-  max-width: 1200px;
+  width: 816px; /* 8.5in @ 96dpi */
+  min-height: 1056px; /* 11in @ 96dpi */
   margin: 0 auto;
+  box-sizing: border-box;
 }
 
 .confirmacion-header-principal {
@@ -109,6 +110,45 @@
   border: 1px dashed #ccc;
   border-radius: 4px;
   background-color: #fafafa;
+  max-width: 100%;
+}
+
+/* Vista solo texto para exportación */
+.confirmacion-export .confirmacion-block {
+  border: none;
+  background-color: transparent;
+}
+.confirmacion-export .confirmacion-titulo-input,
+.confirmacion-export .confirmacion-contenido-input,
+.confirmacion-export .p-inputtext,
+.confirmacion-export .p-inputtextarea {
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  outline: none !important;
+  padding-left: 0;
+  padding-right: 0;
+}
+.confirmacion-export .titulo-action-btn,
+.confirmacion-export .confirmacion-block-delete {
+  display: none !important;
+}
+
+/* Bloques estáticos para exportación (reemplazan inputs/textarea) */
+.confirmacion-text-export {
+  width: 100%;
+  color: #333;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.confirmacion-title-export {
+  width: 100%;
+  color: #111;
+  font-weight: 600;
+  font-size: 1.125rem;
+  white-space: pre-wrap;
 }
 
 .confirmacion-block:hover {
@@ -135,14 +175,16 @@
 
 .confirmacion-block-double {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: 1rem;
+  align-items: start;
 }
 
 .confirmacion-block-column {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  min-width: 0; /* evita desbordes dentro de grid */
 }
 
 .confirmacion-titulo-container {
@@ -155,6 +197,8 @@
   font-weight: 600;
   font-size: 1.125rem;
   flex: 1;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .titulo-action-btn {
@@ -176,6 +220,9 @@
   resize: none;
   height: auto;
   overflow: hidden; /* evita scrollbar interno; combinado con autoResize */
+  white-space: pre-wrap; /* respeta saltos de línea */
+  word-break: break-word; /* evita desbordes muy largos */
+  box-sizing: border-box;
 }
 
 .confirmacion-page-footer {
@@ -369,6 +416,8 @@
     border: none;
     box-shadow: none;
     padding: 0;
+    width: 816px !important;
+    min-height: 1056px !important;
   }
 
   .confirmacion-block {
@@ -381,5 +430,11 @@
     background-color: white;
     border: 1px solid #000;
   }
+}
+
+/* Garantizar tamaño carta en impresión */
+@page {
+  size: letter;
+  margin: 0;
 }
 
