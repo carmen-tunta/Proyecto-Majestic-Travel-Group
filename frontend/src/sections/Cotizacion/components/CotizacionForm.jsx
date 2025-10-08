@@ -27,6 +27,7 @@ import DeleteCotizacionService from '../../../modules/Cotizacion/application/Del
 import DeleteCotizacionServiceComponent from '../../../modules/Cotizacion/application/DeleteCotizacionServiceComponent';
 import { useNotification } from '../../Notification/NotificationContext';
 import PasajerosTab from './PasajerosTab';
+import ConfirmacionReserva from './ConfirmacionReserva';
 import '../styles/Cotizacion.css';
 import '../styles/CotizacionForm.css';
 import '../../Proveedores/styles/DetallesProveedores.css';
@@ -512,6 +513,7 @@ export default function CotizacionForm() {
   const items = [
     { label: 'Cotización' },
     { label: 'Nombre de pasajeros', disabled: !cotizacionId },
+    { label: 'Confirmación de reserva', disabled: !cotizacionId },
   ];
 
   const iconComponents = {
@@ -839,6 +841,13 @@ export default function CotizacionForm() {
         <PasajerosTab
           cotizacionId={cotizacionId}
           cotizacionNombre={form.nombreCotizacion || `Cotización ${numeroFile}`}
+        />
+      )}
+
+      {activeIndex === 2 && cotizacionId && (
+        <ConfirmacionReserva
+          cotizacionId={cotizacionId}
+          cotizacionData={detalle}
         />
       )}
       <AssignProveedorModal

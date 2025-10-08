@@ -9,11 +9,15 @@ import { CotizacionServicioComponente } from './entities/cotizacion-servicio-com
 import { Service } from '../services/entities/service.entity';
 import { Component } from '../components/entities/component.entity';
 import { Proveedores } from '../proveedores/entities/proveedores.entity';
+import { ConfirmacionReserva } from './entities/confirmacion-reserva.entity';
+import { ConfirmacionReservaService } from './confirmacion-reserva/confirmacion-reserva.service';
+import { ConfirmacionReservaController } from './confirmacion-reserva/confirmacion-reserva.controller';
+import { User } from '../users/entities/user.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Cotizacion, Client, CotizacionServicio, CotizacionServicioComponente, Service, Component, Proveedores])],
-  providers: [CotizacionService],
-  controllers: [CotizacionController],
+  imports: [TypeOrmModule.forFeature([Cotizacion, Client, CotizacionServicio, CotizacionServicioComponente, Service, Component, Proveedores, ConfirmacionReserva, User])],
+  providers: [CotizacionService, ConfirmacionReservaService],
+  controllers: [CotizacionController, ConfirmacionReservaController],
   exports: [CotizacionService],
 })
 export class CotizacionModule {}

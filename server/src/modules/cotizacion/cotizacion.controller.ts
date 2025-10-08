@@ -2,6 +2,8 @@ import { Controller, Post, Body, Get, Param, Logger, Put, Delete } from '@nestjs
 import { CotizacionService } from './cotizacion.service';
 import { CreateCotizacionDto } from './dto/create-cotizacion.dto';
 import { Body as ReqBody } from '@nestjs/common';
+import { CurrentUser } from '../auth/decorators/current-user.decorator';
+import { RequirePermissions } from '../auth/decorators/require-permissions.decorator';
 
 @Controller('cotizacion')
 export class CotizacionController {
@@ -10,9 +12,11 @@ export class CotizacionController {
   constructor(private readonly cotizacionService: CotizacionService) {}
 
   @Post()
-  async create(@Body() createCotizacionDto: CreateCotizacionDto) {
+  @RequirePermissions('COTIZACION:CREATE')
+  async create(@Body() createCotizacionDto: CreateCotizacionDto, @CurrentUser() user: any) {
     this.logger.log('Creando cotización', createCotizacionDto);
-    return this.cotizacionService.create(createCotizacionDto);
+    const userId = user?.sub || user?.id;
+    return this.cotizacionService.create(createCotizacionDto, userId);
   }
 
 
