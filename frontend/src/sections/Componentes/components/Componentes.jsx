@@ -4,6 +4,7 @@ import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Paginator } from 'primereact/paginator';
 import ComponentModal from './ComponentModal';
+import { usePermissions } from '../../../contexts/PermissionsContext';
 import "../styles/Componentes.css";
 
 import SearchBar from '../../../components/SearchBar';
@@ -28,6 +29,7 @@ const Componentes = () => {
   const [editingComponent, setEditingComponent] = useState(null);
   const [currentPage, setCurrentPage] = useState(0);
   const { setIsModalOpen } = useModal();
+  const { has } = usePermissions();
 
   // Instancias de los casos de uso
   const createComponent = new CreateComponentsTemplate();
@@ -138,6 +140,7 @@ const Componentes = () => {
           size='small' 
           outlined
           onClick={handleNewComponent}
+          disabled={!has('COMPONENTES','CREATE')}
         />
       </div>
 
@@ -212,12 +215,14 @@ const Componentes = () => {
             style={{ width: '6%', textAlign: 'center' }}
             body={(rowData) => (
               <div style={{ display: 'flex', justifyContent: 'center', padding: '8px' }}>
-                <i 
-                  className="pi pi-pencil" 
-                  title="Editar" 
-                  style={{cursor: 'pointer'}}
-                  onClick={() => handleEditComponent(rowData)}
-                />
+                {has('COMPONENTES','EDIT') && (
+                  <i 
+                    className="pi pi-pencil" 
+                    title="Editar" 
+                    style={{cursor: 'pointer'}}
+                    onClick={() => handleEditComponent(rowData)}
+                  />
+                )}
               </div>
             )}
           />

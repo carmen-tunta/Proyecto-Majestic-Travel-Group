@@ -7,6 +7,7 @@ import { Paginator } from 'primereact/paginator';
 import SearchBar from '../../../components/SearchBar';
 import useSearch from '../../../hooks/useSearch';
 import { apiService } from '../../../services/apiService';
+import { usePermissions } from '../../../contexts/PermissionsContext';
 import ClientRepository from '../../../modules/Clients/repository/ClientRepository';
 import GetAllClients from '../../../modules/Clients/application/GetAllClients';
 import "../styles/Clientes.css";
@@ -79,6 +80,7 @@ const Clientes = () => {
     // Por ahora no hay paginación en el backend, solo actualizamos el estado local
   };
 
+  const { has } = usePermissions();
   // Función para abrir página de nuevo cliente
   const handleNewClient = () => {
     navigate('/clientes/nuevo');
@@ -101,6 +103,7 @@ const Clientes = () => {
           size='small' 
           outlined
           onClick={handleNewClient}
+          disabled={!has('CLIENTES','CREATE')}
         />
       </div>
 
@@ -242,12 +245,14 @@ const Clientes = () => {
             style={{ width: '5%', textAlign: 'center' }}
             body={(rowData) => (
               <div style={{ display: 'flex', justifyContent: 'center', padding: '8px' }}>
-                <i 
-                  className="pi pi-arrow-right" 
-                  title="Ver detalles" 
-                  style={{cursor: 'pointer'}}
-                  onClick={() => handleEditClient(rowData)}
-                />
+                {has('CLIENTES','VIEW') && (
+                  <i 
+                    className="pi pi-arrow-right" 
+                    title="Ver detalles" 
+                    style={{cursor: 'pointer'}}
+                    onClick={() => handleEditClient(rowData)}
+                  />
+                )}
               </div>
             )}
           />

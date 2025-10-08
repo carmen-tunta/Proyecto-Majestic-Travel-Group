@@ -10,6 +10,7 @@ import { useEffect, useState } from 'react';
 import ProveedoresRepository from '../../../modules/Proveedores/repository/ProveedoresRepository';
 import "../styles/Proveedores.css"
 import { useNavigate } from 'react-router-dom';
+import { usePermissions } from '../../../contexts/PermissionsContext';
 import TarifarioRepository from '../../../modules/Tarifario/repository/TarifarioRepository';
 import getTarifarioByIdProveedor from '../../../modules/Tarifario/application/GetTarifarioByIdProveedor';
 
@@ -26,6 +27,7 @@ const Proveedores = () => {
     const [rows, setRows] = useState(10);
     const [totalRecords, setTotalRecords] = useState(0);
     const navigate = useNavigate();
+    const { has } = usePermissions();
 
     const handleEdit = (proveedor) => {
         navigate('/proveedores/detalles', { state: { proveedor } });
@@ -93,7 +95,9 @@ const Proveedores = () => {
                     label="Nuevo" 
                     size='small' 
                     outlined
-                    onClick={() => handleNew()}/>
+                    onClick={() => has('PROVEEDORES','CREATE') && handleNew()}
+                    disabled={!has('PROVEEDORES','CREATE')}
+                />
             </div>
 
             <div className='proveedores-search'>
@@ -163,18 +167,22 @@ const Proveedores = () => {
                         style={{ width: '10%' }}
                         body={rowData => (
                             <span style={{ display: 'flex', justifyContent: 'center' }}>
+                                {has('PROVEEDORES','VIEW') && (
                                 <i 
                                     className="pi pi-file"    
-                                    title="Editar" 
+                                    title="Tarifario" 
                                     style={{marginRight: '10px', cursor:"pointer"}}
                                     onClick={() => handleTarifario(rowData)}
                                 ></i>
+                                )}
+                                {has('PROVEEDORES','EDIT') && (
                                 <i 
                                     className="pi pi-arrow-right"    
                                     title="Editar" 
                                     style={{cursor:"pointer"}}
                                     onClick={() => handleEdit(rowData)}    
                                 ></i>
+                                )}
                             </span>
                         )}
                     />

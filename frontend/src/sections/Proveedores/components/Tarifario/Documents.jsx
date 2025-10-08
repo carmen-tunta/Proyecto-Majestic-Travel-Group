@@ -12,6 +12,7 @@ import DeleteDocument from "../../../../modules/Tarifario/application/DeleteDocu
 import "../../styles/Tarifario/Documents.css"
 import UploadDocument from "../../../../modules/Tarifario/application/UploadDocument";
 import UpdateDocument from "../../../../modules/Tarifario/application/UpdateDocument";
+import { usePermissions } from '../../../../contexts/PermissionsContext';
 
 
 const Documents = ({ tarifario }) => {
@@ -51,6 +52,8 @@ const Documents = ({ tarifario }) => {
     useEffect(() => {
         fetchDocuments();
     }, []);
+
+    const { has } = usePermissions();
 
     const handleUpload = async () => {
         if (!file) {
@@ -174,8 +177,8 @@ const Documents = ({ tarifario }) => {
                     label={!isEditing ? "Agregar" : "Actualizar"} 
                     icon="pi pi-plus"
                     outlined 
-                    onClick={!isEditing ? () => handleUpload() : () => handleUpdate()}
-                    disabled={loading}
+                    onClick={!isEditing ? () => has('PROVEEDORES','CREATE') && handleUpload() : () => has('PROVEEDORES','EDIT') && handleUpdate()}
+                    disabled={loading || (!isEditing ? !has('PROVEEDORES','CREATE') : !has('PROVEEDORES','EDIT'))}
                 />
             </div>
             <div className="documents-table">
@@ -202,6 +205,7 @@ const Documents = ({ tarifario }) => {
                         style={{ width: '10%' }} 
                         body={rowData => (
                             <span style={{ display: 'flex', justifyContent: 'center' }}>
+                                {has('PROVEEDORES','VIEW') && (
                                 <i 
                                     className="pi pi-eye"    
                                     title="Vista previa" 
@@ -210,18 +214,23 @@ const Documents = ({ tarifario }) => {
                                         window.open(`${baseUrl}/${rowData.documentPath}`, '_blank');
                                     }}
                                 ></i>
+                                )}
+                                {has('PROVEEDORES','EDIT') && (
                                 <i 
                                     className="pi pi-pencil"    
                                     title="Editar" 
                                     style={{ marginRight: '10px', cursor:"pointer"}}
                                     onClick={loading ? undefined : () => handleEdit(rowData)}
                                 ></i>
+                                )}
+                                {has('PROVEEDORES','DELETE') && (
                                 <i 
                                     className="pi pi-trash"    
                                     title="Eliminar" 
                                     style={{ cursor:"pointer" }}
                                     onClick={loading ? undefined : () => { setSelectedDocument(rowData); setVisibleDialog(true); }}    
                                 ></i>
+                                )}
                             </span>
                         )}
                     />

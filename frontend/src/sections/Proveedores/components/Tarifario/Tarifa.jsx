@@ -9,6 +9,7 @@ import { Column } from "primereact/column";
 import { ConfirmDialog } from "primereact/confirmdialog";
 import { useNotification } from "../../../Notification/NotificationContext";
 import { ProgressSpinner } from "primereact/progressspinner";
+import { usePermissions } from '../../../../contexts/PermissionsContext';
 import TarifarioRepository from "../../../../modules/Tarifario/repository/TarifarioRepository";
 import GetTarifarioByIdProveedor from "../../../../modules/Tarifario/application/GetTarifarioByIdProveedor";
 import CreateTarifario from "../../../../modules/Tarifario/application/CreateTarifario";
@@ -73,6 +74,7 @@ const TarifaMenu = ({ proveedor, tarifa, setTarifa }) => {
 
     const tarifaPricesRepo = new TarifaPriceRepository();
     const getTarifaPriceByIdTarifa = new GetTarifaPriceByTarifaId(tarifaPricesRepo);
+    const { has } = usePermissions();
 
 
     const parseLocalDate = (dateString) => {
@@ -273,6 +275,7 @@ const TarifaMenu = ({ proveedor, tarifa, setTarifa }) => {
                         gap: "1rem",
                         marginLeft: 8
                     }}>
+                        {has('PROVEEDORES','EDIT') && (
                         <i
                             className="pi pi-pencil"
                             style={{
@@ -288,6 +291,8 @@ const TarifaMenu = ({ proveedor, tarifa, setTarifa }) => {
                                 setModalColumnY(e.pageY);
                             }}
                         />
+                        )}
+                        {has('PROVEEDORES','DELETE') && (
                         <i
                             className="pi pi-trash"
                             style={{
@@ -299,6 +304,7 @@ const TarifaMenu = ({ proveedor, tarifa, setTarifa }) => {
                             title="Eliminar columna"
                             onClick={() => {handleDeleteIconColumnClick(col)}}
                         />
+                        )}
                     </div>
                 </div>
             ),
@@ -501,12 +507,14 @@ const TarifaMenu = ({ proveedor, tarifa, setTarifa }) => {
 
     const componentBodyTemplate = (rowData) => (
         <div style={{ display: 'flex', alignItems: 'center' }}>
+            {has('PROVEEDORES','DELETE') && (
             <i
                 className="pi pi-trash"
                 style={{ cursor: 'pointer', marginRight: 8 }}
                 title="Eliminar componente"
                 onClick={() => handleDeleteIconComponentClick(rowData)}
             />
+            )}
             <span>{rowData.componentName}</span>
         </div>
     );
@@ -570,7 +578,7 @@ const TarifaMenu = ({ proveedor, tarifa, setTarifa }) => {
                         className="tarifa-save-button"
                         label= {tarifa ? "Guardar cambios" : "Guardar para continuar"}
                         text
-                        disabled={loading}
+                        disabled={loading || (tarifa && !has('PROVEEDORES','EDIT')) || (!tarifa && !has('PROVEEDORES','CREATE'))}
                         onClick={handleSaveTarifario}
                     />
                 </div>
@@ -655,6 +663,7 @@ const TarifaMenu = ({ proveedor, tarifa, setTarifa }) => {
                         </DataTable>
                         </div>
                         )}
+                        {has('PROVEEDORES','CREATE') && (
                         <i className="pi pi-plus-circle tarifa-add-column-button" 
                             onClick={modalColumn ? undefined : (e) => {
                                 setModalColumn(true);
@@ -663,6 +672,7 @@ const TarifaMenu = ({ proveedor, tarifa, setTarifa }) => {
                             }} 
                             style={{ visibility: loading ? 'hidden' : 'visible' }}
                         ></i>
+                        )}
                         
                     </div>
 

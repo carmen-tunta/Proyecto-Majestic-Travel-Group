@@ -10,6 +10,7 @@ import ItineraryTemplateRepository from '../../../modules/ItineraryTemplate/repo
 import GetAllItineraryTemplate from '../../../modules/ItineraryTemplate/application/GetAllItineraryTemplate';
 import { useEffect, useState } from 'react';
 import ItineraryModal from './ItineraryModal';
+import { usePermissions } from '../../../contexts/PermissionsContext';
 import { useModal } from '../../../contexts/ModalContext';
 
 const Itinerario = () => {
@@ -36,6 +37,8 @@ const Itinerario = () => {
         setShowModal(true);
         setIsModalOpen(true);
     }
+
+    const { has } = usePermissions();
 
     const onPageChange = (event) => {
         const page = Math.floor(event.first / event.rows);
@@ -84,7 +87,9 @@ const Itinerario = () => {
                     label="Nuevo" 
                     size='small' 
                     outlined
-                    onClick={() => handleNew()}/>
+                    onClick={() => has('ITINERARIO','CREATE') && handleNew()}
+                    disabled={!has('ITINERARIO','CREATE')}
+                />
             </div>
 
             <div className='itinerario-search'>
@@ -120,12 +125,14 @@ const Itinerario = () => {
                         style={{ width: '6%' }}
                         body={rowData => (
                             <span style={{ display: 'flex', justifyContent: 'center' }}>
+                                {has('ITINERARIO','EDIT') && (
                                 <i 
                                     className="pi pi-pencil"    
                                     title="Editar" 
                                     style={{cursor:"pointer"}}
                                     onClick={() => handleEdit(rowData)}    
                                 ></i>
+                                )}
                             </span>
                         )}
                     />

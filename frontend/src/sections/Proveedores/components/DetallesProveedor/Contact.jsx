@@ -10,6 +10,7 @@ import GetContactByIdProveedor from "../../../../modules/ProveedorContact/applic
 import DeleteProveedorContact from "../../../../modules/ProveedorContact/application/DeleteProveedorContact";
 import ContactModal from "./ContactModal";
 import "../../styles/DetallesProveedores.css"
+import { usePermissions } from '../../../../contexts/PermissionsContext';
 
 const Contact = ( {proveedor} ) => {
     const [visible, setVisible] = useState(false);
@@ -19,6 +20,7 @@ const Contact = ( {proveedor} ) => {
     const deleteContact = new DeleteProveedorContact(contactRepository);
     const [contacts, setContacts] = useState([]);
     const { showNotification } = useNotification();
+    const { has } = usePermissions();
 
     const [loadContactsing, setLoadContacts] = useState(false);
     const [showModal, setShowModal] = useState(false);
@@ -96,7 +98,8 @@ const Contact = ( {proveedor} ) => {
                     label="Nuevo" 
                     size='small' 
                     outlined
-                    onClick={() => handleNewContact()}
+                    onClick={() => has('PROVEEDORES','CREATE') && handleNewContact()}
+                    disabled={!has('PROVEEDORES','CREATE')}
                 />
             </div>
             <DataTable
@@ -112,18 +115,22 @@ const Contact = ( {proveedor} ) => {
                 <Column field="actions"  
                     body={rowData => (
                         <span style={{ display: 'flex', justifyContent: 'center' }}>
+                            {has('PROVEEDORES','EDIT') && (
                             <i
                                 className="pi pi-pencil"
                                 title="Editar"
                                 style={{ cursor: "pointer", marginRight: '10px' }}
                                 onClick={() => handleEditContact(rowData)}
                             ></i>
+                            )}
+                            {has('PROVEEDORES','DELETE') && (
                             <i
                                 className="pi pi-trash"
                                 title="Borrar"
                                 style={{ cursor: "pointer" }}
                                 onClick={() => handleDeleteIconClick(rowData)}
                             ></i>
+                            )}
                         </span>
                     )} />
             </DataTable>

@@ -15,6 +15,7 @@ import { InputNumber } from 'primereact/inputnumber';
 import CotizacionRepository from '../../../modules/Cotizacion/repository/CotizacionRepository';
 import UpdateCotizacion from '../../../modules/Cotizacion/application/UpdateCotizacion';
 import { addLocale } from 'primereact/api';
+import { usePermissions } from '../../../contexts/PermissionsContext';
 
 const RegistroPagosModal = ({ onHide, cotizacion }) => {
     const rpRepo = new RegistroPagoRepository();
@@ -30,6 +31,7 @@ const RegistroPagosModal = ({ onHide, cotizacion }) => {
 
     const {showNotification} = useNotification();
     const [loading, setLoading] = useState(false);
+    const { has } = usePermissions();
 
     const [fecha, setFecha] = useState('');
     const [monto, setMonto] = useState('');
@@ -171,7 +173,7 @@ const RegistroPagosModal = ({ onHide, cotizacion }) => {
                     icon="pi pi-plus"
                     className="p-button-sm" 
                     onClick={loading ? () => undefined : () => handleSaveRegistroPago()}
-                    disabled={loading}
+                    disabled={loading || !has('REGISTRO_PAGOS','CREATE')}
                     loading={loading}
                 />
             </div>
@@ -222,12 +224,14 @@ const RegistroPagosModal = ({ onHide, cotizacion }) => {
                     style={{ width: '7%' }}
                     body={rowData => (
                         <span style={{ display: 'flex', justifyContent: 'center' }}>
+                            {has('REGISTRO_PAGOS','DELETE') && (
                             <i 
                                 className="pi pi-trash"    
                                 title="Eliminar" 
                                 style={{cursor:"pointer"}}
                                 onClick={() => handleDeleteRp(rowData.id)}    
                             ></i>
+                            )}
                         </span>
                     )}
                 />
