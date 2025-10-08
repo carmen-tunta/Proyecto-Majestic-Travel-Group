@@ -13,7 +13,7 @@ import { useModal } from '../../../../contexts/ModalContext';
 import AgregarPlantillaItinerario from './AgregarPlantillaItinerario';
 
 
-const TituloDoble = ({ service }) => {
+const TituloDoble = ({ service, onPageToggle }) => {
     const baseUrl = process.env.REACT_APP_API_URL;
     const fileUploadIzquierdaRef = useRef(null);
     const fileUploadDerechaRef = useRef(null);
@@ -32,6 +32,7 @@ const TituloDoble = ({ service }) => {
     const [lado, setLado] = useState('');
     const [showModal, setShowModal] = useState(false);
     const { setIsModalOpen } = useModal();
+    const [isPageDeleted, setIsPageDeleted] = useState(false);
 
     const portadaRepo = new ServicePortadaRepository();
     const getPortada = new GetPortadaByServiceId(portadaRepo);
@@ -39,7 +40,19 @@ const TituloDoble = ({ service }) => {
     const uploadRightImage = new uploadRightDoble(portadaRepo);
     const uploadLeftImage = new uploadLeftDoble(portadaRepo); 
 
-
+    const handleToggleDelete = async (e) => {
+        e.stopPropagation();
+        const newDeleteState = !isPageDeleted;
+        try {
+            const u = await updatePortada.execute(service.id, { dobleDeleted: newDeleteState ? 1 : 0 }, null);
+            setIsPageDeleted(newDeleteState);
+            if (onPageToggle) {
+                onPageToggle('titulo-doble', newDeleteState);
+            }
+        } catch (error) {
+            console.error('Error al actualizar el estado de eliminación de la portada:', error);
+        } 
+    };
     const fetchData = async () => {
         try {
             setLoading(true);
@@ -51,6 +64,7 @@ const TituloDoble = ({ service }) => {
                 setTituloIzquierda(result.tituloDobleIzquierda || 'Título');
                 setImagenIzquierda(result.imagenDobleIzquierda || null);
                 setContenidoIzquierda(result.contenidoDobleIzquierda || 'Contenido');
+                setIsPageDeleted(result.dobleDeleted || false);
             }
         } catch (error) {
             console.error('Error al obtener la portada:', error);
@@ -249,7 +263,12 @@ const TituloDoble = ({ service }) => {
             {loading ? (
                 <ProgressSpinner className='spinner-portada-container'/>)
                 : (
-            <div className="titulo-doble" onClick={handleClose}>
+            <div className={`titulo-doble ${isPageDeleted ? 'page-deleted' : ''}`} onClick={handleClose}>
+                <i 
+                    className={`pi ${isPageDeleted ? 'pi-undo' : 'pi-trash'} icono-eliminar ${isPageDeleted ? 'deleted' : ''}`} 
+                    onClick={handleToggleDelete}
+                    title={isPageDeleted ? 'Restaurar sección' : 'Eliminar sección'}
+                ></i>
                 <div className="izquierda">
                     <div className="titulo-container">
                         <div 

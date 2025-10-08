@@ -165,10 +165,6 @@
   margin: 0 2px;
 }
 
-.p-paginator .p-paginator-pages .p-paginator-page.p-highlight {
-  background: #007bff;
-  border-color: #007bff;
-}
 
 /* Loading and Error States */
 .loading-container {

@@ -33,7 +33,7 @@
     
 }
 
-.titulo-portada {
+.portada-container .titulo {
     font-size: 3rem;
     font-weight: bold;
     text-align: center;
@@ -126,6 +126,6 @@
     z-index: 10;
 }
 
-.titulo-portada p {
+.portada-container .titulo p {
     margin: 0;
 }

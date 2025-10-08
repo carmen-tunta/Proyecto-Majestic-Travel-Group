@@ -71,6 +71,21 @@ export class Portada {
   contenidoContacto: string;
 
 
+  @Column({ type: 'boolean', default: false, comment: 'Indica si la portada está eliminada lógicamente' })
+  portadaDeleted: boolean;
+
+  @Column({ type: 'boolean', default: false, comment: 'Indica si la portada está eliminada lógicamente' })
+  izquierdaDeleted: boolean;
+  
+  @Column({ type: 'boolean', default: false, comment: 'Indica si la portada está eliminada lógicamente' })
+  derechaDeleted: boolean;
+
+  @Column({ type: 'boolean', default: false, comment: 'Indica si la portada está eliminada lógicamente' })
+  dobleDeleted: boolean;
+
+  @Column({ type: 'boolean', default: false, comment: 'Indica si la portada está eliminada lógicamente' })
+  contactoDeleted: boolean;
+
   @OneToOne(() => Service, service => service.portada)
   @JoinColumn()
   service: Service;

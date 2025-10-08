@@ -13,7 +13,7 @@ import AgregarPlantillaItinerario from './AgregarPlantillaItinerario';
 import { useModal } from '../../../../contexts/ModalContext';
 
 
-const TituloDerecha = ({ service }) => {
+const TituloDerecha = ({ service, onPageToggle }) => {
     const baseUrl = process.env.REACT_APP_API_URL;
     const fileUploadRef = useRef(null);
     const fileUploadPequeniaRef = useRef(null);
@@ -46,6 +46,7 @@ const TituloDerecha = ({ service }) => {
                 setImagenDerecha(result.imagenDerecha || null);
                 setContenido(result.contenidoDerecha || 'Contenido');
                 setImagenPequenia(result.imagenPequeniaDerecha || null);
+                setIsPageDeleted(result.derechaDeleted || false);
             }
         } catch (error) {
             console.error('Error al obtener la portada:', error);
@@ -200,13 +201,33 @@ const TituloDerecha = ({ service }) => {
         }
     };
 
+    const [isPageDeleted, setIsPageDeleted] = useState(false);
+
+    const handleToggleDelete = async (e) => {
+        e.stopPropagation();
+        const newDeleteState = !isPageDeleted;
+        try {
+            const u = await updatePortada.execute(service.id, { derechaDeleted: newDeleteState ? 1 : 0 }, null);
+            setIsPageDeleted(newDeleteState);
+            if (onPageToggle) {
+                onPageToggle('titulo-derecha', newDeleteState);
+            }
+        } catch (error) {
+            console.error('Error al actualizar el estado de eliminación de la portada:', error);
+        } 
+    };
 
     return (
         <>
             {loading ? (
                 <ProgressSpinner className='spinner-portada-container'/>)
                 : (
-            <div className="titulo-derecha" onClick={handleClose}>
+            <div className={`titulo-derecha ${isPageDeleted ? 'page-deleted' : ''}`} onClick={handleClose}>
+                <i 
+                    className={`pi ${isPageDeleted ? 'pi-undo' : 'pi-trash'} icono-eliminar ${isPageDeleted ? 'deleted' : ''}`} 
+                    onClick={handleToggleDelete}
+                    title={isPageDeleted ? 'Restaurar sección' : 'Eliminar sección'}
+                ></i>
                 <div className="imagen">
                     <i 
                         className="pi pi-image icono-imagen"
