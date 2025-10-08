@@ -265,7 +265,7 @@ const TarifaMenu = ({ proveedor, tarifa, setTarifa }) => {
                         justifyContent: 'center',
                         flex: 1
                     }}>
-                        <div style={{ fontWeight: 500 }}>Pax</div>
+                        <div style={{ fontWeight: 500 }}>{col.description}</div>
                         <div style={{ fontSize: '0.95em', color: '#555' }}>{col.paxMin}-{col.paxMax}</div>
                     </div>
                     <div style={{
