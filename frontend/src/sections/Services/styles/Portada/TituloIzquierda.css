@@ -67,6 +67,15 @@
     overflow: hidden;
 }
 
+.titulo-izquierda .icono-eliminar {
+    position: relative;
+    color: var(--surface-400);
+    cursor: pointer;
+    position: absolute;
+    top: 15px;
+    left: 25px;
+}
+
 .titulo-izquierda .imagen::before {
     content: '';
     position: absolute;

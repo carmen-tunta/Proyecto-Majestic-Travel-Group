@@ -16,7 +16,7 @@ import AgregarPlantillaItinerario from './AgregarPlantillaItinerario';
 
 
 
-const TituloIzquierda = ({ service }) => {
+const TituloIzquierda = ({ service, onPageToggle }) => {
     const baseUrl = process.env.REACT_APP_API_URL;
     const fileUploadRef = useRef(null);
     const fileUploadPequeniaRef = useRef(null);
@@ -49,6 +49,7 @@ const TituloIzquierda = ({ service }) => {
                 setImagenIzquierda(result.imagenIzquierda || null);
                 setContenido(result.contenidoIzquierda || 'Contenido');
                 setImagenPequenia(result.imagenPequeniaIzquierda || null);
+                setIsPageDeleted(result.izquierdaDeleted || false); 
             }
         } catch (error) {
             console.error('Error al obtener la portada:', error);
@@ -204,12 +205,33 @@ const TituloIzquierda = ({ service }) => {
     };
 
 
+    const [isPageDeleted, setIsPageDeleted] = useState(false);
+
+    const handleToggleDelete = async (e) => {
+        e.stopPropagation();
+        const newDeleteState = !isPageDeleted;
+        try {
+            const u = await updatePortada.execute(service.id, { izquierdaDeleted: newDeleteState ? 1 : 0 }, null);
+            setIsPageDeleted(newDeleteState);
+            if (onPageToggle) {
+                onPageToggle('titulo-izquierda', newDeleteState);
+            }
+        } catch (error) {
+            console.error('Error al actualizar el estado de eliminación de la portada:', error);
+        } 
+    };
+
     return (
         <>
             {loading ? (
                 <ProgressSpinner className='spinner-portada-container'/>)
                 : (
-            <div className="titulo-izquierda" onClick={handleClose}>
+            <div className={`titulo-izquierda ${isPageDeleted ? 'page-deleted' : ''}`} onClick={handleClose}>
+                <i 
+                    className={`pi ${isPageDeleted ? 'pi-undo' : 'pi-trash'} icono-eliminar ${isPageDeleted ? 'deleted' : ''}`} 
+                    onClick={handleToggleDelete}
+                    title={isPageDeleted ? 'Restaurar sección' : 'Eliminar sección'}
+                ></i>
                 <div className="izquierda">
                     <div className="titulo-container">
                         <div 

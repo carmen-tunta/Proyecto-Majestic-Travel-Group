@@ -27,6 +27,11 @@ interface CreatePortadaDto {
     contenidoDobleIzquierda?: string;
     tituloContacto?: string;
     contenidoContacto?: string;
+    portadaDeleted?: boolean;
+    izquierdaDeleted?: boolean;
+    derechaDeleted?: boolean;
+    dobleDeleted?: boolean;
+    contactoDeleted?: boolean;
 }
 
 @Controller('service-portada')
@@ -96,6 +101,12 @@ export class PortadaController {
 
             tituloContacto: data.tituloContacto,
             contenidoContacto: data.contenidoContacto,
+
+            portadaDeleted: data.portadaDeleted,
+            izquierdaDeleted: data.izquierdaDeleted,
+            derechaDeleted: data.derechaDeleted,
+            dobleDeleted: data.dobleDeleted,
+            contactoDeleted: data.contactoDeleted,
             ...(imagenCentro && { imagenCentro })
         };
 

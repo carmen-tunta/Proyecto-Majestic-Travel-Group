@@ -9,7 +9,7 @@ import GetPortadaByServiceId from '../../../../modules/Service/application/GetPo
 import CreateOrUpdatePortada from '../../../../modules/Service/application/CreateOrUpdatePortada';
 import { FileUpload } from 'primereact/fileupload';
 
-const TituloPortada = ({ service }) => {
+const TituloPortada = ({ service, onPageToggle }) => {
     const baseUrl = process.env.REACT_APP_API_URL;
     const fileUploadRef = useRef(null);
 
@@ -30,6 +30,7 @@ const TituloPortada = ({ service }) => {
             if (result) {
                 setTitulo(result.titulo || 'Título');
                 setImagen(result.imagenCentro || null);
+                setIsPageDeleted(result.portadaDeleted || false); // Asegura que sea booleano
             }
         } catch (error) {
             console.error('Error al obtener la portada:', error);
@@ -103,14 +104,37 @@ const TituloPortada = ({ service }) => {
             setShowEditor(false);
         }
     };
-    
+
+    const [isPageDeleted, setIsPageDeleted] = useState(false);
+
+    const handleToggleDelete = async (e) => {
+        e.stopPropagation();
+        const newDeleteState = !isPageDeleted;
+        console.log(newDeleteState);
+        try {
+            const u = await updatePortada.execute(service.id, { portadaDeleted: newDeleteState ? 1 : 0 }, null);
+            console.log(u);
+            setIsPageDeleted(newDeleteState);
+            if (onPageToggle) {
+                onPageToggle('portada-container', newDeleteState);
+            }
+        } catch (error) {
+            console.error('Error al actualizar el estado de eliminación de la portada:', error);
+        }
+        
+    };
 
     return (
         <>
             {loading ? (
                 <ProgressSpinner className='spinner-portada-container'/>) 
                 : (
-                <div className="portada-container" onClick={handleClose}>
+                <div className={`portada-container ${isPageDeleted ? 'page-deleted' : ''}`} onClick={handleClose}>
+                    <i 
+                        className={`pi ${isPageDeleted ? 'pi-undo' : 'pi-trash'} icono-eliminar ${isPageDeleted ? 'deleted' : ''}`} 
+                        onClick={handleToggleDelete}
+                        title={isPageDeleted ? 'Restaurar sección' : 'Eliminar sección'}
+                    ></i>
                     <div className="titulo-portada-container">
                         <i className="pi pi-pencil icono-titulo" onClick={handleEditOpen}></i>
                         <div 

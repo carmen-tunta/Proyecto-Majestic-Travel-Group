@@ -42,10 +42,17 @@
 }
 
 .titulo-doble .derecha .icono-editar,
-.titulo-doble .izquierda .icono-editar {
+.titulo-doble .izquierda .icono-editar,
+.icono-eliminar {
     position: relative;
     color: var(--surface-400);
     cursor: pointer;
+}
+
+.icono-eliminar {
+    position: absolute;
+    top: 15px;
+    right: 25px;
 }
 
 .titulo-doble .derecha .contenido-container .icono-editar,
