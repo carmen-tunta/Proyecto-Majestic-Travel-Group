@@ -1,8 +1,9 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, OneToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, OneToMany, OneToOne } from 'typeorm';
 import { Client } from '../../clients/entities/client.entity';
 import { RegistroPago } from 'src/modules/registroPago/entities/registroPago.entity';
 import { User } from '../../users/entities/user.entity';
 import { Pasajero } from '../../pasajeros/entities/pasajero.entity';
+import { DatosViaje } from './datos-viaje.entity';
 
 @Entity('cotizacion')
 export class Cotizacion {
@@ -92,5 +93,11 @@ export class Cotizacion {
 
   @OneToMany(() => Pasajero, (pasajero) => pasajero.cotizacion, { cascade: true })
   pasajeros: Pasajero[];
+
+  @OneToOne(() => DatosViaje, datosViaje => datosViaje.cotizacion, {
+      cascade: true,
+      nullable: true
+    })
+    datosViaje: DatosViaje;
 
 }

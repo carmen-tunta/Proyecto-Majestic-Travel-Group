@@ -33,6 +33,7 @@ import { Portada } from 'src/modules/services/entities/portada.entity';
 import { AppModuleEntity } from '../modules/permissions/entities/app-module.entity';
 import { ModuleAction } from '../modules/permissions/entities/module-action.entity';
 import { UserPermission } from '../modules/permissions/entities/user-permission.entity';
+import { DatosViaje } from 'src/modules/cotizacion/entities/datos-viaje.entity';
 
 
 @Module({
@@ -74,7 +75,8 @@ import { UserPermission } from '../modules/permissions/entities/user-permission.
                   Portada,
                   AppModuleEntity,
                   ModuleAction,
-                  UserPermission
+                  UserPermission,
+                  DatosViaje
                 ], // Aquí se agregarán las entidades
 
       synchronize: true, // Cambia a true solo en desarrollo
