@@ -82,10 +82,10 @@ export class Client {
 
   @Column({
     type: 'enum',
-    enum: ['Masculino', 'Femenino'],
+    enum: ['Masculino', 'Femenino', 'Otro', 'No especificado'],
     comment: 'Género del cliente',
   })
-  genero: 'Masculino' | 'Femenino';
+  genero: 'Masculino' | 'Femenino' | 'Otro' | 'No especificado';
 
   @Column({
     type: 'date',

@@ -23,7 +23,7 @@ class QuoteRequestRepository {
         return await response.json();
     }
 
-    async getAllQuoteRequests(page = 0, limit = 10) {
+    async getAllQuoteRequests(page = 0, limit = 15) {
         const response = await fetch(`${apiUrl}?page=${page}&limit=${limit}`, {
             headers: getAuthHeaders()
         });

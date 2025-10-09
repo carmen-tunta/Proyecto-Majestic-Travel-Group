@@ -25,6 +25,14 @@ export class CreateCotizacionDto {
   @IsDateString()
   fechaViaje: string;
 
+  @IsOptional()
+  @IsDateString()
+  fechaLlegada?: string;
+
+  @IsOptional()
+  @IsDateString()
+  fechaSalida?: string;
+
   @IsNotEmpty()
   @IsEnum(['Iniciado', 'Proceso', 'Finalizado'])
   estado: string;
@@ -50,6 +58,19 @@ export class CreateCotizacionDto {
   @IsInt()
   @Min(0)
   nroNinos?: number;
+
+  @IsOptional()
+  @IsInt()
+  @Min(0)
+  nroBebes?: number;
+
+  @IsOptional()
+  @IsString()
+  lugarRecojo?: string;
+
+  @IsOptional()
+  @IsString()
+  comentario?: string;
 
   @IsNotEmpty()
   @IsInt()

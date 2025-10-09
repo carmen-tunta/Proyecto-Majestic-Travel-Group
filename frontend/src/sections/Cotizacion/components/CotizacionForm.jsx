@@ -5,6 +5,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { TabMenu } from 'primereact/tabmenu';
 
 import { InputText } from 'primereact/inputtext';
+import { InputTextarea } from 'primereact/inputtextarea';
 
 import { Dropdown } from 'primereact/dropdown';
 
@@ -265,6 +266,10 @@ export default function CotizacionForm() {
 
     fechaViaje: '',
 
+    fechaLlegada: '',
+
+    fechaSalida: '',
+
     estado: null,
 
     agencia: null,
@@ -279,7 +284,11 @@ export default function CotizacionForm() {
 
     nroNinos: null,
 
+    nroBebes: null,
+
     codigoReserva: '',
+
+    lugarRecojo: '',
 
     observacion: ''
 
@@ -319,6 +328,10 @@ export default function CotizacionForm() {
 
               fechaViaje: found.fechaViaje || '',
 
+              fechaLlegada: found.fechaLlegada || '',
+
+              fechaSalida: found.fechaSalida || '',
+
               estado: found.estado,
 
               agencia: found.agencia,
@@ -333,7 +346,13 @@ export default function CotizacionForm() {
 
               nroNinos: found.nroNinos,
 
-              codigoReserva: found.codigoReserva
+              nroBebes: found.nroBebes,
+
+              codigoReserva: found.codigoReserva,
+
+              lugarRecojo: found.lugarRecojo || '',
+
+              observacion: found.comentario || ''
 
             }));
 
@@ -463,6 +482,10 @@ export default function CotizacionForm() {
 
         fechaViaje: form.fechaViaje, // enviar ISO
 
+        fechaLlegada: form.fechaLlegada || undefined,
+
+        fechaSalida: form.fechaSalida || undefined,
+
         estado: form.estado,
 
         agencia: form.agencia,
@@ -474,6 +497,12 @@ export default function CotizacionForm() {
         nroPax: Number(form.nroPax),
 
         nroNinos: Number(form.nroNinos) || 0,
+
+        nroBebes: Number(form.nroBebes) || 0,
+
+        lugarRecojo: form.lugarRecojo || undefined,
+
+        comentario: form.observacion || undefined,
 
         anio,
 
@@ -1235,6 +1264,54 @@ export default function CotizacionForm() {
 
                 <FloatLabel>
 
+                  <Calendar
+
+                    inputId="fechaLlegada"
+
+                    value={form.fechaLlegada ? fromLocalDateStringToDate(form.fechaLlegada) : null}
+
+                    onChange={e => setForm(f => ({ ...f, fechaLlegada: e.value ? toLocalDateString(e.value) : '' }))}
+
+                    dateFormat="D dd M y"
+
+                    locale="es"
+
+                  />
+
+                  <label htmlFor="fechaLlegada">Fecha de llegada</label>
+
+                </FloatLabel>
+
+              </div>
+
+              <div>
+
+                <FloatLabel>
+
+                  <Calendar
+
+                    inputId="fechaSalida"
+
+                    value={form.fechaSalida ? fromLocalDateStringToDate(form.fechaSalida) : null}
+
+                    onChange={e => setForm(f => ({ ...f, fechaSalida: e.value ? toLocalDateString(e.value) : '' }))}
+
+                    dateFormat="D dd M y"
+
+                    locale="es"
+
+                  />
+
+                  <label htmlFor="fechaSalida">Fecha de salida</label>
+
+                </FloatLabel>
+
+              </div>
+
+              <div>
+
+                <FloatLabel>
+
                   <InputText id="nombreCotizacion" value={form.nombreCotizacion} onChange={e => setForm(f => ({ ...f, nombreCotizacion: e.target.value }))} />
 
                   <label htmlFor="nombreCotizacion">Nombre de cotización</label>
@@ -1262,6 +1339,18 @@ export default function CotizacionForm() {
                   <InputText id="codigoReserva" value={form.codigoReserva} onChange={e => setForm(f => ({ ...f, codigoReserva: e.target.value }))} />
 
                   <label htmlFor="codigoReserva">Código de reserva</label>
+
+                </FloatLabel>
+
+              </div>
+
+              <div>
+
+                <FloatLabel>
+
+                  <InputText id="lugarRecojo" value={form.lugarRecojo} onChange={e => setForm(f => ({ ...f, lugarRecojo: e.target.value }))} />
+
+                  <label htmlFor="lugarRecojo">Lugar de recojo</label>
 
                 </FloatLabel>
 
@@ -1325,9 +1414,9 @@ export default function CotizacionForm() {
 
                 <FloatLabel>
 
-                  <InputText id="utilidad" type="number" min="0" max="100" value={form.utilidad} onChange={e => setForm(f => ({ ...f, utilidad: e.target.value }))} />
+                  <InputText id="nroBebes" type="number" min="0" value={form.nroBebes} onChange={e => setForm(f => ({ ...f, nroBebes: e.target.value }))} />
 
-                  <label htmlFor="utilidad">% de utilidad</label>
+                  <label htmlFor="nroBebes">Nro Bebés</label>
 
                 </FloatLabel>
 
@@ -1337,9 +1426,32 @@ export default function CotizacionForm() {
 
                 <FloatLabel>
 
-                  <InputText id="observacion" value={form.observacion} onChange={e => setForm(f => ({ ...f, observacion: e.target.value }))} />
+                  <InputText id="utilidad" type="number" min="0" max="100" value={form.utilidad} onChange={e => setForm(f => ({ ...f, utilidad: e.target.value }))} />
 
-                  <label htmlFor="observacion">Observación</label>
+                  <label htmlFor="utilidad">% de utilidad</label>
+
+                </FloatLabel>
+
+              </div>
+
+            </div>
+
+            <div className="form-grid" style={{ gridTemplateColumns: '1fr', marginTop: '1rem' }}>
+
+              <div>
+
+                <FloatLabel>
+
+                  <InputTextarea 
+                    id="observacion" 
+                    value={form.observacion} 
+                    onChange={e => setForm(f => ({ ...f, observacion: e.target.value }))} 
+                    rows={1}
+                    autoResize
+                    style={{ width: '100%' }}
+                  />
+
+                  <label htmlFor="observacion">Comentario o Nota</label>
 
                 </FloatLabel>
 
