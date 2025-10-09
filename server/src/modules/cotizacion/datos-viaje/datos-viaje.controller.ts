@@ -11,7 +11,7 @@ export class DatosViajeController {
         return this.datosViajeService.create(data);
     }
 
-    @Get(':cotizacionId')
+    @Get('cotizacion/:cotizacionId')
     async getDatosViajeByCotizacionId(@Param('cotizacionId') cotizacionId: number): Promise<DatosViaje | null> {
         return this.datosViajeService.findByCotizacionId(cotizacionId);
     }
