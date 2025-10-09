@@ -30,6 +30,12 @@ export class Cotizacion {
   @Column({ type: 'date' })
   fechaViaje: Date;
 
+  @Column({ type: 'date', nullable: true })
+  fechaLlegada: Date;
+
+  @Column({ type: 'date', nullable: true })
+  fechaSalida: Date;
+
   @Column({ type: 'enum', enum: ['Iniciado', 'Proceso', 'Finalizado'] })
   estado: string;
 
@@ -47,6 +53,15 @@ export class Cotizacion {
 
   @Column({ type: 'int', default: 0 })
   nroNinos: number;
+
+  @Column({ type: 'int', default: 0 })
+  nroBebes: number;
+
+  @Column({ type: 'text', nullable: true })
+  lugarRecojo: string;
+
+  @Column({ type: 'text', nullable: true })
+  comentario: string;
 
   @Column({ type: 'int' })
   anio: number;

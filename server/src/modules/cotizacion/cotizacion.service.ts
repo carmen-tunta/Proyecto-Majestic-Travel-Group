@@ -60,12 +60,16 @@ export class CotizacionService {
     }
 
     const fechaViajeStr = this.toDateOnly(createCotizacionDto.fechaViaje);
+    const fechaLlegadaStr = createCotizacionDto.fechaLlegada ? this.toDateOnly(createCotizacionDto.fechaLlegada) : null;
+    const fechaSalidaStr = createCotizacionDto.fechaSalida ? this.toDateOnly(createCotizacionDto.fechaSalida) : null;
     
     const cotizacion = this.cotizacionRepository.create({
       ...createCotizacionDto,
       numeroFile,
       cliente: client,
       fechaViaje: fechaViajeStr as any,
+      fechaLlegada: fechaLlegadaStr as any,
+      fechaSalida: fechaSalidaStr as any,
       ...(user && { creadoPor: user }),
     });
     
@@ -88,12 +92,24 @@ export class CotizacionService {
     const cot = await this.findOne(id);
     // Permitir fecha en 'YYYY-MM-DD' o ISO; guardar como date-only string
     let fechaViajeStr: string | undefined;
+    let fechaLlegadaStr: string | undefined;
+    let fechaSalidaStr: string | undefined;
+    
     if (data.fechaViaje) {
       fechaViajeStr = this.toDateOnly(data.fechaViaje as any);
     }
+    if (data.fechaLlegada) {
+      fechaLlegadaStr = this.toDateOnly(data.fechaLlegada as any);
+    }
+    if (data.fechaSalida) {
+      fechaSalidaStr = this.toDateOnly(data.fechaSalida as any);
+    }
+    
     Object.assign(cot, {
       ...data,
       fechaViaje: (fechaViajeStr ?? (cot.fechaViaje as any)),
+      fechaLlegada: (fechaLlegadaStr ?? (cot.fechaLlegada as any)),
+      fechaSalida: (fechaSalidaStr ?? (cot.fechaSalida as any)),
     } as any);
     return this.cotizacionRepository.save(cot);
   }
