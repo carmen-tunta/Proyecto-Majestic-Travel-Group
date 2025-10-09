@@ -159,7 +159,7 @@ const Clientes = () => {
           />
           <Column
             field="lenguaNativa"
-            header="Lengua nativa"
+            header="Nacionalidad"
             style={{ width: '15%', textAlign: 'center' }}
             body={(rowData) => (
               <div style={{ 

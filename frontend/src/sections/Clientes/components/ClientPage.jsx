@@ -172,17 +172,40 @@ const ClientPage = () => {
   ];
 
   const lenguasNativas = [
-    { label: 'Español', value: 'Español' },
-    { label: 'Inglés', value: 'Inglés' },
-    { label: 'Portugués', value: 'Portugués' },
-    { label: 'Francés', value: 'Francés' },
-    { label: 'Alemán', value: 'Alemán' },
-    { label: 'Italiano', value: 'Italiano' },
-    { label: 'Chino', value: 'Chino' },
-    { label: 'Japonés', value: 'Japonés' },
-    { label: 'Coreano', value: 'Coreano' },
-    { label: 'Árabe', value: 'Árabe' },
-    { label: 'Ruso', value: 'Ruso' },
+    { label: 'Perú', value: 'Perú' },
+    { label: 'Colombia', value: 'Colombia' },
+    { label: 'Ecuador', value: 'Ecuador' },
+    { label: 'Chile', value: 'Chile' },
+    { label: 'Argentina', value: 'Argentina' },
+    { label: 'Brasil', value: 'Brasil' },
+    { label: 'México', value: 'México' },
+    { label: 'Venezuela', value: 'Venezuela' },
+    { label: 'Bolivia', value: 'Bolivia' },
+    { label: 'Paraguay', value: 'Paraguay' },
+    { label: 'Uruguay', value: 'Uruguay' },
+    { label: 'Panamá', value: 'Panamá' },
+    { label: 'Costa Rica', value: 'Costa Rica' },
+    { label: 'Nicaragua', value: 'Nicaragua' },
+    { label: 'Honduras', value: 'Honduras' },
+    { label: 'El Salvador', value: 'El Salvador' },
+    { label: 'Guatemala', value: 'Guatemala' },
+    { label: 'Belice', value: 'Belice' },
+    { label: 'República Dominicana', value: 'República Dominicana' },
+    { label: 'Cuba', value: 'Cuba' },
+    { label: 'Puerto Rico', value: 'Puerto Rico' },
+    { label: 'Haití', value: 'Haití' },
+    { label: 'Jamaica', value: 'Jamaica' },
+    { label: 'Estados Unidos', value: 'Estados Unidos' },
+    { label: 'España', value: 'España' },
+    { label: 'Francia', value: 'Francia' },
+    { label: 'Alemania', value: 'Alemania' },
+    { label: 'Italia', value: 'Italia' },
+    { label: 'Reino Unido', value: 'Reino Unido' },
+    { label: 'Canadá', value: 'Canadá' },
+    { label: 'Australia', value: 'Australia' },
+    { label: 'Japón', value: 'Japón' },
+    { label: 'China', value: 'China' },
+    { label: 'India', value: 'India' },
     { label: 'Otros', value: 'Otros' }
   ];
 
@@ -428,7 +451,7 @@ const ClientPage = () => {
                     onChange={(e) => handleInputChange('nombre', e.target.value)}
                     required
                   />
-                  <label htmlFor="nombre">Nombre del cliente</label>
+                  <label htmlFor="nombre">Nombre y Apellido*</label>
                 </FloatLabel>
 
                 <FloatLabel>
@@ -466,8 +489,9 @@ const ClientPage = () => {
                     id="whatsapp"
                     value={formData.whatsapp}
                     onChange={(e) => handleInputChange('whatsapp', e.target.value)}
+                    required
                   />
-                  <label htmlFor="whatsapp">WhatsApp</label>
+                  <label htmlFor="whatsapp">Teléfono*</label>
                 </FloatLabel>
 
                 <FloatLabel>
@@ -478,7 +502,7 @@ const ClientPage = () => {
                     onChange={(e) => handleInputChange('correo', e.target.value)}
                     required
                   />
-                  <label htmlFor="correo">Correo</label>
+                  <label htmlFor="correo">Correo*</label>
                 </FloatLabel>
 
                 <FloatLabel>
@@ -501,7 +525,7 @@ const ClientPage = () => {
                     onChange={(e) => handleInputChange('lenguaNativa', e.value)}
                     required
                   />
-                  <label htmlFor="lenguaNativa">Lengua nativa</label>
+                  <label htmlFor="lenguaNativa">Nacionalidad*</label>
                 </FloatLabel>
 
                 <FloatLabel>
