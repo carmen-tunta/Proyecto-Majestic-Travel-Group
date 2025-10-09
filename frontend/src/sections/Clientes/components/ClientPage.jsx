@@ -47,7 +47,7 @@ const ClientPage = () => {
     numeroDocumento: '',
     mercado: '',
     rubro: '',
-    genero: 'Masculino',
+    genero: 'No especificado',
     estado: 'Registrado'
   });
 
@@ -240,7 +240,8 @@ const ClientPage = () => {
   const generos = [
     { label: 'Masculino', value: 'Masculino' },
     { label: 'Femenino', value: 'Femenino' },
-    { label: 'Otro', value: 'Otro' }
+    { label: 'Otro', value: 'Otro' },
+    { label: 'No especificado', value: 'No especificado' }
   ];
 
   // estados (no utilizado) eliminado para limpiar lint

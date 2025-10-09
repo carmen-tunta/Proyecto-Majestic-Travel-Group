@@ -33,12 +33,12 @@ export class QuoteRequestsService {
         correo: dto.email,
         // Campos requeridos en entidad Client que no son relevantes aquí
         fechaNacimiento: new Date('1970-01-01'),
-        lenguaNativa: '',
+        lenguaNativa: dto.countryName || '', // Usar el país como nacionalidad
         tipoDocumento: 'QR',
         numeroDocumento: `QR-${Date.now()}`,
         mercado: '',
         rubro: '',
-        genero: 'Masculino',
+        genero: 'No especificado',
         fechaRegistro: new Date(),
         estado: 'Registrado',
       };
