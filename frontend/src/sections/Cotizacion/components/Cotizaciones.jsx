@@ -8,6 +8,8 @@ import SearchBar from '../../../components/SearchBar';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { ProgressSpinner } from 'primereact/progressspinner';
+import { useModal } from '../../../contexts/ModalContext';
+import DatosViajeModal from './DatosViajeModal';
 
 export default function Cotizaciones() {
   const navigate = useNavigate();
@@ -66,7 +68,8 @@ export default function Cotizaciones() {
       <span className="cotz-det-label">País:</span> {row?.pais || ''} <span className="cotz-sep">|</span>
       <span className="cotz-det-label">Idioma:</span> {row?.idioma || ''} <span className="cotz-sep">|</span>
       <span className="cotz-det-label">Nro. pax:</span> {row?.nroPax ?? ''} <span className="cotz-sep">|</span>
-      <span className="cotz-det-label">Nro. Niños(as):</span> {row?.nroNinos ?? ''}
+      <span className="cotz-det-label">Nro. Niños(as):</span> {row?.nroNinos ?? ''} <span className="cotz-sep">|</span>
+      <span className="cotz-det-label" style={{cursor: 'pointer'}} onClick={() => handleClickDatosViaje(row)}> <i className='pi pi-flag'/> Datos de viaje </span>
     </div>
   );
 
@@ -97,6 +100,22 @@ export default function Cotizaciones() {
       return value;
     }
   }
+
+  const [showModal, setShowModal] = useState(false);
+  const { setIsModalOpen } = useModal();
+  const [selectedCotizacion, setSelectedCotizacion] = useState(null);
+
+  const handleClickDatosViaje = (cotizacion) => {
+    setSelectedCotizacion(cotizacion);
+    setShowModal(true);
+    setIsModalOpen(true);
+  }
+
+  const handleModalClose = () => {
+    setShowModal(false);
+    setIsModalOpen(false);
+    setSelectedCotizacion(null);
+  };
 
   return (
     <div className="cotizaciones">
@@ -143,6 +162,15 @@ export default function Cotizaciones() {
             <Column header="Acción" body={actionTemplate} />
           </DataTable>
       </div>
+
+      {showModal && (
+        <DatosViajeModal 
+          visible={showModal}
+          onHide={handleModalClose}
+          cotizacion={selectedCotizacion}   
+        />
+      )}
+
     </div>
   );
 }

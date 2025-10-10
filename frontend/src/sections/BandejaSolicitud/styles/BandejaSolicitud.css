@@ -239,7 +239,7 @@
 }
 
 /* Row Expansion Icon */
-.p-datatable .p-datatable-tbody > tr > td:first-child {
+.bandeja-solicitud .p-datatable .p-datatable-tbody > tr > td:first-child {
   text-align: center;
   cursor: pointer;
 }
