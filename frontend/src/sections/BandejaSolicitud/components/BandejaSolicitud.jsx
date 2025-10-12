@@ -3,6 +3,7 @@ import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
+import { Paginator } from 'primereact/paginator';
 import { OverlayPanel } from 'primereact/overlaypanel';
 import { ProgressSpinner } from 'primereact/progressspinner';
 import SearchBar from '../../../components/SearchBar';
@@ -676,22 +677,37 @@ const BandejaSolicitud = () => {
     <div className="bandeja-solicitud">
       <div className="bandeja-header">
         <h2>Bandeja de solicitud</h2>
-        <Button 
-          icon="pi pi-refresh" 
-          onClick={loadQuoteRequests}
-          size="small"
-          outlined
-          tooltip="Actualizar"
-          tooltipOptions={{ position: 'bottom' }}
-        />
-      </div>
-
-      <div className="bandeja-search">
-        <SearchBar 
-          value={searchTerm} 
-          onChange={setSearchTerm} 
-          placeholder="Buscar por nombre de cliente" 
-        />
+        
+        {/* En desktop: botón separado */}
+        <div className="bandeja-header-desktop">
+          <Button 
+            icon="pi pi-refresh" 
+            onClick={loadQuoteRequests}
+            size="small"
+            outlined
+            tooltip="Actualizar"
+            tooltipOptions={{ position: 'bottom' }}
+          />
+        </div>
+        
+        {/* En móvil: botón al lado del campo de búsqueda */}
+        <div className="bandeja-header-controls">
+          <Button 
+            icon="pi pi-refresh" 
+            onClick={loadQuoteRequests}
+            size="small"
+            outlined
+            tooltip="Actualizar"
+            tooltipOptions={{ position: 'bottom' }}
+          />
+          <div className="bandeja-search">
+            <SearchBar 
+              value={searchTerm} 
+              onChange={setSearchTerm} 
+              placeholder="Buscar por nombre de cliente" 
+            />
+          </div>
+        </div>
       </div>
 
       <div className="bandeja-content" style={{ position: 'relative' }}>
@@ -718,13 +734,6 @@ const BandejaSolicitud = () => {
             value={filteredRequests}
             className="requests-table"
             responsiveLayout="scroll"
-            paginator
-            rows={rowsPerPage}
-            first={first}
-            totalRecords={totalRecordsForPagination}
-            onPage={onPageChange}
-            paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink"
-            currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} solicitudes"
             emptyMessage="No hay solicitudes disponibles"
             expandedRows={expandedRows}
             onRowToggle={(e) => {
@@ -745,6 +754,21 @@ const BandejaSolicitud = () => {
           <Column field="estado" header="Estado Solicitud" body={estadoTemplate} />
           <Column body={actionTemplate} header="" style={{ width: '50px' }} />
           </DataTable>
+        )}
+
+        {/* Footer con paginación */}
+        {!loading && !error && (
+          <div className='bandeja-footer'>
+            <Paginator
+              first={first}
+              rows={rowsPerPage}
+              totalRecords={totalRecordsForPagination}
+              rowsPerPageOptions={[10]}
+              onPageChange={onPageChange}
+              template="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink"
+              className="custom-paginator"
+            />
+          </div>
         )}
 
         {globalActionLoading && (

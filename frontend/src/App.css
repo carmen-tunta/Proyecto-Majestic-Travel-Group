@@ -17,6 +17,40 @@
   min-height: 100vh;
 }
 
+/* ========== RESPONSIVE DESIGN PARA CONTENIDO PRINCIPAL ========== */
+
+/* Tablets y pantallas medianas (768px - 1024px) */
+@media (max-width: 1024px) {
+  .main-content {
+    margin-left: 20vw;
+    width: 80vw;
+  }
+}
+
+/* Móviles (hasta 768px) */
+@media (max-width: 768px) {
+  .main-content {
+    margin-left: 60px;
+    width: calc(100vw - 60px);
+  }
+}
+
+/* Móviles pequeños (hasta 480px) */
+@media (max-width: 480px) {
+  .main-content {
+    margin-left: 50px;
+    width: calc(100vw - 50px);
+  }
+}
+
+/* Modo horizontal para móviles (landscape) */
+@media (max-width: 768px) and (orientation: landscape) {
+  .main-content {
+    margin-left: 70px;
+    width: calc(100vw - 70px);
+  }
+}
+
 .App {
   text-align: center;
 }

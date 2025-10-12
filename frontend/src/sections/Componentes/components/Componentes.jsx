@@ -58,10 +58,13 @@ const Componentes = () => {
     fetchComponentes();
   }, [fetchComponentes]);
 
-  // Función para truncar texto largo
+  // Función para truncar texto largo - responsive
   const truncateText = (text, maxLength = 50) => {
     if (!text) return '';
-    return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
+    // En móviles, truncar más agresivamente
+    const isMobile = window.innerWidth <= 768;
+    const mobileMaxLength = isMobile ? 25 : maxLength;
+    return text.length > mobileMaxLength ? text.substring(0, mobileMaxLength) + '...' : text;
   };
 
   // Buscador universal para componentes
@@ -161,6 +164,8 @@ const Componentes = () => {
           paginator={false}
           first={first}
           rows={rows}
+          scrollable={window.innerWidth <= 768}
+          scrollHeight={window.innerWidth <= 768 ? "400px" : undefined}
         >
           <Column
             field="componentName"
@@ -173,8 +178,8 @@ const Componentes = () => {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center'
-              }}>
-                {rowData.componentName}
+              }} title={rowData.componentName}>
+                {truncateText(rowData.componentName, 30)}
               </div>
             )}
           />
@@ -189,8 +194,8 @@ const Componentes = () => {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center'
-              }}>
-                {rowData.serviceType}
+              }} title={rowData.serviceType}>
+                {truncateText(rowData.serviceType, 15)}
               </div>
             )}
           />
@@ -205,8 +210,8 @@ const Componentes = () => {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center'
-              }}>
-                {truncateText(rowData.description, 50)}
+              }} title={rowData.description}>
+                {truncateText(rowData.description, 35)}
               </div>
             )}
           />
@@ -219,7 +224,11 @@ const Componentes = () => {
                   <i 
                     className="pi pi-pencil" 
                     title="Editar" 
-                    style={{cursor: 'pointer'}}
+                    style={{
+                      cursor: 'pointer',
+                      fontSize: window.innerWidth <= 768 ? '1rem' : '1.2rem',
+                      padding: window.innerWidth <= 768 ? '4px' : '8px'
+                    }}
                     onClick={() => handleEditComponent(rowData)}
                   />
                 )}
