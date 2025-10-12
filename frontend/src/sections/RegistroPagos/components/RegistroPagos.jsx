@@ -26,12 +26,23 @@ const RegistroPagos = () => {
     const [rows, setRows] = useState(10);
     const [totalRecords, setTotalRecords] = useState(0);
     const navigate = useNavigate();
+    const [isMobile, setIsMobile] = useState(false);
+
+    useEffect(() => {
+        const checkIfMobile = () => {
+            setIsMobile(window.innerWidth <= 768);
+        };
+        
+        checkIfMobile();
+        window.addEventListener('resize', checkIfMobile);
+        
+        return () => window.removeEventListener('resize', checkIfMobile);
+    }, []);
 
     const fetchData = async (page, pageSize) => {
         try {
             setLoading(true);
             const data = await getAllCotizaciones.execute({ page, pageSize });
-            setCotizaciones(data);
             const finalizedData = data.filter(cotizacion => cotizacion.estado === 'Finalizado');
             setCotizaciones(finalizedData);
 
@@ -88,7 +99,7 @@ const RegistroPagos = () => {
                 className="registro-pagos-table" 
                 size="small" 
                 value={search ? results : cotizaciones} 
-                tableStyle={{ minWidth: '60%' }}
+                tableStyle={{ minWidth: '100%' }}
                 emptyMessage="No hay registros"
                 paginator
                 first={first}
@@ -100,12 +111,12 @@ const RegistroPagos = () => {
                 <Column 
                     field="cliente.nombre" 
                     header="Nombre" 
-                    style={{ width: '18%' }}>    
+                    style={{ width : '18%' }}>    
                 </Column>
                 <Column 
                     field="nombreCotizacion" 
                     header="Cotización" 
-                    style={{ width: '26%' }}>
+                    style={{ width: isMobile ? '20%' : '26%' }}>
                 </Column>
                 <Column 
                     field="numeroFile" 
@@ -129,10 +140,10 @@ const RegistroPagos = () => {
                 </Column>
                 <Column 
                     field="precioVenta" 
-                    header="Precio venta USD" 
+                    header={isMobile ? "Precio venta" : "Precio venta USD"} 
                     style={{ width: '9%' }}>
                 </Column><Column  
-                    header="Adelanto USD" 
+                    header={isMobile ? "Adelanto" : "Adelanto USD"} 
                     body={(rowData) => (
                         <span>
                             {rowData.adelanto ? Number(rowData.adelanto).toFixed(2) : '1.00'}
@@ -142,7 +153,7 @@ const RegistroPagos = () => {
                 </Column>
                 <Column 
                     field="saldo" 
-                    header="Saldo USD" 
+                    header={isMobile ? "Saldo" : "Saldo USD"}
                     style={{ width: '7%' }}>
                 </Column>
                 <Column
