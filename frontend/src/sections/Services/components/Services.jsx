@@ -5,6 +5,7 @@ import { apiService } from '../../../services/apiService';
 import { Button } from 'primereact/button';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
+import { Paginator } from 'primereact/paginator';
 import ServiceRepository from '../../../modules/Service/repository/ServiceRepository';
 import GetAllServices from '../../../modules/Service/application/GetAllServices';
 import { ProgressSpinner } from 'primereact/progressspinner';
@@ -116,11 +117,6 @@ const Services = () => {
                     value={search ? results : services}
                     tableStyle={{ minWidth: '60%' }}
                     emptyMessage="No se encontraron servicios"
-                    paginator
-                    first={first}
-                    rows={rows}
-                    totalRecords={totalRecords}
-                    onPage={onPageChange}
                     expandedRows={expandedRows}
                     onRowToggle={e => setExpandedRows(e.data)}
                     rowExpansionTemplate={rowExpansionTemplate}
@@ -165,6 +161,19 @@ const Services = () => {
                         )}
                     />
                 </DataTable>
+            </div>
+
+            {/* Footer con paginación */}
+            <div className='services-footer'>
+                <Paginator
+                    first={first}
+                    rows={rows}
+                    totalRecords={totalRecords}
+                    rowsPerPageOptions={[10]}
+                    onPageChange={onPageChange}
+                    template="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink"
+                    className="custom-paginator"
+                />
             </div>
 
             {showModal && (

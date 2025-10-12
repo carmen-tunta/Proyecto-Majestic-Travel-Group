@@ -4,6 +4,7 @@ import useSearch from '../../../hooks/useSearch';
 import { apiService } from '../../../services/apiService';
 import { Button } from 'primereact/button';
 import { Column } from 'primereact/column';
+import { Paginator } from 'primereact/paginator';
 import { ProgressSpinner } from 'primereact/progressspinner';
 import "../styles/Itinerario.css"
 import ItineraryTemplateRepository from '../../../modules/ItineraryTemplate/repository/ItineraryTemplateRepository';
@@ -112,11 +113,6 @@ const Itinerario = () => {
                     value={search ? results : template} 
                     tableStyle={{ minWidth: '60%' }}
                     emptyMessage="No se encontraron plantillas"
-                    paginator
-                    first={first}
-                    rows={rows}
-                    totalRecords={totalRecords}
-                    onPage={onPageChange}
                     loading={loading || searchLoading}
                     scrollable={window.innerWidth <= 768}
                     scrollHeight={window.innerWidth <= 768 ? "400px" : undefined}
@@ -162,6 +158,19 @@ const Itinerario = () => {
                         )}
                     />
                 </DataTable>
+            </div>
+
+            {/* Footer con paginación */}
+            <div className='itinerario-footer'>
+                <Paginator
+                    first={first}
+                    rows={rows}
+                    totalRecords={totalRecords}
+                    rowsPerPageOptions={[10]}
+                    onPageChange={onPageChange}
+                    template="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink"
+                    className="custom-paginator"
+                />
             </div>
 
             {showModal && (
