@@ -3,12 +3,14 @@ import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
 import "../styles/RecoverPassword.css"
 import { useNotification } from '../../Notification/NotificationContext';        
+import { useNavigate } from 'react-router-dom';
 
 const RecoverPassword = () => {
   const [email, setEmail] = useState('');
   const apiUrl = process.env.REACT_APP_API_URL;
   const { showNotification } = useNotification();
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
   
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -35,10 +37,11 @@ const RecoverPassword = () => {
   return (
     <div className='recover-password'>
       <form className="recover-form" onSubmit={handleSubmit}>
-        <div style={{ textAlign: 'center', marginBottom: 24 }}>
+        <i className="pi pi-arrow-left comeback" onClick={() => navigate(-1)}></i>
+        <div className='recover-logo' style={{ textAlign: 'center', marginBottom: 24 }}>
           <img src={process.env.PUBLIC_URL + '/logo_grande.png'} alt="MTG" style={{ height: '5rem' }} />
         </div>
-        <div className="p-input-icon-left" style={ { width: '27vw'} }>  
+        <div className="p-input-icon-left recover-input-group">  
             <i className="pi pi-envelope"/>
             <InputText 
               type="email" 
@@ -50,9 +53,9 @@ const RecoverPassword = () => {
             />
         </div>
         <Button 
-          style={ { width: '27vw'} }
           label={loading ? "Cargando..." : "Recuperar contraseña"} 
           type='submit' 
+          className='recover-password-button'
           disabled={loading}
           loading={loading}
         />

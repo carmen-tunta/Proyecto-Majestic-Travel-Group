@@ -46,10 +46,6 @@
     min-width: 30%;
 }
 
-.p-column-title, .p-input-icon-left {
-    width: 100%;
-}
-
 .tarifa-add-column-button {
     font-size: 1.5rem;
     max-height: 1.5rem;

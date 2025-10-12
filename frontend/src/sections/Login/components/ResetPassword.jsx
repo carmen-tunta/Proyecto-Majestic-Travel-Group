@@ -20,7 +20,6 @@ const ResetPassword = () => {
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
 
-
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
@@ -49,6 +48,7 @@ const ResetPassword = () => {
     return ( 
     <div className="reset-password">
         <form onSubmit={handleSubmit}>
+            <i className="pi pi-arrow-left comeback" onClick={() => navigate('/')}></i>
             <div style={{ textAlign: 'center'}}>
                 <img src={process.env.PUBLIC_URL + '/logo_grande.png'} alt="MTG" style={{ height: '5rem' }} />
             </div>
