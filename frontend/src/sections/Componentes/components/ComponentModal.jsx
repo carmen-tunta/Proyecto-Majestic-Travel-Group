@@ -86,67 +86,70 @@ const ComponentModal = ({ onHide, component, onSave }) => {
           <h3>{component ? "Editar Componente" : "Nuevo Componente"}</h3>
           <i 
             className="pi pi-times" 
-            style={{ marginBottom: "1rem", cursor: "pointer" }}
+            style={{ cursor: "pointer", fontSize: "1.2rem", color: "#666" }}
             onClick={handleCancel}
           />
         </div>
 
-        <FloatLabel>
-          <InputText 
-            id="componentName" 
-            className="p-inputtext-sm" 
-            value={componentName} 
-            onChange={e => setComponentName(e.target.value)}
-            required 
-            style={{ width: '100%' }}
-          />
-          <label htmlFor="componentName">Nombre del componente</label>
-        </FloatLabel>
+        <div className="component-modal-content">
+          <FloatLabel>
+            <InputText 
+              id="componentName" 
+              className="p-inputtext-sm" 
+              value={componentName} 
+              onChange={e => setComponentName(e.target.value)}
+              placeholder=" "
+              required 
+              style={{ width: '100%' }}
+            />
+            <label htmlFor="componentName">Nombre del componente</label>
+          </FloatLabel>
 
-        <FloatLabel>
-          <Dropdown 
-            id="serviceType" 
-            className="p-inputtext-sm" 
-            value={serviceType} 
-            options={serviceTypeOptions}
-            onChange={e => setServiceType(e.value)}
-            placeholder="Selecciona un tipo de servicio"
-            required 
-            style={{ width: '100%' }}
-          />
-          <label htmlFor="serviceType">Tipo de servicio</label>
-        </FloatLabel>
+          <FloatLabel>
+            <Dropdown 
+              id="serviceType" 
+              className="p-inputtext-sm" 
+              value={serviceType} 
+              options={serviceTypeOptions}
+              onChange={e => setServiceType(e.value)}
+              placeholder="Selecciona un tipo de servicio"
+              required 
+              style={{ width: '100%' }}
+            />
+            <label htmlFor="serviceType">Tipo de servicio</label>
+          </FloatLabel>
 
-        <FloatLabel>
-          <InputTextarea 
-            id="description" 
-            className="p-inputtext-sm" 
-            value={description} 
-            onChange={e => setDescription(e.target.value)}
-            rows={4}
-            placeholder="Describe el componente..."
-            style={{ width: '100%', minHeight: '80px', maxHeight: '120px', resize: 'vertical' }}
-          />
-          <label htmlFor="description">Descripción del componente</label>
-        </FloatLabel>
+          <FloatLabel>
+            <InputTextarea 
+              id="description" 
+              className="p-inputtext-sm" 
+              value={description} 
+              onChange={e => setDescription(e.target.value)}
+              rows={4}
+              placeholder="Describe el componente..."
+              style={{ width: '100%', resize: 'vertical' }}
+            />
+            <label htmlFor="description">Descripción del componente</label>
+          </FloatLabel>
 
-        {error && (
-          <div className="error-message" style={{ 
-            color: 'red', 
-            fontSize: '14px', 
-            marginBottom: '1rem',
-            padding: '0.5rem',
-            backgroundColor: '#ffebee',
-            border: '1px solid #f44336',
-            borderRadius: '4px'
-          }}>
-            {error}
+          {error && (
+            <div className="error-message" style={{ 
+              color: 'red', 
+              fontSize: '14px', 
+              marginBottom: '1rem',
+              padding: '0.75rem',
+              backgroundColor: '#ffebee',
+              border: '1px solid #f44336',
+              borderRadius: '4px'
+            }}>
+              {error}
+            </div>
+          )}
+
+          <div className="component-info-box">
+            <i className="pi pi-info-circle" style={{ marginRight: '0.5rem'}}></i>
+            <span>Los componentes son los items que se cotizan con los proveedores</span>
           </div>
-        )}
-
-        <div className="component-info-box">
-          <i className="pi pi-info-circle" style={{ marginRight: '0.5rem'}}></i>
-          <span>Los componentes son los items que se cotizan con los proveedores</span>
         </div>
 
         <div className='component-modal-buttons'>
