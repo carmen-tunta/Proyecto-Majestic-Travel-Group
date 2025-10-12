@@ -66,36 +66,46 @@ const ItineraryModal = ({ onHide, template }) => {
                 <h3>{template ? "Editar Plantilla Itineraria" : "Nueva Plantilla Itineraria"}</h3>
                 <i 
                     className="pi pi-times" 
-                    style={{ marginBottom: "1rem", cursor:"pointer" }}
+                    style={{ cursor: "pointer", fontSize: "1.2rem", color: "#666" }}
                     onClick={onHide}>
                 </i>
             </div>
-            <FloatLabel>
-                <InputText 
-                    id="plantilla" 
-                    className="p-inputtext-sm" 
-                    value={templateTitle} 
-                    onChange={e => setTemplateTitle(e.target.value)}
-                    required 
+
+            <div className="itinerary-modal-content">
+                <FloatLabel>
+                    <InputText 
+                        id="plantilla" 
+                        className="p-inputtext-sm" 
+                        value={templateTitle} 
+                        onChange={e => setTemplateTitle(e.target.value)}
+                        placeholder=" "
+                        required 
+                        style={{ width: '100%' }}
+                    />
+                    <label htmlFor="plantilla">Título de plantilla</label>
+                </FloatLabel>
+                
+                <FloatLabel>
+                    <InputText 
+                        id="itinerario" 
+                        className="p-inputtext-sm" 
+                        value={itineraryTitle} 
+                        onChange={e => setItineraryTitle(e.target.value)}
+                        placeholder=" "
+                        required 
+                        style={{ width: '100%' }}
+                    />
+                    <label htmlFor="itinerario">Título para itinerario</label>
+                </FloatLabel>
+                
+                <Editor 
+                    style={{ width: '100%' }} 
+                    placeholder="Descripción de la plantilla"
+                    value={editorContent}
+                    onTextChange={(e) => setEditorContent(e.htmlValue)}
                 />
-                <label htmlFor="plantilla">Título de plantilla</label>
-            </FloatLabel>
-            <FloatLabel>
-                <InputText 
-                    id="itinerario" 
-                    className="p-inputtext-sm" 
-                    value={itineraryTitle} 
-                    onChange={e => setItineraryTitle(e.target.value)}
-                    required 
-                />
-                <label htmlFor="itinerario">Título para itinerario</label>
-            </FloatLabel>
-            <Editor 
-                style={{ height: '20vh' }} 
-                placeholder="Descripción de la plantilla"
-                value={editorContent}
-                onTextChange={(e) => setEditorContent(e.htmlValue)}
-            />
+            </div>
+
             <div className='itinerary-modal-buttons'>
                 <Button 
                     label="Cancelar" 

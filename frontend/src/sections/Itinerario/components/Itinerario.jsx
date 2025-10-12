@@ -74,6 +74,15 @@ const Itinerario = () => {
     };
 
 
+    // Función para truncar texto largo - responsive
+    const truncateText = (text, maxLength = 50) => {
+        if (!text) return '';
+        // En móviles, truncar más agresivamente
+        const isMobile = window.innerWidth <= 768;
+        const mobileMaxLength = isMobile ? 25 : maxLength;
+        return text.length > mobileMaxLength ? text.substring(0, mobileMaxLength) + '...' : text;
+    };
+
     // Buscador universal para plantillas
     const { search, setSearch, results, loading: searchLoading } = useSearch((q) => apiService.universalSearch('itinerary-templates', q));
 
@@ -109,16 +118,28 @@ const Itinerario = () => {
                     totalRecords={totalRecords}
                     onPage={onPageChange}
                     loading={loading || searchLoading}
+                    scrollable={window.innerWidth <= 768}
+                    scrollHeight={window.innerWidth <= 768 ? "400px" : undefined}
                 >
                     <Column 
                         field="templateTitle" 
                         header="Título de plantilla" 
-                        style={{ width: '47%' }}>    
+                        style={{ width: '47%' }}
+                        body={(rowData) => (
+                            <div title={rowData.templateTitle}>
+                                {truncateText(rowData.templateTitle, 40)}
+                            </div>
+                        )}>    
                     </Column>
                     <Column 
                         field="itineraryTitle" 
                         header="Título para el itinerario" 
-                        style={{ width: '47%' }}>
+                        style={{ width: '47%' }}
+                        body={(rowData) => (
+                            <div title={rowData.itineraryTitle}>
+                                {truncateText(rowData.itineraryTitle, 40)}
+                            </div>
+                        )}>
                     </Column>
                     <Column
                         header="Acción"
@@ -129,7 +150,11 @@ const Itinerario = () => {
                                 <i 
                                     className="pi pi-pencil"    
                                     title="Editar" 
-                                    style={{cursor:"pointer"}}
+                                    style={{
+                                        cursor: "pointer",
+                                        fontSize: window.innerWidth <= 768 ? '1rem' : '1.2rem',
+                                        padding: window.innerWidth <= 768 ? '4px' : '8px'
+                                    }}
                                     onClick={() => handleEdit(rowData)}    
                                 ></i>
                                 )}

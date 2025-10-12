@@ -1,13 +1,17 @@
 .itinerary-modal {
     background-color: white;
     border-radius: 8px;
-    padding: 0rem 1rem 1rem 1rem;
-    height: 80vh;
-    width: 40vw;
+    padding: 1.5rem;
+    max-height: 90vh;
+    min-height: 600px;
+    width: 50vw;
+    min-width: 600px;
+    max-width: 800px;
     z-index: 1000;
     display: flex;
     flex-direction: column;
-    justify-content: space-around;
+    justify-content: flex-start;
+    overflow-y: auto;
 }
 
 .itinerary-modal-overlay {
@@ -24,13 +28,16 @@
 }
 
 .itinerary-modal input {
-    width: 80%;
+    width: 100%;
 }
 
 .itinerary-modal-buttons {
     display: flex;
     justify-content: space-around;
-    margin-top: 10px;
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid #e0e0e0;
+    flex-shrink: 0;
 }
 
 .itinerary-modal-buttons button {
@@ -43,4 +50,178 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.itinerary-modal-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+}
+
+/* Estilos para FloatLabel */
+.itinerary-modal .p-float-label {
+    margin-bottom: 1rem;
+    margin-top: 0.5rem;
+    position: relative;
+}
+
+.itinerary-modal .p-float-label label {
+    color: #666;
+    font-size: 0.9rem;
+    position: absolute;
+    top: 50%;
+    left: 0.75rem;
+    transition: all 0.2s ease;
+    pointer-events: none;
+    background: white;
+    padding: 0 0.25rem;
+    z-index: 1;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.itinerary-modal .p-float-label .p-inputtext:focus ~ label,
+.itinerary-modal .p-float-label .p-inputtext:not(:placeholder-shown) ~ label {
+    top: -0.5rem;
+    left: 0.5rem;
+    transform: translateX(0);
+    font-size: 0.75rem;
+    color: #666;
+}
+
+/* Asegurar que el label siempre sea visible */
+.itinerary-modal .p-float-label label:not([style*="display: none"]) {
+    display: block !important;
+}
+
+/* Estilos para el Editor */
+.itinerary-modal .p-editor {
+    margin-bottom: 1.5rem;
+}
+
+.itinerary-modal .p-editor .p-editor-content {
+    min-height: 200px;
+}
+
+/* ========== RESPONSIVE DESIGN ========== */
+
+/* Tablets y pantallas medianas (768px - 1024px) */
+@media (max-width: 1024px) {
+    .itinerary-modal {
+        width: 70vw;
+        min-width: 500px;
+        max-width: 700px;
+    }
+}
+
+/* Móviles (hasta 768px) */
+@media (max-width: 768px) {
+    .itinerary-modal {
+        width: 90vw;
+        min-width: 320px;
+        max-width: 90vw;
+        margin: 1rem;
+        max-height: 85vh;
+        min-height: 500px;
+        padding: 1rem;
+    }
+    
+    .itinerary-modal-overlay {
+        padding: 1rem;
+        align-items: flex-start;
+        padding-top: 5vh;
+    }
+    
+    .itinerary-modal-header {
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+    }
+    
+    .itinerary-modal-header h3 {
+        font-size: 1.1rem;
+    }
+    
+    .itinerary-modal .p-float-label {
+        margin-bottom: 1rem;
+        margin-top: 0.5rem;
+    }
+    
+    .itinerary-modal .p-float-label label {
+        font-size: 0.85rem;
+    }
+    
+    .itinerary-modal .p-editor .p-editor-content {
+        min-height: 150px;
+    }
+    
+    .itinerary-modal-buttons {
+        flex-direction: column;
+        gap: 0.75rem;
+        margin-top: 1.5rem;
+        padding-top: 1rem;
+    }
+    
+    .itinerary-modal-buttons button {
+        width: 100%;
+        padding: 12px 20px;
+    }
+    
+    /* Ocultar algunas herramientas del editor en móviles */
+    .itinerary-modal .p-editor .p-editor-toolbar .p-editor-group {
+        display: none;
+    }
+    
+    .itinerary-modal .p-editor .p-editor-toolbar .p-editor-group:first-child,
+    .itinerary-modal .p-editor .p-editor-toolbar .p-editor-group:nth-child(2),
+    .itinerary-modal .p-editor .p-editor-toolbar .p-editor-group:nth-child(3) {
+        display: flex;
+    }
+}
+
+/* Móviles pequeños (hasta 480px) */
+@media (max-width: 480px) {
+    .itinerary-modal {
+        width: 95vw;
+        min-width: 280px;
+        margin: 0.5rem;
+        padding: 0.75rem;
+        max-height: 80vh;
+        min-height: 450px;
+    }
+    
+    .itinerary-modal-overlay {
+        padding: 0.5rem;
+        padding-top: 3vh;
+    }
+    
+    .itinerary-modal-header h3 {
+        font-size: 1rem;
+    }
+    
+    .itinerary-modal .p-float-label {
+        margin-bottom: 1rem;
+        margin-top: 1.5rem;
+    }
+    
+    .itinerary-modal .p-float-label label {
+        font-size: 0.8rem;
+    }
+    
+    .itinerary-modal .p-editor .p-editor-content {
+        min-height: 120px;
+    }
+    
+    .itinerary-modal-buttons {
+        margin-top: 1.5rem;
+        padding-top: 1rem;
+    }
+    
+    /* Ocultar más herramientas del editor en móviles pequeños */
+    .itinerary-modal .p-editor .p-editor-toolbar .p-editor-group:nth-child(3) {
+        display: none;
+    }
 }
