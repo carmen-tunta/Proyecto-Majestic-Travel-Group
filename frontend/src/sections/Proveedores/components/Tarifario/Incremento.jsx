@@ -30,6 +30,21 @@ const Incremento = ({ tarifa }) => {
     const getTarifaIncrements = new GetTarifaIncrementByTarifaId(tarifaIncrementRepo);
     const deleteTarifaIncrement = new DeleteTarifaIncrement(tarifaIncrementRepo);
 
+    const [isMobile, setIsMobile] = useState(false);
+
+    useEffect(() => {
+        const handleResize = () => {
+            setIsMobile(window.innerWidth < 768);
+        };
+
+        window.addEventListener("resize", handleResize);
+        handleResize();
+
+        return () => {
+            window.removeEventListener("resize", handleResize);
+        };
+    }, []);
+
 
     const fetchIncrements = async () => {
         try {
@@ -93,7 +108,7 @@ const Incremento = ({ tarifa }) => {
                 <h3>Tabla de incremento</h3>
                 <Button
                     icon="pi pi-plus"
-                    label="Nuevo"
+                    label={isMobile ? "" : "Nuevo"}
                     size='small'
                     outlined
                     onClick={() => has('PROVEEDORES','CREATE') && handleNew()}
@@ -102,7 +117,7 @@ const Incremento = ({ tarifa }) => {
             </div>
             <div>
                 <DataTable
-                    className="incremento-table"
+                    className={`incremento-table ${isMobile ? 'incremento-table-mobile' : ''}`}
                     value={increments || []}
                     size="small"
                     emptyMessage="No se registraron incrementos"
@@ -110,7 +125,7 @@ const Incremento = ({ tarifa }) => {
                 >
                     <Column 
                         field="incrementDate" 
-                        header="Fecha de incremento" 
+                        header={isMobile ? "Fecha" : "Fecha de incremento"}
                         body={rowData => {
                             if (!rowData.incrementDate) return '';
                             try {
@@ -131,24 +146,24 @@ const Incremento = ({ tarifa }) => {
                                 return formatted;
                             } catch { return rowData.incrementDate; }
                         }}
-                        style={{ width: '20%' }}
+                        style={{ width: isMobile ? '10%' : '20%' }}
                     />
                     <Column 
                         field="percentage"  
-                        header="Porcentaje" 
+                        header={isMobile ? "%" : "Porcentaje"}
                         body={rowData => {
                             if(rowData.percentage) return "Si"; else return "No";
                         }}
-                        style={{ width: '20%' }} 
+                        style={{ width: isMobile ? '10%' : '20%' }} 
                     />
                     <Column 
                         field="incrementValue" 
-                        header="Valor de incremento" 
+                        header={isMobile ? "Valor" : "Valor de incremento"}
                         body={rowData => {
                             const value = Number(rowData.incrementValue);
                             return Number.isInteger(value) ? value : value.toFixed(2).replace(/\.00$/, '');
                         }}
-                        style={{ width: '50%' }} 
+                        style={{ width: isMobile ? '10%' : '50%' }} 
                     />
                     <Column
                         style={{ width: '10%' }}
@@ -186,6 +201,7 @@ const Incremento = ({ tarifa }) => {
                 reject={() => reject()} 
                 acceptLabel="Si"
                 rejectLabel="No"
+                className={isMobile ? 'confirm-dialog-mobile' : ''}
             />
 
             {showModal && (
