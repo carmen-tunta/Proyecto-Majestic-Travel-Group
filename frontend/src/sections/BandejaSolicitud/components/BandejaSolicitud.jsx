@@ -676,22 +676,37 @@ const BandejaSolicitud = () => {
     <div className="bandeja-solicitud">
       <div className="bandeja-header">
         <h2>Bandeja de solicitud</h2>
-        <Button 
-          icon="pi pi-refresh" 
-          onClick={loadQuoteRequests}
-          size="small"
-          outlined
-          tooltip="Actualizar"
-          tooltipOptions={{ position: 'bottom' }}
-        />
-      </div>
-
-      <div className="bandeja-search">
-        <SearchBar 
-          value={searchTerm} 
-          onChange={setSearchTerm} 
-          placeholder="Buscar por nombre de cliente" 
-        />
+        
+        {/* En desktop: botón separado */}
+        <div className="bandeja-header-desktop">
+          <Button 
+            icon="pi pi-refresh" 
+            onClick={loadQuoteRequests}
+            size="small"
+            outlined
+            tooltip="Actualizar"
+            tooltipOptions={{ position: 'bottom' }}
+          />
+        </div>
+        
+        {/* En móvil: botón al lado del campo de búsqueda */}
+        <div className="bandeja-header-controls">
+          <Button 
+            icon="pi pi-refresh" 
+            onClick={loadQuoteRequests}
+            size="small"
+            outlined
+            tooltip="Actualizar"
+            tooltipOptions={{ position: 'bottom' }}
+          />
+          <div className="bandeja-search">
+            <SearchBar 
+              value={searchTerm} 
+              onChange={setSearchTerm} 
+              placeholder="Buscar por nombre de cliente" 
+            />
+          </div>
+        </div>
       </div>
 
       <div className="bandeja-content" style={{ position: 'relative' }}>
