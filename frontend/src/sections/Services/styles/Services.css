@@ -40,3 +40,137 @@
     justify-content: center;
     color: rgb(175, 175, 175);
 }
+
+/* ========== RESPONSIVE DESIGN ========== */
+
+/* Tablets y pantallas medianas (768px - 1024px) */
+@media (max-width: 1024px) {
+    .service {
+        padding: 0rem 2rem 2rem 1rem;
+    }
+    
+    .service-header {
+        flex-direction: column;
+        gap: 15px;
+        align-items: stretch;
+    }
+    
+    .service-header h2 {
+        font-size: 1.25rem;
+        text-align: center;
+    }
+    
+    .service-search {
+        margin-bottom: 1.5rem;
+    }
+}
+
+/* Móviles (hasta 768px) */
+@media (max-width: 768px) {
+    .service {
+        padding: 0rem 1rem 2rem 1rem;
+    }
+    
+    .service-header {
+        flex-direction: column;
+        gap: 15px;
+        align-items: stretch;
+        margin-bottom: 1.5rem;
+    }
+    
+    .service-header h2 {
+        font-size: 1.1rem;
+        text-align: center;
+    }
+    
+    .service-header .p-button {
+        width: 100%;
+        padding: 10px 20px;
+    }
+    
+    .service-search {
+        margin-bottom: 1rem;
+    }
+    
+    /* Mejorar la tabla en móviles */
+    .service-table .p-datatable-thead > tr > th,
+    .service-table .p-datatable-tbody > tr > td {
+        padding: 8px 4px;
+        font-size: 12px;
+    }
+    
+    .service-table .p-datatable-thead > tr > th:first-child,
+    .service-table .p-datatable-tbody > tr > td:first-child {
+        width: 30px !important;
+    }
+    
+    .service-table .p-datatable-thead > tr > th:nth-child(2),
+    .service-table .p-datatable-tbody > tr > td:nth-child(2) {
+        width: 45% !important;
+    }
+    
+    .service-table .p-datatable-thead > tr > th:nth-child(3),
+    .service-table .p-datatable-tbody > tr > td:nth-child(3) {
+        width: 35% !important;
+    }
+    
+    .service-table .p-datatable-thead > tr > th:nth-child(4),
+    .service-table .p-datatable-tbody > tr > td:nth-child(4) {
+        width: 20% !important;
+    }
+    
+    /* Tabla de componentes expandida */
+    .service-components-table .p-datatable-thead > tr > th,
+    .service-components-table .p-datatable-tbody > tr > td {
+        padding: 6px 4px;
+        font-size: 11px;
+    }
+}
+
+/* Móviles pequeños (hasta 480px) */
+@media (max-width: 480px) {
+    .service {
+        padding: 0rem 0.5rem 1rem 0.5rem;
+    }
+    
+    .service-header h2 {
+        font-size: 1rem;
+    }
+    
+    .service-table .p-datatable-thead > tr > th,
+    .service-table .p-datatable-tbody > tr > td {
+        padding: 6px 2px;
+        font-size: 11px;
+    }
+    
+    .service-table .p-datatable-thead > tr > th:nth-child(2),
+    .service-table .p-datatable-tbody > tr > td:nth-child(2) {
+        width: 40% !important;
+    }
+    
+    .service-table .p-datatable-thead > tr > th:nth-child(3),
+    .service-table .p-datatable-tbody > tr > td:nth-child(3) {
+        width: 30% !important;
+    }
+    
+    .service-table .p-datatable-thead > tr > th:nth-child(4),
+    .service-table .p-datatable-tbody > tr > td:nth-child(4) {
+        width: 30% !important;
+    }
+    
+    /* Ocultar algunas columnas en móviles muy pequeños */
+    .service-table .p-datatable-thead > tr > th:nth-child(3),
+    .service-table .p-datatable-tbody > tr > td:nth-child(3) {
+        display: none;
+    }
+    
+    .service-table .p-datatable-thead > tr > th:nth-child(2),
+    .service-table .p-datatable-tbody > tr > td:nth-child(2) {
+        width: 70% !important;
+    }
+    
+    .service-table .p-datatable-thead > tr > th:nth-child(4),
+    .service-table .p-datatable-tbody > tr > td:nth-child(4) {
+        width: 30% !important;
+    }
+}

@@ -133,3 +133,156 @@
   color: var(--surface-700);
   font-weight: 600;
 }
+
+/* ========== RESPONSIVE DESIGN ========== */
+
+/* Tablets y pantallas medianas (768px - 1024px) */
+@media (max-width: 1024px) {
+    .service-modal {
+        width: 60vw;
+        min-width: 500px;
+        max-width: 700px;
+        height: 85vh;
+    }
+    
+    .service-modal-header {
+        flex-direction: column;
+        gap: 15px;
+        align-items: stretch;
+        margin-bottom: 1rem;
+    }
+    
+    .service-modal-header h3 {
+        font-size: 1.2rem;
+        text-align: center;
+    }
+}
+
+/* Móviles (hasta 768px) */
+@media (max-width: 768px) {
+    .service-modal {
+        width: 95vw;
+        min-width: 320px;
+        max-width: 95vw;
+        margin: 0.5rem;
+        height: 90vh;
+        padding: 1rem;
+        max-height: 90vh;
+    }
+    
+    .service-modal-overlay {
+        padding: 0.5rem;
+        align-items: flex-start;
+        padding-top: 5vh;
+    }
+    
+    .service-modal-header {
+        flex-direction: column;
+        gap: 15px;
+        align-items: stretch;
+        margin-bottom: 1.5rem;
+    }
+    
+    .service-modal-header h3 {
+        font-size: 1.1rem;
+        text-align: center;
+    }
+    
+    .service-modal-buttons {
+        flex-direction: column;
+        gap: 0.75rem;
+        margin-top: 1.5rem;
+        margin-bottom: 1rem;
+    }
+    
+    .service-modal-buttons button {
+        width: 100%;
+        padding: 12px 20px;
+    }
+    
+    /* Mejorar el área de subida de imágenes */
+    .service-upload-images {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        justify-content: center;
+    }
+    
+    .service-upload-images .p-button {
+        width: 4rem;
+        height: 5rem;
+    }
+    
+    .service-image {
+        width: 4rem;
+        height: 5rem;
+    }
+    
+    /* Mejorar la tabla de componentes */
+    .service-components-search {
+        flex-direction: column;
+        gap: 10px;
+        align-items: stretch;
+        margin-top: 1.5rem;
+        margin-bottom: 1rem;
+    }
+    
+    .p-4 {
+        gap: 0.25rem;
+    }
+}
+
+/* Móviles pequeños (hasta 480px) */
+@media (max-width: 480px) {
+    .service-modal {
+        width: 98vw;
+        min-width: 280px;
+        max-width: 98vw;
+        margin: 0.25rem;
+        height: 95vh;
+        padding: 0.75rem;
+        max-height: 95vh;
+    }
+    
+    .service-modal-overlay {
+        padding: 0.25rem;
+        padding-top: 2vh;
+    }
+    
+    .service-modal-header h3 {
+        font-size: 1rem;
+    }
+    
+    /* Área de subida de imágenes más compacta */
+    .service-upload-images {
+        gap: 0.25rem;
+    }
+    
+    .service-upload-images .p-button {
+        width: 3.5rem;
+        height: 4.5rem;
+    }
+    
+    .service-image {
+        width: 3.5rem;
+        height: 4.5rem;
+    }
+    
+    .delete-image {
+        width: 16px;
+        height: 16px;
+        font-size: 6px;
+    }
+    
+    /* Tabla de componentes más compacta */
+    .service-components-search {
+        margin-top: 1rem;
+        margin-bottom: 0.75rem;
+    }
+    
+    .components-table th,
+    .components-table td {
+        padding: 4px 2px;
+        font-size: 11px;
+    }
+}
