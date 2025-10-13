@@ -136,34 +136,32 @@ export default function Cotizaciones() {
       </div>
 
       <div className="card">
-          <DataTable
-            className="cotizaciones-table"
-            size="small"
-            value={filtered}
-            emptyMessage="Sin resultados"
-            loading={loading}
-            paginator
-            first={first}
-            rows={rowsPerPage}
-            totalRecords={totalRecords}
-            onPage={onPageChange}
-            dataKey="id"
-            expandedRows={expandedRows}
-            onRowToggle={(e) => setExpandedRows(e.data)}
-            rowExpansionTemplate={rowExpansionTemplate}
-            responsiveLayout="scroll"
-            paginatorClassName="custom-paginator"
-            breakpoints={{'960px': '80vw', '641px': '95vw'}}
-          >
-            <Column expander className="cotz-expander-col" />
-            <Column header="Nombre del cliente" body={(r) => <span className="client-name">{r?.cliente?.nombre}</span>} sortable />
-            <Column header="Categoría" body={(r) => (r?.categoria === 'Priv' ? 'Privado' : r?.categoria)} />
-            <Column header="% Utilidad" body={(r) => (r?.utilidad != null ? `${Number(r.utilidad).toFixed(0)}%` : '')} />
-            <Column header="Código reserva" body={(r) => (r?.codigoReserva || r?.codigo || '')} />
-            <Column header="Fecha viaje" body={(r) => (r?.fechaViaje ? formatLocalDate(r.fechaViaje) : '')} sortable sortField="fechaViaje" />
-            <Column header="Estado" field="estado" />
-            <Column header="Acción" body={actionTemplate} />
-          </DataTable>
+        <DataTable
+          className="cotizaciones-table"
+          size="small"
+          value={filtered}
+          emptyMessage="Sin resultados"
+          loading={loading}
+          paginator
+          first={first}
+          rows={rowsPerPage}
+          totalRecords={totalRecords}
+          onPage={onPageChange}
+          dataKey="id"
+          expandedRows={expandedRows}
+          onRowToggle={(e) => setExpandedRows(e.data)}
+          rowExpansionTemplate={rowExpansionTemplate}
+          paginatorClassName="custom-paginator"
+        >
+          <Column expander className="cotz-expander-col" />
+          <Column header="Nombre del cliente" body={(r) => <span className="client-name" data-label="Cliente">{r?.cliente?.nombre}</span>} sortable />
+          <Column header="Categoría" body={(r) => <span data-label="Categoría">{r?.categoria === 'Priv' ? 'Privado' : r?.categoria}</span>} />
+          <Column header="% Utilidad" body={(r) => <span data-label="% Utilidad">{r?.utilidad != null ? `${Number(r.utilidad).toFixed(0)}%` : ''}</span>} />
+          <Column header="Código reserva" body={(r) => <span data-label="Código">{r?.codigoReserva || r?.codigo || ''}</span>} />
+          <Column header="Fecha viaje" body={(r) => <span data-label="Fecha viaje">{r?.fechaViaje ? formatLocalDate(r.fechaViaje) : ''}</span>} sortable sortField="fechaViaje" />
+          <Column header="Estado" body={(r) => <span data-label="Estado">{r?.estado || ''}</span>} />
+          <Column header="Acción" body={(r) => <span data-label="Acción">{actionTemplate(r)}</span>} />
+        </DataTable>
       </div>
 
       {showModal && (
@@ -173,7 +171,6 @@ export default function Cotizaciones() {
           cotizacion={selectedCotizacion}   
         />
       )}
-
     </div>
   );
 }

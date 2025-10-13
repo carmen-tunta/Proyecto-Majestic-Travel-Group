@@ -66,6 +66,13 @@
   text-overflow: ellipsis;
 }
 
+/* Evitar que el texto del header se apile verticalmente en la tabla de usuarios */
+.permisos-component .usuarios-datatable .p-datatable-thead > tr > th {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 .permisos-component .p-datatable .p-datatable-tbody > tr {
   background: #fff;
   border-bottom: 1px solid #f0f0f0;
@@ -277,117 +284,28 @@
         padding: 0 !important;
     }
     
-    /* Tabla de usuarios - Ocultar header y convertir a cards */
+    /* Mantener tabla como en Services: compacta, sin convertir a cards */
     .permisos-component .usuarios-datatable .p-datatable-wrapper {
-        overflow: visible;
+        overflow-x: auto;
     }
-    
-    .permisos-component .usuarios-datatable .p-datatable-thead {
-        display: none;
-    }
-    
-    .permisos-component .usuarios-datatable .p-datatable-tbody > tr {
-        display: block;
-        margin-bottom: 1rem;
-        border: 1px solid #dee2e6;
-        border-radius: 8px;
-        background: white;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        cursor: pointer;
-        transition: box-shadow 0.2s ease;
-    }
-    
-    .permisos-component .usuarios-datatable .p-datatable-tbody > tr:hover {
-        box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-    }
-    
+    .permisos-component .usuarios-datatable .p-datatable-thead > tr > th,
     .permisos-component .usuarios-datatable .p-datatable-tbody > tr > td {
-        display: grid;
-        grid-template-columns: 100px 1fr;
-        gap: 1rem;
-        align-items: center;
-        border: none;
-        padding: 0.75rem 1rem !important;
-        border-bottom: 1px solid #f0f0f0;
-    }
-    
-    .permisos-component .usuarios-datatable .p-datatable-tbody > tr > td:last-child {
-        border-bottom: none;
-    }
-    
-    .permisos-component .usuarios-datatable .p-datatable-tbody > tr > td:before {
-        content: attr(data-label);
-        font-weight: 600;
-        color: #6c757d;
+        padding: 8px 4px !important;
         font-size: 12px;
     }
-    
-    .permisos-component .usuarios-datatable .p-datatable-tbody > tr > td > span {
-        font-size: 14px;
-        font-weight: 400;
-        color: #212529;
-    }
-    
-    /* Primera fila (nombre) destacada - evitar márgenes negativos que causan overflow horizontal */
-    .permisos-component .usuarios-datatable .p-datatable-tbody > tr > td:first-child {
-        grid-column: 1 / -1;
-        font-size: 16px;
-        font-weight: 700;
-        padding-bottom: 0.5rem !important;
-        border-bottom: 2px solid #dee2e6 !important;
-        background: #f8f9fa;
-        margin: 0 0 0.5rem 0;
-        padding: 0.75rem 1rem !important;
-    }
-    
-    .permisos-component .usuarios-datatable .p-datatable-tbody > tr > td:first-child:before {
-        content: '';
-        display: none;
-    }
-    
-    .permisos-component .usuarios-datatable .p-datatable-tbody > tr > td:first-child > span {
-        display: block;
-    }
-    
-    /* Agregar labels con data-label */
-    .permisos-component .usuarios-datatable .p-datatable-tbody > tr > td:nth-child(2):before {
-        content: 'Correo';
-    }
-    
-    .permisos-component .usuarios-datatable .p-datatable-tbody > tr > td:nth-child(3):before {
-        content: 'Área';
-    }
-    
-    .permisos-component .usuarios-datatable .p-datatable-tbody > tr > td:nth-child(4):before {
-        content: 'Usuario';
-    }
-    
-    .permisos-component .usuarios-datatable .p-datatable-tbody > tr > td:nth-child(5):before {
-        content: 'Fecha';
-    }
-    
-    .permisos-component .usuarios-datatable .p-datatable-tbody > tr > td:nth-child(6):before {
-        content: 'Estado';
-    }
-    
-    /* Badge de estado */
-    .permisos-component .user-status {
-        display: inline-block;
-        padding: 4px 12px;
-        border-radius: 4px;
-        font-size: 12px;
-        font-weight: 600;
-    }
-    
-    .permisos-component .user-status.activo {
-        background: #d4edda;
-        color: #155724;
-    }
-    
-    .permisos-component .user-status.suspendido {
-        background: #f8d7da;
-        color: #721c24;
-    }
+    /* Anchos por columna (1:Nombre, 2:Correo, 3:Área, 4:Usuario, 5:Fecha, 6:Estado) */
+    .permisos-component .usuarios-datatable .p-datatable-thead > tr > th:nth-child(1),
+    .permisos-component .usuarios-datatable .p-datatable-tbody > tr > td:nth-child(1) { width: 28% !important; }
+    .permisos-component .usuarios-datatable .p-datatable-thead > tr > th:nth-child(2),
+    .permisos-component .usuarios-datatable .p-datatable-tbody > tr > td:nth-child(2) { width: 30% !important; }
+    .permisos-component .usuarios-datatable .p-datatable-thead > tr > th:nth-child(3),
+    .permisos-component .usuarios-datatable .p-datatable-tbody > tr > td:nth-child(3) { width: 14% !important; }
+    .permisos-component .usuarios-datatable .p-datatable-thead > tr > th:nth-child(4),
+    .permisos-component .usuarios-datatable .p-datatable-tbody > tr > td:nth-child(4) { width: 12% !important; }
+    .permisos-component .usuarios-datatable .p-datatable-thead > tr > th:nth-child(5),
+    .permisos-component .usuarios-datatable .p-datatable-tbody > tr > td:nth-child(5) { width: 10% !important; }
+    .permisos-component .usuarios-datatable .p-datatable-thead > tr > th:nth-child(6),
+    .permisos-component .usuarios-datatable .p-datatable-tbody > tr > td:nth-child(6) { width: 6% !important; }
     
     /* Tabla de permisos responsive mejorada */
     .permisos-table {
@@ -581,39 +499,27 @@
         font-size: 12px;
     }
     
-    /* Cards de usuarios más compactos */
-    .permisos-component .usuarios-datatable .p-datatable-tbody > tr {
-        margin-bottom: 0.875rem;
-        border-radius: 8px;
-    }
-    
+    /* Mantener tabla compacta; priorizar columnas, ocultar solo Fecha (5) */
+    .permisos-component .usuarios-datatable .p-datatable-thead > tr > th,
     .permisos-component .usuarios-datatable .p-datatable-tbody > tr > td {
-        grid-template-columns: 85px 1fr;
-        gap: 0.75rem;
-        padding: 0.625rem 0.875rem !important;
-    }
-    
-    .permisos-component .usuarios-datatable .p-datatable-tbody > tr > td:before {
+        padding: 6px 2px !important;
         font-size: 11px;
     }
-    
-    .permisos-component .usuarios-datatable .p-datatable-tbody > tr > td:first-child {
-        font-size: 15px;
-        padding: 0.625rem 0.875rem !important;
-        margin: 0 0 0.5rem 0;
-        grid-column: 1 / -1;
-        background: transparent;
-    }
-    
-    .permisos-component .usuarios-datatable .p-datatable-tbody > tr > td > span {
-        font-size: 13px;
-    }
-    
-    /* Badge de estado */
-    .permisos-component .user-status {
-        padding: 3px 10px;
-        font-size: 11px;
-    }
+    .permisos-component .usuarios-datatable .p-datatable-wrapper { overflow-x: auto; }
+    .permisos-component .usuarios-datatable .p-datatable-thead > tr > th:nth-child(1),
+    .permisos-component .usuarios-datatable .p-datatable-tbody > tr > td:nth-child(1) { width: 34% !important; }
+    .permisos-component .usuarios-datatable .p-datatable-thead > tr > th:nth-child(2),
+    .permisos-component .usuarios-datatable .p-datatable-tbody > tr > td:nth-child(2) { width: 36% !important; word-break: break-word; }
+    .permisos-component .usuarios-datatable .p-datatable-thead > tr > th:nth-child(3),
+    .permisos-component .usuarios-datatable .p-datatable-tbody > tr > td:nth-child(3) { width: 14% !important; }
+    .permisos-component .usuarios-datatable .p-datatable-thead > tr > th:nth-child(4),
+    .permisos-component .usuarios-datatable .p-datatable-tbody > tr > td:nth-child(4) { width: 16% !important; }
+    /* Ocultar Fecha registrada en móviles pequeños */
+    .permisos-component .usuarios-datatable .p-datatable-thead > tr > th:nth-child(5),
+    .permisos-component .usuarios-datatable .p-datatable-tbody > tr > td:nth-child(5) { display: none; }
+    /* Estado ocupa espacio mínimo */
+    .permisos-component .usuarios-datatable .p-datatable-thead > tr > th:nth-child(6),
+    .permisos-component .usuarios-datatable .p-datatable-tbody > tr > td:nth-child(6) { width: 14% !important; }
     
     /* Optimización para móviles muy pequeños */
     .permisos-table tr.module-row {
@@ -688,3 +594,44 @@
         font-size: 14px;
     }
 }
+
+    /* Móviles medianos (<= 600px): ocultar Área (3) y ensanchar Correo */
+    @media (max-width: 600px) {
+        .permisos-component .usuarios-datatable .p-datatable-thead > tr > th,
+        .permisos-component .usuarios-datatable .p-datatable-tbody > tr > td {
+            padding: 6px 4px !important;
+            font-size: 11px;
+        }
+        /* Ocultar Área */
+        .permisos-component .usuarios-datatable .p-datatable-thead > tr > th:nth-child(3),
+        .permisos-component .usuarios-datatable .p-datatable-tbody > tr > td:nth-child(3) { display: none; }
+        /* Rebalancear anchos: 1 Nombre, 2 Correo, 4 Usuario, 5 Fecha, 6 Estado */
+        .permisos-component .usuarios-datatable .p-datatable-thead > tr > th:nth-child(1),
+        .permisos-component .usuarios-datatable .p-datatable-tbody > tr > td:nth-child(1) { width: 34% !important; }
+        .permisos-component .usuarios-datatable .p-datatable-thead > tr > th:nth-child(2),
+        .permisos-component .usuarios-datatable .p-datatable-tbody > tr > td:nth-child(2) { width: 42% !important; word-break: break-word; }
+        .permisos-component .usuarios-datatable .p-datatable-thead > tr > th:nth-child(4),
+        .permisos-component .usuarios-datatable .p-datatable-tbody > tr > td:nth-child(4) { width: 12% !important; }
+        .permisos-component .usuarios-datatable .p-datatable-thead > tr > th:nth-child(5),
+        .permisos-component .usuarios-datatable .p-datatable-tbody > tr > td:nth-child(5) { width: 6% !important; }
+        .permisos-component .usuarios-datatable .p-datatable-thead > tr > th:nth-child(6),
+        .permisos-component .usuarios-datatable .p-datatable-tbody > tr > td:nth-child(6) { width: 6% !important; }
+    }
+
+    /* Móviles pequeños (<= 480px): mostrar Usuario, Correo y Estado; ocultar Nombres, Área y Fecha */
+    @media (max-width: 480px) {
+        /* Ocultar Nombres (1), Área (3) y Fecha (5) */
+        .permisos-component .usuarios-datatable .p-datatable-thead > tr > th:nth-child(1),
+        .permisos-component .usuarios-datatable .p-datatable-tbody > tr > td:nth-child(1) { display: none; }
+        .permisos-component .usuarios-datatable .p-datatable-thead > tr > th:nth-child(3),
+        .permisos-component .usuarios-datatable .p-datatable-tbody > tr > td:nth-child(3) { display: none; }
+        .permisos-component .usuarios-datatable .p-datatable-thead > tr > th:nth-child(5),
+        .permisos-component .usuarios-datatable .p-datatable-tbody > tr > td:nth-child(5) { display: none; }
+        /* Rebalancear anchos: Correo 60%, Usuario 30%, Estado 10% */
+        .permisos-component .usuarios-datatable .p-datatable-thead > tr > th:nth-child(2),
+        .permisos-component .usuarios-datatable .p-datatable-tbody > tr > td:nth-child(2) { width: 60% !important; word-break: break-word; }
+        .permisos-component .usuarios-datatable .p-datatable-thead > tr > th:nth-child(4),
+        .permisos-component .usuarios-datatable .p-datatable-tbody > tr > td:nth-child(4) { width: 30% !important; }
+        .permisos-component .usuarios-datatable .p-datatable-thead > tr > th:nth-child(6),
+        .permisos-component .usuarios-datatable .p-datatable-tbody > tr > td:nth-child(6) { width: 10% !important; }
+    }
