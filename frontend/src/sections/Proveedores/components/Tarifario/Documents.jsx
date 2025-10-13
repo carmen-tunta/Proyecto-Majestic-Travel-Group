@@ -13,6 +13,7 @@ import "../../styles/Tarifario/Documents.css"
 import UploadDocument from "../../../../modules/Tarifario/application/UploadDocument";
 import UpdateDocument from "../../../../modules/Tarifario/application/UpdateDocument";
 import { usePermissions } from '../../../../contexts/PermissionsContext';
+import { useNotification } from "../../../Notification/NotificationContext";
 
 
 const Documents = ({ tarifario }) => {
@@ -27,6 +28,7 @@ const Documents = ({ tarifario }) => {
     const [description, setDescription] = useState("");
     const [file, setFile] = useState(null);
     const [newFile, setNewFile] = useState(null);
+    const {showNotification} = useNotification();
 
 
     const documentRepo = new TarifarioDocumentsRepository();
@@ -57,7 +59,7 @@ const Documents = ({ tarifario }) => {
 
     const handleUpload = async () => {
         if (!file) {
-            alert("Por favor, seleccione un archivo.");
+            showNotification("Por favor, seleccione un archivo.", 'error');
             return;
         }
         try {
@@ -161,13 +163,16 @@ const Documents = ({ tarifario }) => {
                         name="documentFile"
                         accept=".pdf,.doc,.docx,.xls,.xlsx"
                         mode="basic"
-                        maxFileSize={5000000}
+                        maxFileSize={10000000}
                         chooseLabel={ !newFile ? (file ? file.name : "Elegir archivo") : newFile.name}
                         chooseOptions={{ className: 'p-button-outlined' }}
                         customUpload
                         onSelect={(e) => {
                             !isEditing ? setFile(e.files[0]) : setNewFile(e.files[0]);
                             if (filesUploadRef.current) { filesUploadRef.current.clear() }
+                        }}
+                        onValidationFail={(file) => {
+                            showNotification(`El archivo "${file.name}" excede el tamaño máximo permitido de 10 MB`, 'error');
                         }}
                         disabled={loading}
                     />

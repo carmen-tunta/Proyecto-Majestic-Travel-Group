@@ -10,6 +10,7 @@ import SearchBar from '../../../components/SearchBar';
 import QuoteRequestRepository from '../../../modules/QuoteRequest/repository/QuoteRequestRepository';
 import GetAllQuoteRequests from '../../../modules/QuoteRequest/application/GetAllQuoteRequests';
 import '../styles/BandejaSolicitud.css';
+import { useNavigate } from 'react-router-dom';
 
 // Componente separado para el contador que se actualiza automáticamente
 const ExpirationCounter = ({ assignedAt }) => {
@@ -673,6 +674,8 @@ const BandejaSolicitud = () => {
     );
   };
 
+  const navigate = useNavigate();
+
   return (
     <div className="bandeja-solicitud">
       <div className="bandeja-header">
@@ -680,6 +683,15 @@ const BandejaSolicitud = () => {
         
         {/* En desktop: botón separado */}
         <div className="bandeja-header-desktop">
+          <Button 
+            icon="pi pi-map" 
+            onClick={() => navigate('/plan-your-trip')}
+            size="small"
+            outlined
+            tooltip="Plan your trip"
+            tooltipOptions={{ position: 'bottom' }}
+            style={{ marginRight: 8 }}
+          />
           <Button 
             icon="pi pi-refresh" 
             onClick={loadQuoteRequests}
