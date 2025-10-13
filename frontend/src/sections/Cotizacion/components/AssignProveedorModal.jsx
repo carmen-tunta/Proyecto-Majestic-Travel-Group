@@ -124,6 +124,7 @@ export default function AssignProveedorModal({
       style={{ width: '50vw', maxWidth: '95vw', maxHeight: '80vh' }}
       modal
       onHide={onHide}
+      breakpoints={{'960px': '75vw', '641px': '90vw'}}
     >
       <div style={{ display: 'flex', gap: 24, marginBottom: 12, fontWeight: 600 }}>
         <div>Tipo de servicio: <span style={{ fontWeight: 700 }}>{serviceType || '-'}</span></div>
@@ -139,11 +140,14 @@ export default function AssignProveedorModal({
             stripedRows 
             onRowClick={(e) => handleAssign(e.data)}
             emptyMessage="No hay proveedores disponibles"
+            paginator={rows.length > 8}
+            rows={8}
+            paginatorClassName="custom-paginator"
           >
-            <Column field="nombre" header="Proveedor" style={{ width: '50%' }}></Column>
-            <Column field="costo" header={`Costo`} body={(r) => <div style={{ textAlign: 'right', width: '100%' }}>{r.costo}</div>} style={{ width: '17%' }}></Column>
-            <Column field="incrementoLabel" header="Incremento" body={(r) => <div style={{ textAlign: 'right', width: '100%' }}>{r.incrementoLabel}</div>} style={{ width: '17%' }}></Column>
-            <Column field="total" header="Total" body={(r) => <div style={{ textAlign: 'right', width: '100%' }}>{r.total}</div>} style={{ width: '16%' }}></Column>
+            <Column field="nombre" header="Proveedor" style={{ width: '50%' }} headerClassName="column-header" bodyClassName="column-body"></Column>
+            <Column field="costo" header={`Costo`} body={(r) => <div style={{ textAlign: 'right', width: '100%' }}>{r.costo}</div>} style={{ width: '17%' }} headerClassName="column-header" bodyClassName="column-body"></Column>
+            <Column field="incrementoLabel" header="Incremento" body={(r) => <div style={{ textAlign: 'right', width: '100%' }}>{r.incrementoLabel}</div>} style={{ width: '17%' }} headerClassName="column-header" bodyClassName="column-body"></Column>
+            <Column field="total" header="Total" body={(r) => <div style={{ textAlign: 'right', width: '100%' }}>{r.total}</div>} style={{ width: '16%' }} headerClassName="column-header" bodyClassName="column-body"></Column>
             {/* <Column header="" body={(r) => (
               <button className="p-button p-button-sm" onClick={() => handleAssign(r)}>Elegir</button>
             )} style={{ width: 90 }}></Column> */}

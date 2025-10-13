@@ -932,9 +932,24 @@ const ConfirmacionReserva = ({ cotizacionId, cotizacionData }) => {
               <div className="confirmacion-itinerario">
                 <h4>Itinerario</h4>
                 <DataTable value={getItinerario()} size="small" emptyMessage="Sin itinerario">
-                  <Column field="dia" header="DÍA" style={{ width: '10%' }} />
-                  <Column field="fecha" header="FECHA" style={{ width: '25%' }} />
-                  <Column field="actividad" header="SERVICIOS/ACTIVIDADES" style={{ width: '65%' }} />
+                  <Column 
+                    field="dia" 
+                    header="DÍA" 
+                    style={{ width: '10%' }}
+                    body={(rowData) => <span data-label="DÍA">{rowData.dia}</span>}
+                  />
+                  <Column 
+                    field="fecha" 
+                    header="FECHA" 
+                    style={{ width: '25%' }}
+                    body={(rowData) => <span data-label="FECHA">{rowData.fecha}</span>}
+                  />
+                  <Column 
+                    field="actividad" 
+                    header="SERVICIOS/ACTIVIDADES" 
+                    style={{ width: '65%' }}
+                    body={(rowData) => <span data-label="SERVICIOS/ACTIVIDADES">{rowData.actividad}</span>}
+                  />
                 </DataTable>
               </div>
             </>

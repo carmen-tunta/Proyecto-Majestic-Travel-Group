@@ -9,6 +9,7 @@ import { apiService } from "../../../services/apiService";
 import SearchBar from "../../../components/SearchBar";
 import { Button } from "primereact/button";
 import "../../Services/styles/Portada/AgregarPlantillaItinerario.css";
+import "../styles/PlantillaItinerarioModal.css";
 
 const PlantillaItinerarioModal = ({ onHide, onSelectTemplate }) => {
     const [templates, setTemplates] = useState([]);
@@ -49,7 +50,7 @@ const PlantillaItinerarioModal = ({ onHide, onSelectTemplate }) => {
 
     return (
         <div className="itinerary-modal-overlay">
-            <div className="agregar-itinerario-modal">
+            <div className="agregar-itinerario-modal plantilla-itinerario-modal">
                 {loading ? (
                     <ProgressSpinner />
                 ) : (
@@ -71,11 +72,15 @@ const PlantillaItinerarioModal = ({ onHide, onSelectTemplate }) => {
                                 selectionMode="single"
                                 selection={selectedTemplate}
                                 onSelectionChange={(e) => setSelectedTemplate(e.value)}
+                                responsiveLayout="scroll"
+                                paginator={(search ? results : templates).length > 8}
+                                rows={8}
+                                paginatorClassName="custom-paginator"
                             >
                                 <Column
                                     field="templateTitle" 
                                     header="Título de la plantilla" 
-                                    style={{ width: '47%' }}>    
+                                    style={{ width: '100%' }}>    
                                 </Column>
                             </DataTable>
                             <div className="itinerario-info">

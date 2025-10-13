@@ -206,20 +206,18 @@ const Permisos = () => {
 
   // Tabla Usuarios
   const UsersTab = (
-    <div className="pasajeros-tab">
-      <div className="pasajeros-header">
-        <div className="pasajeros-title">
-          <h3 style={{ margin:0 }}>Usuarios</h3>
-          <p className="cotizacion-info">Administración de usuarios y sus permisos</p>
-        </div>
-        <div>
-          {isAdmin && (
-            <Button onClick={openNew} label="Nuevo" icon="pi pi-plus" outlined />
-          )}
-        </div>
-      </div>
-
-      <div className="card" style={{ borderRadius:8 }}>
+      <div className="pasajeros-tab">
+        <div className="pasajeros-header">
+          <div className="pasajeros-title">
+            <h3 style={{ margin:0 }}>Usuarios</h3>
+            <p className="cotizacion-info">Administración de usuarios y sus permisos</p>
+          </div>
+          <div className="pasajeros-actions">
+            {isAdmin && (
+              <Button onClick={openNew} label="Nuevo" icon="pi pi-plus" outlined className="btn-nuevo-usuario" />
+            )}
+          </div>
+        </div>      <div className="card" style={{ borderRadius:8 }}>
         <div style={{ padding: '12px' }}>
           <DataTable
             value={users}
@@ -229,14 +227,17 @@ const Permisos = () => {
             onRowClick={e => { setSelectedUser(e.data); setActiveIndex(1); }}
             paginator
             rows={4}
+            paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink"
+            paginatorClassName="custom-paginator"
             style={{ cursor:'pointer' }}
+            className="usuarios-datatable"
           >
-            <Column field="nombre" header="Nombres" style={{ width:'18%' }} body={r => <span style={{ fontWeight:500 }}>{r.nombre}</span>} />
-            <Column field="email" header="Correo" style={{ width:'22%' }} />
-            <Column field="area" header="Area" style={{ width:'16%' }} />
-            <Column field="username" header="Usuario" style={{ width:'14%' }} />
-            <Column header="Fecha registrada" style={{ width:'18%' }} body={r => formatSpanishDate(r.createdAt)} />
-            <Column header="Estado" style={{ width:'12%' }} body={r => r.status === 'activo' ? 'Activo' : 'Suspendido'} />
+            <Column field="nombre" header="Nombres" body={r => <span style={{ fontWeight:500 }} data-label="Nombres">{r.nombre}</span>} sortable />
+            <Column field="email" header="Correo" body={r => <span data-label="Correo">{r.email}</span>} sortable />
+            <Column field="area" header="Area" body={r => <span data-label="Área">{r.area}</span>} />
+            <Column field="username" header="Usuario" body={r => <span data-label="Usuario">{r.username}</span>} sortable />
+            <Column header="Fecha registrada" body={r => <span data-label="Fecha registrada">{formatSpanishDate(r.createdAt)}</span>} sortable sortField="createdAt" />
+            <Column header="Estado" body={r => <span className={`user-status ${r.status}`} data-label="Estado">{r.status === 'activo' ? 'Activo' : 'Suspendido'}</span>} />
           </DataTable>
         </div>
       </div>
@@ -272,7 +273,7 @@ const Permisos = () => {
                   <tbody>
                     {modules.length === 0 && (
                       <tr>
-                        <td colSpan={3} style={{ padding:'2rem', textAlign:'center', color:'#777' }}>
+                        <td colSpan={4} style={{ padding:'2rem', textAlign:'center', color:'#777' }}>
                           No hay módulos de permisos cargados. Verifica que el backend haya ejecutado el seed.
                         </td>
                       </tr>
@@ -289,13 +290,13 @@ const Permisos = () => {
                       if (actions.length === 0) return null; // omitir módulos sin acciones relevantes
                       const hasAny = actions.some(a => userHasAction(m.code, a.action));
                       const hidden = !hasAny; // Ocultar cuando no tiene ninguna acción
-                      const activarChecked = hasAny; // Según screenshot: activar marc ado aunque no todas las acciones estén activas
+                      const activarChecked = hasAny; // Según screenshot: activar marcado aunque no todas las acciones estén activas
                       const actionIds = actions.map(a => a.id);
                       return (
                         <React.Fragment key={m.id}>
                           <tr className='module-row'>
-                            <td className='permisos-module-name'>{m.nombre || m.name || m.code}</td>
-                            <td>
+                            <td className='permisos-module-name' data-label="Módulo">{m.nombre || m.name || m.code}</td>
+                            <td data-label="Ocultar">
                               <Checkbox
                                 inputId={`hide-${m.id}`}
                                 checked={hidden}
@@ -303,7 +304,7 @@ const Permisos = () => {
                                 onChange={e => toggleHideModule(m, e.checked)}
                               />
                             </td>
-                            <td style={{ padding:'12px 8px' }}>
+                            <td data-label="Activar" style={{ padding:'12px 8px' }}>
                               <Checkbox
                                 inputId={`activate-${m.id}`}
                                 checked={activarChecked}
@@ -311,21 +312,21 @@ const Permisos = () => {
                                 onChange={e => toggleActivateModule(m, e.checked)}
                               />
                             </td>
-                            <td className='permisos-updated'>{moduleUpdatedMap[m.code] ? formatSpanishDate(new Date(moduleUpdatedMap[m.code])) : ''}</td>
+                            <td className='permisos-updated' data-label="Fecha actualizada">{moduleUpdatedMap[m.code] ? formatSpanishDate(new Date(moduleUpdatedMap[m.code])) : ''}</td>
                           </tr>
                           {actions.map(a => (
                             <tr key={a.id} className='action-row'>
-                              <td className='permisos-subaction'>{a.uiLabel}</td>
-                              <td></td>
-                              <td>
+                              <td className='permisos-subaction' data-label="Acción">{a.uiLabel}</td>
+                              <td data-label=""></td>
+                              <td data-label="Permitir">
                                 <Checkbox
                                   inputId={`act-${a.id}`}
                                   checked={userHasAction(m.code, a.action)}
                                   disabled={!isAdmin || (authUser && selectedUser.id === authUser.id)}
-                                      onChange={e => toggleAction(m, a, e.checked)}
+                                  onChange={e => toggleAction(m, a, e.checked)}
                                 />
                               </td>
-                              <td></td>
+                              <td data-label=""></td>
                             </tr>
                           ))}
                         </React.Fragment>
@@ -351,32 +352,81 @@ const Permisos = () => {
         <TabPanel header="Permisos">{PermsTab}</TabPanel>
       </TabView>
 
-      <Dialog header="Nuevo Usuario" visible={showNew} style={{ width:'30rem' }} onHide={() => setShowNew(false)} modal>
-        <div className='p-fluid' style={{ display:'flex', flexDirection:'column', gap:12 }}>
+      <Dialog 
+        header="Nuevo Usuario" 
+        visible={showNew} 
+        style={{ width:'30rem' }} 
+        onHide={() => setShowNew(false)} 
+        modal 
+        className="nuevo-usuario-dialog"
+        breakpoints={{'960px': '75vw', '641px': '90vw'}}
+        draggable={false}
+        resizable={false}
+      >
+        <div className='p-fluid nuevo-usuario-form' style={{ display:'flex', flexDirection:'column', gap:12 }}>
           <span className='p-float-label'>
-            <InputText id='nombre' value={form.nombre} onChange={e=> setForm(f=>({...f, nombre:e.target.value}))} />
-            <label htmlFor='nombre'>Nombres</label>
+            <InputText 
+              id='nombre' 
+              value={form.nombre} 
+              onChange={e=> setForm(f=>({...f, nombre:e.target.value}))} 
+              autoComplete="off"
+            />
+            <label htmlFor='nombre'>Nombres *</label>
           </span>
           <span className='p-float-label'>
-            <InputText id='email' value={form.email} onChange={e=> setForm(f=>({...f, email:e.target.value}))} />
-            <label htmlFor='email'>Correo</label>
+            <InputText 
+              id='email' 
+              value={form.email} 
+              onChange={e=> setForm(f=>({...f, email:e.target.value}))} 
+              type="email"
+              autoComplete="email"
+            />
+            <label htmlFor='email'>Correo *</label>
           </span>
           <span className='p-float-label'>
-            <InputText id='area' value={form.area} onChange={e=> setForm(f=>({...f, area:e.target.value}))} />
+            <InputText 
+              id='area' 
+              value={form.area} 
+              onChange={e=> setForm(f=>({...f, area:e.target.value}))} 
+              autoComplete="organization"
+            />
             <label htmlFor='area'>Área</label>
           </span>
           <span className='p-float-label'>
-            <InputText id='username' value={form.username} onChange={e=> setForm(f=>({...f, username:e.target.value}))} />
-            <label htmlFor='username'>Usuario</label>
+            <InputText 
+              id='username' 
+              value={form.username} 
+              onChange={e=> setForm(f=>({...f, username:e.target.value}))} 
+              autoComplete="username"
+            />
+            <label htmlFor='username'>Usuario *</label>
           </span>
           <span className='p-float-label'>
-            <Dropdown id='status' value={form.status} options={ESTADOS} onChange={e=> setForm(f=>({...f, status:e.value}))} optionLabel='label' optionValue='value' />
+            <Dropdown 
+              id='status' 
+              value={form.status} 
+              options={ESTADOS} 
+              onChange={e=> setForm(f=>({...f, status:e.value}))} 
+              optionLabel='label' 
+              optionValue='value' 
+            />
             <label htmlFor='status'>Estado</label>
           </span>
         </div>
-        <div style={{ display:'flex', justifyContent:'flex-end', marginTop:20, gap:8 }}>
-          <Button label='Cancelar' text onClick={()=> setShowNew(false)} />
-          <Button label='Guardar' icon='pi pi-check' loading={creating} onClick={createUser} />
+        <div className="dialog-buttons" style={{ display:'flex', justifyContent:'flex-end', marginTop:20, gap:8 }}>
+          <Button 
+            label='Cancelar' 
+            text 
+            onClick={()=> setShowNew(false)} 
+            className="btn-cancelar"
+          />
+          <Button 
+            label='Guardar' 
+            icon='pi pi-check' 
+            loading={creating} 
+            onClick={createUser} 
+            className="btn-guardar"
+          />
         </div>
       </Dialog>
     </div>
