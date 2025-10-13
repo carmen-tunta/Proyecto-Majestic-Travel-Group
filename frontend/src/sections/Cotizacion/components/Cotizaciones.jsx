@@ -151,13 +151,16 @@ export default function Cotizaciones() {
             expandedRows={expandedRows}
             onRowToggle={(e) => setExpandedRows(e.data)}
             rowExpansionTemplate={rowExpansionTemplate}
+            responsiveLayout="scroll"
+            paginatorClassName="custom-paginator"
+            breakpoints={{'960px': '80vw', '641px': '95vw'}}
           >
             <Column expander className="cotz-expander-col" />
-            <Column header="Nombre del cliente" body={(r) => <span className="client-name">{r?.cliente?.nombre}</span>} />
+            <Column header="Nombre del cliente" body={(r) => <span className="client-name">{r?.cliente?.nombre}</span>} sortable />
             <Column header="Categoría" body={(r) => (r?.categoria === 'Priv' ? 'Privado' : r?.categoria)} />
             <Column header="% Utilidad" body={(r) => (r?.utilidad != null ? `${Number(r.utilidad).toFixed(0)}%` : '')} />
             <Column header="Código reserva" body={(r) => (r?.codigoReserva || r?.codigo || '')} />
-            <Column header="Fecha viaje" body={(r) => (r?.fechaViaje ? formatLocalDate(r.fechaViaje) : '')} />
+            <Column header="Fecha viaje" body={(r) => (r?.fechaViaje ? formatLocalDate(r.fechaViaje) : '')} sortable sortField="fechaViaje" />
             <Column header="Estado" field="estado" />
             <Column header="Acción" body={actionTemplate} />
           </DataTable>

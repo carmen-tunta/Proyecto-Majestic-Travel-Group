@@ -365,41 +365,720 @@
 }
 
 /* Responsive */
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
+  .confirmacion-editor-container {
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    gap: 0.75rem;
+  }
+  
+  .confirmacion-editor-header {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    padding: 1rem;
+    margin: 0;
+    border-radius: 0;
+  }
+  
+  .confirmacion-editor-header .p-button {
+    flex: 1 1 auto;
+    min-width: 140px;
+    font-size: 13px;
+  }
+  
+  .confirmacion-language-selector {
+    flex: 0 1 auto;
+  }
+  
+  .language-dropdown {
+    width: 120px;
+  }
+  
+  .confirmacion-page {
+    padding: 1.5rem;
+    width: 100%;
+    max-width: 100%;
+    min-height: auto;
+    margin: 0;
+    border-radius: 0;
+    box-sizing: border-box;
+  }
+  
   .confirmacion-block-double {
     grid-template-columns: 1fr;
+    gap: 1.5rem;
   }
+  
+  .confirmacion-header-principal {
+    grid-template-columns: 1fr;
+    text-align: center;
+    gap: 1rem;
+  }
+  
+  .confirmacion-logo-container {
+    justify-content: center;
+    margin-bottom: 1rem;
+  }
+  
+  .confirmacion-estado-container {
+    align-items: center;
+  }
+  
+  .confirmacion-info-section {
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .confirmacion-itinerario .p-datatable .p-datatable-thead > tr > th,
+  .confirmacion-itinerario .p-datatable .p-datatable-tbody > tr > td {
+    padding: 8px 6px;
+    font-size: 13px;
+  }
+  
+  .confirmacion-titulo-input {
+    font-size: 1rem;
+  }
+  
+  .confirmacion-contenido-input {
+    font-size: 0.875rem;
+    min-height: 70px;
+  }
+  
+  .confirmacion-controls {
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 1rem;
+    margin: 0;
+    border-radius: 0;
+  }
+  
+  .confirmacion-controls .p-button {
+    flex: 1 1 calc(50% - 5px);
+    min-width: 120px;
+    font-size: 13px;
+  }
+  
+  .confirmacion-page-footer {
+    padding: 1rem 0;
+  }
+}
 
+@media (max-width: 768px) {
+  .confirmacion-editor-container {
+    padding: 0;
+    margin: 0;
+    gap: 0;
+    width: 100%;
+    overflow-x: hidden;
+  }
+  
+  .confirmacion-editor-header {
+    flex-direction: column;
+    gap: 10px;
+    align-items: stretch;
+    padding: 0.75rem;
+    margin: 0;
+    border-radius: 0;
+  }
+  
+  .confirmacion-editor-header .p-button {
+    width: 100%;
+    justify-content: center;
+    font-size: 13px;
+  }
+  
+  .confirmacion-language-selector {
+    flex: 1 0 auto;
+  }
+  
+  .language-dropdown {
+    width: 100%;
+  }
+  
   .confirmacion-page {
     padding: 1rem;
+    width: 100%;
+    max-width: 100%;
+    border-radius: 0;
+    margin: 0;
+    border-left: none;
+    border-right: none;
+    box-sizing: border-box;
+  }
+  
+  .confirmacion-header-principal {
+    grid-template-columns: 1fr;
+    text-align: center;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+  }
+  
+  .confirmacion-logo {
+    max-width: 140px;
+  }
+  
+  .confirmacion-titulo-container h2 {
+    font-size: 1.25rem;
+  }
+  
+  .confirmacion-block-double {
+    grid-template-columns: 1fr;
+    gap: 1rem;
   }
 
   .confirmacion-page-footer {
     flex-direction: column;
     align-items: flex-start;
+    gap: 12px;
+    padding: 0.75rem 0;
   }
 
-  .confirmacion-header-completo {
-    grid-template-columns: 1fr;
-    text-align: center;
+  .footer-item {
+    font-size: 12px;
+  }
+  
+  .footer-item i {
+    font-size: 1rem;
   }
 
-  .confirmacion-estado-right {
+  .confirmacion-estado-container {
     align-items: center;
+    justify-content: center;
   }
 
   .confirmacion-info-section {
     grid-template-columns: 1fr;
-    gap: 1rem;
+    gap: 0.5rem;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border: 1px solid #dee2e6;
   }
 
   .info-row {
     grid-template-columns: 1fr;
     gap: 0.25rem;
+    padding: 0.5rem;
+    background: white;
+    border-radius: 6px;
+    margin-bottom: 0.25rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
   }
 
   .info-label {
     font-weight: 700;
+    font-size: 11px;
+    color: #007bff;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  .info-value {
+    font-size: 14px;
+    font-weight: 500;
+    color: #212529;
+    padding-top: 2px;
+  }
+  
+  .confirmacion-pasajeros {
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+    border-radius: 8px;
+    border: 2px solid #2196f3;
+  }
+  
+  .confirmacion-pasajeros h4 {
+    font-size: 0.95rem;
+    margin-bottom: 0.75rem;
+    color: #1976d2;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .confirmacion-pasajeros h4:before {
+    content: '👥';
+    font-size: 1.2rem;
+  }
+  
+  .confirmacion-pasajeros ul {
+    margin: 0;
+    padding-left: 1.5rem;
+    list-style-type: none;
+  }
+  
+  .confirmacion-pasajeros li {
+    font-size: 0.875rem;
+    line-height: 1.8;
+    color: #212529;
+    padding: 0.25rem 0;
+    position: relative;
+  }
+  
+  .confirmacion-pasajeros li:before {
+    content: '✓';
+    position: absolute;
+    left: -1.2rem;
+    color: #2196f3;
+    font-weight: bold;
+  }
+  
+  .confirmacion-itinerario {
+    margin-bottom: 1.5rem;
+  }
+  
+  .confirmacion-itinerario h4 {
+    font-size: 1rem;
+    margin-bottom: 0.75rem;
+  }
+  
+  /* Tabla responsive con cards mejorados - tipo timeline */
+  .confirmacion-itinerario .p-datatable .p-datatable-thead,
+  .confirmacion-itinerario .p-datatable .p-datatable-tbody,
+  .confirmacion-itinerario .p-datatable .p-datatable-tbody tr {
+    display: block;
+  }
+  
+  .confirmacion-itinerario .p-datatable .p-datatable-thead th {
+    position: absolute;
+    top: -9999px;
+    left: -9999px;
+  }
+  
+  .confirmacion-itinerario .p-datatable .p-datatable-tbody tr {
+    border-left: 4px solid #007bff;
+    margin-bottom: 16px;
+    padding: 14px;
+    border-radius: 8px;
+    background: #ffffff;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.12);
+    position: relative;
+  }
+  
+  .confirmacion-itinerario .p-datatable .p-datatable-tbody tr:before {
+    content: '';
+    position: absolute;
+    left: -10px;
+    top: 18px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #007bff;
+    border: 3px solid #fff;
+    box-shadow: 0 0 0 2px #007bff;
+  }
+  
+  .confirmacion-itinerario .p-datatable .p-datatable-tbody tr td {
+    display: block;
+    padding: 8px 0;
+    border: none;
+    font-size: 13px;
+    line-height: 1.6;
+  }
+  
+  .confirmacion-itinerario .p-datatable .p-datatable-tbody tr td:first-child {
+    font-size: 18px;
+    font-weight: 700;
+    color: #007bff;
+    padding-bottom: 4px;
+    border-bottom: 2px solid #e9ecef;
+    margin-bottom: 8px;
+  }
+  
+  .confirmacion-itinerario .p-datatable .p-datatable-tbody tr td:nth-child(2) {
+    font-size: 12px;
+    color: #6c757d;
+    font-weight: 600;
+    padding-bottom: 8px;
+  }
+  
+  .confirmacion-itinerario .p-datatable .p-datatable-tbody tr td:nth-child(3) {
+    color: #212529;
+    font-size: 14px;
+    line-height: 1.7;
+    padding-top: 4px;
+  }
+  
+  .confirmacion-itinerario .p-datatable .p-datatable-tbody tr td:before {
+    display: none;
+  }
+  
+  /* Bloques editables */
+  .confirmacion-block {
+    padding: 0.75rem;
+    margin-bottom: 1rem;
+    border-radius: 6px;
+  }
+  
+  .confirmacion-block-delete {
+    top: 0.35rem;
+    right: 0.35rem;
+  }
+  
+  .confirmacion-titulo-container {
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+  
+  .confirmacion-titulo-input {
+    font-size: 1rem;
+    padding: 0.5rem;
+    border-radius: 4px;
+  }
+  
+  .confirmacion-contenido-input {
+    min-height: 80px;
+    font-size: 0.875rem;
+    padding: 0.5rem;
+    border-radius: 4px;
+    line-height: 1.5;
+  }
+  
+  .titulo-action-btn {
+    min-width: 2.2rem;
+    height: 2.2rem;
+  }
+  
+  .titulo-action-btn .pi {
+    font-size: 1rem;
+  }
+  
+  /* Controles */
+  .confirmacion-controls {
+    flex-direction: column;
+    gap: 10px;
+    align-items: stretch;
+    padding: 0.75rem;
+    margin: 0;
+    border-radius: 0;
+  }
+  
+  .confirmacion-controls .p-button {
+    width: 100%;
+    justify-content: center;
+    font-size: 13px;
+    padding: 10px;
+  }
+  
+  /* Indicador de páginas */
+  .confirmacion-pages-indicator {
+    padding: 0.5rem;
+    gap: 0.5rem;
+  }
+  
+  .confirmacion-pages-indicator .p-button {
+    min-width: 2rem;
+    height: 2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .confirmacion-editor-container {
+    padding: 0;
+    margin: 0;
+    gap: 0;
+    width: 100%;
+    overflow-x: hidden;
+  }
+  
+  .confirmacion-editor-header {
+    padding: 0.5rem;
+    gap: 8px;
+    border-radius: 0;
+    margin: 0;
+  }
+  
+  .confirmacion-editor-header .p-button {
+    font-size: 12px;
+    padding: 9px 12px;
+  }
+  
+  .confirmacion-editor-header .p-button .pi {
+    font-size: 13px;
+  }
+  
+  .language-label {
+    font-size: 0.7rem;
+  }
+  
+  .confirmacion-page {
+    padding: 0.75rem;
+    border-radius: 0;
+    margin: 0;
+    border-left: none;
+    border-right: none;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  
+  .confirmacion-header-principal {
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.5rem;
+  }
+  
+  .confirmacion-logo {
+    max-width: 120px;
+  }
+  
+  .confirmacion-titulo-container h2 {
+    font-size: 1.1rem;
+  }
+  
+  .estado-label {
+    font-size: 0.7rem;
+  }
+  
+  .estado-value {
+    font-size: 0.85rem;
+  }
+  
+  .confirmacion-info-section {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+    padding: 0.875rem;
+    margin-bottom: 1.25rem;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border: 1px solid #dee2e6;
+  }
+
+  .info-row {
+    grid-template-columns: 1fr;
+    gap: 0.25rem;
+    padding: 0.5rem;
+    background: white;
+    border-radius: 6px;
+    margin-bottom: 0.25rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  }
+
+  .info-label {
+    font-weight: 700;
+    font-size: 10px;
+    color: #007bff;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  .info-value {
+    font-size: 13px;
+    font-weight: 500;
+    color: #212529;
+    padding-top: 2px;
+  }
+  
+  .confirmacion-pasajeros {
+    margin-bottom: 1.25rem;
+    padding: 0.875rem;
+    background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+    border-radius: 8px;
+    border: 2px solid #2196f3;
+  }
+  
+  .confirmacion-pasajeros h4 {
+    font-size: 0.85rem;
+    margin-bottom: 0.625rem;
+    color: #1976d2;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .confirmacion-pasajeros h4:before {
+    content: '👥';
+    font-size: 1.1rem;
+  }
+  
+  .confirmacion-pasajeros ul {
+    margin: 0;
+    padding-left: 1.5rem;
+    list-style-type: none;
+  }
+  
+  .confirmacion-pasajeros li {
+    font-size: 0.8125rem;
+    line-height: 1.7;
+    color: #212529;
+    padding: 0.25rem 0;
+    position: relative;
+  }
+  
+  .confirmacion-pasajeros li:before {
+    content: '✓';
+    position: absolute;
+    left: -1.2rem;
+    color: #2196f3;
+    font-weight: bold;
+  }
+  
+  .confirmacion-itinerario {
+    margin-bottom: 1rem;
+  }
+  
+  .confirmacion-itinerario h4 {
+    font-size: 0.95rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .confirmacion-itinerario .p-datatable .p-datatable-tbody tr {
+    border-left: 3px solid #007bff;
+    padding: 12px;
+    margin-bottom: 14px;
+    position: relative;
+  }
+  
+  .confirmacion-itinerario .p-datatable .p-datatable-tbody tr:before {
+    left: -9px;
+    top: 16px;
+    width: 14px;
+    height: 14px;
+  }
+  
+  .confirmacion-itinerario .p-datatable .p-datatable-tbody tr td {
+    padding: 6px 0;
+    font-size: 12px;
+    line-height: 1.5;
+  }
+  
+  .confirmacion-itinerario .p-datatable .p-datatable-tbody tr td:first-child {
+    font-size: 16px;
+    font-weight: 700;
+    padding-bottom: 3px;
+    margin-bottom: 6px;
+  }
+  
+  .confirmacion-itinerario .p-datatable .p-datatable-tbody tr td:nth-child(2) {
+    font-size: 11px;
+    padding-bottom: 6px;
+  }
+  
+  .confirmacion-itinerario .p-datatable .p-datatable-tbody tr td:nth-child(3) {
+    font-size: 13px;
+    line-height: 1.6;
+    padding-top: 3px;
+  }
+  
+  /* Bloques editables muy compactos */
+  .confirmacion-block {
+    padding: 0.6rem;
+    margin-bottom: 0.75rem;
+    border-radius: 4px;
+  }
+  
+  .confirmacion-block-delete {
+    top: 0.3rem;
+    right: 0.3rem;
+  }
+  
+  .confirmacion-block-delete .p-button {
+    width: 1.9rem;
+    height: 1.9rem;
+  }
+  
+  .confirmacion-block-double {
+    gap: 0.75rem;
+  }
+  
+  .confirmacion-block-column {
+    gap: 0.4rem;
+  }
+  
+  .confirmacion-titulo-container {
+    gap: 0.4rem;
+    margin-bottom: 0.3rem;
+    flex-wrap: wrap;
+  }
+  
+  .confirmacion-titulo-input {
+    font-size: 0.9rem;
+    padding: 0.45rem;
+    border-radius: 4px;
+  }
+  
+  .confirmacion-contenido-input {
+    min-height: 70px;
+    font-size: 0.8rem;
+    padding: 0.45rem;
+    border-radius: 4px;
+    line-height: 1.4;
+  }
+  
+  .titulo-action-btn {
+    min-width: 1.9rem;
+    height: 1.9rem;
+  }
+  
+  .titulo-action-btn .pi {
+    font-size: 0.9rem;
+  }
+  
+  /* Footer muy compacto */
+  .confirmacion-page-footer {
+    font-size: 11px;
+    padding: 0.6rem 0;
+    gap: 10px;
+  }
+  
+  .footer-item {
+    font-size: 11px;
+    width: 100%;
+  }
+  
+  .footer-item i {
+    font-size: 1rem;
+  }
+  
+  /* Controles muy compactos */
+  .confirmacion-controls {
+    padding: 0.5rem;
+    gap: 8px;
+    margin: 0;
+    border-radius: 0;
+  }
+  
+  .confirmacion-controls .p-button {
+    font-size: 12px;
+    padding: 9px 12px;
+    width: 100%;
+  }
+  
+  .confirmacion-controls .p-button .pi {
+    font-size: 13px;
+  }
+  
+  /* Indicador de páginas */
+  .confirmacion-pages-indicator {
+    padding: 0.4rem;
+    gap: 0.4rem;
+  }
+  
+  .confirmacion-pages-indicator .p-button {
+    width: 1.9rem;
+    height: 1.9rem;
+    font-size: 11px;
+  }
+  
+  /* Loading state */
+  .confirmacion-loading {
+    min-height: 300px;
+    gap: 0.75rem;
+    padding: 1rem;
+  }
+  
+  .confirmacion-loading p {
+    font-size: 13px;
+    text-align: center;
   }
 }
 

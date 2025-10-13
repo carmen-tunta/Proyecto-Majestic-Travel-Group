@@ -1,0 +1,217 @@
+/* SelectAddModal Styles */
+.select-add-modal {
+    width: 100%;
+}
+
+.select-add-modal .search-container {
+    margin-bottom: 16px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.select-add-modal .search-container .search-bar {
+    flex: 1;
+}
+
+.select-add-modal .btn-primary {
+    padding: 8px 16px;
+    font-size: 14px;
+    border-radius: 6px;
+    background-color: #1976d2;
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.select-add-modal .btn-primary:hover {
+    background-color: #1565c0;
+}
+
+.select-add-modal .btn-primary:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.select-add-modal .results-table {
+    width: 100%;
+}
+
+.select-add-modal .results-table .p-datatable-thead > tr > th {
+    background-color: #f8f9fa;
+    color: #333;
+    font-weight: 600;
+    padding: 12px 8px;
+    border: 1px solid #dee2e6;
+}
+
+.select-add-modal .results-table .p-datatable-tbody > tr > td {
+    padding: 10px 8px;
+    border: 1px solid #dee2e6;
+}
+
+.select-add-modal .results-table .p-datatable-tbody > tr:hover {
+    background-color: #f8f9fa;
+    cursor: pointer;
+}
+
+.select-add-modal .results-table .p-datatable-tbody > tr.p-highlight {
+    background-color: #e3f2fd;
+    color: #1976d2;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .select-add-modal .search-container {
+        gap: 8px;
+    }
+    
+    .select-add-modal .results-table .p-datatable-thead > tr > th,
+    .select-add-modal .results-table .p-datatable-tbody > tr > td {
+        padding: 8px 6px;
+        font-size: 13px;
+    }
+}
+
+@media (max-width: 768px) {
+    .select-add-modal .search-container {
+        flex-direction: column;
+        gap: 12px;
+        align-items: stretch;
+    }
+    
+    .select-add-modal .btn-primary {
+        width: 100%;
+        padding: 12px;
+        font-size: 16px;
+    }
+    
+    .select-add-modal .results-table .p-datatable-thead > tr > th,
+    .select-add-modal .results-table .p-datatable-tbody > tr > td {
+        padding: 6px 4px;
+        font-size: 12px;
+    }
+    
+    /* Tabla responsive con cards */
+    .select-add-modal .results-table .p-datatable-thead,
+    .select-add-modal .results-table .p-datatable-tbody,
+    .select-add-modal .results-table .p-datatable-tbody tr {
+        display: block;
+    }
+    
+    .select-add-modal .results-table .p-datatable-thead th {
+        position: absolute;
+        top: -9999px;
+        left: -9999px;
+    }
+    
+    .select-add-modal .results-table .p-datatable-tbody tr {
+        border: 1px solid #ddd;
+        margin-bottom: 12px;
+        padding: 12px;
+        border-radius: 8px;
+        background: #fff;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        cursor: pointer;
+    }
+    
+    .select-add-modal .results-table .p-datatable-tbody tr:hover {
+        box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        transform: translateY(-1px);
+        transition: all 0.2s ease;
+    }
+    
+    .select-add-modal .results-table .p-datatable-tbody tr.p-highlight {
+        border-color: #1976d2;
+        background-color: #e3f2fd;
+    }
+    
+    .select-add-modal .results-table .p-datatable-tbody tr td {
+        display: block;
+        padding: 8px 0;
+        border: none;
+        border-bottom: 1px solid #f0f0f0;
+        text-align: left;
+    }
+    
+    .select-add-modal .results-table .p-datatable-tbody tr td:last-child {
+        border-bottom: none;
+    }
+    
+    .select-add-modal .results-table .p-datatable-tbody tr td:before {
+        content: attr(data-label) ': ';
+        font-weight: 600;
+        color: #666;
+        margin-right: 10px;
+        display: inline-block;
+        min-width: 60px;
+    }
+}
+
+@media (max-width: 480px) {
+    .select-add-modal .results-table .p-datatable-tbody tr {
+        padding: 10px;
+        margin-bottom: 10px;
+    }
+    
+    .select-add-modal .results-table .p-datatable-tbody tr td {
+        padding: 6px 0;
+        font-size: 11px;
+    }
+    
+    .select-add-modal .results-table .p-datatable-tbody tr td:before {
+        font-size: 10px;
+        margin-right: 8px;
+        min-width: 50px;
+    }
+}
+
+/* Paginación personalizada responsive */
+.select-add-modal .custom-paginator .p-paginator-page,
+.select-add-modal .custom-paginator .p-paginator-first,
+.select-add-modal .custom-paginator .p-paginator-prev,
+.select-add-modal .custom-paginator .p-paginator-next,
+.select-add-modal .custom-paginator .p-paginator-last {
+    padding: 6px 8px;
+    font-size: 12px;
+    margin: 0 2px;
+    min-width: 32px;
+    height: 32px;
+}
+
+@media (max-width: 768px) {
+    .select-add-modal .custom-paginator .p-paginator-page,
+    .select-add-modal .custom-paginator .p-paginator-first,
+    .select-add-modal .custom-paginator .p-paginator-prev,
+    .select-add-modal .custom-paginator .p-paginator-next,
+    .select-add-modal .custom-paginator .p-paginator-last {
+        padding: 6px 8px;
+        font-size: 12px;
+        margin: 0 1px;
+        min-width: 28px;
+        height: 28px;
+    }
+    
+    .select-add-modal .custom-paginator .p-paginator-current {
+        font-size: 11px;
+    }
+}
+
+@media (max-width: 480px) {
+    .select-add-modal .custom-paginator .p-paginator-page,
+    .select-add-modal .custom-paginator .p-paginator-first,
+    .select-add-modal .custom-paginator .p-paginator-prev,
+    .select-add-modal .custom-paginator .p-paginator-next,
+    .select-add-modal .custom-paginator .p-paginator-last {
+        padding: 4px 6px;
+        font-size: 11px;
+        margin: 0 1px;
+        min-width: 24px;
+        height: 24px;
+    }
+    
+    .select-add-modal .custom-paginator .p-paginator-current {
+        font-size: 10px;
+    }
+}

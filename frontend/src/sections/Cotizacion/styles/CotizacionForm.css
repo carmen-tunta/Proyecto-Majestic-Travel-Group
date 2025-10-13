@@ -425,3 +425,815 @@
 .p-dialog-header {
     cursor:default;
 }
+
+/* ========== RESPONSIVE DESIGN ========== */
+
+/* Tablets y pantallas medianas (768px - 1024px) */
+@media (max-width: 1024px) {
+    /* Asegurar que el contenedor principal use todo el ancho */
+    body, .cotizacion-form-container {
+        padding: 0;
+        margin: 0;
+        width: 100%;
+        overflow-x: hidden;
+    }
+    
+    .form-card {
+        padding: 12px;
+        margin: 0;
+        width: 100%;
+        box-sizing: border-box;
+    }
+    
+    /* Grids adaptativos para tablet */
+    .row1-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+    }
+    
+    .row2-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+    }
+    
+    .row3-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+    }
+    
+    .grid.grid-6 {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+    
+    .grid.grid-12 {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+    }
+    
+    .cotz-builder {
+        flex-direction: column;
+        height: auto;
+        padding: 1rem;
+        margin-top: 1rem;
+    }
+    
+    .cotz-builder-left {
+        width: 100%;
+        padding: 1rem 0;
+    }
+    
+    .totals-card {
+        width: 100%;
+        border-left: none;
+        border-top: 1px dashed var(--gray-300);
+        padding-top: 1rem;
+        margin-top: 1rem;
+        padding: 12px;
+        gap: 8px;
+    }
+    
+    .totals-row {
+        margin-left: 0;
+        font-size: 15px;
+    }
+    
+    /* Servicios card más compacto */
+    .cotz-service-card {
+        padding: 1rem 0.5rem;
+        margin-bottom: 0.75rem;
+        overflow-x: hidden;
+    }
+    
+    .cotz-service-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+    
+    .cotz-service-title {
+        font-size: 1rem;
+    }
+    
+    /* Lista de componentes sin overflow */
+    .componentes-list {
+        width: 100%;
+        overflow-x: hidden;
+    }
+    
+    .cotz-component-row {
+        font-size: 14px;
+        padding: 6px 0;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+    
+    .price-input {
+        width: 80px;
+        font-size: 14px;
+    }
+    
+    /* Tab menu más compacto */
+    .p-tabmenu .p-tabmenu-nav .p-tabmenuitem .p-menuitem-link {
+        padding: 8px 10px;
+        font-size: 14px;
+    }
+    
+    /* Botones de acción responsive */
+    .form-actions {
+        flex-wrap: wrap;
+        gap: 8px;
+        justify-content: center;
+    }
+    
+    .form-actions .p-button {
+        min-width: 140px;
+        font-size: 14px;
+    }
+    
+    /* Componente cards - mejor layout en tablet */
+    .componente-card {
+        flex-wrap: wrap;
+        gap: 12px !important;
+        padding: 8px;
+        border: 1px solid #f0f0f0;
+        border-radius: 6px;
+        margin-bottom: 8px;
+    }
+}
+
+/* Móviles (hasta 768px) */
+@media (max-width: 768px) {
+    /* Contenedor principal sin márgenes */
+    body, .cotizacion-form-container {
+        padding: 0;
+        margin: 0;
+        width: 100%;
+        overflow-x: hidden;
+    }
+    
+    .form-card {
+        padding: 8px;
+        margin: 0;
+        border-radius: 0;
+        overflow-x: hidden;
+        width: 100%;
+        box-sizing: border-box;
+    }
+    
+    /* Contenedor de servicios */
+    .cotz-service-card {
+        padding: 1rem 0.5rem;
+        margin-bottom: 0.75rem;
+        margin-left: 0;
+        margin-right: 0;
+        overflow-x: hidden;
+    }
+    
+    /* Lista de componentes */
+    .componentes-list {
+        width: 100%;
+        overflow-x: hidden;
+    }
+    
+    .form-card .row {
+        flex-direction: column;
+        gap: 8px;
+        margin-bottom: 20px;
+    }
+    
+    .form-card .right-btn {
+        margin-left: 0;
+        margin-top: 10px;
+        width: 100%;
+    }
+    
+    /* Todas las grids se vuelven de una columna */
+    .row1-grid,
+    .row2-grid,
+    .row3-grid {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+    
+    .grid.grid-6,
+    .grid.grid-12,
+    .grid {
+        grid-template-columns: 1fr;
+    }
+    
+    /* Inputs más compactos */
+    .form-grid input,
+    .form-grid select,
+    .grid input,
+    .grid select {
+        height: 36px;
+        padding: 8px 10px;
+        font-size: 14px;
+    }
+    
+    .form-grid .p-dropdown.p-component,
+    .form-grid .p-calendar.p-component,
+    .grid .p-dropdown.p-component,
+    .grid .p-calendar.p-component {
+        height: 36px;
+    }
+    
+    /* Servicios card más compacto */
+    .cotz-service-card {
+        padding: 1rem 0.5rem;
+        margin-bottom: 0.75rem;
+    }
+    
+    .cotz-service-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+    
+    .cotz-service-title {
+        font-size: 1rem;
+    }
+    
+    /* Componente card - adaptación total mobile */
+    .componente-card {
+        flex-direction: column;
+        align-items: stretch !important;
+        gap: 10px !important;
+        padding: 12px;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        background: #fafafa;
+        position: relative;
+    }
+    
+    .componente-card > div {
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+    
+    /* Fecha y hora */
+    .componente-card > div:first-child {
+        display: flex !important;
+        align-items: center;
+        justify-content: flex-start;
+        padding-top: 20px;
+        margin-left: 0 !important;
+    }
+    
+    .componente-card .pi-trash {
+        position: absolute !important;
+        top: 8px;
+        right: 8px;
+        margin-left: 0 !important;
+        width: auto !important;
+    }
+    
+    /* Nombre del componente */
+    .componente-card > div:nth-child(2) {
+        border-left: 3px solid var(--blue-200);
+        padding-left: 10px;
+        width: 100% !important;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+    }
+    
+    .componente-card > div:nth-child(2) > div {
+        margin-left: 0 !important;
+        width: 100% !important;
+    }
+    
+    /* Nota input */
+    .componente-card > div:nth-child(3) {
+        margin-top: 4px;
+        width: 100% !important;
+        min-width: 0 !important;
+    }
+    
+    .componente-card > div:nth-child(3) > div {
+        min-width: 0 !important;
+        width: 100% !important;
+    }
+    
+    .componente-card > div:nth-child(3) input,
+    .componente-card > div:nth-child(3) .p-inputtext {
+        width: 100% !important;
+        max-width: 100%;
+        min-width: 0 !important;
+        box-sizing: border-box;
+    }
+    
+    /* Precio */
+    .componente-card > div:last-child {
+        display: flex;
+        justify-content: flex-end;
+        width: 100% !important;
+    }
+    
+    .componente-card > div:last-child .p-inputnumber,
+    .componente-card > div:last-child .price-input {
+        width: 100px !important;
+    }
+    
+    .cotz-component-row {
+        grid-template-columns: 1fr auto;
+        gap: 4px;
+        margin-left: 8px;
+        padding: 4px 0;
+        font-size: 14px;
+    }
+    
+    .price-input {
+        width: 70px;
+        font-size: 14px;
+    }
+    
+    /* Builder adaptativo */
+    .cotz-builder {
+        height: auto;
+        padding: 0.75rem;
+        margin-top: 1rem;
+        margin-left: 0;
+        margin-right: 0;
+        flex-direction: column;
+        width: 100%;
+        box-sizing: border-box;
+    }
+    
+    .cotz-builder-left {
+        padding: 0.75rem 0;
+        width: 100%;
+    }
+    
+    .cotz-searchline {
+        flex-direction: column;
+        gap: 12px;
+        align-items: stretch;
+        margin-bottom: 1rem;
+    }
+    
+    .cotz-searchline label {
+        font-weight: 500;
+        font-size: 14px;
+        margin: 0;
+    }
+    
+    /* Radio buttons en fila horizontal con mejor espaciado */
+    .cotz-searchline > div {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+        align-items: center;
+    }
+    
+    .cotz-searchbar {
+        flex-direction: column;
+        gap: 10px;
+        align-items: stretch;
+        width: 100%;
+    }
+    
+    .cotz-searchbar .p-autocomplete {
+        width: 100% !important;
+        max-width: 100%;
+    }
+    
+    .cotz-searchbar .p-autocomplete .p-inputtext {
+        width: 100% !important;
+    }
+    
+    .cotz-searchbar .p-button {
+        width: 100%;
+    }
+    
+    .search-status {
+        position: static;
+        text-align: center;
+        margin-top: 4px;
+        font-size: 12px;
+    }
+    
+    /* Tab Menu responsive */
+    .p-tabmenu .p-tabmenu-nav {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        margin: 0;
+        width: 100%;
+    }
+    
+    .p-tabmenu .p-tabmenu-nav .p-tabmenuitem {
+        flex-shrink: 0;
+    }
+    
+    .p-tabmenu .p-tabmenu-nav .p-tabmenuitem .p-menuitem-link {
+        padding: 10px 16px;
+        font-size: 14px;
+        white-space: nowrap;
+    }
+    
+    /* Dialog responsive */
+    .p-dialog {
+        width: 95vw;
+        margin: 0 auto;
+        max-width: 95vw;
+    }
+    
+    /* Totales card más legible */
+    .totals-card {
+        padding: 12px;
+        gap: 8px;
+    }
+    
+    .totals-row {
+        font-size: 14px;
+        padding: 4px 0;
+    }
+    
+    .totals-row.bold {
+        font-size: 16px;
+        margin-top: 8px;
+        padding-top: 8px;
+        border-top: 1px solid #ddd;
+    }
+}
+
+/* Móviles pequeños (hasta 480px) */
+@media (max-width: 480px) {
+    /* Contenedor principal sin márgenes */
+    body, .cotizacion-form-container {
+        padding: 0;
+        margin: 0;
+        width: 100%;
+        overflow-x: hidden;
+    }
+    
+    .form-card {
+        padding: 6px;
+        margin: 0;
+        border-radius: 0;
+        overflow-x: hidden;
+        width: 100%;
+        box-sizing: border-box;
+    }
+    
+    /* Servicios muy compactos */
+    .cotz-service-card {
+        padding: 0.5rem 0.25rem;
+        margin-bottom: 8px;
+        margin-left: 0;
+        margin-right: 0;
+        overflow-x: hidden;
+    }
+    
+    .cotz-service-header {
+        gap: 6px;
+    }
+    
+    /* Lista de componentes */
+    .componentes-list {
+        width: 100%;
+        overflow-x: hidden;
+        padding: 0;
+        margin: 0;
+    }
+    
+    .form-card .row {
+        margin-bottom: 15px;
+    }
+    
+    .form-card .right-btn {
+        font-size: 13px;
+        padding: 8px 12px;
+    }
+    
+    /* Todas las grids se vuelven de una sola columna */
+    .row1-grid,
+    .row2-grid,
+    .row3-grid {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+    
+    .grid.grid-6,
+    .grid.grid-12 {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+    
+    /* Inputs aún más compactos */
+    .form-grid input,
+    .form-grid select,
+    .grid input,
+    .grid select {
+        height: 32px;
+        padding: 6px 8px;
+        font-size: 13px;
+    }
+    
+    .form-grid .p-dropdown.p-component,
+    .form-grid .p-calendar.p-component,
+    .grid .p-dropdown.p-component,
+    .grid .p-calendar.p-component {
+        height: 32px;
+    }
+    
+    .form-grid .p-dropdown .p-dropdown-label,
+    .grid .p-dropdown .p-dropdown-label {
+        font-size: 13px;
+        padding: 6px 8px;
+    }
+    
+    /* Servicios muy compactos */
+    .cotz-service-card {
+        padding: 0.5rem 0.25rem;
+        margin-bottom: 8px;
+    }
+    
+    .cotz-service-header {
+        gap: 6px;
+    }
+    
+    .cotz-service-header .pi-trash {
+        font-size: 16px;
+    }
+    
+    .cotz-service-title {
+        font-size: 0.9rem;
+        margin-bottom: 6px;
+    }
+    
+    .cotz-select-hint {
+        font-size: 11px;
+        margin-top: 4px;
+    }
+    
+    /* Componente card ultra mobile */
+    .componente-card {
+        padding: 10px;
+        gap: 8px !important;
+        margin-bottom: 10px;
+        position: relative;
+    }
+    
+    .componente-card > div {
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+    
+    .componente-card > div:first-child {
+        font-size: 13px;
+        padding-top: 24px;
+        margin-left: 0 !important;
+        display: flex !important;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .componente-card > div:nth-child(2) {
+        font-size: 14px;
+        font-weight: 600;
+        border-left-width: 2px;
+        padding-left: 8px;
+        width: 100% !important;
+        word-wrap: break-word;
+    }
+    
+    .componente-card > div:nth-child(2) i {
+        font-size: 14px;
+    }
+    
+    .componente-card > div:nth-child(2) > div {
+        font-size: 11px;
+        margin-left: 0 !important;
+        margin-top: 4px;
+        width: 100% !important;
+    }
+    
+    .componente-card > div:nth-child(3) {
+        font-size: 13px;
+        width: 100% !important;
+        min-width: 0 !important;
+    }
+    
+    .componente-card > div:nth-child(3) > div {
+        min-width: 0 !important;
+        width: 100% !important;
+    }
+    
+    .componente-card > div:nth-child(3) input,
+    .componente-card > div:nth-child(3) .p-inputtext {
+        width: 100% !important;
+        max-width: 100%;
+        min-width: 0 !important;
+        font-size: 13px;
+        box-sizing: border-box;
+    }
+    
+    .componente-card .pi-trash {
+        top: 6px;
+        right: 6px;
+        font-size: 14px;
+        position: absolute !important;
+        width: auto !important;
+        margin-left: 0 !important;
+    }
+    
+    .componente-card > div:last-child {
+        width: 100% !important;
+        display: flex;
+        justify-content: flex-end;
+    }
+    
+    .componente-card > div:last-child .p-inputnumber,
+    .componente-card > div:last-child .price-input {
+        width: 90px !important;
+    }
+    
+    .cotz-component-row .component-info {
+        width: 100%;
+        margin-bottom: 4px;
+    }
+    
+    .cotz-component-row .component-actions {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .price-input {
+        width: 60px;
+        font-size: 12px;
+        height: 28px;
+    }
+    
+    .cotz-builder {
+        padding: 0.5rem;
+        margin-top: 1rem;
+        margin-left: 0;
+        margin-right: 0;
+        flex-direction: column;
+        width: 100%;
+        box-sizing: border-box;
+    }
+    
+    .cotz-builder-left {
+        padding: 0.5rem 0;
+        width: 100%;
+    }
+    
+    .cotz-searchline {
+        gap: 10px;
+        margin-bottom: 0.75rem;
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .cotz-searchline label {
+        font-size: 13px;
+        margin: 0;
+    }
+    
+    .cotz-searchline .p-radiobutton {
+        width: 16px;
+        height: 16px;
+    }
+    
+    .cotz-searchline > div {
+        gap: 12px;
+        display: flex;
+        flex-wrap: wrap;
+    }
+    
+    .cotz-searchbar {
+        gap: 8px;
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .cotz-searchbar .p-autocomplete {
+        font-size: 13px;
+        width: 100% !important;
+        max-width: 100%;
+    }
+    
+    .cotz-searchbar .p-autocomplete .p-inputtext {
+        font-size: 13px;
+        padding: 8px 10px;
+        width: 100% !important;
+    }
+    
+    .cotz-searchbar .p-button {
+        font-size: 13px;
+        padding: 8px 12px;
+        width: 100%;
+    }
+    
+    .totals-card {
+        padding: 8px 12px;
+        margin-top: 0.5rem;
+        padding-top: 0.5rem;
+    }
+    
+    .totals-row {
+        font-size: 13px;
+        margin-bottom: 4px;
+    }
+    
+    .totals-row.bold,
+    .totals-row.final-total {
+        font-size: 15px;
+        font-weight: 700;
+    }
+    
+    /* Tab menu muy compacto */
+    .p-tabmenu .p-tabmenu-nav .p-tabmenuitem .p-menuitem-link {
+        padding: 8px 12px;
+        font-size: 13px;
+    }
+    
+    /* Botones de acción full width */
+    .form-actions {
+        flex-direction: column;
+        gap: 8px;
+        margin-top: 16px;
+    }
+    
+    .form-actions .p-button {
+        width: 100%;
+        min-width: auto;
+        font-size: 13px;
+        padding: 10px;
+    }
+    
+    /* Dialog full width en móviles pequeños */
+    .p-dialog {
+        width: 98vw;
+        max-height: 90vh;
+        border-radius: 8px;
+    }
+    
+    .p-dialog .p-dialog-header {
+        padding: 12px 16px;
+    }
+    
+    .p-dialog .p-dialog-header .p-dialog-title {
+        font-size: 14px;
+    }
+    
+    .p-dialog .p-dialog-content {
+        padding: 12px 16px;
+    }
+    
+    /* Búsqueda de servicios/componentes */
+    .search-container {
+        flex-direction: column;
+        gap: 8px;
+        margin-bottom: 12px;
+    }
+    
+    .search-container input {
+        width: 100%;
+        font-size: 13px;
+    }
+    
+    .search-container button {
+        width: 100%;
+        font-size: 13px;
+        padding: 8px;
+    }
+    
+    /* Cliente search wrap */
+    .client-search-wrap .p-inputtext {
+        font-size: 13px;
+        height: 32px;
+        padding-right: 32px;
+    }
+    
+    .client-search-wrap .right-icon {
+        right: 8px;
+        font-size: 14px;
+    }
+    
+    /* Center message */
+    .center {
+        padding: 1.5rem 0 0.75rem 0;
+        font-size: 1.1rem;
+        margin: 0;
+        width: 100%;
+    }
+    
+    /* Componentes list */
+    .componentes-list {
+        margin-top: 8px;
+        width: 100%;
+        padding: 0;
+    }
+    
+    /* Asegurar que todos los componentes PrimeReact respeten el ancho */
+    .p-component {
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+}

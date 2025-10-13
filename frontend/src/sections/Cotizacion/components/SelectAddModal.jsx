@@ -6,6 +6,7 @@ import SearchBar from '../../../components/SearchBar';
 import AddServiceToCotizacion from '../../../modules/Cotizacion/application/AddServiceToCotizacion';
 import AddComponentsToCotizacionService from '../../../modules/Cotizacion/application/AddComponentsToCotizacionService';
 import { apiService } from '../../../services/apiService';
+import '../styles/SelectAddModal.css';
 
 export default function SelectAddModal({ visible, onHide, mode = 'service', cotizacionId, csId, onAdded, showNotification }) {
   const [query, setQuery] = useState('');
@@ -83,9 +84,11 @@ export default function SelectAddModal({ visible, onHide, mode = 'service', coti
       modal
       style={{ width: 720, maxWidth: '95vw' }}
       onHide={onHide}
+      breakpoints={{'960px': '80vw', '641px': '95vw'}}
+      className="select-add-modal"
     >
-      <div style={{ marginBottom: 10, display: 'flex', gap: 8, alignItems: 'center' }} onKeyDown={onKeyDown}>
-        <div style={{ flex: 1 }}>
+      <div className="search-container" onKeyDown={onKeyDown}>
+        <div className="search-bar">
           <SearchBar value={query} onChange={setQuery} placeholder={isService ? 'Buscar servicios...' : 'Buscar componentes...'} />
         </div>
         <button className="btn-primary" onClick={handleAdd} disabled={!selected && results.length === 0}>Agregar</button>
@@ -99,6 +102,11 @@ export default function SelectAddModal({ visible, onHide, mode = 'service', coti
         onSelectionChange={(e) => setSelected(e.value)}
         onRowDoubleClick={(e) => { setSelected(e.data); handleAdd(); }}
         size="small"
+        className="results-table"
+        responsiveLayout="scroll"
+        paginator={results.length > 10}
+        rows={10}
+        paginatorClassName="custom-paginator"
         scrollable
         scrollHeight="320px"
         emptyMessage={query ? 'Sin resultados' : 'Empieza a escribir para buscar'}
