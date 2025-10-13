@@ -117,3 +117,73 @@
   color: var(--surface-700);
   font-weight: 600;
 }
+
+
+/* Responsividad para el componente Contact */
+@media (max-width: 768px) {
+    .contact-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    
+    .contact-table.contact-table-mobile {
+        font-size: 0.85rem;
+    }
+    
+    .contact-table-mobile .p-datatable-thead > tr > th {
+        font-size: 0.8rem;
+        padding: 8px 4px;
+        white-space: nowrap;
+    }
+    
+    .contact-table-mobile .p-datatable-tbody > tr > td {
+        padding: 8px 4px;
+        font-size: 0.8rem;
+    }
+    
+    /* Permitir que la descripción se parta */
+    .contact-table-mobile .p-datatable-tbody > tr > td:nth-child(2) {
+        white-space: normal !important;
+        word-wrap: break-word;
+        word-break: break-word;
+        line-height: 1.2;
+        max-width: 200px;
+    }
+    
+}
+
+@media (max-width: 480px) {
+    .contact-table-mobile .p-datatable-thead > tr > th {
+        font-size: 0.75rem;
+        padding: 6px 2px;
+    }
+    
+    .contact-table-mobile .p-datatable-tbody > tr > td {
+        padding: 6px 2px;
+        font-size: 0.75rem;
+    }
+    
+    /* Ocultar columna Nota en móviles pequeños */
+    .contact-table-mobile .p-datatable-thead > tr > th:nth-child(3),
+    .contact-table-mobile .p-datatable-tbody > tr > td:nth-child(3) {
+        display: none;
+    }
+    
+    /* Ajustar anchos para móviles pequeños */
+    .contact-table-mobile .p-datatable-thead > tr > th:nth-child(1),
+    .contact-table-mobile .p-datatable-tbody > tr > td:nth-child(1) {
+        width: 30%;
+    }
+    
+    .contact-table-mobile .p-datatable-thead > tr > th:nth-child(2),
+    .contact-table-mobile .p-datatable-tbody > tr > td:nth-child(2) {
+        width: 55%;
+        max-width: 150px;
+    }
+    
+    .contact-table-mobile .p-datatable-thead > tr > th:nth-child(4),
+    .contact-table-mobile .p-datatable-tbody > tr > td:nth-child(4) {
+        width: 15%;
+    }
+}

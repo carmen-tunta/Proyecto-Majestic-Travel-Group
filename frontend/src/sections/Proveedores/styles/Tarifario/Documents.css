@@ -57,4 +57,166 @@
     min-width: 7rem;
 }
 
+/* Responsividad para tablets */
+@media (max-width: 1024px) {
+    .documents-body {
+        padding: 1rem 2rem;
+    }
+    
+    .documents-header {
+        gap: 1.5rem;
+    }
+    
+    .document-upload {
+        gap: 1rem;
+    }
+}
 
+/* Responsividad para móviles */
+@media (max-width: 768px) {
+    .documents-body {
+        padding: 1rem;
+    }
+    
+    .documents-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1.5rem;
+    }
+    
+    .document-upload {
+        flex-direction: column;
+        gap: 1rem;
+        width: 100%;
+    }
+    
+    .document-upload .p-float-label {
+        width: 100%;
+    }
+    
+    .document-upload .upload {
+        width: 100%;
+    }
+    
+    .upload-button {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .documents-table {
+        overflow-x: auto;
+    }
+    
+    .documents-table .p-datatable {
+        font-size: 0.85rem;
+    }
+    
+    .documents-table .p-datatable-thead > tr > th {
+        font-size: 0.8rem;
+        padding: 8px 4px;
+        white-space: nowrap;
+    }
+    
+    .documents-table .p-datatable-tbody > tr > td {
+        padding: 8px 4px;
+        font-size: 0.8rem;
+    }
+    
+    /* Permitir que las descripciones se partan */
+    .documents-table .p-datatable-tbody > tr > td:nth-child(1),
+    .documents-table .p-datatable-tbody > tr > td:nth-child(2) {
+        white-space: normal !important;
+        word-wrap: break-word;
+        word-break: break-word;
+        line-height: 1.2;
+        max-width: 150px;
+    }
+}
+
+/* Responsividad para móviles pequeños */
+@media (max-width: 480px) {
+    .documents-body {
+        padding: 0.5rem;
+    }
+    
+    .documents-header {
+        gap: 1rem;
+    }
+    
+    .document-upload {
+        gap: 0.75rem;
+    }
+    
+    .documents-table .p-datatable {
+        font-size: 0.8rem;
+    }
+    
+    .documents-table .p-datatable-thead > tr > th {
+        font-size: 0.75rem;
+        padding: 6px 2px;
+    }
+    
+    .documents-table .p-datatable-tbody > tr > td {
+        padding: 6px 2px;
+        font-size: 0.75rem;
+    }
+    
+    .documents-table .p-datatable-tbody > tr > td:nth-child(1),
+    .documents-table .p-datatable-tbody > tr > td:nth-child(2) {
+        max-width: 120px;
+    }
+
+    .documents-table .p-datatable-thead > tr > th:nth-child(1),
+    .documents-table .p-datatable-tbody > tr > td:nth-child(1) {
+        display: none;
+    }
+    
+    /* Ajustar anchos de las columnas restantes */
+    .documents-table .p-datatable-thead > tr > th:nth-child(2),
+    .documents-table .p-datatable-tbody > tr > td:nth-child(2) {
+        width: 70%;
+        max-width: 200px;
+    }
+    
+    .documents-table .p-datatable-thead > tr > th:nth-child(3),
+    .documents-table .p-datatable-tbody > tr > td:nth-child(3) {
+        width: 30%;
+    }
+    
+}
+
+/* Landscape mode para móviles */
+@media (max-width: 768px) and (orientation: landscape) {
+    .documents-header {
+        flex-direction: row;
+        align-items: center;
+    }
+    
+    .document-upload {
+        flex-direction: row;
+        flex: 1;
+        gap: 1rem;
+    }
+    
+    .upload-button {
+        width: auto;
+        flex-shrink: 0;
+    }
+}
+
+/* Mejoras adicionales para la experiencia móvil */
+@media (max-width: 768px) {
+    .documents-table .p-fileupload-choose {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .documents-table input[type="text"] {
+        font-size: 0.9rem;
+    }
+    
+    /* Mejorar área táctil de los iconos */
+    .documents-table .pi {
+        padding: 4px;
+    }
+}

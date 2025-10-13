@@ -76,6 +76,20 @@ const TarifaMenu = ({ proveedor, tarifa, setTarifa }) => {
     const getTarifaPriceByIdTarifa = new GetTarifaPriceByTarifaId(tarifaPricesRepo);
     const { has } = usePermissions();
 
+    const [isMobile, setIsMobile] = useState(false);
+
+    useEffect(() => {
+        const handleResize = () => {
+            setIsMobile(window.innerWidth < 768);
+        };
+
+        window.addEventListener('resize', handleResize);
+        handleResize();
+
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
+    }, []);
 
     const parseLocalDate = (dateString) => {
         if (!dateString) return null;
@@ -520,7 +534,7 @@ const TarifaMenu = ({ proveedor, tarifa, setTarifa }) => {
     );
 
 
-    const MODAL_WIDTH = window.innerWidth * 0.27;
+    const MODAL_WIDTH = isMobile ? window.innerWidth * 0.9 : window.innerWidth * 0.27;
     let modalStyle = {};
     if (modalColumnX !== null) {
         const windowWidth = window.innerWidth;
@@ -598,7 +612,7 @@ const TarifaMenu = ({ proveedor, tarifa, setTarifa }) => {
                         ) : (
                         <div className="scrolling-table">
                         <DataTable 
-                            className="tarifa-table"
+                            className={`tarifa-table ${isMobile ? 'tarifa-table-mobile' : ''}`}
                             value={selectedComponents}
                             scrollable
                             scrollHeight="flex" 
@@ -607,19 +621,22 @@ const TarifaMenu = ({ proveedor, tarifa, setTarifa }) => {
                             emptyMessage="Sin datos todavía"
                         >
                             <Column 
-                                style={{ minWidth: '25vw', backgroundColor: '#ffffff', border: 'none' }}
+                                style={{ 
+                                    minWidth: '25vw', 
+                                    backgroundColor: '#ffffff', 
+                                    border: 'none' }}
                                 field="componentName"
                                 body={componentBodyTemplate}
                                 header={
                                     <div>
-                                        <SearchBar value={search} onChange={setSearch} placeholder="Buscar componentes..." />
+                                        <SearchBar value={search} onChange={setSearch} placeholder={isMobile ? "Buscar" : "Buscar componentes..."} />
                                         {search && results.length > 0 && (
                                             <div
                                                 style={{
                                                     position: 'absolute',
                                                     top: '4rem', // ajusta según la altura del input
                                                     left: '1.25rem',
-                                                    width: '22vw',
+                                                    width: isMobile ? '60vw' : '22vw',
                                                     background: '#fff',
                                                     border: '1px solid #ddd',
                                                     borderRadius: 4,

@@ -22,6 +22,19 @@ const Proveedores = () => {
     const tarifarioRepository = new TarifarioRepository();
     const getTarifarioById = new getTarifarioByIdProveedor(tarifarioRepository);
 
+    const [isMobile, setIsMobile] = useState(false);
+
+    useEffect(() => {
+        const checkScreenSize = () => {
+            setIsMobile(window.innerWidth <= 768);
+        };
+        
+        checkScreenSize();
+        window.addEventListener('resize', checkScreenSize);
+        
+        return () => window.removeEventListener('resize', checkScreenSize);
+    }, []);
+
     const [proveedores, setProveedores] = useState([]);
     const [loading, setLoading] = useState(true);
     const [first, setFirst] = useState(0);
@@ -111,12 +124,12 @@ const Proveedores = () => {
                 >
                     <Column 
                         field="name" 
-                        header="Nombre del proveedor" 
+                        header={isMobile ? "Proveedor" : "Nombre del proveedor"} 
                         style={{ width: '20%' }}>    
                     </Column>
                     <Column 
                         field="serviceType" 
-                        header="Tipo de servicio" 
+                        header={isMobile ? "Servicio" : "Tipo de servicio"}
                         style={{ width: '20%' }}>
                     </Column>
                     <Column 

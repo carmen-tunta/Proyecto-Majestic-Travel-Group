@@ -27,6 +27,19 @@ const Contact = ( {proveedor} ) => {
     const [selectedContact, setSelectedContact] = useState(null);
     const { setIsModalOpen } = useModal();
 
+    const [isMobile, setIsMobile] = useState(false);
+
+    useEffect(() => {
+        const checkIfMobile = () => {
+            setIsMobile(window.innerWidth <= 768);
+        };
+        
+        checkIfMobile();
+        window.addEventListener('resize', checkIfMobile);
+        
+        return () => window.removeEventListener('resize', checkIfMobile);
+    }, []);
+
     const loadContacts = async () => {
         setLoadContacts(true);
         try {
@@ -103,7 +116,7 @@ const Contact = ( {proveedor} ) => {
                 />
             </div>
             <DataTable
-                className="contact-table"
+                className={`contact-table ${isMobile ? 'contact-table-mobile' : ''}`}
                 size="small"
                 loading={loadContactsing}
                 value={contacts}

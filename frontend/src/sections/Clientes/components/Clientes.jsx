@@ -19,6 +19,18 @@ const Clientes = () => {
   const [first, setFirst] = useState(0);
   const [rows, setRows] = useState(10);
   const [totalRecords, setTotalRecords] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+  const checkScreenSize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    
+    checkScreenSize();
+    window.addEventListener('resize', checkScreenSize);
+    
+    return () => window.removeEventListener('resize', checkScreenSize);
+  }, []);
 
   // Función para obtener los clientes del backend
   const fetchClientes = useCallback(async () => {
@@ -127,7 +139,7 @@ const Clientes = () => {
         >
           <Column
             field="nombre"
-            header="Nombre del cliente"
+            header={isMobile ? "Cliente" : "Nombre del cliente"}
             style={{ width: '20%', textAlign: 'center' }}
             body={(rowData) => (
               <div style={{ 

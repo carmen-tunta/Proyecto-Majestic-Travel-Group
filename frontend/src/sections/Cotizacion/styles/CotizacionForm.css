@@ -417,7 +417,7 @@
     opacity: .6;
 }
 
-.p-dialog {
+.menu-edition .p-dialog {
     background-color: white;
     width: 40vw;
 }

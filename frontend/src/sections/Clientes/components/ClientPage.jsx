@@ -34,6 +34,19 @@ const ClientPage = () => {
   const { id } = useParams();
   const isEditing = Boolean(id);
 
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkIfMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    
+    checkIfMobile();
+    window.addEventListener('resize', checkIfMobile);
+    
+    return () => window.removeEventListener('resize', checkIfMobile);
+  }, []);
+
   const [formData, setFormData] = useState({
     nombre: '',
     pais: '',
@@ -612,11 +625,11 @@ const ClientPage = () => {
         <div className="contact">
           <div className="contact-header">
             <h3>Datos de contacto</h3>
-            <Button icon="pi pi-plus" label="Nuevo" size="small" outlined onClick={() => has('CLIENTES','CREATE') && handleNewContact()} disabled={!has('CLIENTES','CREATE')} />
+            <Button icon="pi pi-plus" label={isMobile ? "Nuevo" : "Nuevo contacto"} size="small" outlined onClick={() => has('CLIENTES','CREATE') && handleNewContact()} disabled={!has('CLIENTES','CREATE')} />
           </div>
           
           <div className="contact-table">
-            <table className="contacts-table">
+            <table className={`contacts-table ${isMobile ? 'contacts-table-mobile' : ''}`}>
               <thead>
                 <tr>
                   <th>Medio</th>

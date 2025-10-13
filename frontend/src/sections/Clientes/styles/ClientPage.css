@@ -933,3 +933,165 @@
 .contact-action-button:hover {
   color: #1976d2;
 }
+
+/* Responsividad para tablets */
+@media (max-width: 1024px) {
+    .menu-edition {
+        padding: 1rem 2rem;
+    }
+
+    .details {
+        width: 100%;
+    }
+    
+    .details-form {
+        gap: 1.5rem;
+    }
+    
+    .details-form .left,
+    .details-form .right {
+        gap: 1.5rem;
+    }
+
+    .contact-actions {
+      gap: 1px;
+    }
+
+    .contacts-table-mobile th:nth-child(2),
+    .contacts-table-mobile td:nth-child(2) {
+        white-space: normal !important;
+        word-wrap: break-word;
+        word-break: break-word;
+        line-height: 1.2;
+    }
+
+}
+
+/* Responsividad para móviles */
+@media (max-width: 768px) {
+  
+    .contact {
+        width: 100%;
+    }
+    .menu-edition {
+        width: 100%;
+        padding:0 1rem 1rem 1rem !important;
+    }
+    
+    .header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    
+    .proveedor-name {
+        font-size: 1.2rem;
+    }
+    
+    .details-form {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .details-form .left,
+    .details-form .right {
+        width: 100%;
+        gap: 1rem;
+    }
+    
+    .contact-header {
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    
+    .contact-table {
+        overflow-x: auto;
+    }
+    
+    .contacts-table-mobile {
+        font-size: 0.85rem;
+    }
+    
+    .contacts-table-mobile th,
+    .contacts-table-mobile td {
+        padding: 8px 4px;
+        white-space: nowrap;
+    }
+    
+    .contact-modal {
+        width: 95vw;
+        margin: 1rem;
+    }
+    
+    .contact-modal-form {
+        gap: 1rem;
+    }
+    
+    .contact-modal-actions {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .contact-modal-actions .p-button {
+        width: 100%;
+    }
+}
+
+/* Responsividad para móviles pequeños */
+@media (max-width: 480px) {
+    .menu-edition {
+        padding: 0.5rem;
+    }
+    
+    .header .header-icon {
+        font-size: 0.9rem;
+    }
+    
+    .proveedor-name {
+        font-size: 1.1rem;
+    }
+    
+    .details-header h3,
+    .contact-header h3 {
+        font-size: 1.1rem;
+    }
+    
+    .contacts-table-mobile {
+        font-size: 0.8rem;
+    }
+    
+    .contacts-table-mobile th:nth-child(3),
+    .contacts-table-mobile td:nth-child(3) {
+        display: none;
+    }
+    
+    .contacts-table-mobile th:nth-child(1),
+    .contacts-table-mobile td:nth-child(1) {
+        width: 10%;
+    }
+
+    .contacts-table-mobile th:nth-child(2),
+    .contacts-table-mobile td:nth-child(2) {
+        width: 70%;
+    }
+
+    .contacts-table-mobile th:nth-child(4),
+    .contacts-table-mobile td:nth-child(4) {
+        max-width: 15% !important;
+    }
+
+    .contacts-table-mobile th:nth-child(4) {
+      padding: 0 !important;
+    }
+
+    .contact-modal {
+        width: 98vw;
+        margin: 0.5rem;
+        padding: 1rem;
+    }
+    
+    .p-tabmenu .p-tabmenu-nav .p-tabmenuitem .p-menuitem-link {
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+    }
+}

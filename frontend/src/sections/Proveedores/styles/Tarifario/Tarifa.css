@@ -46,10 +46,6 @@
     min-width: 30%;
 }
 
-.p-column-title, .p-input-icon-left {
-    width: 100%;
-}
-
 .tarifa-add-column-button {
     font-size: 1.5rem;
     max-height: 1.5rem;
@@ -143,4 +139,189 @@ input[type="number"]::-webkit-inner-spin-button {
 
 input[type="number"] {
     -moz-appearance: textfield;
+}
+
+/* Responsividad para tablets */
+@media (max-width: 1024px) {
+    .tarifa-header {
+        flex-direction: column;
+        gap: 1.5rem;
+        padding: 1rem;
+        padding-top: 0;
+    }
+
+    .tarifa-header span {
+        width: 100%;
+    }
+
+    .tarifa-save-button {
+        border: 1px solid var(--primary-color);
+        width: 10rem;
+    }
+
+    .tarifa-validity,
+    .tarifa-observation {
+        min-width: 180px;
+    }
+    
+    .tarifa-save-button {
+        font-size: 0.9rem;
+        padding: 0.6rem 1rem;
+    }
+    
+    .tarifa-body h3 {
+        font-size: 1.3rem;
+    }
+}
+
+/* Responsividad para móviles */
+@media (max-width: 768px) {
+    
+    .tarifa-validity,
+    .tarifa-observation {
+        width: 100%;
+        min-width: auto;
+    }
+    
+    .tarifa-save-button {
+        width: 100%;
+        justify-content: center;
+        font-size: 0.9rem;
+    }
+    
+    .tarifa-body {
+        padding: 0.5rem;
+    }
+    
+    .tarifa-body h3 {
+        font-size: 1.2rem;
+        margin-bottom: 1rem;
+    }
+    
+    .tarifa-content {
+        margin-top: 1rem;
+    }
+    
+    .scrolling-table {
+        overflow-x: auto;
+        margin: 0 -0.5rem;
+    }
+    
+    .tarifa-table.tarifa-table-mobile {
+        min-width: 600px;
+        font-size: 0.85rem;
+    }
+    
+    .tarifa-table-mobile .p-datatable-thead > tr > th {
+        font-size: 0.8rem;
+        padding: 8px 4px;
+        white-space: nowrap;
+    }
+    
+    .tarifa-table-mobile .p-datatable-tbody > tr > td {
+        padding: 8px 4px;
+        font-size: 0.8rem;
+    }
+    
+    .tarifa-add-column-button {
+        font-size: 2rem;
+        margin-top: 1rem;
+    }
+    
+    /* Modal adaptativo */
+    .modal-add-column {
+        width: 90vw !important;
+        max-width: 400px;
+        left: 50% !important;
+        top: 50% !important;
+        transform: translate(-50%, -50%) !important;
+        position: fixed !important;
+    }
+    
+    .modal-column-body > div {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .modal-column-body .pax {
+        width: 100%;
+    }
+}
+
+/* Responsividad para móviles pequeños */
+@media (max-width: 480px) {
+    
+    .tarifa-body {
+        padding: 0.25rem;
+    }
+    
+    .tarifa-body h3 {
+        font-size: 1.1rem;
+    }
+    
+    .tarifa-table.tarifa-table-mobile {
+        min-width: 500px;
+        font-size: 0.75rem;
+    }
+    
+    .tarifa-table-mobile .p-datatable-thead > tr > th {
+        font-size: 0.75rem;
+        padding: 6px 2px;
+    }
+    
+    .tarifa-table-mobile .p-datatable-tbody > tr > td {
+        padding: 6px 2px;
+        font-size: 0.75rem;
+    }
+    
+    /* Iconos más grandes para móviles */
+    .tarifa-table-mobile .pi-trash,
+    .tarifa-table-mobile .pi-pencil {
+        font-size: 1.1rem !important;
+    }
+    
+    /* Modal más compacto */
+    .modal-add-column {
+        width: 95vw !important;
+    }
+    
+    .modal-column-header h2 {
+        font-size: 1.1rem;
+    }
+    
+    .modal-column-body {
+        gap: 0.75rem;
+    }
+}
+
+/* Mejoras específicas para la tabla en móviles */
+@media (max-width: 768px) {
+    .tarifa-dynamic-cell {
+        min-width: 80px;
+        text-align: center;
+    }
+    
+    .tarifa-dynamic-cell input {
+        font-size: 0.8rem !important;
+        padding: 4px !important;
+    }
+    
+    /* Componentes de la primera columna */
+    .tarifa-table-mobile .pi-trash {
+        margin-right: 4px;
+    }
+}
+
+/* Landscape mode para móviles */
+@media (max-width: 768px) and (orientation: landscape) {
+    .tarifa-validity,
+    .tarifa-observation {
+        flex: 1;
+        min-width: 150px;
+    }
+    
+    .tarifa-save-button {
+        width: auto;
+        flex-shrink: 0;
+    }
 }

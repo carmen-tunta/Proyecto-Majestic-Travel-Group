@@ -10,6 +10,7 @@ import { addLocale } from "primereact/api";
 import { useNotification } from "../../Notification/NotificationContext";
 import CotizacionRepository from "../../../modules/Cotizacion/repository/CotizacionRepository";
 import GetAllCotizaciones from "../../../modules/Cotizacion/application/GetAllCotizaciones";
+import { useNavigate } from "react-router-dom";
 
 const Reporte = () => {
     const rpRepo = new RegistroPagoRepository();
@@ -22,6 +23,7 @@ const Reporte = () => {
     const [hasta, setHasta] = useState(null);
     const [reporteFiltrado, setReporteFiltrado] = useState([]);
     const showNotification = useNotification();
+    const navigate = useNavigate();
 
     const [reporte, setReporte] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -133,7 +135,10 @@ const Reporte = () => {
     return (
         <div className="reporte">
             <div className='reporte-header'>
-                <h2>Reporte de registro de pagos</h2>
+                <span style={{display: 'flex', alignItems: 'center'}}>
+                    <i className="pi pi-arrow-left" onClick={() => navigate(-1)}/>
+                    <h2>Reporte de registro de pagos</h2>
+                </span>
                 {(desde || hasta) && (
                     <p style={{ color: '#666', fontSize: '0.9rem' }}>
                         Mostrando {reporteFiltrado.length} de {reporte.length} registros
