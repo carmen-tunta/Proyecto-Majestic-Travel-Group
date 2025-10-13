@@ -77,17 +77,25 @@
   
   .cotizaciones-table { width: 100%; margin: 0; }
   .cotizaciones-table .p-datatable { width: 100%; }
-  .cotizaciones-table .p-datatable-wrapper { width: 100%; overflow-x: auto; }
+  .cotizaciones-table .p-datatable-wrapper { width: 100%; overflow-x: hidden; }
 
-  .cotizaciones-table .p-datatable-thead > tr > th, .cotizaciones-table .p-datatable-tbody > tr > td { padding: 8px 4px; font-size: 12px; }
-  .cotizaciones-table .p-datatable-tbody > tr > td:nth-child(even) { padding: 8px 4px; }
-  
-  .cotizaciones-table .p-datatable-thead > tr > th:nth-child(4), .cotizaciones-table .p-datatable-tbody > tr > td:nth-child(4) { display: none; }
-  .cotizaciones-table .p-datatable-thead > tr > th:nth-child(5), .cotizaciones-table .p-datatable-tbody > tr > td:nth-child(5) { display: none; }
-  .cotizaciones-table .p-datatable-thead > tr > th:nth-child(2), .cotizaciones-table .p-datatable-tbody > tr > td:nth-child(2) { width: 40% !important; }
-  .cotizaciones-table .p-datatable-thead > tr > th:nth-child(3), .cotizaciones-table .p-datatable-tbody > tr > td:nth-child(3) { width: 25% !important; }
-  .cotizaciones-table .p-datatable-tbody > tr > td:nth-child(6) { width: 20% !important; }
-  .cotizaciones-table .p-datatable-thead > tr > th:nth-child(7), .cotizaciones-table .p-datatable-tbody > tr > td:nth-child(7) { width: 15% !important; }
+  /* Mantener tabla (estilo azul) reduciendo paddings y tamaños como Services */
+  .cotizaciones-table .p-datatable-thead > tr > th,
+  .cotizaciones-table .p-datatable-tbody > tr > td { padding: 8px 4px; font-size: 12px; }
+  .cotizaciones-table .p-datatable-thead > tr > th:first-child,
+  .cotizaciones-table .p-datatable-tbody > tr > td:first-child { width: 30px !important; }
+  .cotizaciones-table .p-datatable-thead > tr > th:nth-child(2),
+  .cotizaciones-table .p-datatable-tbody > tr > td:nth-child(2) { width: 40% !important; }
+  .cotizaciones-table .p-datatable-thead > tr > th:nth-child(3),
+  .cotizaciones-table .p-datatable-tbody > tr > td:nth-child(3) { width: 20% !important; }
+  .cotizaciones-table .p-datatable-thead > tr > th:nth-child(4),
+  .cotizaciones-table .p-datatable-tbody > tr > td:nth-child(4) { width: 12% !important; }
+  .cotizaciones-table .p-datatable-thead > tr > th:nth-child(5),
+  .cotizaciones-table .p-datatable-tbody > tr > td:nth-child(5) { width: 14% !important; }
+  .cotizaciones-table .p-datatable-thead > tr > th:nth-child(6),
+  .cotizaciones-table .p-datatable-tbody > tr > td:nth-child(6) { width: 8% !important; }
+  .cotizaciones-table .p-datatable-thead > tr > th:nth-child(7),
+  .cotizaciones-table .p-datatable-tbody > tr > td:nth-child(7) { width: 6% !important; }
 
   .cotz-detail-row { font-size: 11px; padding: 4px; flex-wrap: wrap; }
   .cotz-sep { padding: 0 4px; }
@@ -117,30 +125,27 @@
   .cotizaciones-table .p-datatable { width: 100%; }
   .cotizaciones-table .p-datatable-wrapper { width: 100%; overflow-x: auto; }
 
-  .cotizaciones-table .p-datatable-thead > tr > th, .cotizaciones-table .p-datatable-tbody > tr > td { padding: 6px 2px; font-size: 11px; }
-  .cotizaciones-table .p-datatable-tbody > tr > td:nth-child(even) { padding: 6px 2px; }
-
+  /* Mantener la tabla (como Services) con columnas priorizadas en móviles pequeños */
+  .cotizaciones-table .p-datatable-thead > tr > th,
+  .cotizaciones-table .p-datatable-tbody > tr > td { padding: 6px 2px; font-size: 11px; }
+  .cotizaciones-table .p-datatable-thead > tr > th:nth-child(2),
+  .cotizaciones-table .p-datatable-tbody > tr > td:nth-child(2) { width: 50% !important; }
   .cotizaciones-table .p-datatable-thead > tr > th:nth-child(3),
-  .cotizaciones-table .p-datatable-tbody > tr > td:nth-child(3),
+  .cotizaciones-table .p-datatable-tbody > tr > td:nth-child(3) { width: 18% !important; }
   .cotizaciones-table .p-datatable-thead > tr > th:nth-child(4),
-  .cotizaciones-table .p-datatable-tbody > tr > td:nth-child(4),
+  .cotizaciones-table .p-datatable-tbody > tr > td:nth-child(4) { width: 12% !important; }
   .cotizaciones-table .p-datatable-thead > tr > th:nth-child(5),
-  .cotizaciones-table .p-datatable-tbody > tr > td:nth-child(5),
+  .cotizaciones-table .p-datatable-tbody > tr > td:nth-child(5) { width: 20% !important; }
   .cotizaciones-table .p-datatable-thead > tr > th:nth-child(6),
-  .cotizaciones-table .p-datatable-tbody > tr > td:nth-child(6),
+  .cotizaciones-table .p-datatable-tbody > tr > td:nth-child(6) { display: none; }
   .cotizaciones-table .p-datatable-thead > tr > th:nth-child(7),
-  .cotizaciones-table .p-datatable-tbody > tr > td:nth-child(7) { display: none; }
+  .cotizaciones-table .p-datatable-tbody > tr > td:nth-child(7) { width: 10% !important; }
 
-  .cotizaciones-table .p-datatable-thead > tr > th:nth-child(1), .cotizaciones-table .p-datatable-tbody > tr > td:nth-child(1) { width: 10% !important; padding-left: 4px; }
-  .cotizaciones-table .p-datatable-thead > tr > th:nth-child(2), .cotizaciones-table .p-datatable-tbody > tr > td:nth-child(2) { width: 60% !important; padding-left: 4px; }
-  .cotizaciones-table .p-datatable-thead > tr > th:nth-child(8), .cotizaciones-table .p-datatable-tbody > tr > td:nth-child(8) { width: 15% !important; font-size: 10px; }
-  .cotizaciones-table .p-datatable-thead > tr > th:nth-child(9), .cotizaciones-table .p-datatable-tbody > tr > td:nth-child(9) { width: 15% !important; padding-right: 4px; }
-
-  .cotz-detail-row { font-size: 10px; padding: 8px 4px; line-height: 1.3; display: grid; grid-template-columns: 1fr 1fr; gap: 4px; background: #f8f9fa; border-radius: 4px; margin: 4px 0; }
-  .cotz-det-label { font-weight: 600; font-size: 9px; color: #666; }
+  /* Detalle expandido dentro del card */
+  .cotz-detail-row { font-size: 11px; padding: 8px; line-height: 1.35; display: grid; grid-template-columns: 1fr 1fr; gap: 6px; background: #f8f9fa; border-radius: 6px; margin: 6px 4px; }
+  .cotz-det-label { font-weight: 600; font-size: 10px; color: #666; }
   .cotz-sep { display: none; }
-  
-  .cotz-cliente-cell { padding: 6px 2px; }
+  .cotz-cliente-cell { padding: 4px 2px; }
 
   .cotizaciones .custom-paginator .p-paginator-page,
   .cotizaciones .custom-paginator .p-paginator-first,
