@@ -42,6 +42,12 @@
     color: rgb(175, 175, 175);
 }
 
+.p-column-filter-operator,
+.p-column-filter-add-rule,
+.p-column-filter-matchmode-dropdown.p-dropdown.p-component.p-inputwrapper.p-inputwrapper-filled {
+    display: none;
+}
+
 /* Responsividad para tablets */
 @media (max-width: 1024px) {
     .proveedores {
