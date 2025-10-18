@@ -286,9 +286,6 @@ const ClientPage = () => {
     alert('Error: Ya existe un cliente con este correo electrónico. Por favor, usa un correo diferente.');
   };
 
-  const handleDuplicateDocumentError = () => {
-    alert('Error: Ya existe un cliente con este número de documento. Por favor, usa un número diferente.');
-  };
 
   const handleGenericError = () => {
     alert('Error al procesar el cliente. Por favor, inténtalo de nuevo.');
@@ -325,8 +322,6 @@ const ClientPage = () => {
     
     if (error.message.includes('Duplicate entry') && error.message.includes('correo')) {
       handleDuplicateEmailError();
-    } else if (error.message.includes('Duplicate entry') && error.message.includes('numeroDocumento')) {
-      handleDuplicateDocumentError();
     } else {
       handleGenericError();
     }

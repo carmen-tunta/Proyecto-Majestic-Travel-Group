@@ -63,7 +63,6 @@ export class Client {
 
   @Column({
     type: 'text',
-    unique: true,
     comment: 'Número de documento del cliente',
   })
   numeroDocumento: string;
