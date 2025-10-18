@@ -14,6 +14,7 @@ import { usePermissions } from '../../../contexts/PermissionsContext';
 import TarifarioRepository from '../../../modules/Tarifario/repository/TarifarioRepository';
 import getTarifarioByIdProveedor from '../../../modules/Tarifario/application/GetTarifarioByIdProveedor';
 import GetAllTarifario from '../../../modules/Tarifario/application/GetAllTarifario';
+import { addLocale, locale } from 'primereact/api';
 
 const Proveedores = () => {
     const proveedoresRepository = new ProveedoresRepository();
@@ -33,6 +34,37 @@ const Proveedores = () => {
         window.addEventListener('resize', checkScreenSize);
         
         return () => window.removeEventListener('resize', checkScreenSize);
+    }, []);
+
+    useEffect(() => {
+        addLocale('es', {
+            apply: 'Aplicar',
+            clear: 'Limpiar',
+            addRule: 'Agregar regla',
+            removeRule: 'Eliminar regla',
+            accept: 'Sí',
+            reject: 'No',
+            choose: 'Elegir',
+            upload: 'Subir',
+            cancel: 'Cancelar',
+            dayNames: ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'],
+            dayNamesShort: ['dom', 'lun', 'mar', 'mié', 'jue', 'vie', 'sáb'],
+            dayNamesMin: ['D', 'L', 'M', 'X', 'J', 'V', 'S'],
+            monthNames: ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'],
+            monthNamesShort: ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'],
+            today: 'Hoy',
+            weekHeader: 'Sm',
+            firstDayOfWeek: 1,
+            showMonthAfterYear: false,
+            dateFormat: 'dd/mm/yy',
+            weak: 'Débil',
+            medium: 'Medio',
+            strong: 'Fuerte',
+            passwordPrompt: 'Introduce una contraseña',
+            emptyFilterMessage: 'No se encontraron resultados',
+            emptyMessage: 'No hay opciones disponibles'
+        });
+        locale('es');
     }, []);
 
     const [proveedores, setProveedores] = useState([]);
@@ -121,6 +153,7 @@ const Proveedores = () => {
                     totalRecords={totalRecords}
                     onPage={onPageChange}
                     loading={loading || searchLoading}
+                    filterDisplay='menu'
                 >
                     <Column 
                         field="name" 
@@ -154,7 +187,10 @@ const Proveedores = () => {
                     <Column 
                         field="city" 
                         header="Ciudad" 
-                        style={{ width: '10%' }}>
+                        style={{ width: '10%' }}
+                        filterField='city'
+                        filter
+                        filterPlaceholder='Filtrar por ciudad'>
                     </Column>
                     <Column 
                         field="whatsapp" 
