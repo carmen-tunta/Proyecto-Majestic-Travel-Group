@@ -12,6 +12,11 @@ export class ProveedoresService {
   ) { }
 
   async create(data: Partial<Proveedores>): Promise<Proveedores> {
+    if (data.documentNumber !== undefined && data.documentNumber !== null) {
+        const stringValue = String(data.documentNumber);
+        const numValue = Number(stringValue);        
+        data.documentNumber = stringValue.trim() === '' || isNaN(numValue) ? null : numValue;
+    }
     const newProveedor = this.proveedoresRepository.create(data);
     return this.proveedoresRepository.save(newProveedor);
   }
