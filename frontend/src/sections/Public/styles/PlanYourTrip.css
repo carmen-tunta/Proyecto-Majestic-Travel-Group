@@ -7,7 +7,6 @@
 
 .pyt-main { flex: 1; display: grid; grid-template-columns: 360px minmax(0, 1fr); gap: 20px; }
 
-.pyt-sidebar { }
 .pyt-card { background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px; }
 .pyt-section-title { margin: 0 0 8px; font-size: 14px; color: #374151; }
 
@@ -55,6 +54,51 @@
 
 @media (max-width: 640px) {
   .pyt-grid { grid-template-columns: 1fr; }
+}
+
+/* Estilos para Galleria */
+.pyt-trip-card .p-galleria {
+  width: 100%;
+}
+
+.pyt-trip-card .p-galleria-content {
+  border-radius: 8px 8px 0 0;
+  overflow: hidden;
+}
+
+.pyt-trip-card .p-galleria-item-wrapper {
+  border-radius: 8px 8px 0 0;
+  overflow: hidden;
+}
+
+/* Navegadores deshabilitados */
+.pyt-trip-card .p-galleria .p-galleria-item-nav {
+  display: none;
+}
+
+.pyt-trip-card .p-galleria-indicators {
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+  padding: 8px;
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+}
+
+.pyt-trip-card .p-galleria-indicator > button {
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  border-radius: 50%;
+  width: 8px;
+  height: 8px;
+  padding: 0;
+}
+
+.pyt-trip-card .p-galleria-indicator.p-highlight > button {
+  background: white;
 }
 
 

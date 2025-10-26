@@ -5,7 +5,7 @@ import GetPublicServices from '../../../modules/Service/application/GetPublicSer
 import SearchService from '../../../modules/Service/application/SearchService';
 import { Skeleton } from 'primereact/skeleton';
 import { Calendar } from 'primereact/calendar';
-import { FloatLabel } from 'primereact/floatlabel';
+import { Galleria } from 'primereact/galleria';
 import { addLocale } from 'primereact/api';
 import QuoteRequestRepository from '../../../modules/QuoteRequest/repository/QuoteRequestRepository';
 import CreateQuoteRequest from '../../../modules/QuoteRequest/application/CreateQuoteRequest';
@@ -14,7 +14,6 @@ import { ProgressSpinner } from 'primereact/progressspinner';
 export default function PlanYourTrip() {
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
   const [query, setQuery] = useState('');
   const searchTimeoutRef = useRef(null);
   const [trips, setTrips] = useState([]);
@@ -38,7 +37,7 @@ export default function PlanYourTrip() {
         setServices(Array.isArray(result?.data) ? result.data.slice(0, 6) : []);
       } catch (e) {
         if (!mounted) return;
-        setError(e?.message || 'Error al cargar servicios');
+        console.error('Error al cargar servicios:', e?.message);
       } finally {
         if (mounted) setLoading(false);
       }
@@ -83,7 +82,7 @@ export default function PlanYourTrip() {
         const result = await search.execute(trimmed);
         setServices(Array.isArray(result) ? result.slice(0, 6) : []);
       } catch (e) {
-        setError(e?.message || 'Error en la búsqueda');
+        console.error('Error en la búsqueda:', e?.message);
       } finally {
         setLoading(false);
       }
@@ -256,9 +255,51 @@ export default function PlanYourTrip() {
                   </article>
                 );
               }
-              const img = svc?.images?.[0]?.imagePath ? `${process.env.REACT_APP_API_URL}/${svc.images[0].imagePath}` : null;
+              
+              // Preparar imágenes para Galleria
+              const images = svc?.images?.map(img => ({
+                itemImageSrc: img.imagePath ? `${process.env.REACT_APP_API_URL}/${img.imagePath}` : null
+              })).filter(img => img.itemImageSrc) || [];
+              
               const title = svc?.name || '';
               const isSelected = trips.some(t => t.id === svc?.id);
+              
+              const responsiveOptions = [
+                {
+                  breakpoint: '991px',
+                  numVisible: 1
+                },
+                {
+                  breakpoint: '767px',
+                  numVisible: 1
+                },
+                {
+                  breakpoint: '575px',
+                  numVisible: 1
+                }
+              ];
+
+              const itemTemplate = (item) => {
+                return (
+                  <img 
+                    src={item.itemImageSrc} 
+                    alt={title || 'Service image'} 
+                    className="pyt-trip-image"
+                    style={{ width: '100%', height: '220px', objectFit: 'cover', borderRadius: '8px 8px 0 0' }}
+                  />
+                );
+              };
+
+              const thumbnailTemplate = (item) => {
+                return (
+                  <img 
+                    src={item.itemImageSrc} 
+                    alt={title || 'Service image'} 
+                    style={{ width: '100%', height: '60px', objectFit: 'cover' }}
+                  />
+                );
+              };
+
               return (
                 <article
                   key={svc?.id ?? idx}
@@ -268,8 +309,24 @@ export default function PlanYourTrip() {
                   tabIndex={0}
                   aria-pressed={isSelected}
                 >
-                  {img ? (
-                    <img className="pyt-trip-image" src={img} alt={title || 'Service image'} />
+                  {images.length > 0 ? (
+                    <Galleria
+                      value={images}
+                      responsiveOptions={responsiveOptions}
+                      numVisible={3}
+                      circular
+                      item={itemTemplate}
+                      thumbnail={thumbnailTemplate}
+                      style={{ width: '100%' }}
+                      showItemNavigators={false}
+                      showThumbnails={false}
+                      autoPlay={images.length > 1}
+                      showIndicators={images.length > 1}
+                      transitionOptions={{
+                        classNames: 'p-galleria-slide-left'
+                      }}
+                      transitionInterval={5000}
+                    />
                   ) : (
                     <div className="pyt-trip-image" />
                   )}
