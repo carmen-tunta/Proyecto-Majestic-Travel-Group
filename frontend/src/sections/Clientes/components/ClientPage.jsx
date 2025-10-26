@@ -807,7 +807,7 @@ const paises = [
                   <label htmlFor="pais">País</label>
                 </FloatLabel>
 
-                <FloatLabel>
+                <FloatLabel style={{ display: 'none' }}>
                   <InputText
                     id="ciudad"
                     value={formData.ciudad}
@@ -817,7 +817,7 @@ const paises = [
                   <label htmlFor="ciudad">Ciudad</label>
                 </FloatLabel>
 
-                <FloatLabel>
+                <FloatLabel style={{ display: 'none' }}>
                   <InputText
                     id="direccion"
                     value={formData.direccion}
@@ -891,7 +891,7 @@ const paises = [
                   <label htmlFor="numeroDocumento">Número de documento</label>
                 </FloatLabel>
 
-                <FloatLabel>
+                <FloatLabel style={{ display: 'none' }}>
                   <Dropdown
                     id="mercado"
                     value={formData.mercado}
@@ -902,7 +902,7 @@ const paises = [
                   <label htmlFor="mercado">Mercado</label>
                 </FloatLabel>
 
-                <FloatLabel>
+                <FloatLabel style={{ display: 'none' }}>
                   <Dropdown
                     id="rubro"
                     value={formData.rubro}
