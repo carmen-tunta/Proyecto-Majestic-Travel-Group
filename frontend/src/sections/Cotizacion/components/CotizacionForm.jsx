@@ -77,6 +77,8 @@ import CotizacionRepository from '../../../modules/Cotizacion/repository/Cotizac
 // Modal de asignación de proveedores
 
 import { usePermissions } from '../../../contexts/PermissionsContext';
+import DatosViajeModal from './DatosViajeModal';
+import { Tooltip } from 'primereact/tooltip';
 
 
 
@@ -1092,8 +1094,18 @@ export default function CotizacionForm() {
 
   };
 
+  const [showModal, setShowModal] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const handleClickDatosViaje = () => {
+    setShowModal(true);
+    setIsModalOpen(true);
+  }
 
+  const handleModalClose = () => {
+    setShowModal(false);
+    setIsModalOpen(false);
+  };
 
 
   return (
@@ -1386,7 +1398,7 @@ export default function CotizacionForm() {
 
               </div>
 
-              <div>
+              {/* <div>
 
                 <FloatLabel>
 
@@ -1396,9 +1408,9 @@ export default function CotizacionForm() {
 
                 </FloatLabel>
 
-              </div>
+              </div> */}
 
-              <div>
+              {/* <div>
 
                 <FloatLabel>
 
@@ -1408,9 +1420,9 @@ export default function CotizacionForm() {
 
                 </FloatLabel>
 
-              </div>
+              </div> */}
 
-              <div>
+              {/* <div>
 
                 <FloatLabel>
 
@@ -1420,7 +1432,7 @@ export default function CotizacionForm() {
 
                 </FloatLabel>
 
-              </div>
+              </div> */}
 
               <div>
 
@@ -1433,6 +1445,18 @@ export default function CotizacionForm() {
                 </FloatLabel>
 
               </div>
+
+              <span 
+                  id="datos-viaje-btn"
+                  style={{cursor: (routeId || cotizacionId) ? 'pointer' : 'not-allowed', width: '8rem', marginLeft:'1rem', marginTop:'7px', borderRadius: '4px', color: (routeId || cotizacionId) ? 'rgba(0,0,0,1)' : 'rgba(0,0,0,0.5)'}} 
+                  onClick={(routeId || cotizacionId) ? handleClickDatosViaje : undefined}
+                  data-pr-tooltip={routeId ? "Configurar número de pasajeros y detalles del viaje" : "Guarda la cotización primero para acceder a los datos de viaje"}
+                  data-pr-position="top"
+              > 
+                  <i className='pi pi-flag' style={{color: (routeId || cotizacionId) ? 'rgba(0,0,0,1)' : 'rgba(0,0,0,0.5)', marginRight: '4px'}}/> 
+                  Datos de viaje  
+              </span>
+              <Tooltip target="#datos-viaje-btn" showDelay={1000}/>
 
             </div>
 
@@ -1937,6 +1961,14 @@ export default function CotizacionForm() {
         />
 
       </Dialog>
+
+      {showModal && (
+        <DatosViajeModal
+          visible={showModal}
+          onHide={handleModalClose}
+          cotizacionId={routeId ? routeId : cotizacionId}
+        />
+      )}
 
     </div>
 
