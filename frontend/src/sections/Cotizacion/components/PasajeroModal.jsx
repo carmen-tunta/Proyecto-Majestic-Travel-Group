@@ -475,6 +475,7 @@ export default function PasajeroModal({
                 options={paises}
                 onChange={(e) => handleInputChange('pais', e.value)}
                 required
+                filter
               />
               <label htmlFor="pais">País de residencia <span style={{ color: 'red' }}>*</span></label>
             </FloatLabel>
@@ -521,6 +522,7 @@ export default function PasajeroModal({
                 options={nacionalidades}
                 onChange={(e) => handleInputChange('nacionalidad', e.value)}
                 required
+                filter
               />
               <label htmlFor="nacionalidad">Nacionalidad <span style={{ color: 'red' }}>*</span></label>
             </FloatLabel>

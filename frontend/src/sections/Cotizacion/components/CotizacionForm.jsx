@@ -1378,7 +1378,7 @@ export default function CotizacionForm() {
 
                 <FloatLabel>
 
-                  <Dropdown inputId="pais" value={form.pais} options={paises} onChange={e => setForm(f => ({ ...f, pais: e.value }))} />
+                  <Dropdown filter inputId="pais" value={form.pais} options={paises} onChange={e => setForm(f => ({ ...f, pais: e.value }))} />
 
                   <label htmlFor="pais">País</label>
 

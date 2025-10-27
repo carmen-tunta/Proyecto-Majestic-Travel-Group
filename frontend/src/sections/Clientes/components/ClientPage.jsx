@@ -663,6 +663,7 @@ const paises = [
                     options={paises}
                     onChange={(e) => handleInputChange('pais', e.value)}
                     required
+                    filter
                   />
                   <label htmlFor="pais">País de residencia</label>
                 </FloatLabel>
@@ -725,6 +726,7 @@ const paises = [
                     options={lenguasNativas}
                     onChange={(e) => handleInputChange('lenguaNativa', e.value)}
                     required
+                    filter
                   />
                   <label htmlFor="lenguaNativa">Nacionalidad <span style={{ color: 'red' }}>*</span></label>
                 </FloatLabel>
