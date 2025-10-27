@@ -33,6 +33,13 @@ export default class CreatePasajeroWithFile {
     formData.append('cotizacionId', pasajeroData.cotizacionId);
     formData.append('nombre', pasajeroData.nombre);
     formData.append('pais', pasajeroData.pais);
+    formData.append('whatsapp', pasajeroData.whatsapp);
+    formData.append('correo', pasajeroData.correo);
+    formData.append('fechaNacimiento', pasajeroData.fechaNacimiento);
+    formData.append('tipoDocumento', pasajeroData.tipoDocumento);
+    formData.append('numeroDocumento', pasajeroData.numeroDocumento);
+    formData.append('genero', pasajeroData.genero);
+    formData.append('nacionalidad', pasajeroData.nacionalidad);
     formData.append('descripcionDocumento', pasajeroData.descripcionDocumento);
     formData.append('file', file);
 

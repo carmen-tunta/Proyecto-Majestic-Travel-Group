@@ -4,6 +4,13 @@ export default class Pasajero {
     cotizacionId,
     nombre,
     pais,
+    whatsapp,
+    correo,
+    fechaNacimiento,
+    tipoDocumento,
+    numeroDocumento,
+    genero,
+    nacionalidad,
     descripcionDocumento,
     rutaArchivo,
     nombreArchivo,
@@ -14,6 +21,13 @@ export default class Pasajero {
     this.cotizacionId = cotizacionId;
     this.nombre = nombre;
     this.pais = pais;
+    this.whatsapp = whatsapp;
+    this.correo = correo;
+    this.fechaNacimiento = fechaNacimiento;
+    this.tipoDocumento = tipoDocumento;
+    this.numeroDocumento = numeroDocumento;
+    this.genero = genero;
+    this.nacionalidad = nacionalidad;
     this.descripcionDocumento = descripcionDocumento;
     this.rutaArchivo = rutaArchivo;
     this.nombreArchivo = nombreArchivo;
@@ -33,9 +47,7 @@ export default class Pasajero {
       errors.push('El país es requerido');
     }
 
-    if (!PasajeroData.descripcionDocumento?.trim()) {
-      errors.push('La descripción del documento es requerida');
-    }
+    
 
     if (!PasajeroData.cotizacionId) {
       errors.push('El ID de cotización es requerido');
