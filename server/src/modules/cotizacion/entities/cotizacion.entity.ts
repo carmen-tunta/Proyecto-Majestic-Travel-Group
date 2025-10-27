@@ -37,16 +37,16 @@ export class Cotizacion {
   @Column({ type: 'date', nullable: true })
   fechaSalida: Date;
 
-  @Column({ type: 'enum', enum: ['Iniciado', 'Proceso', 'Finalizado'] })
+  @Column({ type: 'enum', enum: ['Iniciado', 'Proceso', 'Cotización enviada', 'Finalizado'] })
   estado: string;
 
   @Column({ type: 'enum', enum: ['Viator', 'Civitatis', 'GetYourGuide', 'TourRadar', 'TripAdvisor', 'Peru Hop', 'Inca Rail', 'PeruRail', 'Lima Tours', 'Condor Travel'] })
   agencia: string;
 
-  @Column({ type: 'enum', enum: ['Perú', 'Bolivia', 'Chile', 'Argentina', 'Brasil', 'Ecuador', 'Colombia', 'España', 'Estados Unidos', 'Francia'] })
+  @Column({ type: 'text' })
   pais: string;
 
-  @Column({ type: 'enum', enum: ['Español', 'Inglés', 'Francés', 'Alemán', 'Portugués', 'Italiano'] })
+  @Column({ type: 'text' })
   idioma: string;
 
   @Column({ type: 'int', default: 1 })

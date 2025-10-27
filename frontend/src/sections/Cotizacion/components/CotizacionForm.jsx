@@ -408,7 +408,7 @@ export default function CotizacionForm() {
 
   useEffect(() => {
 
-    if (activeIndex === 2 && form.estado !== 'Finalizado') {
+    if (activeIndex === 2 && (form.estado !== 'Finalizado' && form.estado !== 'Cotización enviada')) {
 
       setActiveIndex(0);
 
@@ -1069,7 +1069,7 @@ export default function CotizacionForm() {
     { label: 'Nombre de pasajeros', disabled: !cotizacionId },
 
     // Solo mostrar 'Confirmación de reserva' si el estado es 'Finalizado'
-    ...(form.estado === 'Finalizado' ? [{ label: 'Confirmación de reserva', disabled: !cotizacionId }] : []),
+    ...((form.estado === 'Finalizado' || form.estado === 'Cotización enviada') ? [{ label: 'Confirmación de reserva', disabled: !cotizacionId }] : []),
   ];
 
 
@@ -1812,7 +1812,7 @@ export default function CotizacionForm() {
       )}
 
 
-      {activeIndex === 2 && cotizacionId && form.estado === 'Finalizado' && (
+      {activeIndex === 2 && cotizacionId && (form.estado === 'Finalizado' || form.estado === 'Cotización enviada') && (
         <ConfirmacionReserva
           cotizacionId={cotizacionId}
           cotizacionData={detalle}

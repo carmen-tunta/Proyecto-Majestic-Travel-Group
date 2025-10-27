@@ -88,7 +88,6 @@ const ConfirmacionReserva = ({ cotizacionId, cotizacionData }) => {
             try {
               const pages = JSON.parse(data.paginasEditables);
               setEditablePages(pages);
-              console.log('Páginas cargadas:', pages);
             } catch (e) {
               console.error('Error al parsear páginas editables:', e);
             }
@@ -525,11 +524,11 @@ const ConfirmacionReserva = ({ cotizacionId, cotizacionData }) => {
                   <img src="/logo_grande.png" alt="Logo" class="confirmacion-logo" />
                 </div>
                 <div class="confirmacion-titulo-container">
-                  <h2>Confirmación de Reserva</h2>
+                  <h2>${cotizacionData?.estado === 'Cotización enviada' ? `Cotización para ${cotizacionData?.cliente?.nombre}` : 'Confirmación de Reserva'}</h2>
                 </div>
                 <div class="confirmacion-estado-container">
                   <div class="estado-label">Estado del booking</div>
-                  <div class="estado-value">Confirmado</div>
+                  <div class="estado-value">${cotizacionData?.estado || ''}</div>
                 </div>
               </div>
               
@@ -872,11 +871,11 @@ const ConfirmacionReserva = ({ cotizacionId, cotizacionData }) => {
                   <img src="/logo_grande.png" alt="Logo" className="confirmacion-logo" />
                 </div>
                 <div className="confirmacion-titulo-container">
-                  <h2>Confirmación de Reserva</h2>
+                  <h2>{cotizacionData.estado === "Cotización enviada" ? `Cotización para ${cotizacionData?.cliente?.nombre}` : 'Confirmación de Reserva'}</h2>
                 </div>
                 <div className="confirmacion-estado-container">
                   <div className="estado-label">Estado del booking</div>
-                  <div className="estado-value">Confirmado</div>
+                  <div className="estado-value">{cotizacionData?.estado || ''}</div>
                 </div>
               </div>
 
