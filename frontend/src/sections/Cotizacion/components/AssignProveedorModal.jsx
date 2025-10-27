@@ -45,6 +45,7 @@ export default function AssignProveedorModal({
       try {
   // Obtenemos proveedores por componente y pax (pax ya debe incluir adultos + niños)
   const data = await apiService.getProveedoresByComponentAndPax(componentId, pax);
+  console.log('Proveedores recibidos:', data);
         const mapped = (data || []).map((row) => {
           const proveedor = row.proveedor || {};
           // costoPerPax: costo unitario por pasajero devuelto por la tarifa del proveedor
@@ -79,8 +80,10 @@ export default function AssignProveedorModal({
             incrementoLabel,
             total: total.toFixed(2),
             totalNumber: total,
+            descripcion: row.columnDescription || '-'
           };
         });
+        console.log('Proveedores mapeados:', mapped);
         if (active) setRows(mapped);
       } catch (e) {
         if (active) setRows([]);
@@ -144,7 +147,19 @@ export default function AssignProveedorModal({
             rows={8}
             paginatorClassName="custom-paginator"
           >
-            <Column field="nombre" header="Proveedor" style={{ width: '50%' }} headerClassName="column-header" bodyClassName="column-body"></Column>
+            <Column 
+              field="nombre" 
+              header="Proveedor" 
+              style={{ width: '50%' }} 
+              headerClassName="column-header" 
+              bodyClassName="column-body"
+              body={(r) => 
+                  <div> 
+                    <div>{r.nombre}</div>
+                    <div style={{ fontSize: 12, color: '#8891a6' }}>{r.descripcion}</div>
+                  </div>
+              }
+            ></Column>
             <Column field="costo" header={`Costo`} body={(r) => <div style={{ textAlign: 'right', width: '100%' }}>{r.costo}</div>} style={{ width: '17%' }} headerClassName="column-header" bodyClassName="column-body"></Column>
             <Column field="incrementoLabel" header="Incremento" body={(r) => <div style={{ textAlign: 'right', width: '100%' }}>{r.incrementoLabel}</div>} style={{ width: '17%' }} headerClassName="column-header" bodyClassName="column-body"></Column>
             <Column field="total" header="Total" body={(r) => <div style={{ textAlign: 'right', width: '100%' }}>{r.total}</div>} style={{ width: '16%' }} headerClassName="column-header" bodyClassName="column-body"></Column>
