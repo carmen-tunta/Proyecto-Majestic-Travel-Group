@@ -63,7 +63,7 @@ export default function Cotizaciones() {
 
   const rowExpansionTemplate = (row) => (
     <div className="cotz-detail-row">
-      <span className="cotz-det-label">Cotización:</span> {row?.cotizacion || row?.tipoCotizacion || ''} <span className="cotz-sep">|</span>
+      <span className="cotz-det-label">Cotización:</span> {row?.nombreCotizacion || ''} <span className="cotz-sep">|</span>
       <span className="cotz-det-label">Agencia:</span> {row?.agencia || ''} <span className="cotz-sep">|</span>
       <span className="cotz-det-label">País:</span> {row?.pais || ''} <span className="cotz-sep">|</span>
       <span className="cotz-det-label">Idioma:</span> {row?.idioma || ''} <span className="cotz-sep">|</span>
