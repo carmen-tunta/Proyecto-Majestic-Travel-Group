@@ -13,9 +13,37 @@ export class CreatePasajeroDto {
   @IsString()
   pais: string;
 
+  @IsOptional()
+  @IsString()
+  whatsapp?: string;
+
+  @IsOptional()
+  @IsString()
+  correo?: string;
+
+  @IsOptional()
+  @IsString()
+  fechaNacimiento?: string;
+
   @IsNotEmpty()
   @IsString()
-  descripcionDocumento: string;
+  tipoDocumento: string;
+
+  @IsNotEmpty()
+  @IsString()
+  numeroDocumento: string;
+
+  @IsOptional()
+  @IsString()
+  genero?: string;
+
+  @IsOptional()
+  @IsString()
+  nacionalidad?: string;
+
+  @IsOptional()
+  @IsString()
+  descripcionDocumento?: string;
 
   @IsOptional()
   @IsString()

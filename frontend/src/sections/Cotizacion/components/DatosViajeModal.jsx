@@ -16,15 +16,15 @@ import { addLocale } from "primereact/api";
 import { InputNumber } from "primereact/inputnumber";
 import { ProgressSpinner } from "primereact/progressspinner";
 
-const DatosViajeModal = ({ onHide, cotizacion }) => {
+const DatosViajeModal = ({ onHide, cotizacionId }) => {
     const datosVidajeRepo = new DatosViajeRepository();
     const getDatosViaje = new getDatosViajeByCotizacionId(datosVidajeRepo);
     const createDatosViaje = new CreateDatosViaje(datosVidajeRepo);
     const updateDatosViaje = new UpdateDatosViaje(datosVidajeRepo);
 
     const [datosViaje, setDatosViaje] = useState(null);
-    const [fechaLlegada, setFechaLlegada] = useState(null);
-    const [fechaSalida, setFechaSalida] = useState(null);
+    // const [fechaLlegada, setFechaLlegada] = useState(null);
+    // const [fechaSalida, setFechaSalida] = useState(null);
     const [cantidadAdultos, setCantidadAdultos] = useState('');
     const [cantidadNinos, setCantidadNinos] = useState('')
     const [cantidadBebes, setCantidadBebes] = useState('');
@@ -53,19 +53,18 @@ const DatosViajeModal = ({ onHide, cotizacion }) => {
 
     useEffect(() => {
         fetchDatosViaje();
-    }, [cotizacion]);
+    }, [cotizacionId]);
 
     const fetchDatosViaje = async () => {
         setLoadingModal(true);
         try {
-            const datos = await getDatosViaje.execute(cotizacion.id);
+            const datos = await getDatosViaje.execute(cotizacionId);
             if (!datos) {
                 return;
             }
-            console.log(datos)
             setDatosViaje(datos);
-            setFechaLlegada(datos.fechaLlegada ? parseLocalDate(datos.fechaLlegada) : null);
-            setFechaSalida(datos.fechaSalida ? parseLocalDate(datos.fechaSalida) : null);
+            // setFechaLlegada(datos.fechaLlegada ? parseLocalDate(datos.fechaLlegada) : null);
+            // setFechaSalida(datos.fechaSalida ? parseLocalDate(datos.fechaSalida) : null);
             setCantidadAdultos(datos.adultos);
             setCantidadNinos(datos.ninos);
             setCantidadBebes(datos.bebes);
@@ -79,7 +78,7 @@ const DatosViajeModal = ({ onHide, cotizacion }) => {
     };
 
     const handleCreateOrUpdate = async () => {
-        if (!fechaLlegada || !fechaSalida || !lugarRecojo) {
+        if (!lugarRecojo) {
             showNotification('Por favor, completa todos los campos obligatorios.', 'error');
             return;
         }
@@ -87,9 +86,9 @@ const DatosViajeModal = ({ onHide, cotizacion }) => {
             setLoading(true);
             if (!datosViaje) {
                 await createDatosViaje.execute({
-                    cotizacionId: cotizacion.id,
-                    fechaLlegada: fechaLlegada,
-                    fechaSalida: fechaSalida,
+                    cotizacionId: cotizacionId,
+                    // fechaLlegada: fechaLlegada,
+                    // fechaSalida: fechaSalida,
                     adultos: cantidadAdultos,
                     ninos: cantidadNinos,
                     bebes: cantidadBebes,
@@ -98,9 +97,9 @@ const DatosViajeModal = ({ onHide, cotizacion }) => {
                 });
                 showNotification('Datos de viaje guardados correctamente.', 'success');
             } else {
-                await updateDatosViaje.execute(cotizacion.id, {
-                    fechaLlegada: fechaLlegada,
-                    fechaSalida: fechaSalida,
+                await updateDatosViaje.execute(cotizacionId, {
+                    // fechaLlegada: fechaLlegada,
+                    // fechaSalida: fechaSalida,
                     adultos: cantidadAdultos,
                     ninos: cantidadNinos,
                     bebes: cantidadBebes,
@@ -131,7 +130,7 @@ const DatosViajeModal = ({ onHide, cotizacion }) => {
                         onClick={() => loading ? undefined : onHide()}>
                     </i>
                 </div>
-                <div className="datos-viaje-modal-dates">
+                {/* <div className="datos-viaje-modal-dates">
                     <FloatLabel>
                         <Calendar 
                             id="llegada" 
@@ -160,7 +159,7 @@ const DatosViajeModal = ({ onHide, cotizacion }) => {
                         />
                         <label htmlFor="salida">Fecha de salida</label>
                     </FloatLabel>
-                </div>
+                </div> */}
                 <div className="datos-viaje-modal-cantidades">
                     <FloatLabel>
                         <InputNumber

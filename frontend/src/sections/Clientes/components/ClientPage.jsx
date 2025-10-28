@@ -663,6 +663,7 @@ const paises = [
                     options={paises}
                     onChange={(e) => handleInputChange('pais', e.value)}
                     required
+                    filter
                   />
                   <label htmlFor="pais">País de residencia</label>
                 </FloatLabel>
@@ -672,7 +673,6 @@ const paises = [
                     id="ciudad"
                     value={formData.ciudad}
                     onChange={(e) => handleInputChange('ciudad', e.target.value)}
-                    required
                   />
                   <label htmlFor="ciudad">Ciudad</label>
                 </FloatLabel>
@@ -726,6 +726,7 @@ const paises = [
                     options={lenguasNativas}
                     onChange={(e) => handleInputChange('lenguaNativa', e.value)}
                     required
+                    filter
                   />
                   <label htmlFor="lenguaNativa">Nacionalidad <span style={{ color: 'red' }}>*</span></label>
                 </FloatLabel>
@@ -757,7 +758,6 @@ const paises = [
                     value={formData.mercado}
                     options={mercados}
                     onChange={(e) => handleInputChange('mercado', e.value)}
-                    required
                   />
                   <label htmlFor="mercado">Mercado</label>
                 </FloatLabel>
@@ -768,7 +768,6 @@ const paises = [
                     value={formData.rubro}
                     options={rubros}
                     onChange={(e) => handleInputChange('rubro', e.value)}
-                    required
                   />
                   <label htmlFor="rubro">Rubro</label>
                 </FloatLabel>

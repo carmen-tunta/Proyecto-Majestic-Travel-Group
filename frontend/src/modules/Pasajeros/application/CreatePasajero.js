@@ -20,6 +20,13 @@ export default class CreatePasajero {
       cotizacionId: pasajero.cotizacionId,
       nombre: pasajero.nombre,
       pais: pasajero.pais,
+      whatsapp: pasajero.whatsapp,
+      correo: pasajero.correo,
+      fechaNacimiento: pasajero.fechaNacimiento,
+      tipoDocumento: pasajero.tipoDocumento,
+      numeroDocumento: pasajero.numeroDocumento,
+      genero: pasajero.genero,
+      nacionalidad: pasajero.nacionalidad,
       descripcionDocumento: pasajero.descripcionDocumento
     });
 
