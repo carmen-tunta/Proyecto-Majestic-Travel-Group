@@ -426,6 +426,93 @@
     cursor:default;
 }
 
+/* Estilos para el modal de fecha y hora */
+.date-time-modal {
+    width: auto !important;
+    max-width: 500px !important;
+}
+
+.date-time-modal .p-dialog-content {
+    padding: 0.75rem !important;
+    overflow: visible !important;
+}
+
+.date-time-modal .p-calendar {
+    width: 100% !important;
+}
+
+.date-time-modal .p-calendar .p-datepicker-inline {
+    width: 100% !important;
+    border: none !important;
+    padding: 0 !important;
+}
+
+.date-time-modal .p-datepicker-header {
+    padding: 0.5rem 0 !important;
+    background: transparent !important;
+    border-bottom: 1px solid #e0e0e0 !important;
+    margin-bottom: 0.25rem !important;
+}
+
+.date-time-modal .p-datepicker-calendar {
+    padding: 0.25rem 0 !important;
+}
+
+.date-time-modal .p-datepicker-calendar th {
+    padding: 0.4rem !important;
+    font-weight: 600 !important;
+    color: #424242 !important;
+    font-size: 0.85rem !important;
+}
+
+.date-time-modal .p-datepicker-day {
+    padding: 0.4rem !important;
+    border-radius: 4px !important;
+    transition: all 0.2s !important;
+}
+
+.date-time-modal .p-datepicker-day:not(.p-disabled):not(.p-highlight):hover {
+    background: #e3f2fd !important;
+}
+
+.date-time-modal .p-datepicker-day.p-highlight {
+    background: #1976d2 !important;
+    color: white !important;
+}
+
+.date-time-modal .p-datepicker-day.p-highlight:hover {
+    background: #1565c0 !important;
+}
+
+.date-time-modal .p-timepicker {
+    border-top: 1px solid #e0e0e0 !important;
+    padding: 0.75rem 0 0.5rem 0 !important;
+    margin-top: 0.25rem !important;
+}
+
+.date-time-modal .p-timepicker > div {
+    padding: 0.15rem !important;
+}
+
+.date-time-modal .p-timepicker-button {
+    width: 1.75rem !important;
+    height: 1.75rem !important;
+    border-radius: 4px !important;
+}
+
+.date-time-modal .p-timepicker-button:hover {
+    background: #e3f2fd !important;
+}
+
+.date-time-modal .p-timepicker span {
+    font-size: 1rem !important;
+    font-weight: 500 !important;
+}
+
+.date-time-modal .p-timepicker .p-link {
+    color: #1976d2 !important;
+}
+
 /* ========== RESPONSIVE DESIGN ========== */
 
 /* Tablets y pantallas medianas (768px - 1024px) */
@@ -838,6 +925,37 @@
         margin: 0 auto;
         max-width: 95vw;
     }
+
+    /* Modal de fecha y hora responsive */
+    .date-time-modal {
+        width: 90vw !important;
+        max-width: 90vw !important;
+    }
+
+    .date-time-modal .p-dialog-content {
+        padding: 0.75rem !important;
+    }
+
+    .date-time-modal .p-datepicker-header {
+        padding: 0.5rem 0 !important;
+    }
+
+    .date-time-modal .p-datepicker-calendar {
+        font-size: 14px !important;
+    }
+
+    .date-time-modal .p-datepicker-day {
+        padding: 0.4rem !important;
+        font-size: 13px !important;
+    }
+
+    .date-time-modal .p-timepicker {
+        padding: 0.75rem 0 !important;
+    }
+
+    .date-time-modal .p-timepicker span {
+        font-size: 0.95rem !important;
+    }
     
     /* Totales card más legible */
     .totals-card {
@@ -1173,17 +1291,60 @@
         max-height: 90vh;
         border-radius: 8px;
     }
-    
+
     .p-dialog .p-dialog-header {
         padding: 12px 16px;
     }
-    
+
     .p-dialog .p-dialog-header .p-dialog-title {
         font-size: 14px;
     }
-    
+
     .p-dialog .p-dialog-content {
         padding: 12px 16px;
+    }
+
+    /* Modal de fecha y hora en móviles pequeños */
+    .date-time-modal {
+        width: 95vw !important;
+        max-width: 95vw !important;
+    }
+
+    .date-time-modal .p-dialog-content {
+        padding: 0.5rem !important;
+    }
+
+    .date-time-modal .p-datepicker-header {
+        padding: 0.25rem 0 !important;
+        margin-bottom: 0.25rem !important;
+    }
+
+    .date-time-modal .p-datepicker-calendar {
+        font-size: 12px !important;
+    }
+
+    .date-time-modal .p-datepicker-calendar th {
+        padding: 0.25rem !important;
+        font-size: 11px !important;
+    }
+
+    .date-time-modal .p-datepicker-day {
+        padding: 0.25rem !important;
+        font-size: 12px !important;
+    }
+
+    .date-time-modal .p-timepicker {
+        padding: 0.5rem 0 !important;
+        margin-top: 0.25rem !important;
+    }
+
+    .date-time-modal .p-timepicker span {
+        font-size: 0.9rem !important;
+    }
+
+    .date-time-modal .p-timepicker-button {
+        width: 1.75rem !important;
+        height: 1.75rem !important;
     }
     
     /* Búsqueda de servicios/componentes */

@@ -1928,6 +1928,8 @@ export default function CotizacionForm() {
 
         modal
 
+        className="date-time-modal"
+
         onHide={() => setDateTimeModalOpen(false)}
 
         footer={
@@ -1944,7 +1946,7 @@ export default function CotizacionForm() {
 
       >
 
-        <PrimeCalendar
+        <Calendar
 
           value={dateTimeDraft}
 
@@ -1956,7 +1958,9 @@ export default function CotizacionForm() {
 
           inline
 
-          style={{ width: '100%' }}
+          locale="es"
+
+          dateFormat="dd/mm/yy"
 
         />
 
