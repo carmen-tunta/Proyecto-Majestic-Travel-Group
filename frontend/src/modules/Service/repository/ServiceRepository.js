@@ -17,11 +17,14 @@ class ServiceRepository {
         return await response.json(); // { data, total, page, limit }
     }
 
-    // Para páginas públicas como PlanYourTrip
+    // Para páginas públicas como PlanYourTrip - sin autenticación
     async getPublicServices(limit = 6) {
-        const response = await fetch(`${apiUrl}?page=0&limit=${limit}`, {
-            headers: getAuthHeaders()
+        const response = await fetch(`${apiUrl}/public?page=0&limit=${limit}`, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
         });
+        if (!response.ok) throw new Error('Error al cargar servicios públicos');
         return await response.json();
     }
 
@@ -63,6 +66,17 @@ class ServiceRepository {
         const response = await fetch(`${apiUrl}/search?name=${encodeURIComponent(name)}`, {
             headers: getAuthHeaders()
         });
+        return await response.json();
+    }
+
+    // Búsqueda pública de servicios - sin autenticación
+    async searchPublicServices(name) {
+        const response = await fetch(`${apiUrl}/public/search?name=${encodeURIComponent(name)}`, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        if (!response.ok) throw new Error('Error al buscar servicios públicos');
         return await response.json();
     }
 

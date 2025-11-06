@@ -1,6 +1,7 @@
 import { CanActivate, ExecutionContext, Injectable, ForbiddenException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { PERMISSION_KEY } from '../decorators/require-permissions.decorator';
+import { IS_PUBLIC_KEY } from '../decorators/public.decorator';
 import { PermissionsService } from '../../permissions/permissions.service';
 
 @Injectable()
@@ -8,6 +9,15 @@ export class PermissionsGuard implements CanActivate {
   constructor(private reflector: Reflector, private permService: PermissionsService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
+    // Verificar si la ruta es pública
+    const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
+      context.getHandler(),
+      context.getClass(),
+    ]);
+    if (isPublic) {
+      return true;
+    }
+
     const required = this.reflector.getAllAndOverride<string[]>(PERMISSION_KEY, [
       context.getHandler(),
       context.getClass(),

@@ -1,5 +1,6 @@
 import { Controller, Get, Post, Body, Param, Put, Delete, Query, BadRequestException } from '@nestjs/common';
 import { RequirePermissions } from '../auth/decorators/require-permissions.decorator';
+import { Public } from '../auth/decorators/public.decorator';
 import { ServicesService } from './services.service';
 import { Service } from './entities/service.entity';
 
@@ -11,6 +12,35 @@ export class ServicesController {
   @RequirePermissions('SERVICIOS:CREATE')
   create(@Body() data: Partial<Service> & { componentIds?: number[] }) {
     return this.servicesService.create(data);
+  }
+
+  // Endpoint público para páginas públicas (Plan your trip)
+  @Get('public')
+  @Public()
+  async findPublic(
+    @Query('page') page: string,
+    @Query('limit') limit: string
+  ) {
+    const pageNum = parseInt(page || '0') || 0;
+    const limitNum = parseInt(limit || '10') || 10;
+
+    const services = await this.servicesService.findAll();
+    return {
+      data: services,
+      total: services.length,
+      page: pageNum,
+      limit: limitNum
+    };
+  }
+
+  // Endpoint público para búsqueda de servicios
+  @Get('public/search')
+  @Public()
+  async searchPublicServices(@Query('name') name: string) {
+    if (!name || name.trim() === '') {
+      throw new BadRequestException("El parámetro 'name' es requerido y no puede estar vacío.");
+    }
+    return await this.servicesService.searchByName(name);
   }
 
   @Get()

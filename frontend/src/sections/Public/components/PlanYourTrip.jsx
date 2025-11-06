@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import '../styles/PlanYourTrip.css';
 import ServiceRepository from '../../../modules/Service/repository/ServiceRepository';
 import GetPublicServices from '../../../modules/Service/application/GetPublicServices';
-import SearchService from '../../../modules/Service/application/SearchService';
+import SearchPublicService from '../../../modules/Service/application/SearchPublicService';
 import { Skeleton } from 'primereact/skeleton';
 import { Calendar } from 'primereact/calendar';
 import { Galleria } from 'primereact/galleria';
@@ -78,7 +78,7 @@ export default function PlanYourTrip() {
       }
       try {
         const repo = new ServiceRepository();
-        const search = new SearchService(repo);
+        const search = new SearchPublicService(repo);
         const result = await search.execute(trimmed);
         setServices(Array.isArray(result) ? result.slice(0, 6) : []);
       } catch (e) {
