@@ -51,7 +51,12 @@ const FormProveedor = ({proveedor, setProveedorState, setActiveIndex}) => {
     const [mail, setMail] = useState(localProveedorState ? localProveedorState.mail : '');
     const [language, setLanguage] = useState(localProveedorState && typeof localProveedorState.languages === 'string' ? localProveedorState.languages : '');
     const [documentType, setDocumentType] = useState(localProveedorState ? localProveedorState.documentType : '');
-    const [documentNumber, setDocumentNumber] = useState(localProveedorState ? localProveedorState.documentNumber : '');
+    // Aseguramos que el número de documento se maneje siempre como string en el estado para evitar errores de trim
+    const [documentNumber, setDocumentNumber] = useState(
+        localProveedorState && localProveedorState.documentNumber !== undefined && localProveedorState.documentNumber !== null
+            ? String(localProveedorState.documentNumber)
+            : ''
+    );
     const [direction, setDirection] = useState(localProveedorState ? localProveedorState.direction : '');
     const [birthDate, setBirthDate] = useState(localProveedorState && localProveedorState.birthdate ? parseLocalDate(localProveedorState.birthdate) : null);
     const [gender, setGender] = useState(localProveedorState ? localProveedorState.gender : '');
@@ -73,6 +78,15 @@ const FormProveedor = ({proveedor, setProveedorState, setActiveIndex}) => {
 
         setLoading(true);
         try {
+            // Normalizar número de documento de forma segura
+            const normalizeDocumentNumber = (val) => {
+                if (val === undefined || val === null) return null;
+                const str = String(val).trim();
+                if (str === '') return null;
+                const parsed = parseInt(str, 10);
+                return Number.isNaN(parsed) ? null : parsed;
+            };
+
             if (localProveedorState && localProveedorState.id) {
                 const proveedorActualizado = await updateProveedor.execute({
                     ...localProveedorState,
@@ -84,7 +98,7 @@ const FormProveedor = ({proveedor, setProveedorState, setActiveIndex}) => {
                     mail: mail,
                     languages: language,
                     documentType: documentType,
-                    documentNumber: documentNumber && documentNumber.trim() !== '' ? parseInt(documentNumber, 10) : null,
+                    documentNumber: normalizeDocumentNumber(documentNumber),
                     direction: direction,
                     birthdate: birthDate,
                     gender: gender,
@@ -103,7 +117,7 @@ const FormProveedor = ({proveedor, setProveedorState, setActiveIndex}) => {
                     mail: mail.trim(),
                     languages: language.trim(),
                     documentType: documentType.trim(),
-                    documentNumber: documentNumber && documentNumber.trim() !== '' ? parseInt(documentNumber, 10) : null,
+                    documentNumber: normalizeDocumentNumber(documentNumber),
                     direction: direction.trim(),
                     birthdate: birthDate,
                     gender: gender.trim(),
