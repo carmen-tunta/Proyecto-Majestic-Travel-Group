@@ -53,6 +53,9 @@ export class Cotizacion {
   nroPax: number;
 
   @Column({ type: 'int', default: 0 })
+  nroAdultos: number;
+
+  @Column({ type: 'int', default: 0 })
   nroNinos: number;
 
   @Column({ type: 'int', default: 0 })
