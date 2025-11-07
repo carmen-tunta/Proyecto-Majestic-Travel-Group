@@ -1,9 +1,0 @@
-# .gitattributes (añádelo en la raíz del repo)
-* text=auto
-*.js   text eol=lf
-*.jsx  text eol=lf
-*.ts   text eol=lf
-*.tsx  text eol=lf
-*.json text eol=lf
-*.css  text eol=lf
-*.html text eol=lf
