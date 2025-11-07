@@ -1,0 +1,347 @@
+.registro-pagos-modal {
+    background-color: white;
+    border-radius: 8px;
+    padding: 1rem 2rem 2rem 2rem;
+    height: 80vh;
+    width: 65vw;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+}
+
+.registro-pagos-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0,0,0,0.7);
+    z-index: 999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.registro-pagos-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 2rem;
+    padding-top: 1rem;
+}
+
+.registro-pagos-modal-header-left {
+    display: flex;
+    flex-direction: row;
+    gap: 2rem;
+    align-items: end;
+}
+
+.registro-pagos-modal-header-left > div {
+    font-size: 1.2rem;
+    color: rgb(110, 110, 110);
+}
+
+.registro-pagos-modal-body {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 2rem;
+    margin-top: 1rem;
+}
+
+.registro-pagos-modal-body .p-inputtext {
+    width: 100%;
+}
+
+.registro-pagos-modal-body button {
+    background-color: transparent;
+    border-radius: 100px;
+    width: 2rem;
+    height: 2rem;
+    border: 3px solid var(--primary-color);
+    padding: 0;
+}
+
+.registro-pagos-modal-body button .pi {
+    font-size: 1rem;
+    font-weight: bolder;
+}
+
+.registro-pagos-modal-footer {
+    margin-top: 1rem;
+    display: flex;
+    justify-content: space-between;
+    padding-left: 1rem;
+    padding-right: 2rem;
+}
+
+.registro-pagos-modal-table {
+    box-shadow: 0 0 7px rgba(0,0,0,0.15);
+    margin-top: 2rem;
+}
+
+.registro-pagos-modal-table .p-datatable-thead > tr > th {
+    background: var(--surface-b);
+    color: var(--surface-700);
+    font-weight: 600;
+    border: none;
+}
+
+.registro-pagos-modal-table .p-datatable-tbody > tr > td {
+  border: none;
+  padding: 15px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+/* Responsividad para tablets */
+@media (max-width: 1024px) {
+    .registro-pagos-modal {
+        width: 80vw;
+        height: 70vh;
+        overflow-y: scroll;
+    }
+    
+    .registro-pagos-modal-header h3 {
+        font-size: 1.3rem;
+    }
+    
+    .registro-pagos-modal-header-left {
+        gap: 1.5rem;
+    }
+    
+    .registro-pagos-modal-header-left > div {
+        font-size: 1.1rem;
+    }
+    
+    .registro-pagos-modal-body {
+        gap: 1.5rem;
+    }
+    
+    .registro-pagos-modal-body .p-float-label {
+        min-width: 120px;
+    }
+    
+    .registro-pagos-modal-table .p-datatable-thead > tr > th {
+        font-size: 0.9rem;
+        padding: 10px 8px;
+    }
+    
+    .registro-pagos-modal-table .p-datatable-tbody > tr > td {
+        padding: 12px 8px;
+        font-size: 0.9rem;
+    }
+}
+
+/* Responsividad para móviles */
+@media (max-width: 768px) {
+    .registro-pagos-modal-overlay {
+        padding: 10px;
+    }
+    
+    .registro-pagos-modal {
+        width: 80vw;
+        height: 70vh;
+        padding: 2rem;
+        border-radius: 12px;
+        overflow-y: scroll;
+    }
+    
+    .registro-pagos-modal-header {
+        flex-direction: column;
+        align-items: flex-start;
+        padding-bottom: 1rem;
+        gap: 1rem;
+        position: relative;
+    }
+    
+    .registro-pagos-modal-header .pi-times {
+        position: absolute;
+        top: 0;
+        right: 0;
+        font-size: 1.2rem;
+        margin: 0;
+    }
+    
+    .registro-pagos-modal-header h3 {
+        font-size: 1.2rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .registro-pagos-modal-header-left {
+        flex-direction: column;
+        gap: 0.5rem;
+        align-items: flex-start;
+        width: 100%;
+        padding-right: 2rem;
+    }
+    
+    .registro-pagos-modal-header-left > div {
+        font-size: 1rem;
+    }
+    
+    .registro-pagos-modal-body {
+        flex-direction: column;
+        gap: 1rem;
+        margin-top: 0.5rem;
+    }
+    
+    .registro-pagos-modal-body .p-float-label {
+        width: 100% !important;
+        max-width: none;
+    }
+
+    .registro-pagos-modal-body .p-float-label span,
+    .registro-pagos-modal-body .p-float-label input{
+        width: 100% !important;
+    }
+    
+    .registro-pagos-modal-body .p-float-label:nth-child(1) {
+        order: 1;
+    }
+    
+    .registro-pagos-modal-body .p-float-label:nth-child(2) {
+        order: 2;
+    }
+    
+    .registro-pagos-modal-body .p-float-label:nth-child(3) {
+        order: 3;
+    }
+    
+    .registro-pagos-modal-body button {
+        order: 4;
+        align-self: center;
+        width: 2.5rem;
+        height: 2.5rem;
+    }
+    
+    .registro-pagos-modal-table {
+        margin-top: 1rem;
+    }
+    
+    .registro-pagos-modal-table .p-datatable-wrapper {
+        overflow-x: auto;
+    }
+    
+    .registro-pagos-modal-table .p-datatable-thead > tr > th {
+        font-size: 0.8rem;
+        padding: 8px 4px;
+        white-space: nowrap;
+    }
+    
+    .registro-pagos-modal-table .p-datatable-tbody > tr > td {
+        padding: 10px 4px;
+        font-size: 0.8rem;
+    }
+    
+    .registro-pagos-modal-footer {
+        flex-direction: column;
+        gap: 0.5rem;
+        padding: 0 0.5rem;
+        text-align: center;
+    }
+    
+    .registro-pagos-modal-footer > div:last-child {
+        text-align: center;
+    }
+}
+
+/* Responsividad para móviles pequeños */
+@media (max-width: 480px) {
+    .registro-pagos-modal-overlay {
+        padding: 5px;
+    }
+    
+    .registro-pagos-modal {
+        width: 80vw;
+        height: 70vh;
+        padding: 2rem;
+        overflow-y: scroll;
+    }
+    
+    .registro-pagos-modal-header h3 {
+        font-size: 1.1rem;
+    }
+    
+    .registro-pagos-modal-header-left > div {
+        font-size: 0.9rem;
+    }
+    
+    .registro-pagos-modal-body {
+        gap: 0.8rem;
+    }
+    
+    .registro-pagos-modal-body .p-inputtext,
+    .registro-pagos-modal-body .p-calendar,
+    .registro-pagos-modal-body .p-inputnumber {
+        font-size: 0.9rem;
+    }
+    
+    .registro-pagos-modal-body button {
+        width: 2.2rem;
+        height: 2.2rem;
+    }
+    
+    .registro-pagos-modal-table .p-datatable-thead > tr > th {
+        font-size: 0.75rem;
+        padding: 6px 2px;
+    }
+    
+    .registro-pagos-modal-table .p-datatable-tbody > tr > td {
+        padding: 8px 2px;
+        font-size: 0.75rem;
+    }
+    
+    /* Ocultar columna de nota en móviles muy pequeños para dar más espacio */
+    .registro-pagos-modal-table .p-datatable-thead > tr > th:nth-child(2),
+    .registro-pagos-modal-table .p-datatable-tbody > tr > td:nth-child(2) {
+        display: none;
+    }
+    
+    .registro-pagos-modal-footer {
+        font-size: 0.85rem;
+    }
+}
+
+/* Ajustes adicionales para mejorar la experiencia móvil */
+@media (max-width: 768px) {
+    
+    /* Mejorar el espaciado de los inputs */
+    .registro-pagos-modal-body .p-float-label label {
+        font-size: 0.9rem;
+    }
+    
+    /* Asegurar que los botones sean fáciles de tocar */
+    .registro-pagos-modal-table .pi-trash {
+        font-size: 1.1rem;
+        padding: 5px;
+    }
+}
+
+/* Landscape mode para móviles */
+@media (max-width: 768px) and (orientation: landscape) {
+    .registro-pagos-modal {
+        height: 80vh;
+        width: 85vw;
+        overflow-y: scroll;
+    }
+    
+    .registro-pagos-modal-header {
+        padding-bottom: 0.5rem;
+    }
+    
+    .registro-pagos-modal-body {
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+    
+    .registro-pagos-modal-body .p-float-label {
+        flex: 1;
+        min-width: 120px;
+    }
+    
+    .registro-pagos-modal-body button {
+        flex-shrink: 0;
+    }
+}

@@ -1,0 +1,161 @@
+.assign-proveedor-body {
+    width: 100%;
+}
+
+.assign-proveedor-table th {
+  background: var(--surface-b);
+  color: var(--surface-700);
+  font-weight: 600;
+}
+
+.assign-proveedor-table tbody > tr:hover,
+.assign-proveedor-body .p-datatable.p-datatable-striped .p-datatable-tbody > tr.p-row-odd:hover {
+    background-color: var(--blue-50);
+    cursor: pointer;
+}
+
+.assign-proveedor-body .p-datatable.p-datatable-striped .p-datatable-tbody > tr.p-row-odd {
+    background-color: white;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .assign-proveedor-body {
+        width: 100%;
+    }
+    
+    .assign-proveedor-table .p-datatable-thead > tr > th,
+    .assign-proveedor-table .p-datatable-tbody > tr > td {
+        padding: 8px 6px;
+        font-size: 13px;
+    }
+}
+
+@media (max-width: 768px) {
+    .assign-proveedor-table .p-datatable-thead > tr > th,
+    .assign-proveedor-table .p-datatable-tbody > tr > td {
+        padding: 6px 4px;
+        font-size: 12px;
+    }
+    
+    /* Tabla responsive con cards */
+    .assign-proveedor-table .p-datatable-thead,
+    .assign-proveedor-table .p-datatable-tbody,
+    .assign-proveedor-table .p-datatable-tbody tr {
+        display: block;
+    }
+    
+    .assign-proveedor-table .p-datatable-thead th {
+        position: absolute;
+        top: -9999px;
+        left: -9999px;
+    }
+    
+    .assign-proveedor-table .p-datatable-tbody tr {
+        border: 1px solid #ddd;
+        margin-bottom: 12px;
+        padding: 12px;
+        border-radius: 8px;
+        background: #fff;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        cursor: pointer;
+    }
+    
+    .assign-proveedor-table .p-datatable-tbody tr:hover {
+        box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        transform: translateY(-1px);
+        transition: all 0.2s ease;
+    }
+    
+    .assign-proveedor-table .p-datatable-tbody tr td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 0;
+        border: none;
+        border-bottom: 1px solid #f0f0f0;
+    }
+    
+    .assign-proveedor-table .p-datatable-tbody tr td:last-child {
+        border-bottom: none;
+    }
+    
+    .assign-proveedor-table .p-datatable-tbody tr td:before {
+        content: attr(data-label) ': ';
+        font-weight: 600;
+        color: #666;
+        margin-right: 10px;
+        flex-shrink: 0;
+    }
+    
+    .assign-proveedor-table .p-datatable-tbody tr td:nth-child(1):before { content: 'Proveedor: '; }
+    .assign-proveedor-table .p-datatable-tbody tr td:nth-child(2):before { content: 'Costo: '; }
+    .assign-proveedor-table .p-datatable-tbody tr td:nth-child(3):before { content: 'Incremento: '; }
+    .assign-proveedor-table .p-datatable-tbody tr td:nth-child(4):before { content: 'Total: '; }
+}
+
+@media (max-width: 480px) {
+    .assign-proveedor-table .p-datatable-tbody tr {
+        padding: 10px;
+        margin-bottom: 10px;
+    }
+    
+    .assign-proveedor-table .p-datatable-tbody tr td {
+        padding: 6px 0;
+        font-size: 11px;
+    }
+    
+    .assign-proveedor-table .p-datatable-tbody tr td:before {
+        font-size: 10px;
+        margin-right: 8px;
+    }
+}
+
+/* Paginación personalizada responsive */
+.assign-proveedor-body .custom-paginator .p-paginator-page,
+.assign-proveedor-body .custom-paginator .p-paginator-first,
+.assign-proveedor-body .custom-paginator .p-paginator-prev,
+.assign-proveedor-body .custom-paginator .p-paginator-next,
+.assign-proveedor-body .custom-paginator .p-paginator-last {
+    padding: 6px 8px;
+    font-size: 12px;
+    margin: 0 2px;
+    min-width: 32px;
+    height: 32px;
+}
+
+@media (max-width: 768px) {
+    .assign-proveedor-body .custom-paginator .p-paginator-page,
+    .assign-proveedor-body .custom-paginator .p-paginator-first,
+    .assign-proveedor-body .custom-paginator .p-paginator-prev,
+    .assign-proveedor-body .custom-paginator .p-paginator-next,
+    .assign-proveedor-body .custom-paginator .p-paginator-last {
+        padding: 6px 8px;
+        font-size: 12px;
+        margin: 0 1px;
+        min-width: 28px;
+        height: 28px;
+    }
+    
+    .assign-proveedor-body .custom-paginator .p-paginator-current {
+        font-size: 11px;
+    }
+}
+
+@media (max-width: 480px) {
+    .assign-proveedor-body .custom-paginator .p-paginator-page,
+    .assign-proveedor-body .custom-paginator .p-paginator-first,
+    .assign-proveedor-body .custom-paginator .p-paginator-prev,
+    .assign-proveedor-body .custom-paginator .p-paginator-next,
+    .assign-proveedor-body .custom-paginator .p-paginator-last {
+        padding: 4px 6px;
+        font-size: 11px;
+        margin: 0 1px;
+        min-width: 24px;
+        height: 24px;
+    }
+    
+    .assign-proveedor-body .custom-paginator .p-paginator-current {
+        font-size: 10px;
+    }
+}

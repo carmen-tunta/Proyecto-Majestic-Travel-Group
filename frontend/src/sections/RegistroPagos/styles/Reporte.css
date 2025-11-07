@@ -1,0 +1,186 @@
+.reporte {
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    padding: 0rem 4rem 2rem 2rem;
+}
+
+.reporte-buscador {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    margin-top: 2rem;
+}
+
+.reporte-table {
+    border: 1px solid #f0f0f0;
+}
+
+.reporte-table .p-datatable-thead > tr > th {
+    background: var(--surface-b);
+    color: var(--surface-700);
+    font-weight: 600;
+    border: none;
+}
+
+.reporte-table .p-datatable-tbody > tr > td {
+  border: none;
+  padding: 15px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.reporte-footer {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+    padding: 1rem 3rem 0 1rem;
+    color: rgb(175, 175, 175);
+}
+
+.reporte-footer .monto {
+    font-size: 0.8rem;
+    font-weight: 400;
+}
+
+.reporte-footer .adelanto-saldo {
+    display: flex;
+    flex-direction: column;
+    font-weight: 600;
+    width: 9rem;
+    color: var(--surface-500)
+}
+
+.reporte-footer .adelanto-saldo div {
+    display: flex;
+    justify-content: space-between;
+}
+
+.reporte-header .pi-arrow-left {
+    cursor: pointer;
+    margin-right: 0.5rem;
+}
+
+
+/* Responsividad para tablets */
+@media (max-width: 1024px) {
+    .reporte {
+        padding: 0rem 2rem 2rem 2rem;
+    }
+    
+    .reporte-header h2 {
+        font-size: 1.5rem;
+    }
+    
+    .reporte-table .p-datatable-thead > tr > th {
+        font-size: 0.8rem;
+        padding: 8px;
+    }
+
+    .reporte-table .p-datatable-tbody > tr > td {
+        padding: 10px 8px;
+        font-size: 0.8rem;
+    }
+    
+    /* Ocultar columnas menos importantes en tablets */
+    .reporte-table .p-datatable-thead > tr > th:nth-child(4),
+    .reporte-table .p-datatable-tbody > tr > td:nth-child(4) {
+        display: none;
+    }
+
+    .reporte-footer {
+        padding: 1rem 1rem 1rem 0rem;
+    }
+
+    .reporte-footer .adelanto-saldo {
+        font-size: 0.75rem;
+        width: 7rem;
+        color: var(--surface-500)
+    }
+}
+
+/* Responsividad para móviles */
+@media (max-width: 768px) {
+    .reporte {
+        padding: 1rem;
+    }
+    
+    .reporte-header h2 {
+        font-size: 1.3rem;
+    }
+    
+    /* Hacer la tabla responsive con scroll horizontal */
+    .card {
+        overflow-x: auto;
+    }
+    
+    .reporte-table .p-datatable-thead > tr > th {
+        font-size: 0.75rem;
+        padding: 6px 4px;
+        white-space: nowrap;
+    }
+    
+    .reporte-table .p-datatable-tbody > tr > td {
+        padding: 8px 4px;
+        font-size: 0.75rem;
+        white-space: nowrap;
+    }
+    
+    /* Ocultar más columnas en móviles */
+    .reporte-table .p-datatable-thead > tr > th:nth-child(3),
+    .reporte-table .p-datatable-tbody > tr > td:nth-child(3),
+    .reporte-table .p-datatable-thead > tr > th:nth-child(4),
+    .reporte-table .p-datatable-tbody > tr > td:nth-child(4),
+    .reporte-table .p-datatable-thead > tr > th:nth-child(5),
+    .reporte-table .p-datatable-tbody > tr > td:nth-child(5) {
+        display: none;
+    }
+    
+    /* Ajustar paginador */
+    .p-paginator {
+        padding: 0.5rem;
+        font-size: 0.8rem;
+    }
+    
+    .p-paginator .p-paginator-pages .p-paginator-page {
+        min-width: 2rem;
+        height: 2rem;
+    }
+}
+
+/* Responsividad para móviles pequeños */
+@media (max-width: 480px) {
+    .reporte {
+        padding: 0.5rem;
+    }
+    
+    .reporte-header h2 {
+        font-size: 1.2rem;
+    }
+    
+    .reporte-table .p-datatable-thead > tr > th {
+        font-size: 0.7rem;
+        padding: 4px 2px;
+    }
+    
+    .reporte-table .p-datatable-tbody > tr > td {
+        padding: 6px 2px;
+        font-size: 0.7rem;
+    }
+    
+    /* En móviles muy pequeños, mostrar solo las columnas esenciales */
+    .reporte-table .p-datatable-thead > tr > th:not(:nth-child(2)):not(:nth-child(6)):not(:nth-child(7)):not(:nth-child(8)):not(:nth-child(9)),
+    .reporte-table .p-datatable-tbody > tr > td:not(:nth-child(2)):not(:nth-child(6)):not(:nth-child(7)):not(:nth-child(8)):not(:nth-child(9)) {
+        display: none;
+    }
+    
+}
+
+/* Ajustes adicionales para mejorar la experiencia móvil */
+@media (max-width: 768px) {
+    .registro-pagos-header .p-button {
+        white-space: nowrap;
+    }
+}
+
+

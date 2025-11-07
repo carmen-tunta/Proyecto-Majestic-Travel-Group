@@ -1,0 +1,1400 @@
+/* Cotizacion Form specific styles aligned with Proveedores */
+
+.form-card {
+    border: 1px solid #e6e9ef;
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.08);
+    /* Shared width tokens to keep symmetry across rows */
+    --w-left: 50%;   /* Nombre cliente / Nombre cotización */
+    --w-mid: 34%;    /* Agencia */
+    --w-small: 16%;  /* Estado, Fecha, Código */
+    --w-small3: 12%; /* Pax, Niños, % */
+}
+
+.form-card .row {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* más pegado horizontalmente */
+    margin-bottom: 30px; /* un poco más de aire bajo el header */
+}
+
+.form-card .row-spacer {
+    flex: 1;
+}
+
+.form-card .right-btn {
+    margin-left: auto;
+    margin-top: 6px; /* bajar ligeramente el botón para que no quede pegado a los inputs */
+}
+
+.form-card .label { color: #6b778c; }
+
+/* Link-like save button (top-right) */
+.form-card .link-btn {
+    background: transparent;
+    border: 0;
+    color: var(--primary-color);
+    font-weight: 600;
+    cursor: pointer;
+}
+.form-card .link-btn:hover { text-decoration: underline; }
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(4, 2fr);
+    gap: 12px;
+    justify-items: start;
+}
+
+/* 6-column variant used at top form */
+.grid.grid-6 {
+    grid-template-columns: repeat(6, 1fr);
+}
+
+/* 12-column variant for fine-grained spans */
+.grid.grid-12 {
+    grid-template-columns: repeat(12, 1fr);
+}
+
+/* Explicit row grids with 12-unit symmetry (fr-based) */
+.form-grid {
+    display: grid;
+    column-gap: 6px;  /* aún más pegado entre campos */
+    row-gap: 10px;    /* un poco menos de espacio vertical */
+}
+
+/* Separación vertical entre los bloques de filas (row1, row2, row3) */
+.form-card .form-grid + .form-grid {
+    margin-top: 2px; /* bloques más cercanos entre sí */
+}
+
+/* Row 1: [Nombre cliente][Tipo][Fecha][Estado] */
+.row1-grid { grid-template-columns: minmax(300px, 6fr) minmax(160px, 2fr) minmax(160px, 2fr) minmax(160px, 2fr); }
+
+/* Row 2: [Nombre cotización][Agencia][Código] */
+.row2-grid { grid-template-columns: minmax(300px, 6fr) minmax(220px, 4fr) minmax(150px, 2fr); }
+
+/* Row 3: [País][Idioma][Paxs][Niños][%][Observación] */
+.row3-grid { grid-template-columns: minmax(150px, 2fr) minmax(150px, 2fr) minmax(120px, 2fr) minmax(120px, 2fr) minmax(120px, 2fr) minmax(300px, 6fr); }
+
+/* Ensure controls inside form-grid adopt the same single-outline look */
+.form-grid input,
+.form-grid select {
+    width: var(--field-w, 100%);
+    padding: 10px 12px;
+    height: 40px;
+    /* border: 1px solid #9ec0f7; */
+    border-radius: 10px;
+    box-sizing: border-box;
+    background: #fff;
+}
+
+.form-grid input:focus,
+.form-grid select:focus {
+    outline: none;
+    /* border-color: #2c7be5; */
+    /* box-shadow: 0 0 0 3px rgba(44, 123, 229, .12); */
+}
+
+.form-grid .p-inputtext,
+.form-grid .p-dropdown,
+.form-grid .p-calendar {
+    width: var(--field-w, 100%);
+    max-width: 100%;
+}
+
+/* Asegurar que el contenedor FloatLabel ocupe todo el ancho del grid */
+.form-grid .p-float-label { width: 100%; }
+
+.form-grid .p-dropdown.p-component,
+.form-grid .p-calendar.p-component {
+    border: 1px solid #d1d5db;
+    border-radius: 10px;
+    background: #fff;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+}
+
+.form-grid .p-dropdown .p-dropdown-label,
+.form-grid .p-calendar .p-inputtext {
+    border: 0 !important;
+    box-shadow: none !important;
+    background: transparent !important;
+    border-radius: 0 !important;
+    padding: 8px 12px;
+    height: 100%;
+}
+
+.form-grid .p-dropdown .p-dropdown-trigger,
+.form-grid .p-calendar .p-datepicker-trigger {
+    border-left: 0 !important;
+    background: transparent !important;
+    border: 0 !important;
+}
+
+.form-grid .p-dropdown.p-focus,
+.form-grid .p-calendar.p-focus {
+    box-shadow: 0 0 0 0.2rem var(--blue-100);
+    border-color: var(--blue-500);
+}
+
+.grid .span-1 { grid-column: span 1; }
+.grid .span-2 { grid-column: span 2; }
+.grid .span-3 { grid-column: span 3; }
+.grid .span-4 { grid-column: span 4; }
+.grid .span-5 { grid-column: span 5; }
+.grid .span-6 { grid-column: span 6; }
+.grid .span-7 { grid-column: span 7; }
+.grid .span-8 { grid-column: span 8; }
+.grid .span-9 { grid-column: span 9; }
+.grid .span-10 { grid-column: span 10; }
+.grid .span-11 { grid-column: span 11; }
+.grid .span-12 { grid-column: span 12; }
+
+.grid input,
+.grid select {
+    width: var(--field-w, 100%);
+    padding: 10px 12px;
+    height: 40px;
+    /* border: 1px solid #9ec0f7; */
+    border-radius: 10px;
+    box-sizing: border-box;
+    /* background: #fff; */
+}
+
+/* PrimeReact controls: allow per-field custom width via --field-w */
+.grid .p-inputtext,
+.grid .p-dropdown,
+.grid .p-calendar {
+    width: var(--field-w, 100%);
+    max-width: 100%;
+}
+
+/* FloatLabel dentro de grillas genéricas */
+.grid .p-float-label { width: 100%; }
+
+/* PrimeReact: single outline look (no inner borders) */
+.grid .p-dropdown.p-component,
+.grid .p-calendar.p-component {
+    border: 1px solid #9ec0f7;
+    border-radius: 10px;
+    background: #fff;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+}
+.grid .p-dropdown .p-dropdown-label,
+.grid .p-calendar .p-inputtext {
+    border: 0 !important;
+    box-shadow: none !important;
+    background: transparent !important;
+    border-radius: 0 !important;
+    padding: 8px 12px;
+    height: 100%;
+}
+.grid .p-dropdown .p-dropdown-trigger,
+.grid .p-calendar .p-datepicker-trigger {
+    border-left: 0 !important;
+    background: transparent !important;
+    border: 0 !important;
+}
+
+.grid input:focus,
+.grid select:focus {
+    outline: none;
+    /* border-color: #2c7be5; */
+    /* box-shadow: 0 0 0 3px rgba(44, 123, 229, .12); */
+}
+
+/* Focus ring for PrimeReact wrappers */
+.grid .p-dropdown.p-focus,
+.grid .p-calendar.p-focus {
+    /* border-color: #2c7be5 !important; */
+    box-shadow: 0 0 0 3px rgba(44, 123, 229, .12) !important;
+}
+
+.search-select {
+    position: relative;
+}
+
+.search-select .dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: #fff;
+    border: 1px solid #cfd6e4;
+    border-radius: 6px;
+    z-index: 20;
+    max-height: 200px;
+    overflow: auto;
+}
+
+.search-select .option {
+    padding: 8px 10px;
+    cursor: pointer;
+}
+
+.search-select .option:hover {
+    background: #f5f7fb;
+}
+
+.search-select .option.disabled {
+    color: #98a2b3;
+    cursor: default;
+}
+
+.center {
+    padding: 2rem 0 1rem 0;
+    text-align: center;
+    color: #98a2b3;
+    font-size: 1.3rem;
+    font-weight: 350;
+}
+
+/* Builder */
+.cotz-service-card {
+    padding: 2rem 0.75rem 2rem 0.75rem;
+    border: 2px solid var(--blue-50);
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    background: transparent;
+    
+}
+
+.cotz-service-card.selected {
+    background: var(--blue-50);
+}
+
+.cotz-service-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.cotz-service-title {
+    font-weight: 600;
+    font-size: 1.05rem;
+}
+
+.cotz-component-row {
+    display: grid;
+    grid-template-columns: auto 1fr auto 80px;
+    gap: 8px;
+    align-items: center;
+    margin-left: 16px;
+    color: #293241;
+    padding: 6px 0;
+}
+
+.muted {
+    color: #6b7280;
+}
+
+.label-muted {
+    opacity: .7;
+}
+
+.btn-sm {
+    padding: 4px 8px;
+}
+
+.price-input {
+    width: 80px;
+    padding: 6px 8px;
+    /* border: 1px solid #cfd6e4; */
+    border-radius: 6px;
+    text-align: right !important;
+}
+
+/* Right-align InputNumber values */
+.price-input,
+.price-input input,
+.p-inputnumber .price-input {
+    text-align: right !important;
+}
+
+.cotz-select-hint {
+    margin-top: 0px;
+    color: var(--blue-400);
+    font-size: 12px;
+}
+
+.cotz-builder {
+    display: flex;
+    margin-top: 2rem;
+    align-items: center;
+    height: 9rem;
+    padding: 0rem 1rem 0rem 1rem;
+    border: 1px dashed var(--gray-300);
+    border-radius: 10px;
+}
+
+.cotz-builder-left {
+    height: 100%;
+    width: 70%;
+    padding: 1.5rem 0rem 1.5rem 0rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.cotz-searchline {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 12px;
+}
+
+.cotz-searchbar {
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+
+.search-status {
+    position: absolute;
+    right: 120px;
+    top: 10px;
+    font-size: 12px;
+    color: #98a2b3;
+}
+
+.totals-card {
+    border-left: 1px dashed var(--gray-300);
+    padding: 12px 16px;
+    color: #333;
+    height: 100%;
+    width: 30%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: initial baseline;
+}
+
+.totals-row {
+    display: flex;
+    justify-content: space-between;
+    margin-left: 4rem;
+}
+
+.totals-row+.totals-row {
+    margin-top: 6px;
+}
+
+.totals-row.bold {
+    font-weight: 700;
+}
+
+/* Client field search icon at right */
+.client-search-wrap {
+    position: relative;
+}
+
+.client-search-wrap input {
+    padding-right: 36px;
+}
+
+/* Asegurar que el campo de 'Nombre del cliente' (PrimeReact InputText) tenga misma altura y ancho */
+.client-search-wrap .p-inputtext {
+    height: 40px;
+    width: 100%;
+    box-sizing: border-box;
+    padding-right: 36px; /* deja espacio para el icono */
+}
+
+.client-search-wrap .right-icon {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    opacity: .6;
+}
+
+.menu-edition .p-dialog {
+    background-color: white;
+    width: 40vw;
+}
+
+.p-dialog-header {
+    cursor:default;
+}
+
+/* Estilos para el modal de fecha y hora */
+.date-time-modal {
+    width: auto !important;
+    max-width: 500px !important;
+}
+
+.date-time-modal .p-dialog-content {
+    padding: 0.75rem !important;
+    overflow: visible !important;
+}
+
+.date-time-modal .p-calendar {
+    width: 100% !important;
+}
+
+.date-time-modal .p-calendar .p-datepicker-inline {
+    width: 100% !important;
+    border: none !important;
+    padding: 0 !important;
+}
+
+.date-time-modal .p-datepicker-header {
+    padding: 0.5rem 0 !important;
+    background: transparent !important;
+    border-bottom: 1px solid #e0e0e0 !important;
+    margin-bottom: 0.25rem !important;
+}
+
+.date-time-modal .p-datepicker-calendar {
+    padding: 0.25rem 0 !important;
+}
+
+.date-time-modal .p-datepicker-calendar th {
+    padding: 0.4rem !important;
+    font-weight: 600 !important;
+    color: #424242 !important;
+    font-size: 0.85rem !important;
+}
+
+.date-time-modal .p-datepicker-day {
+    padding: 0.4rem !important;
+    border-radius: 4px !important;
+    transition: all 0.2s !important;
+}
+
+.date-time-modal .p-datepicker-day:not(.p-disabled):not(.p-highlight):hover {
+    background: #e3f2fd !important;
+}
+
+.date-time-modal .p-datepicker-day.p-highlight {
+    background: #1976d2 !important;
+    color: white !important;
+}
+
+.date-time-modal .p-datepicker-day.p-highlight:hover {
+    background: #1565c0 !important;
+}
+
+.date-time-modal .p-timepicker {
+    border-top: 1px solid #e0e0e0 !important;
+    padding: 0.75rem 0 0.5rem 0 !important;
+    margin-top: 0.25rem !important;
+}
+
+.date-time-modal .p-timepicker > div {
+    padding: 0.15rem !important;
+}
+
+.date-time-modal .p-timepicker-button {
+    width: 1.75rem !important;
+    height: 1.75rem !important;
+    border-radius: 4px !important;
+}
+
+.date-time-modal .p-timepicker-button:hover {
+    background: #e3f2fd !important;
+}
+
+.date-time-modal .p-timepicker span {
+    font-size: 1rem !important;
+    font-weight: 500 !important;
+}
+
+.date-time-modal .p-timepicker .p-link {
+    color: #1976d2 !important;
+}
+
+/* ========== RESPONSIVE DESIGN ========== */
+
+/* Tablets y pantallas medianas (768px - 1024px) */
+@media (max-width: 1024px) {
+    /* Asegurar que el contenedor principal use todo el ancho */
+    body, .cotizacion-form-container {
+        padding: 0;
+        margin: 0;
+        width: 100%;
+        overflow-x: hidden;
+    }
+    
+    .form-card {
+        padding: 12px;
+        margin: 0;
+        width: 100%;
+        box-sizing: border-box;
+    }
+    
+    /* Grids adaptativos para tablet */
+    .row1-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+    }
+    
+    .row2-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+    }
+    
+    .row3-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+    }
+    
+    .grid.grid-6 {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+    
+    .grid.grid-12 {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+    }
+    
+    .cotz-builder {
+        flex-direction: column;
+        height: auto;
+        padding: 1rem;
+        margin-top: 1rem;
+    }
+    
+    .cotz-builder-left {
+        width: 100%;
+        padding: 1rem 0;
+    }
+    
+    .totals-card {
+        width: 100%;
+        border-left: none;
+        border-top: 1px dashed var(--gray-300);
+        padding-top: 1rem;
+        margin-top: 1rem;
+        padding: 12px;
+        gap: 8px;
+    }
+    
+    .totals-row {
+        margin-left: 0;
+        font-size: 15px;
+    }
+    
+    /* Servicios card más compacto */
+    .cotz-service-card {
+        padding: 1rem 0.5rem;
+        margin-bottom: 0.75rem;
+        overflow-x: hidden;
+    }
+    
+    .cotz-service-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+    
+    .cotz-service-title {
+        font-size: 1rem;
+    }
+    
+    /* Lista de componentes sin overflow */
+    .componentes-list {
+        width: 100%;
+        overflow-x: hidden;
+    }
+    
+    .cotz-component-row {
+        font-size: 14px;
+        padding: 6px 0;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+    
+    .price-input {
+        width: 80px;
+        font-size: 14px;
+    }
+    
+    /* Tab menu más compacto */
+    .p-tabmenu .p-tabmenu-nav .p-tabmenuitem .p-menuitem-link {
+        padding: 8px 10px;
+        font-size: 14px;
+    }
+    
+    /* Botones de acción responsive */
+    .form-actions {
+        flex-wrap: wrap;
+        gap: 8px;
+        justify-content: center;
+    }
+    
+    .form-actions .p-button {
+        min-width: 140px;
+        font-size: 14px;
+    }
+    
+    /* Componente cards - mejor layout en tablet */
+    .componente-card {
+        flex-wrap: wrap;
+        gap: 12px !important;
+        padding: 8px;
+        border: 1px solid #f0f0f0;
+        border-radius: 6px;
+        margin-bottom: 8px;
+    }
+}
+
+/* Móviles (hasta 768px) */
+@media (max-width: 768px) {
+    /* Contenedor principal sin márgenes */
+    body, .cotizacion-form-container {
+        padding: 0;
+        margin: 0;
+        width: 100%;
+        overflow-x: hidden;
+    }
+    
+    .form-card {
+        padding: 8px;
+        margin: 0;
+        border-radius: 0;
+        overflow-x: hidden;
+        width: 100%;
+        box-sizing: border-box;
+    }
+    
+    /* Contenedor de servicios */
+    .cotz-service-card {
+        padding: 1rem 0.5rem;
+        margin-bottom: 0.75rem;
+        margin-left: 0;
+        margin-right: 0;
+        overflow-x: hidden;
+    }
+    
+    /* Lista de componentes */
+    .componentes-list {
+        width: 100%;
+        overflow-x: hidden;
+    }
+    
+    .form-card .row {
+        flex-direction: column;
+        gap: 8px;
+        margin-bottom: 20px;
+    }
+    
+    .form-card .right-btn {
+        margin-left: 0;
+        margin-top: 10px;
+        width: 100%;
+    }
+    
+    /* Todas las grids se vuelven de una columna */
+    .row1-grid,
+    .row2-grid,
+    .row3-grid {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+    
+    .grid.grid-6,
+    .grid.grid-12,
+    .grid {
+        grid-template-columns: 1fr;
+    }
+    
+    /* Inputs más compactos */
+    .form-grid input,
+    .form-grid select,
+    .grid input,
+    .grid select {
+        height: 36px;
+        padding: 8px 10px;
+        font-size: 14px;
+    }
+    
+    .form-grid .p-dropdown.p-component,
+    .form-grid .p-calendar.p-component,
+    .grid .p-dropdown.p-component,
+    .grid .p-calendar.p-component {
+        height: 36px;
+    }
+    
+    /* Servicios card más compacto */
+    .cotz-service-card {
+        padding: 1rem 0.5rem;
+        margin-bottom: 0.75rem;
+    }
+    
+    .cotz-service-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+    
+    .cotz-service-title {
+        font-size: 1rem;
+    }
+    
+    /* Componente card - adaptación total mobile */
+    .componente-card {
+        flex-direction: column;
+        align-items: stretch !important;
+        gap: 10px !important;
+        padding: 12px;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        background: #fafafa;
+        position: relative;
+    }
+    
+    .componente-card > div {
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+    
+    /* Fecha y hora */
+    .componente-card > div:first-child {
+        display: flex !important;
+        align-items: center;
+        justify-content: flex-start;
+        padding-top: 20px;
+        margin-left: 0 !important;
+    }
+    
+    .componente-card .pi-trash {
+        position: absolute !important;
+        top: 8px;
+        right: 8px;
+        margin-left: 0 !important;
+        width: auto !important;
+    }
+    
+    /* Nombre del componente */
+    .componente-card > div:nth-child(2) {
+        border-left: 3px solid var(--blue-200);
+        padding-left: 10px;
+        width: 100% !important;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+    }
+    
+    .componente-card > div:nth-child(2) > div {
+        margin-left: 0 !important;
+        width: 100% !important;
+    }
+    
+    /* Nota input */
+    .componente-card > div:nth-child(3) {
+        margin-top: 4px;
+        width: 100% !important;
+        min-width: 0 !important;
+    }
+    
+    .componente-card > div:nth-child(3) > div {
+        min-width: 0 !important;
+        width: 100% !important;
+    }
+    
+    .componente-card > div:nth-child(3) input,
+    .componente-card > div:nth-child(3) .p-inputtext {
+        width: 100% !important;
+        max-width: 100%;
+        min-width: 0 !important;
+        box-sizing: border-box;
+    }
+    
+    /* Precio */
+    .componente-card > div:last-child {
+        display: flex;
+        justify-content: flex-end;
+        width: 100% !important;
+    }
+    
+    .componente-card > div:last-child .p-inputnumber,
+    .componente-card > div:last-child .price-input {
+        width: 100px !important;
+    }
+    
+    .cotz-component-row {
+        grid-template-columns: 1fr auto;
+        gap: 4px;
+        margin-left: 8px;
+        padding: 4px 0;
+        font-size: 14px;
+    }
+    
+    .price-input {
+        width: 70px;
+        font-size: 14px;
+    }
+    
+    /* Builder adaptativo */
+    .cotz-builder {
+        height: auto;
+        padding: 0.75rem;
+        margin-top: 1rem;
+        margin-left: 0;
+        margin-right: 0;
+        flex-direction: column;
+        width: 100%;
+        box-sizing: border-box;
+    }
+    
+    .cotz-builder-left {
+        padding: 0.75rem 0;
+        width: 100%;
+    }
+    
+    .cotz-searchline {
+        flex-direction: column;
+        gap: 12px;
+        align-items: stretch;
+        margin-bottom: 1rem;
+    }
+    
+    .cotz-searchline label {
+        font-weight: 500;
+        font-size: 14px;
+        margin: 0;
+    }
+    
+    /* Radio buttons en fila horizontal con mejor espaciado */
+    .cotz-searchline > div {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+        align-items: center;
+    }
+    
+    .cotz-searchbar {
+        flex-direction: column;
+        gap: 10px;
+        align-items: stretch;
+        width: 100%;
+    }
+    
+    .cotz-searchbar .p-autocomplete {
+        width: 100% !important;
+        max-width: 100%;
+    }
+    
+    .cotz-searchbar .p-autocomplete .p-inputtext {
+        width: 100% !important;
+    }
+    
+    .cotz-searchbar .p-button {
+        width: 100%;
+    }
+    
+    .search-status {
+        position: static;
+        text-align: center;
+        margin-top: 4px;
+        font-size: 12px;
+    }
+    
+    /* Tab Menu responsive */
+    .p-tabmenu .p-tabmenu-nav {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        margin: 0;
+        width: 100%;
+    }
+    
+    .p-tabmenu .p-tabmenu-nav .p-tabmenuitem {
+        flex-shrink: 0;
+    }
+    
+    .p-tabmenu .p-tabmenu-nav .p-tabmenuitem .p-menuitem-link {
+        padding: 10px 16px;
+        font-size: 14px;
+        white-space: nowrap;
+    }
+    
+    /* Dialog responsive */
+    .p-dialog {
+        width: 95vw;
+        margin: 0 auto;
+        max-width: 95vw;
+    }
+
+    /* Modal de fecha y hora responsive */
+    .date-time-modal {
+        width: 90vw !important;
+        max-width: 90vw !important;
+    }
+
+    .date-time-modal .p-dialog-content {
+        padding: 0.75rem !important;
+    }
+
+    .date-time-modal .p-datepicker-header {
+        padding: 0.5rem 0 !important;
+    }
+
+    .date-time-modal .p-datepicker-calendar {
+        font-size: 14px !important;
+    }
+
+    .date-time-modal .p-datepicker-day {
+        padding: 0.4rem !important;
+        font-size: 13px !important;
+    }
+
+    .date-time-modal .p-timepicker {
+        padding: 0.75rem 0 !important;
+    }
+
+    .date-time-modal .p-timepicker span {
+        font-size: 0.95rem !important;
+    }
+    
+    /* Totales card más legible */
+    .totals-card {
+        padding: 12px;
+        gap: 8px;
+    }
+    
+    .totals-row {
+        font-size: 14px;
+        padding: 4px 0;
+    }
+    
+    .totals-row.bold {
+        font-size: 16px;
+        margin-top: 8px;
+        padding-top: 8px;
+        border-top: 1px solid #ddd;
+    }
+}
+
+/* Móviles pequeños (hasta 480px) */
+@media (max-width: 480px) {
+    /* Contenedor principal sin márgenes */
+    body, .cotizacion-form-container {
+        padding: 0;
+        margin: 0;
+        width: 100%;
+        overflow-x: hidden;
+    }
+    
+    .form-card {
+        padding: 6px;
+        margin: 0;
+        border-radius: 0;
+        overflow-x: hidden;
+        width: 100%;
+        box-sizing: border-box;
+    }
+    
+    /* Servicios muy compactos */
+    .cotz-service-card {
+        padding: 0.5rem 0.25rem;
+        margin-bottom: 8px;
+        margin-left: 0;
+        margin-right: 0;
+        overflow-x: hidden;
+    }
+    
+    .cotz-service-header {
+        gap: 6px;
+    }
+    
+    /* Lista de componentes */
+    .componentes-list {
+        width: 100%;
+        overflow-x: hidden;
+        padding: 0;
+        margin: 0;
+    }
+    
+    .form-card .row {
+        margin-bottom: 15px;
+    }
+    
+    .form-card .right-btn {
+        font-size: 13px;
+        padding: 8px 12px;
+    }
+    
+    /* Todas las grids se vuelven de una sola columna */
+    .row1-grid,
+    .row2-grid,
+    .row3-grid {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+    
+    .grid.grid-6,
+    .grid.grid-12 {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+    
+    /* Inputs aún más compactos */
+    .form-grid input,
+    .form-grid select,
+    .grid input,
+    .grid select {
+        height: 32px;
+        padding: 6px 8px;
+        font-size: 13px;
+    }
+    
+    .form-grid .p-dropdown.p-component,
+    .form-grid .p-calendar.p-component,
+    .grid .p-dropdown.p-component,
+    .grid .p-calendar.p-component {
+        height: 32px;
+    }
+    
+    .form-grid .p-dropdown .p-dropdown-label,
+    .grid .p-dropdown .p-dropdown-label {
+        font-size: 13px;
+        padding: 6px 8px;
+    }
+    
+    /* Servicios muy compactos */
+    .cotz-service-card {
+        padding: 0.5rem 0.25rem;
+        margin-bottom: 8px;
+    }
+    
+    .cotz-service-header {
+        gap: 6px;
+    }
+    
+    .cotz-service-header .pi-trash {
+        font-size: 16px;
+    }
+    
+    .cotz-service-title {
+        font-size: 0.9rem;
+        margin-bottom: 6px;
+    }
+    
+    .cotz-select-hint {
+        font-size: 11px;
+        margin-top: 4px;
+    }
+    
+    /* Componente card ultra mobile */
+    .componente-card {
+        padding: 10px;
+        gap: 8px !important;
+        margin-bottom: 10px;
+        position: relative;
+    }
+    
+    .componente-card > div {
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+    
+    .componente-card > div:first-child {
+        font-size: 13px;
+        padding-top: 24px;
+        margin-left: 0 !important;
+        display: flex !important;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .componente-card > div:nth-child(2) {
+        font-size: 14px;
+        font-weight: 600;
+        border-left-width: 2px;
+        padding-left: 8px;
+        width: 100% !important;
+        word-wrap: break-word;
+    }
+    
+    .componente-card > div:nth-child(2) i {
+        font-size: 14px;
+    }
+    
+    .componente-card > div:nth-child(2) > div {
+        font-size: 11px;
+        margin-left: 0 !important;
+        margin-top: 4px;
+        width: 100% !important;
+    }
+    
+    .componente-card > div:nth-child(3) {
+        font-size: 13px;
+        width: 100% !important;
+        min-width: 0 !important;
+    }
+    
+    .componente-card > div:nth-child(3) > div {
+        min-width: 0 !important;
+        width: 100% !important;
+    }
+    
+    .componente-card > div:nth-child(3) input,
+    .componente-card > div:nth-child(3) .p-inputtext {
+        width: 100% !important;
+        max-width: 100%;
+        min-width: 0 !important;
+        font-size: 13px;
+        box-sizing: border-box;
+    }
+    
+    .componente-card .pi-trash {
+        top: 6px;
+        right: 6px;
+        font-size: 14px;
+        position: absolute !important;
+        width: auto !important;
+        margin-left: 0 !important;
+    }
+    
+    .componente-card > div:last-child {
+        width: 100% !important;
+        display: flex;
+        justify-content: flex-end;
+    }
+    
+    .componente-card > div:last-child .p-inputnumber,
+    .componente-card > div:last-child .price-input {
+        width: 90px !important;
+    }
+    
+    .cotz-component-row .component-info {
+        width: 100%;
+        margin-bottom: 4px;
+    }
+    
+    .cotz-component-row .component-actions {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .price-input {
+        width: 60px;
+        font-size: 12px;
+        height: 28px;
+    }
+    
+    .cotz-builder {
+        padding: 0.5rem;
+        margin-top: 1rem;
+        margin-left: 0;
+        margin-right: 0;
+        flex-direction: column;
+        width: 100%;
+        box-sizing: border-box;
+    }
+    
+    .cotz-builder-left {
+        padding: 0.5rem 0;
+        width: 100%;
+    }
+    
+    .cotz-searchline {
+        gap: 10px;
+        margin-bottom: 0.75rem;
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .cotz-searchline label {
+        font-size: 13px;
+        margin: 0;
+    }
+    
+    .cotz-searchline .p-radiobutton {
+        width: 16px;
+        height: 16px;
+    }
+    
+    .cotz-searchline > div {
+        gap: 12px;
+        display: flex;
+        flex-wrap: wrap;
+    }
+    
+    .cotz-searchbar {
+        gap: 8px;
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .cotz-searchbar .p-autocomplete {
+        font-size: 13px;
+        width: 100% !important;
+        max-width: 100%;
+    }
+    
+    .cotz-searchbar .p-autocomplete .p-inputtext {
+        font-size: 13px;
+        padding: 8px 10px;
+        width: 100% !important;
+    }
+    
+    .cotz-searchbar .p-button {
+        font-size: 13px;
+        padding: 8px 12px;
+        width: 100%;
+    }
+    
+    .totals-card {
+        padding: 8px 12px;
+        margin-top: 0.5rem;
+        padding-top: 0.5rem;
+    }
+    
+    .totals-row {
+        font-size: 13px;
+        margin-bottom: 4px;
+    }
+    
+    .totals-row.bold,
+    .totals-row.final-total {
+        font-size: 15px;
+        font-weight: 700;
+    }
+    
+    /* Tab menu muy compacto */
+    .p-tabmenu .p-tabmenu-nav .p-tabmenuitem .p-menuitem-link {
+        padding: 8px 12px;
+        font-size: 13px;
+    }
+    
+    /* Botones de acción full width */
+    .form-actions {
+        flex-direction: column;
+        gap: 8px;
+        margin-top: 16px;
+    }
+    
+    .form-actions .p-button {
+        width: 100%;
+        min-width: auto;
+        font-size: 13px;
+        padding: 10px;
+    }
+    
+    /* Dialog full width en móviles pequeños */
+    .p-dialog {
+        width: 98vw;
+        max-height: 90vh;
+        border-radius: 8px;
+    }
+
+    .p-dialog .p-dialog-header {
+        padding: 12px 16px;
+    }
+
+    .p-dialog .p-dialog-header .p-dialog-title {
+        font-size: 14px;
+    }
+
+    .p-dialog .p-dialog-content {
+        padding: 12px 16px;
+    }
+
+    /* Modal de fecha y hora en móviles pequeños */
+    .date-time-modal {
+        width: 95vw !important;
+        max-width: 95vw !important;
+    }
+
+    .date-time-modal .p-dialog-content {
+        padding: 0.5rem !important;
+    }
+
+    .date-time-modal .p-datepicker-header {
+        padding: 0.25rem 0 !important;
+        margin-bottom: 0.25rem !important;
+    }
+
+    .date-time-modal .p-datepicker-calendar {
+        font-size: 12px !important;
+    }
+
+    .date-time-modal .p-datepicker-calendar th {
+        padding: 0.25rem !important;
+        font-size: 11px !important;
+    }
+
+    .date-time-modal .p-datepicker-day {
+        padding: 0.25rem !important;
+        font-size: 12px !important;
+    }
+
+    .date-time-modal .p-timepicker {
+        padding: 0.5rem 0 !important;
+        margin-top: 0.25rem !important;
+    }
+
+    .date-time-modal .p-timepicker span {
+        font-size: 0.9rem !important;
+    }
+
+    .date-time-modal .p-timepicker-button {
+        width: 1.75rem !important;
+        height: 1.75rem !important;
+    }
+    
+    /* Búsqueda de servicios/componentes */
+    .search-container {
+        flex-direction: column;
+        gap: 8px;
+        margin-bottom: 12px;
+    }
+    
+    .search-container input {
+        width: 100%;
+        font-size: 13px;
+    }
+    
+    .search-container button {
+        width: 100%;
+        font-size: 13px;
+        padding: 8px;
+    }
+    
+    /* Cliente search wrap */
+    .client-search-wrap .p-inputtext {
+        font-size: 13px;
+        height: 32px;
+        padding-right: 32px;
+    }
+    
+    .client-search-wrap .right-icon {
+        right: 8px;
+        font-size: 14px;
+    }
+    
+    /* Center message */
+    .center {
+        padding: 1.5rem 0 0.75rem 0;
+        font-size: 1.1rem;
+        margin: 0;
+        width: 100%;
+    }
+    
+    /* Componentes list */
+    .componentes-list {
+        margin-top: 8px;
+        width: 100%;
+        padding: 0;
+    }
+    
+    /* Asegurar que todos los componentes PrimeReact respeten el ancho */
+    .p-component {
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+}

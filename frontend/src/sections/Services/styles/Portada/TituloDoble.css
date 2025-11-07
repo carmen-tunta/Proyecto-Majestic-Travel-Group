@@ -1,0 +1,155 @@
+.titulo-doble {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+
+}
+
+.titulo-doble .derecha,
+.titulo-doble .izquierda {
+    display: flex;
+    flex-direction: column;
+    min-width: 49vw;
+    max-width: 50vw;
+    height: 100%;
+    padding: 3rem;
+}
+
+.titulo-doble .izquierda {
+    border-right: 3px dotted rgb(230, 230, 230);
+}
+
+
+.titulo-doble .derecha .titulo,
+.titulo-doble .izquierda .titulo {
+    font-size: 2rem;
+    margin-left: 1.5rem;
+}
+
+.titulo-doble .derecha .contenido,
+.titulo-doble .izquierda .contenido {
+    background-color: var(--blue-100);
+    padding: 2rem;
+    margin-top: 1rem;
+    border-radius: 10px;
+}
+
+.titulo-doble .derecha .titulo-container,
+.titulo-doble .izquierda .titulo-container {
+    display: flex;
+    flex-direction: row;
+}
+
+.titulo-doble .derecha .icono-editar,
+.titulo-doble .izquierda .icono-editar,
+.icono-eliminar {
+    position: relative;
+    color: var(--surface-400);
+    cursor: pointer;
+}
+
+.icono-eliminar {
+    position: absolute;
+    top: 15px;
+    right: 25px;
+}
+
+.titulo-doble .derecha .contenido-container .icono-editar,
+.titulo-doble .izquierda .contenido-container .icono-editar {
+    left: 102%;
+    top: -75%;
+}
+
+.titulo-doble .derecha .titulo-container .icono-editar,
+.titulo-doble .izquierda .titulo-container .icono-editar {
+    top: 15px;
+    left: 15px;
+}
+
+.titulo-doble .icono-imagen {
+    position: relative;
+    left: 50%;
+    top: 2rem;
+    color: var(--surface-400);
+    cursor: pointer;
+}
+
+.titulo-doble .contenido-imagen-derecha,
+.titulo-doble  .contenido-imagen-izquierda {
+    position: relative;
+    width: 100%;
+    height: 35vh;
+    overflow: hidden;
+}
+
+.titulo-doble .contenido-imagen-derecha::before {
+    content: '';
+    position: absolute;
+    top: 10px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: var(--bg-portada-doble-derecha-imagen);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: 1;
+    filter: brightness(1);
+    z-index: -1;
+}
+
+.titulo-doble .contenido-imagen-izquierda::before {
+    content: '';
+    position: absolute;
+    top: 10px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: var(--bg-portada-doble-izquierda-imagen);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: 1;
+    filter: brightness(1);
+    z-index: -1;
+}
+
+.editor-derecha-doble.editor-container {
+    top: 15%;
+    right: 5%;
+}
+
+.editor-izquierda-doble.editor-container {
+    top: 15%;
+    left: 20%;
+}
+
+.editor-derecha-doble.editor-container,
+.editor-izquierda-doble.editor-container {
+    position: absolute;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 0.5rem;
+    background-color: #ffffff;
+}
+
+.editor-derecha-doble.editor-container > div,
+.editor-izquierda-doble.editor-container > div{
+    width: 25rem;
+    min-height: 12rem;
+    max-width: 40rem;
+    max-height: 20rem;
+    overflow-y: auto;
+}
+
+.editor-derecha-doble.editor-container .button-container,
+.editor-izquierda-doble.editor-container .button-container {
+    max-width: 100%;
+    min-height: 3rem;
+}
+
+.titulo-doble .titulo p,
+.titulo-doble .contenido p {
+    margin: 0;
+}

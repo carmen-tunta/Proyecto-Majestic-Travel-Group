@@ -1,0 +1,1097 @@
+/* Página de cliente */
+.client-page {
+  min-height: 100vh;
+  background: #f8f9fa;
+  padding: 0;
+  margin: 0;
+}
+
+/* Loading */
+.client-page-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: #f8f9fa;
+}
+
+.loading-spinner {
+  font-size: 18px;
+  color: #1976d2;
+}
+
+/* Header */
+.client-page-header {
+  background: #fff;
+  padding: 24px 40px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.client-page-header-content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.client-page-header-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.client-page-breadcrumb {
+  font-size: 14px;
+  color: #666;
+  font-weight: 500;
+}
+
+.client-page-title {
+  font-size: 28px;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+}
+
+/* Tabs */
+.client-page-tabs {
+  background: #fff;
+  padding: 0 40px;
+  border-bottom: 1px solid #e0e0e0;
+  display: flex;
+  gap: 0;
+}
+
+.client-page-tab {
+  background: none;
+  border: none;
+  padding: 16px 24px;
+  font-size: 16px;
+  font-weight: 500;
+  color: #666;
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.client-page-tab:hover {
+  color: #1976d2;
+  background: #f8f9fa;
+}
+
+.client-page-tab.active {
+  color: #1976d2;
+  border-bottom-color: #1976d2;
+  background: #fff;
+}
+
+/* Form */
+.client-page-form {
+  padding: 40px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.client-page-form-card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 40px;
+  margin-bottom: 24px;
+}
+
+.client-page-form-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 32px 0;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.client-page-form-section {
+  margin-bottom: 0;
+}
+
+.client-page-form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+}
+
+.client-page-form-column {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Form fields */
+.client-page-form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.client-page-form-field label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+  margin: 0;
+}
+
+.client-page-form-field .p-inputtext,
+.client-page-form-field .p-dropdown,
+.client-page-form-field .p-calendar {
+  width: 100%;
+  padding: 14px 16px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.client-page-form-field .p-inputtext:focus,
+.client-page-form-field .p-dropdown:focus,
+.client-page-form-field .p-calendar:focus {
+  outline: none;
+  border-color: #1976d2;
+  box-shadow: 0 0 0 2px rgba(25, 118, 210, 0.2);
+}
+
+.client-page-form-field .p-inputtext:hover,
+.client-page-form-field .p-dropdown:hover,
+.client-page-form-field .p-calendar:hover {
+  border-color: #1976d2;
+}
+
+/* Radio buttons */
+.client-page-radio-fieldset {
+  border: none;
+  padding: 0;
+  margin: 0;
+}
+
+.client-page-radio-legend {
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 8px;
+  padding: 0;
+}
+
+.client-page-radio-group {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  margin-top: 8px;
+}
+
+.client-page-radio-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.client-page-radio-option label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-weight: normal;
+  margin: 0;
+  padding: 0;
+  color: #333;
+  font-size: 14px;
+}
+
+/* Estilos para radio buttons */
+.client-page-form-field .p-radiobutton {
+  margin-right: 8px;
+}
+
+.client-page-form-field .p-radiobutton .p-radiobutton-box {
+  border: 2px solid #e0e0e0;
+  background: #fff;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.client-page-form-field .p-radiobutton .p-radiobutton-box.p-highlight {
+  border-color: #1976d2 !important;
+  background: #1976d2 !important;
+}
+
+.client-page-form-field .p-radiobutton .p-radiobutton-box.p-highlight .p-radiobutton-icon {
+  background: #fff !important;
+  width: 8px !important;
+  height: 8px !important;
+  border-radius: 50% !important;
+  display: block !important;
+}
+
+.client-page-form-field .p-radiobutton .p-radiobutton-box .p-radiobutton-icon {
+  background: transparent;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: none;
+}
+
+/* Estado marcado cuando está checked */
+.client-page-form-field .p-radiobutton .p-radiobutton-box:not(.p-highlight) {
+  border-color: #e0e0e0;
+  background: #fff;
+}
+
+.client-page-form-field .p-radiobutton .p-radiobutton-box:not(.p-highlight) .p-radiobutton-icon {
+  display: none;
+}
+
+/* Estados hover y focus */
+.client-page-form-field .p-radiobutton .p-radiobutton-box:hover {
+  border-color: #1976d2;
+  box-shadow: 0 2px 4px rgba(25, 118, 210, 0.2);
+}
+
+.client-page-form-field .p-radiobutton .p-radiobutton-box:focus {
+  outline: none;
+  border-color: #1976d2;
+  box-shadow: 0 0 0 2px rgba(25, 118, 210, 0.2);
+}
+
+/* Forzar visibilidad del icono cuando está marcado */
+.client-page-form-field .p-radiobutton.p-radiobutton-checked .p-radiobutton-box {
+  border-color: #1976d2 !important;
+  background: #1976d2 !important;
+}
+
+.client-page-form-field .p-radiobutton.p-radiobutton-checked .p-radiobutton-box .p-radiobutton-icon {
+  background: #fff !important;
+  display: block !important;
+}
+
+/* Estilos específicos para PrimeReact RadioButton */
+.client-page-form-field .p-radiobutton input[type="radio"]:checked + .p-radiobutton-box {
+  border-color: #1976d2 !important;
+  background: #1976d2 !important;
+}
+
+.client-page-form-field .p-radiobutton input[type="radio"]:checked + .p-radiobutton-box .p-radiobutton-icon {
+  background: #fff !important;
+  display: block !important;
+  width: 8px !important;
+  height: 8px !important;
+  border-radius: 50% !important;
+}
+
+/* Estado checked usando la clase p-radiobutton-checked */
+.client-page-form-field .p-radiobutton.p-radiobutton-checked .p-radiobutton-box,
+.client-page-form-field .p-radiobutton.p-radiobutton-checked .p-radiobutton-box.p-highlight {
+  border-color: #1976d2 !important;
+  background: #1976d2 !important;
+}
+
+.client-page-form-field .p-radiobutton.p-radiobutton-checked .p-radiobutton-box .p-radiobutton-icon,
+.client-page-form-field .p-radiobutton.p-radiobutton-checked .p-radiobutton-box.p-highlight .p-radiobutton-icon {
+  background: #fff !important;
+  display: block !important;
+  width: 8px !important;
+  height: 8px !important;
+  border-radius: 50% !important;
+}
+
+/* Forzar estado visual cuando está checked */
+.client-page-form-field .p-radiobutton input[type="radio"]:checked ~ .p-radiobutton-box {
+  border-color: #1976d2 !important;
+  background: #1976d2 !important;
+}
+
+.client-page-form-field .p-radiobutton input[type="radio"]:checked ~ .p-radiobutton-box .p-radiobutton-icon {
+  background: #fff !important;
+  display: block !important;
+  width: 8px !important;
+  height: 8px !important;
+  border-radius: 50% !important;
+}
+
+/* Estilos adicionales para asegurar que se vea marcado */
+.client-page-form-field .p-radiobutton .p-radiobutton-box.p-radiobutton-box-highlight {
+  border-color: #1976d2 !important;
+  background: #1976d2 !important;
+}
+
+.client-page-form-field .p-radiobutton .p-radiobutton-box.p-radiobutton-box-highlight .p-radiobutton-icon {
+  background: #fff !important;
+  display: block !important;
+  width: 8px !important;
+  height: 8px !important;
+  border-radius: 50% !important;
+}
+
+/* Campo deshabilitado */
+.client-page-disabled-field {
+  background: #f5f5f5 !important;
+  color: #666 !important;
+  cursor: not-allowed !important;
+}
+
+/* Estilos para Calendar */
+.client-page-form-field .p-calendar {
+  position: relative;
+  width: 100%;
+}
+
+.client-page-form-field .p-calendar .p-inputtext {
+  padding-right: 40px !important;
+  width: 100% !important;
+}
+
+.client-page-form-field .p-calendar .p-datepicker-trigger {
+  position: absolute !important;
+  right: 25px !important;
+  top: 30% !important;
+  transform: translateY(-50%) !important;
+  background: #1976d2 !important;
+  border: none !important;
+  border-radius: 4px !important;
+  width: 32px !important;
+  height: 32px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  color: white !important;
+  cursor: pointer !important;
+  z-index: 1 !important;
+}
+
+.client-page-form-field .p-calendar .p-datepicker-trigger:hover {
+  background: #1565c0 !important;
+}
+
+.client-page-form-field .p-calendar .p-datepicker-trigger .p-button-icon {
+  font-size: 14px !important;
+  color: white !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* Estilos para el contenedor del calendario con InputText superpuesto */
+.client-page-calendar-container {
+  position: relative;
+  width: 100%;
+}
+
+.client-page-calendar-input {
+  width: 100% !important;
+  padding-right: 40px !important;
+  background: white !important;
+  cursor: pointer !important;
+}
+
+.client-page-calendar-overlay {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  opacity: 0 !important;
+  z-index: 2 !important;
+}
+
+.client-page-calendar-overlay .p-inputtext {
+  background: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.client-page-calendar-overlay .p-datepicker-trigger {
+  position: absolute !important;
+  right: 8px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  background: #1976d2 !important;
+  border: none !important;
+  border-radius: 4px !important;
+  width: 32px !important;
+  height: 32px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  color: white !important;
+  cursor: pointer !important;
+  z-index: 3 !important;
+}
+
+/* Botones de acción */
+.client-page-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 16px;
+  padding: 24px 0;
+  background: #f8f9fa;
+  margin: 0 -40px -40px -40px;
+  padding: 24px 40px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.client-page-form-actions .p-button {
+  background: white;
+  border: 1px solid #1976d2;
+  color: #1976d2;
+  min-width: 120px;
+  padding: 12px 24px;
+  font-weight: 500;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.client-page-form-actions .p-button:hover {
+  background: #f5f5f5;
+  border-color: #1565c0;
+  color: #1565c0;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(25, 118, 210, 0.2);
+}
+
+.client-page-form-actions .p-button.p-button-text {
+  color: #666;
+}
+
+.client-page-form-actions .p-button.p-button-text:hover {
+  background: #f0f0f0;
+  color: #333;
+}
+
+/* Sección de contactos */
+.client-page-contacts {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 24px;
+  margin-top: 24px;
+}
+
+.client-page-contacts-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.client-page-contacts-header h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+}
+
+.client-page-contacts-header .p-button {
+  background: white;
+  border: 1px solid #1976d2;
+  color: #1976d2;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 8px 16px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.client-page-contacts-header .p-button:hover {
+  background: #f5f5f5;
+  border-color: #1565c0;
+  color: #1565c0;
+}
+
+.contacts-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.contacts-table th {
+  background: var(--surface-b);
+  color: var(--surface-700);
+  font-weight: 600;
+  text-align: left;
+}
+
+.contacts-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid #e0e0e0;
+  vertical-align: top;
+  font-size: 14px;
+}
+
+.contacts-table tr:hover {
+  background: #f8f9fa;
+}
+
+.contact-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.contact-action-button {
+  background: none;
+  border: none;
+  padding: 8px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  min-height: 32px;
+}
+
+.contact-action-button:hover {
+  background-color: #f5f5f5;
+}
+
+.contact-action-button:focus {
+  outline: 2px solid #1976d2;
+  outline-offset: 2px;
+}
+
+.contact-action-button i {
+  color: #666;
+  font-size: 16px;
+  transition: color 0.2s ease;
+}
+
+.contact-edit-button:hover i {
+  color: #1976d2;
+}
+
+.contact-delete-button:hover i {
+  color: #dc3545;
+}
+
+.no-contacts {
+  text-align: center;
+  color: #666;
+  font-style: italic;
+  padding: 40px !important;
+}
+
+/* Modal de contacto */
+.contact-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.contact-modal {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  width: 90%;
+  max-width: 450px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.contact-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.contact-modal-header h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+}
+
+.contact-modal-header i {
+  cursor: pointer;
+  color: #666;
+  font-size: 20px;
+  padding: 8px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.contact-modal-header i:hover {
+  color: #333;
+  background: #f0f0f0;
+}
+
+.contact-modal-form {
+  padding: 24px;
+}
+
+.contact-form-field {
+  margin-bottom: 16px;
+}
+
+.contact-form-field label {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.contact-form-field .p-inputtext,
+.contact-form-field .p-dropdown {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.contact-form-field .p-inputtext:focus,
+.contact-form-field .p-dropdown:focus {
+  outline: none;
+  border-color: #1976d2;
+  box-shadow: 0 0 0 2px rgba(25, 118, 210, 0.2);
+}
+
+.contact-form-field .p-dropdown .p-dropdown-label {
+  padding: 0;
+}
+
+.contact-form-field .p-dropdown .p-dropdown-trigger {
+  width: 2rem;
+}
+
+.contact-form-field .p-dropdown .p-dropdown-label-container {
+  border: none !important;
+  border-bottom: none !important;
+  border-top: none !important;
+  border-left: none !important;
+  border-right: none !important;
+}
+
+.contact-form-field .p-dropdown .p-dropdown-label-container::after {
+  display: none !important;
+}
+
+.contact-form-field .p-dropdown .p-dropdown-label-container::before {
+  display: none !important;
+}
+
+.contact-form-field .p-dropdown .p-dropdown-label {
+  border: none !important;
+  border-bottom: none !important;
+  padding-left: 8px !important;
+}
+
+.contact-form-field .p-dropdown .p-dropdown-label::after {
+  display: none !important;
+}
+
+.contact-form-field .p-dropdown .p-dropdown-label::before {
+  display: none !important;
+}
+
+.contact-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.contact-modal-actions .p-button {
+  min-width: 100px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .client-page-form-row {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+  
+  .client-page-header {
+    padding: 16px 20px;
+  }
+  
+  .client-page-tabs {
+    padding: 0 20px;
+  }
+  
+  .client-page-form {
+    padding: 20px;
+  }
+  
+  .client-page-form-card {
+    padding: 24px;
+  }
+  
+  .client-page-form-actions {
+    margin: 0 -20px -20px -20px;
+    padding: 20px;
+  }
+
+  .client-page-contacts {
+    padding: 16px;
+  }
+
+  .contact-modal {
+    width: 95%;
+    margin: 20px;
+  }
+
+  .contact-modal-header,
+  .contact-modal-form {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+}
+
+/* Estilos de DetallesProveedores aplicados a ClientPage */
+.menu-edition {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  flex-direction: column;
+  padding: 0rem 4rem 2rem 2rem;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+}
+
+.header-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 2rem;  
+  margin-bottom: 1rem;
+  cursor: pointer; 
+}
+
+.header-icon div {
+  font-size: 1.2rem;
+}
+
+.proveedor-name {
+  font-size: 2rem;
+  margin-left: 0.75rem;
+}
+
+.details {
+  display: flex;
+  flex-direction: column;
+  width: 90%;
+  height: 100%;
+  padding: 2rem;
+  padding-top: 1rem;
+  border-radius: 15px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+  margin-top: 2rem;
+}
+
+.details-header {
+  margin-bottom: 2rem;
+}
+
+.details-form {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+}
+
+.details-form .left, .details-form .right {
+  width: 100%;
+  height: 80%;
+}
+
+.details-form .p-inputtext,
+.details-form .p-dropdown,
+.details-form .p-calendar,
+.details-form .p-multiselect {
+  width: 87%;
+}
+
+.menu-edition .p-float-label {
+  margin-bottom: 2rem;
+}
+
+.gender { 
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  margin-bottom: 2.25rem;
+  padding: 0.5rem 0.5rem;
+}
+
+.details-button {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 2rem;
+}
+
+.p-tabmenu {
+  height: 6rem;
+}
+
+.contact {
+  display: flex;
+  flex-direction: column;
+  width: 95%;
+  height: 100%;
+  padding: 2rem;
+  padding-top: 1rem;
+  border-radius: 15px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+  margin-top: 2rem;
+}
+
+.contact-header {
+  margin-bottom: 2rem;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.contact-table {
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  background: #fff;
+}
+
+/* Tabla de contactos más "pegada" (como Proveedores) */
+.contacts-table {
+  width: 100%;
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+.contacts-table thead th {
+  background: var(--surface-b);
+  color: var(--surface-700);
+  font-weight: 600;
+  padding: 10px 14px;
+  font-size: 14px;
+}
+
+.contacts-table tbody td {
+  padding: 10px 14px;
+  font-size: 14px;
+  vertical-align: middle;
+}
+
+.contacts-table tbody tr + tr td {
+  border-top: 1px solid #e6ebf2;
+}
+
+.contacts-table tbody tr:hover td {
+  background: #fafbff;
+}
+
+.contact-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 64px;
+}
+
+.contact-action-button {
+  background: transparent;
+  border: none;
+  padding: 0;
+  color: #5a6a85;
+  cursor: pointer;
+}
+
+.contact-action-button:hover {
+  color: #1976d2;
+}
+
+/* Responsividad para tablets */
+@media (max-width: 1024px) {
+    .menu-edition {
+        padding: 1rem 2rem;
+    }
+
+    .details {
+        width: 100%;
+    }
+    
+    .details-form {
+        gap: 1.5rem;
+    }
+    
+    .details-form .left,
+    .details-form .right {
+        gap: 1.5rem;
+    }
+
+    .contact-actions {
+      gap: 1px;
+    }
+
+    .contacts-table-mobile th:nth-child(2),
+    .contacts-table-mobile td:nth-child(2) {
+        white-space: normal !important;
+        word-wrap: break-word;
+        word-break: break-word;
+        line-height: 1.2;
+    }
+
+}
+
+/* Responsividad para móviles */
+@media (max-width: 768px) {
+  
+    .contact {
+        width: 100%;
+    }
+    .menu-edition {
+        width: 100%;
+        padding:0 1rem 1rem 1rem !important;
+    }
+    
+    .header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    
+    .proveedor-name {
+        font-size: 1.2rem;
+    }
+    
+    .details-form {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .details-form .left,
+    .details-form .right {
+        width: 100%;
+        gap: 1rem;
+    }
+    
+    .contact-header {
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    
+    .contact-table {
+        overflow-x: auto;
+    }
+    
+    .contacts-table-mobile {
+        font-size: 0.85rem;
+    }
+    
+    .contacts-table-mobile th,
+    .contacts-table-mobile td {
+        padding: 8px 4px;
+        white-space: nowrap;
+    }
+    
+    .contact-modal {
+        width: 95vw;
+        margin: 1rem;
+    }
+    
+    .contact-modal-form {
+        gap: 1rem;
+    }
+    
+    .contact-modal-actions {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .contact-modal-actions .p-button {
+        width: 100%;
+    }
+}
+
+/* Responsividad para móviles pequeños */
+@media (max-width: 480px) {
+    .menu-edition {
+        padding: 0.5rem;
+    }
+    
+    .header .header-icon {
+        font-size: 0.9rem;
+    }
+    
+    .proveedor-name {
+        font-size: 1.1rem;
+    }
+    
+    .details-header h3,
+    .contact-header h3 {
+        font-size: 1.1rem;
+    }
+    
+    .contacts-table-mobile {
+        font-size: 0.8rem;
+    }
+    
+    .contacts-table-mobile th:nth-child(3),
+    .contacts-table-mobile td:nth-child(3) {
+        display: none;
+    }
+    
+    .contacts-table-mobile th:nth-child(1),
+    .contacts-table-mobile td:nth-child(1) {
+        width: 10%;
+    }
+
+    .contacts-table-mobile th:nth-child(2),
+    .contacts-table-mobile td:nth-child(2) {
+        width: 70%;
+    }
+
+    .contacts-table-mobile th:nth-child(4),
+    .contacts-table-mobile td:nth-child(4) {
+        max-width: 15% !important;
+    }
+
+    .contacts-table-mobile th:nth-child(4) {
+      padding: 0 !important;
+    }
+
+    .contact-modal {
+        width: 98vw;
+        margin: 0.5rem;
+        padding: 1rem;
+    }
+    
+    .p-tabmenu .p-tabmenu-nav .p-tabmenuitem .p-menuitem-link {
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+    }
+}

@@ -1,0 +1,145 @@
+.incremento-body {
+    margin-top: 1rem;
+    box-shadow: 0 0 7px rgba(0,0,0,0.15);
+    padding: 2rem 2rem 3rem 2rem;
+    border-radius: 10px;
+}
+
+.incremento-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.incremento-table {
+    box-shadow: 0 0 8px rgba(0,0,0,0.05);
+    border: 1px solid #ddd;
+}
+
+.incremento-table th {
+  background: var(--surface-b);
+  color: var(--surface-700);
+  font-weight: 600;
+}
+
+
+/* Responsividad para tablets */
+@media (max-width: 1024px) {
+    .incremento-body {
+        padding: 1rem 2rem;
+    }
+    
+    .incremento-header h3 {
+        font-size: 1.3rem;
+    }
+    
+    .incremento-table .p-datatable-thead > tr > th {
+        font-size: 0.8rem;
+        padding: 8px;
+    }
+    
+    .incremento-table .p-datatable-tbody > tr > td {
+        padding: 10px 8px;
+        font-size: 0.8rem;
+    }
+}
+
+/* Responsividad para móviles */
+@media (max-width: 768px) {
+    .incremento-body {
+        padding: 1rem;
+    }
+    
+    .incremento-header.incremento-header-mobile {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    
+    .incremento-header h3 {
+        font-size: 1.2rem;
+        margin: 0;
+    }
+    
+    .incremento-table.incremento-table-mobile {
+        font-size: 0.85rem;
+    }
+    
+    .incremento-table-mobile .p-datatable-thead > tr > th {
+        font-size: 0.75rem;
+        white-space: nowrap;
+    }
+    
+    .incremento-table-mobile .p-datatable-tbody > tr > td {
+        font-size: 0.75rem;
+        white-space: nowrap;
+    }
+    
+    /* Hacer el contenido de la tabla scrollable horizontalmente si es necesario */
+    .incremento-body > div:last-child {
+        overflow-x: auto;
+    }
+}
+
+/* Responsividad para móviles pequeños */
+@media (max-width: 480px) {
+    .incremento-body {
+        padding: 0.5rem;
+    }
+    
+    .incremento-header h3 {
+        font-size: 1.1rem;
+    }
+    
+    .incremento-header .p-button {
+        font-size: 0.8rem;
+        padding: 0.4rem 0.8rem;
+    }
+    
+    .incremento-table-mobile {
+        font-size: 0.8rem;
+    }
+    
+    .incremento-table-mobile .p-datatable-thead > tr > th {
+        font-size: 0.7rem;
+    }
+    
+    .incremento-table-mobile .p-datatable-tbody > tr > td {
+        font-size: 0.7rem;
+    }
+    
+}
+
+/* Mejoras adicionales para la experiencia móvil */
+@media (max-width: 768px) {
+    /* Asegurar que el botón sea fácil de tocar */
+    .incremento-header .p-button {
+        white-space: nowrap;
+        min-height: 40px;
+    }
+    
+    /* Mejorar la legibilidad de los datos */
+    .incremento-table-mobile .p-datatable-tbody > tr > td {
+        line-height: 1.3;
+    }
+    
+    /* Centrar mejor los iconos de acción */
+    .incremento-table-mobile .pi-pencil,
+    .incremento-table-mobile .pi-trash {
+        padding: 4px;
+    }
+}
+
+/* Landscape mode para móviles */
+@media (max-width: 768px) and (orientation: landscape) {
+    .incremento-header.incremento-header-mobile {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .incremento-body {
+        padding: 0.5rem 1rem;
+    }
+}

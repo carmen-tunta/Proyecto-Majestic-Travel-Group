@@ -1,0 +1,322 @@
+.portada-menu {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    flex-direction: row;
+    position: fixed;
+    bottom: 1rem;
+    left: 7.5%;
+    right: 7.5%;
+    width: 85%;
+    background-color: var(--surface-b);
+    box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    border-radius: 15px;
+    padding: 0.1rem;
+    z-index: 100;
+    gap: 5px;
+}
+
+.portada-menu .p-tabmenu {
+    padding: 0;
+    margin: 0;
+    height: auto;
+    background-color: transparent;
+}
+
+.portada-menu .p-tabmenu .p-tabmenu-nav {
+    background-color: transparent;
+    border: none;   
+}
+
+.portada-menu .p-tabmenu .p-tabmenu-nav .p-tabmenuitem .p-menuitem-link {
+    border-radius: 15px;
+    background: transparent;
+    font-weight: normal;
+    font-size: 12px;
+}
+
+.portada-menu .p-button-label {
+    font-weight: normal;
+    font-size: 12px;
+}
+
+.portada-menu button > .pi-google {
+    color: white;
+}
+
+.portada-menu .p-tabmenu .p-tabmenu-nav .p-tabmenuitem .p-menuitem-link:hover {
+    background-color: var(--blue-50);
+}
+
+.portada-menu .p-tabmenu .p-tabmenu-nav .p-tabmenuitem.p-highlight .p-menuitem-link {
+    background: var(--blue-100);
+    border-radius: 15px;
+    border: none;
+}
+
+.portada-menu .p-tabmenu .p-tabmenuitem .p-menuitem-link {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.portada-menu .p-tabmenu .p-tabmenuitem .p-menuitem-icon {
+    margin-right: 0 !important;
+    margin-bottom: 0.25rem;
+}
+
+.portada-menu .p-float-label {
+    font-size: 12px;
+
+}
+
+.portada-menu .dropdown-menu {
+    width: 8rem;
+    font-size: 12px;
+    height: 2.25rem;
+    border: 1px solid var(--primary-color);
+}
+
+.portada-dropdown-panel .p-dropdown-items > li {
+    padding: 0.5rem 0.75rem;
+    font-size: 12px;
+}
+
+.portada-menu .dropdown-menu .p-dropdown-label {
+    font-size: 12px;
+}
+
+.portada-menu .label-dropdown.has-language-selection {
+    margin-top: 1px;
+}
+
+/* ========== RESPONSIVE DESIGN ========== */
+
+/* Tablets y pantallas medianas (768px - 1024px) */
+@media (max-width: 1024px) {
+    .portada-menu {
+        left: 5%;
+        right: 5%;
+        width: 90%;
+        padding: 0.5rem;
+        gap: 8px;
+    }
+    
+    .portada-menu .dropdown-menu {
+        width: 7rem;
+        font-size: 11px;
+        height: 2rem;
+    }
+    
+    .portada-menu .p-button-label {
+        font-size: 11px;
+    }
+    
+    .portada-menu .p-tabmenu .p-tabmenu-nav .p-tabmenuitem .p-menuitem-link {
+        font-size: 11px;
+    }
+}
+
+/* Móviles (hasta 768px) */
+@media (max-width: 768px) {
+    .portada-menu {
+        left: 2%;
+        right: 2%;
+        width: 96%;
+        bottom: 0.5rem;
+        padding: 0.75rem 0.5rem;
+        gap: 6px;
+        flex-wrap: wrap;
+        min-height: auto;
+    }
+    
+    .portada-menu .p-tabmenu {
+        order: 1;
+        width: 100%;
+        margin-bottom: 8px;
+    }
+    
+    .portada-menu .p-tabmenu .p-tabmenu-nav {
+        display: flex;
+        justify-content: center;
+        gap: 4px;
+    }
+    
+    .portada-menu .p-tabmenu .p-tabmenu-nav .p-tabmenuitem .p-menuitem-link {
+        padding: 8px 6px;
+        font-size: 10px;
+        min-width: auto;
+        flex: 1;
+    }
+    
+    .portada-menu .p-tabmenu .p-tabmenuitem .p-menuitem-icon {
+        font-size: 14px;
+        margin-bottom: 2px;
+    }
+    
+    /* Botones y dropdowns en fila */
+    .portada-menu .p-button,
+    .portada-menu .p-float-label {
+        order: 2;
+        flex: 1;
+        min-width: 0;
+    }
+    
+    .portada-menu .p-button {
+        padding: 6px 8px;
+        font-size: 10px;
+        height: 2rem;
+    }
+    
+    .portada-menu .p-button-label {
+        font-size: 10px;
+        display: none; /* Ocultar texto en móviles */
+    }
+    
+    .portada-menu .p-button .p-button-icon {
+        margin: 0;
+        font-size: 14px;
+    }
+    
+    .portada-menu .dropdown-menu {
+        width: 100%;
+        font-size: 10px;
+        height: 2rem;
+        min-width: 0;
+    }
+    
+    .portada-menu .p-float-label label {
+        font-size: 9px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    
+    .portada-dropdown-panel .p-dropdown-items > li {
+        padding: 0.4rem 0.6rem;
+        font-size: 11px;
+    }
+    
+    .portada-menu .dropdown-menu .p-dropdown-label {
+        font-size: 10px;
+    }
+}
+
+/* Móviles pequeños (hasta 480px) */
+@media (max-width: 480px) {
+    .portada-menu {
+        left: 1%;
+        right: 1%;
+        width: 98%;
+        bottom: 0.25rem;
+        padding: 0.5rem 0.25rem;
+        gap: 4px;
+    }
+    
+    .portada-menu .p-tabmenu .p-tabmenu-nav .p-tabmenuitem .p-menuitem-link {
+        padding: 6px 4px;
+        font-size: 9px;
+    }
+    
+    .portada-menu .p-tabmenu .p-tabmenuitem .p-menuitem-icon {
+        font-size: 12px;
+        margin-bottom: 1px;
+    }
+    
+    .portada-menu .p-button {
+        padding: 4px 6px;
+        height: 1.75rem;
+        min-width: 40px;
+    }
+    
+    .portada-menu .p-button .p-button-icon {
+        font-size: 12px;
+    }
+    
+    .portada-menu .dropdown-menu {
+        height: 1.75rem;
+        font-size: 9px;
+    }
+    
+    .portada-menu .p-float-label label {
+        font-size: 8px;
+    }
+    
+    .portada-dropdown-panel .p-dropdown-items > li {
+        padding: 0.3rem 0.5rem;
+        font-size: 10px;
+    }
+    
+    .portada-menu .dropdown-menu .p-dropdown-label {
+        font-size: 9px;
+    }
+    
+    /* En móviles muy pequeños, hacer dos filas */
+    .portada-menu {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 6px;
+    }
+    
+    .portada-menu .p-tabmenu {
+        order: 1;
+        width: 100%;
+        margin-bottom: 4px;
+    }
+    
+    .portada-menu .p-tabmenu .p-tabmenu-nav {
+        display: flex;
+        justify-content: space-between;
+        gap: 2px;
+    }
+    
+    /* Segunda fila para controles */
+    .portada-menu .p-button,
+    .portada-menu .p-float-label {
+        order: 2;
+        flex: 1;
+        margin: 0 2px;
+    }
+    
+    .portada-menu .p-button {
+        width: auto;
+        flex: 0 0 auto;
+    }
+}
+
+/* Móviles muy pequeños (hasta 360px) */
+@media (max-width: 360px) {
+    .portada-menu {
+        padding: 0.4rem 0.2rem;
+        gap: 3px;
+    }
+    
+    .portada-menu .p-tabmenu .p-tabmenu-nav .p-tabmenuitem .p-menuitem-link {
+        padding: 4px 2px;
+        font-size: 8px;
+    }
+    
+    .portada-menu .p-tabmenu .p-tabmenuitem .p-menuitem-icon {
+        font-size: 10px;
+    }
+    
+    .portada-menu .p-button {
+        padding: 3px 4px;
+        height: 1.5rem;
+        min-width: 35px;
+    }
+    
+    .portada-menu .p-button .p-button-icon {
+        font-size: 10px;
+    }
+    
+    .portada-menu .dropdown-menu {
+        height: 1.5rem;
+        font-size: 8px;
+    }
+    
+    .portada-menu .p-float-label label {
+        font-size: 7px;
+    }
+}
+

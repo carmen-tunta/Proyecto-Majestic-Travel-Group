@@ -1,0 +1,637 @@
+/* Styles to match PrimeReact look and the Figma screens for Permisos */
+.permisos-card {
+  border-radius: 8px;
+  padding: 0.5rem;
+  background: #ffffff;
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.02);
+}
+.permisos-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+.permisos-table thead th {
+  background: #fafafa;
+  padding: 12px 16px;
+  text-align: left;
+  color: #6b6b6b;
+  font-weight: 600;
+  border-bottom: 1px solid #eee;
+}
+.permisos-table tbody tr.module-row {
+  border-top: 1px solid #eee;
+}
+.permisos-table tbody tr.action-row {
+  background: #fbfbfb;
+}
+.permisos-table td {
+  padding: 8px 16px;
+  vertical-align: middle;
+}
+.permisos-module-name {
+  font-weight: 700;
+}
+.permisos-subaction {
+  padding-left: 32px;
+  color: #4b4b4b;
+}
+.permisos-updated {
+  color: #6b6b6b;
+  white-space: nowrap;
+}
+
+/* DataTable / Users table styling to mimic Pasajeros table in screenshot (scoped to Permisos) */
+.permisos-component .p-datatable {
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.permisos-component .p-datatable .p-datatable-wrapper {
+  overflow-x: visible !important;
+  overflow-y: visible !important;
+}
+
+.permisos-component .p-datatable table {
+  width: 100%;
+  table-layout: auto;
+}
+
+.permisos-component .p-datatable .p-datatable-thead > tr > th {
+  background: #fafafa;
+  color: #555;
+  font-weight: 600;
+  border-bottom: 1px solid #eee;
+  white-space: normal;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Evitar que el texto del header se apile verticalmente en la tabla de usuarios */
+.permisos-component .usuarios-datatable .p-datatable-thead > tr > th {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.permisos-component .p-datatable .p-datatable-tbody > tr {
+  background: #fff;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.permisos-component .p-datatable .p-datatable-tbody > tr:hover {
+  background: #fbfbfb;
+}
+
+.permisos-component .p-datatable .p-datatable-tbody > tr > td {
+  white-space: normal;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Desktop: ellipsize long single-line fields (email) but allow wrapping inside cards on mobile */
+.permisos-component .usuarios-datatable .p-datatable-tbody > tr > td span {
+    display: inline-block;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+    .permisos-component .usuarios-datatable .p-datatable-tbody > tr > td span {
+        white-space: normal;
+        display: block;
+        overflow: visible;
+        text-overflow: unset;
+    }
+    /* ensure email links wrap */
+    .permisos-component .usuarios-datatable .p-datatable-tbody > tr > td a {
+        word-break: break-all;
+    }
+}
+
+.permisos-component .p-datatable .p-paginator {
+  display: flex;
+  justify-content: center;
+  padding: 1rem 0;
+}
+
+.permisos-component .card {
+  border-radius: 8px;
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.02);
+  overflow: visible;
+}
+
+.permisos-component .card > div {
+  overflow: visible;
+}
+
+/* Small adjustments for cell text to match screenshot (scoped) */
+.permisos-component .p-datatable td, .permisos-component .p-datatable th {
+  padding: 14px 18px !important;
+  font-size: 14px;
+  color: #333;
+}
+
+/* Asegurar que la tabla de usuarios no tenga scroll horizontal en desktop */
+.permisos-component .usuarios-datatable {
+  width: 100%;
+}
+
+.permisos-component .usuarios-datatable .p-datatable-wrapper {
+  overflow-x: visible !important;
+  overflow-y: visible !important;
+}
+
+.permisos-component .usuarios-datatable table {
+  width: 100%;
+  table-layout: auto;
+}
+
+.permisos-component .usuarios-datatable .p-datatable-tbody > tr > td,
+.permisos-component .usuarios-datatable .p-datatable-thead > tr > th {
+  max-width: none;
+  white-space: normal;
+  word-wrap: break-word;
+}
+
+/* Make paginator simple small style (scoped) */
+.permisos-component .p-paginator .p-paginator-pages .p-paginator-page {
+    margin: 0 6px;
+}
+
+/* Paginación responsive como Componentes */
+.permisos-component .p-paginator .p-paginator-page,
+.permisos-component .p-paginator .p-paginator-first,
+.permisos-component .p-paginator .p-paginator-prev,
+.permisos-component .p-paginator .p-paginator-next,
+.permisos-component .p-paginator .p-paginator-last {
+    color: #666 !important;
+    border: none !important;
+    background: transparent !important;
+    margin: 0 4px !important;
+    padding: 8px 12px !important;
+    border-radius: 4px !important;
+    font-size: 14px !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+}
+
+.permisos-component .p-paginator .p-paginator-page:hover,
+.permisos-component .p-paginator .p-paginator-first:hover,
+.permisos-component .p-paginator .p-paginator-prev:hover,
+.permisos-component .p-paginator .p-paginator-next:hover,
+.permisos-component .p-paginator .p-paginator-last:hover {
+    background: #f5f5f5 !important;
+    color: #333 !important;
+}
+
+/* ========== RESPONSIVE DESIGN ========== */
+
+/* Tablets y pantallas medianas (768px - 1024px) */
+@media (max-width: 1024px) {
+    .permisos-component {
+        padding: 1rem;
+    }
+    
+    /* Tabla de usuarios más compacta */
+    .permisos-component .p-datatable td,
+    .permisos-component .p-datatable th {
+        padding: 10px 12px !important;
+        font-size: 13px;
+    }
+    
+    /* Mantener todas las columnas visibles en tablet; reducir padding/size en vez de ocultar */
+    .permisos-component .usuarios-datatable .p-datatable-tbody > tr > td,
+    .permisos-component .usuarios-datatable .p-datatable-thead > tr > th {
+        padding: 8px 10px !important;
+        font-size: 13px;
+    }
+    
+    /* Tabla de permisos adaptativa */
+    .permisos-table {
+        font-size: 13px;
+    }
+    
+    .permisos-table thead th {
+        padding: 10px 12px;
+    }
+    
+    .permisos-table td {
+        padding: 6px 12px;
+    }
+}
+
+/* Móviles (hasta 768px) */
+@media (max-width: 768px) {
+    .permisos-component {
+        padding: 0;
+        margin: 0;
+        width: 100%;
+    }
+    
+    /* TabView responsive */
+    .permisos-component .p-tabview .p-tabview-nav {
+        flex-wrap: wrap;
+        padding: 0;
+        margin: 0;
+    }
+    
+    .permisos-component .p-tabview .p-tabview-nav li {
+        flex: 1;
+        min-width: 120px;
+    }
+    
+    .permisos-component .p-tabview .p-tabview-panels {
+        padding: 0;
+        margin: 0;
+    }
+    
+    /* Header del tab de usuarios */
+    .pasajeros-tab {
+        padding: 1rem;
+        margin: 0;
+        width: 100%;
+        box-sizing: border-box;
+    }
+    
+    .pasajeros-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+    
+    .pasajeros-title h3 {
+        font-size: 1.1rem;
+        text-align: center;
+    }
+    
+    .pasajeros-header .p-button {
+        width: 100%;
+    }
+    
+    /* Card contenedor sin espacios laterales */
+    .permisos-component .card {
+        border-radius: 0;
+        margin: 0;
+        padding: 0;
+        box-shadow: none;
+        border: none;
+    }
+    
+    .permisos-component .card > div {
+        padding: 0 !important;
+    }
+    
+    /* Mantener tabla como en Services: compacta, sin convertir a cards */
+    .permisos-component .usuarios-datatable .p-datatable-wrapper {
+        overflow-x: auto;
+    }
+    .permisos-component .usuarios-datatable .p-datatable-thead > tr > th,
+    .permisos-component .usuarios-datatable .p-datatable-tbody > tr > td {
+        padding: 8px 4px !important;
+        font-size: 12px;
+    }
+    /* Anchos por columna (1:Nombre, 2:Correo, 3:Área, 4:Usuario, 5:Fecha, 6:Estado) */
+    .permisos-component .usuarios-datatable .p-datatable-thead > tr > th:nth-child(1),
+    .permisos-component .usuarios-datatable .p-datatable-tbody > tr > td:nth-child(1) { width: 28% !important; }
+    .permisos-component .usuarios-datatable .p-datatable-thead > tr > th:nth-child(2),
+    .permisos-component .usuarios-datatable .p-datatable-tbody > tr > td:nth-child(2) { width: 30% !important; }
+    .permisos-component .usuarios-datatable .p-datatable-thead > tr > th:nth-child(3),
+    .permisos-component .usuarios-datatable .p-datatable-tbody > tr > td:nth-child(3) { width: 14% !important; }
+    .permisos-component .usuarios-datatable .p-datatable-thead > tr > th:nth-child(4),
+    .permisos-component .usuarios-datatable .p-datatable-tbody > tr > td:nth-child(4) { width: 12% !important; }
+    .permisos-component .usuarios-datatable .p-datatable-thead > tr > th:nth-child(5),
+    .permisos-component .usuarios-datatable .p-datatable-tbody > tr > td:nth-child(5) { width: 10% !important; }
+    .permisos-component .usuarios-datatable .p-datatable-thead > tr > th:nth-child(6),
+    .permisos-component .usuarios-datatable .p-datatable-tbody > tr > td:nth-child(6) { width: 6% !important; }
+    
+    /* Tabla de permisos responsive mejorada */
+    .permisos-table {
+        font-size: 12px;
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+    
+    .permisos-table thead,
+    .permisos-table tbody,
+    .permisos-table tr {
+        display: block;
+    }
+    
+    .permisos-table thead th {
+        position: absolute;
+        top: -9999px;
+        left: -9999px;
+    }
+    
+    .permisos-table tr {
+        border: 1px solid #ccc;
+        margin-bottom: 12px;
+        padding: 12px;
+        border-radius: 6px;
+        background: #fff;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    
+    /* Filas de módulos - layout especial */
+    .permisos-table tr.module-row {
+        background: #f8f9fa;
+        border: 2px solid #e9ecef;
+        font-weight: 600;
+    }
+    
+    .permisos-table tr.module-row td {
+        display: block;
+        padding: 8px 0;
+        border: none;
+        position: relative;
+    }
+    
+    .permisos-table tr.module-row td:first-child {
+        font-size: 14px;
+        font-weight: 700;
+        color: #2c3e50;
+        margin-bottom: 12px;
+        text-align: center;
+    }
+    
+    .permisos-table tr.module-row td:nth-child(2),
+    .permisos-table tr.module-row td:nth-child(3) {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 6px 0;
+        border-bottom: 1px solid #dee2e6;
+    }
+    
+    .permisos-table tr.module-row td:nth-child(2):before,
+    .permisos-table tr.module-row td:nth-child(3):before {
+        content: attr(data-label) ': ';
+        font-weight: 600;
+        color: #666;
+        flex-shrink: 0;
+        margin-right: 10px;
+    }
+    
+    .permisos-table tr.module-row td:nth-child(4) {
+        text-align: center;
+        font-size: 11px;
+        color: #666;
+        margin-top: 8px;
+        font-style: italic;
+    }
+    
+    .permisos-table tr.module-row td:nth-child(4):before {
+        content: 'Actualizado: ';
+        font-weight: 600;
+    }
+    
+    /* Filas de acciones - layout card */
+    .permisos-table tr.action-row {
+        background: #fff;
+        margin-left: 16px;
+        margin-bottom: 8px;
+        border-left: 3px solid #667eea;
+    }
+    
+    .permisos-table tr.action-row td {
+        display: block;
+        padding: 4px 0;
+        border: none;
+        position: relative;
+    }
+    
+    .permisos-table tr.action-row td:first-child {
+        font-weight: 600;
+        color: #495057;
+        margin-bottom: 8px;
+        padding-left: 8px;
+    }
+    
+    .permisos-table tr.action-row td:nth-child(3) {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 6px 8px;
+        background: #f8f9fa;
+        border-radius: 4px;
+        margin-top: 4px;
+    }
+    
+    .permisos-table tr.action-row td:nth-child(3):before {
+        content: attr(data-label) ': ';
+        font-weight: 600;
+        color: #666;
+        flex-shrink: 0;
+        margin-right: 8px;
+        min-width: 50px;
+    }
+    
+    /* Checkboxes mejor posicionados en móvil */
+    .permisos-table tr.action-row td:nth-child(3) .p-checkbox {
+        margin-left: auto;
+        flex-shrink: 0;
+    }
+    
+    /* Checkboxes más grandes en móvil */
+    .permisos-component .p-checkbox {
+        width: 20px;
+        height: 20px;
+    }
+    
+    .permisos-component .p-checkbox .p-checkbox-box {
+        width: 20px;
+        height: 20px;
+    }
+    
+    /* Espaciado mejorado para checkboxes en filas de acciones */
+    .permisos-table tr.action-row td:nth-child(3) {
+        min-height: 36px;
+    }
+    
+    /* Dialog responsive */
+    .permisos-component .p-dialog {
+        width: 95vw;
+        max-width: 400px;
+    }
+    
+    .permisos-component .p-dialog .p-dialog-content {
+        padding: 1rem;
+    }
+}
+
+/* Móviles pequeños (hasta 480px) */
+@media (max-width: 480px) {
+    .permisos-component {
+        padding: 0;
+        margin: 0;
+        width: 100%;
+    }
+    
+    /* TabView aún más compacto */
+    .permisos-component .p-tabview .p-tabview-nav {
+        padding: 0;
+        margin: 0;
+    }
+    
+    .permisos-component .p-tabview .p-tabview-nav li {
+        min-width: 100px;
+        font-size: 13px;
+    }
+    
+    .permisos-component .p-tabview .p-tabview-panels {
+        padding: 0;
+        margin: 0;
+    }
+    
+    .pasajeros-tab {
+        padding: 0.75rem;
+    }
+    
+    .pasajeros-title h3 {
+        font-size: 1rem;
+    }
+    
+    .cotizacion-info {
+        font-size: 12px;
+    }
+    
+    /* Mantener tabla compacta; priorizar columnas, ocultar solo Fecha (5) */
+    .permisos-component .usuarios-datatable .p-datatable-thead > tr > th,
+    .permisos-component .usuarios-datatable .p-datatable-tbody > tr > td {
+        padding: 6px 2px !important;
+        font-size: 11px;
+    }
+    .permisos-component .usuarios-datatable .p-datatable-wrapper { overflow-x: auto; }
+    .permisos-component .usuarios-datatable .p-datatable-thead > tr > th:nth-child(1),
+    .permisos-component .usuarios-datatable .p-datatable-tbody > tr > td:nth-child(1) { width: 34% !important; }
+    .permisos-component .usuarios-datatable .p-datatable-thead > tr > th:nth-child(2),
+    .permisos-component .usuarios-datatable .p-datatable-tbody > tr > td:nth-child(2) { width: 36% !important; word-break: break-word; }
+    .permisos-component .usuarios-datatable .p-datatable-thead > tr > th:nth-child(3),
+    .permisos-component .usuarios-datatable .p-datatable-tbody > tr > td:nth-child(3) { width: 14% !important; }
+    .permisos-component .usuarios-datatable .p-datatable-thead > tr > th:nth-child(4),
+    .permisos-component .usuarios-datatable .p-datatable-tbody > tr > td:nth-child(4) { width: 16% !important; }
+    /* Ocultar Fecha registrada en móviles pequeños */
+    .permisos-component .usuarios-datatable .p-datatable-thead > tr > th:nth-child(5),
+    .permisos-component .usuarios-datatable .p-datatable-tbody > tr > td:nth-child(5) { display: none; }
+    /* Estado ocupa espacio mínimo */
+    .permisos-component .usuarios-datatable .p-datatable-thead > tr > th:nth-child(6),
+    .permisos-component .usuarios-datatable .p-datatable-tbody > tr > td:nth-child(6) { width: 14% !important; }
+    
+    /* Optimización para móviles muy pequeños */
+    .permisos-table tr.module-row {
+        padding: 10px;
+        margin-bottom: 8px;
+    }
+    
+    .permisos-table tr.module-row td:first-child {
+        font-size: 13px;
+        margin-bottom: 10px;
+    }
+    
+    .permisos-table tr.module-row td:nth-child(2),
+    .permisos-table tr.module-row td:nth-child(3) {
+        padding: 4px 0;
+        font-size: 12px;
+    }
+    
+    .permisos-table tr.action-row {
+        margin-left: 8px;
+        margin-bottom: 6px;
+        padding: 8px;
+    }
+    
+    .permisos-table tr.action-row td:first-child {
+        font-size: 12px;
+        margin-bottom: 6px;
+    }
+    
+    .permisos-table tr.action-row td:nth-child(3) {
+        padding: 4px 6px;
+        font-size: 11px;
+    }
+    
+    /* Paginación más compacta con clases custom */
+    .permisos-component .custom-paginator .p-paginator-page,
+    .permisos-component .custom-paginator .p-paginator-first,
+    .permisos-component .custom-paginator .p-paginator-prev,
+    .permisos-component .custom-paginator .p-paginator-next,
+    .permisos-component .custom-paginator .p-paginator-last {
+        padding: 4px 6px !important;
+        font-size: 11px !important;
+        margin: 0 1px !important;
+        min-width: 28px !important;
+        height: 28px !important;
+    }
+    
+    .permisos-component .custom-paginator .p-paginator-current {
+        font-size: 10px !important;
+    }
+    
+    /* Dialog full screen en móviles pequeños */
+    .permisos-component .p-dialog {
+        width: 98vw;
+        height: 90vh;
+        max-width: none;
+    }
+    
+    .permisos-component .p-dialog .p-dialog-content {
+        padding: 0.75rem;
+        overflow-y: auto;
+    }
+    
+    /* Form fields en dialog */
+    .permisos-component .p-float-label {
+        margin-bottom: 1rem;
+    }
+    
+    .permisos-component .p-inputtext,
+    .permisos-component .p-dropdown {
+        width: 100%;
+        font-size: 14px;
+    }
+}
+
+    /* Móviles medianos (<= 600px): ocultar Área (3) y ensanchar Correo */
+    @media (max-width: 600px) {
+        .permisos-component .usuarios-datatable .p-datatable-thead > tr > th,
+        .permisos-component .usuarios-datatable .p-datatable-tbody > tr > td {
+            padding: 6px 4px !important;
+            font-size: 11px;
+        }
+        /* Ocultar Área */
+        .permisos-component .usuarios-datatable .p-datatable-thead > tr > th:nth-child(3),
+        .permisos-component .usuarios-datatable .p-datatable-tbody > tr > td:nth-child(3) { display: none; }
+        /* Rebalancear anchos: 1 Nombre, 2 Correo, 4 Usuario, 5 Fecha, 6 Estado */
+        .permisos-component .usuarios-datatable .p-datatable-thead > tr > th:nth-child(1),
+        .permisos-component .usuarios-datatable .p-datatable-tbody > tr > td:nth-child(1) { width: 34% !important; }
+        .permisos-component .usuarios-datatable .p-datatable-thead > tr > th:nth-child(2),
+        .permisos-component .usuarios-datatable .p-datatable-tbody > tr > td:nth-child(2) { width: 42% !important; word-break: break-word; }
+        .permisos-component .usuarios-datatable .p-datatable-thead > tr > th:nth-child(4),
+        .permisos-component .usuarios-datatable .p-datatable-tbody > tr > td:nth-child(4) { width: 12% !important; }
+        .permisos-component .usuarios-datatable .p-datatable-thead > tr > th:nth-child(5),
+        .permisos-component .usuarios-datatable .p-datatable-tbody > tr > td:nth-child(5) { width: 6% !important; }
+        .permisos-component .usuarios-datatable .p-datatable-thead > tr > th:nth-child(6),
+        .permisos-component .usuarios-datatable .p-datatable-tbody > tr > td:nth-child(6) { width: 6% !important; }
+    }
+
+    /* Móviles pequeños (<= 480px): mostrar Usuario, Correo y Estado; ocultar Nombres, Área y Fecha */
+    @media (max-width: 480px) {
+        /* Ocultar Nombres (1), Área (3) y Fecha (5) */
+        .permisos-component .usuarios-datatable .p-datatable-thead > tr > th:nth-child(1),
+        .permisos-component .usuarios-datatable .p-datatable-tbody > tr > td:nth-child(1) { display: none; }
+        .permisos-component .usuarios-datatable .p-datatable-thead > tr > th:nth-child(3),
+        .permisos-component .usuarios-datatable .p-datatable-tbody > tr > td:nth-child(3) { display: none; }
+        .permisos-component .usuarios-datatable .p-datatable-thead > tr > th:nth-child(5),
+        .permisos-component .usuarios-datatable .p-datatable-tbody > tr > td:nth-child(5) { display: none; }
+        /* Rebalancear anchos: Correo 60%, Usuario 30%, Estado 10% */
+        .permisos-component .usuarios-datatable .p-datatable-thead > tr > th:nth-child(2),
+        .permisos-component .usuarios-datatable .p-datatable-tbody > tr > td:nth-child(2) { width: 60% !important; word-break: break-word; }
+        .permisos-component .usuarios-datatable .p-datatable-thead > tr > th:nth-child(4),
+        .permisos-component .usuarios-datatable .p-datatable-tbody > tr > td:nth-child(4) { width: 30% !important; }
+        .permisos-component .usuarios-datatable .p-datatable-thead > tr > th:nth-child(6),
+        .permisos-component .usuarios-datatable .p-datatable-tbody > tr > td:nth-child(6) { width: 10% !important; }
+    }
