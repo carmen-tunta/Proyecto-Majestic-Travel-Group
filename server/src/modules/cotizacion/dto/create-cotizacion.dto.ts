@@ -57,6 +57,11 @@ export class CreateCotizacionDto {
   @IsOptional()
   @IsInt()
   @Min(0)
+  nroAdultos?: number;
+
+  @IsOptional()
+  @IsInt()
+  @Min(0)
   nroNinos?: number;
 
   @IsOptional()

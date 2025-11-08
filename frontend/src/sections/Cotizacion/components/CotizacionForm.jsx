@@ -77,8 +77,6 @@ import CotizacionRepository from '../../../modules/Cotizacion/repository/Cotizac
 // Modal de asignación de proveedores
 
 import { usePermissions } from '../../../contexts/PermissionsContext';
-import DatosViajeModal from './DatosViajeModal';
-import { Tooltip } from 'primereact/tooltip';
 
 
 
@@ -284,6 +282,8 @@ export default function CotizacionForm() {
 
     nroPax: null,
 
+    nroAdultos: null,
+
     nroNinos: null,
 
     nroBebes: null,
@@ -345,6 +345,8 @@ export default function CotizacionForm() {
               utilidad: found.utilidad,
 
               nroPax: found.nroPax,
+
+              nroAdultos: found.nroAdultos,
 
               nroNinos: found.nroNinos,
 
@@ -497,6 +499,8 @@ export default function CotizacionForm() {
         idioma: form.idioma,
 
         nroPax: Number(form.nroPax),
+
+        nroAdultos: Number(form.nroAdultos) || 0,
 
         nroNinos: Number(form.nroNinos) || 0,
 
@@ -1094,18 +1098,6 @@ export default function CotizacionForm() {
 
   };
 
-  const [showModal, setShowModal] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const handleClickDatosViaje = () => {
-    setShowModal(true);
-    setIsModalOpen(true);
-  }
-
-  const handleModalClose = () => {
-    setShowModal(false);
-    setIsModalOpen(false);
-  };
 
 
   return (
@@ -1398,41 +1390,85 @@ export default function CotizacionForm() {
 
               </div>
 
-              {/* <div>
+              <div>
 
                 <FloatLabel>
 
-                  <InputText id="nroPax" type="number" min="1" value={form.nroPax} onChange={e => setForm(f => ({ ...f, nroPax: e.target.value }))} />
+                  <InputNumber 
+                    id="nroPax" 
+                    value={form.nroPax} 
+                    onValueChange={e => setForm(f => ({ ...f, nroPax: e.value }))} 
+                    min={1}
+                    mode="decimal"
+                    minFractionDigits={0}
+                    maxFractionDigits={0}
+                  />
 
-                  <label htmlFor="nroPax">Nro. Paxs</label>
+                  <label htmlFor="nroPax">N° Pax</label>
 
                 </FloatLabel>
 
-              </div> */}
+              </div>
 
-              {/* <div>
+              <div>
 
                 <FloatLabel>
 
-                  <InputText id="nroNinos" type="number" min="0" value={form.nroNinos} onChange={e => setForm(f => ({ ...f, nroNinos: e.target.value }))} />
+                  <InputNumber 
+                    id="nroAdultos" 
+                    value={form.nroAdultos} 
+                    onValueChange={e => setForm(f => ({ ...f, nroAdultos: e.value }))} 
+                    min={0}
+                    mode="decimal"
+                    minFractionDigits={0}
+                    maxFractionDigits={0}
+                  />
 
-                  <label htmlFor="nroNinos">Nro Niños(as)</label>
+                  <label htmlFor="nroAdultos">N° adultos</label>
 
                 </FloatLabel>
 
-              </div> */}
+              </div>
 
-              {/* <div>
+              <div>
 
                 <FloatLabel>
 
-                  <InputText id="nroBebes" type="number" min="0" value={form.nroBebes} onChange={e => setForm(f => ({ ...f, nroBebes: e.target.value }))} />
+                  <InputNumber 
+                    id="nroNinos" 
+                    value={form.nroNinos} 
+                    onValueChange={e => setForm(f => ({ ...f, nroNinos: e.value }))} 
+                    min={0}
+                    mode="decimal"
+                    minFractionDigits={0}
+                    maxFractionDigits={0}
+                  />
 
-                  <label htmlFor="nroBebes">Nro Bebés</label>
+                  <label htmlFor="nroNinos">N° niños(as)</label>
 
                 </FloatLabel>
 
-              </div> */}
+              </div>
+
+              <div>
+
+                <FloatLabel>
+
+                  <InputNumber 
+                    id="nroBebes" 
+                    value={form.nroBebes} 
+                    onValueChange={e => setForm(f => ({ ...f, nroBebes: e.value }))} 
+                    min={0}
+                    mode="decimal"
+                    minFractionDigits={0}
+                    maxFractionDigits={0}
+                  />
+
+                  <label htmlFor="nroBebes">Nº bebés</label>
+
+                </FloatLabel>
+
+              </div>
 
               <div>
 
@@ -1445,18 +1481,6 @@ export default function CotizacionForm() {
                 </FloatLabel>
 
               </div>
-
-              <span 
-                  id="datos-viaje-btn"
-                  style={{cursor: (routeId || cotizacionId) ? 'pointer' : 'not-allowed', width: '8rem', marginLeft:'1rem', marginTop:'7px', borderRadius: '4px', color: (routeId || cotizacionId) ? 'rgba(0,0,0,1)' : 'rgba(0,0,0,0.5)'}} 
-                  onClick={(routeId || cotizacionId) ? handleClickDatosViaje : undefined}
-                  data-pr-tooltip={routeId ? "Configurar número de pasajeros y detalles del viaje" : "Guarda la cotización primero para acceder a los datos de viaje"}
-                  data-pr-position="top"
-              > 
-                  <i className='pi pi-flag' style={{color: (routeId || cotizacionId) ? 'rgba(0,0,0,1)' : 'rgba(0,0,0,0.5)', marginRight: '4px'}}/> 
-                  Datos de viaje  
-              </span>
-              <Tooltip target="#datos-viaje-btn" showDelay={1000}/>
 
             </div>
 
@@ -1966,13 +1990,6 @@ export default function CotizacionForm() {
 
       </Dialog>
 
-      {showModal && (
-        <DatosViajeModal
-          visible={showModal}
-          onHide={handleModalClose}
-          cotizacionId={routeId ? routeId : cotizacionId}
-        />
-      )}
 
     </div>
 

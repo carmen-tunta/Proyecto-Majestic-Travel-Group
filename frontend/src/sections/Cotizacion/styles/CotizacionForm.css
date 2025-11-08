@@ -75,8 +75,8 @@
 /* Row 2: [Nombre cotización][Agencia][Código] */
 .row2-grid { grid-template-columns: minmax(300px, 6fr) minmax(220px, 4fr) minmax(150px, 2fr); }
 
-/* Row 3: [País][Idioma][Paxs][Niños][%][Observación] */
-.row3-grid { grid-template-columns: minmax(150px, 2fr) minmax(150px, 2fr) minmax(120px, 2fr) minmax(120px, 2fr) minmax(120px, 2fr) minmax(300px, 6fr); }
+/* Row 3: [País][Idioma][N° Pax][N° adultos][N° niños][Nº bebés][% utilidad] */
+.row3-grid { grid-template-columns: minmax(150px, 2fr) minmax(150px, 2fr) minmax(100px, 1.5fr) minmax(100px, 1.5fr) minmax(100px, 1.5fr) minmax(100px, 1.5fr) minmax(120px, 2fr); }
 
 /* Ensure controls inside form-grid adopt the same single-outline look */
 .form-grid input,
