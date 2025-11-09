@@ -408,8 +408,7 @@ export default function CotizacionForm() {
 
   }, [clientQuery]);
 
-  // Si el estado cambia a algo diferente de "Finalizado" y estamos en la pestaña de confirmación, volver a la primera pestaña
-
+  // Si el estado cambia a algo diferente de "Finalizado" o "Cotización enviada" y estamos en la pestaña de confirmación, volver a la primera pestaña
   useEffect(() => {
 
     if (activeIndex === 2 && (form.estado !== 'Finalizado' && form.estado !== 'Cotización enviada')) {
@@ -528,12 +527,12 @@ export default function CotizacionForm() {
 
 
 
-      // Si es una nueva cotización, cambiar a la pestaña de pasajeros
-
-      if (!cotizacionId) {
-
+      // Si el estado es "Cotización enviada", activar el tab de Confirmación de reserva
+      if (form.estado === 'Cotización enviada') {
+        setActiveIndex(2);
+      } else if (!cotizacionId) {
+        // Si es una nueva cotización, cambiar a la pestaña de pasajeros
         setActiveIndex(1);
-
       }
 
     } catch (e) { 
@@ -1863,7 +1862,7 @@ export default function CotizacionForm() {
       {activeIndex === 2 && cotizacionId && (form.estado === 'Finalizado' || form.estado === 'Cotización enviada') && (
         <ConfirmacionReserva
           cotizacionId={cotizacionId}
-          cotizacionData={detalle}
+          cotizacionData={detalle ? { ...detalle, estado: form.estado } : null}
         />
       )}
       <AssignProveedorModal
