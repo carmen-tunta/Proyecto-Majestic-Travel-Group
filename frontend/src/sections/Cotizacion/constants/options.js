@@ -1,6 +1,6 @@
 export const categorias = ['Privado', 'Compartido', 'Privado/compartido'];
 export const estados = ['Iniciado', 'Proceso', 'Cotización enviada', 'Finalizado'];
-export const agencias = ['Viator', 'Civitatis', 'GetYourGuide', 'TourRadar', 'TripAdvisor', 'Peru Hop', 'Inca Rail', 'PeruRail', 'Lima Tours', 'Condor Travel'];
+export const agencias = ['PeruAndesTop', 'Instagram', 'Facebook', 'Whatsapp', 'Tiktok'];
 export const paises = [
     { label: 'Afganistán', value: 'Afganistán' },
     { label: 'Albania', value: 'Albania' },

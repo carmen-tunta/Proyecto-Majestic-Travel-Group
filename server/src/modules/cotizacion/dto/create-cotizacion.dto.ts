@@ -38,7 +38,7 @@ export class CreateCotizacionDto {
   estado: string;
 
   @IsNotEmpty()
-  @IsEnum(['Viator', 'Civitatis', 'GetYourGuide', 'TourRadar', 'TripAdvisor', 'Peru Hop', 'Inca Rail', 'PeruRail', 'Lima Tours', 'Condor Travel'])
+  @IsEnum(['PeruAndesTop', 'Instagram', 'Facebook', 'Whatsapp', 'Tiktok'])
   agencia: string;
 
   @IsNotEmpty()

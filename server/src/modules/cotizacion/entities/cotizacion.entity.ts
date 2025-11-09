@@ -40,7 +40,7 @@ export class Cotizacion {
   @Column({ type: 'enum', enum: ['Iniciado', 'Proceso', 'Cotización enviada', 'Finalizado'] })
   estado: string;
 
-  @Column({ type: 'enum', enum: ['Viator', 'Civitatis', 'GetYourGuide', 'TourRadar', 'TripAdvisor', 'Peru Hop', 'Inca Rail', 'PeruRail', 'Lima Tours', 'Condor Travel'] })
+  @Column({ type: 'enum', enum: ['PeruAndesTop', 'Instagram', 'Facebook', 'Whatsapp', 'Tiktok'] })
   agencia: string;
 
   @Column({ type: 'text' })

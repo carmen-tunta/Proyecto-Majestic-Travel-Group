@@ -7,7 +7,7 @@
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.08);
     /* Shared width tokens to keep symmetry across rows */
     --w-left: 50%;   /* Nombre cliente / Nombre cotización */
-    --w-mid: 34%;    /* Agencia */
+    --w-mid: 34%;    /* Origen */
     --w-small: 16%;  /* Estado, Fecha, Código */
     --w-small3: 12%; /* Pax, Niños, % */
 }
@@ -72,8 +72,8 @@
 /* Row 1: [Nombre cliente][Tipo][Fecha][Estado] */
 .row1-grid { grid-template-columns: minmax(300px, 6fr) minmax(160px, 2fr) minmax(160px, 2fr) minmax(160px, 2fr); }
 
-/* Row 2: [Nombre cotización][Agencia][Código] */
-.row2-grid { grid-template-columns: minmax(300px, 6fr) minmax(220px, 4fr) minmax(150px, 2fr); }
+/* Row 2: [Nombre cotización][Origen][Código][Lugar de recojo] */
+.row2-grid { grid-template-columns: minmax(300px, 4fr) minmax(180px, 3fr) minmax(150px, 2fr) minmax(200px, 3fr); }
 
 /* Row 3: [País][Idioma][N° Pax][N° adultos][N° niños][Nº bebés][% utilidad] */
 .row3-grid { grid-template-columns: minmax(150px, 2fr) minmax(150px, 2fr) minmax(100px, 1.5fr) minmax(100px, 1.5fr) minmax(100px, 1.5fr) minmax(100px, 1.5fr) minmax(120px, 2fr); }

@@ -556,11 +556,11 @@ const ConfirmacionReserva = ({ cotizacionId, cotizacionData }) => {
                     <span class="info-value">${cotizacionData?.cliente?.nombre || ''}</span>
                   </div>
                   <div class="info-row">
-                    <span class="info-label">Agencia:</span>
+                    <span class="info-label">Origen:</span>
                     <span class="info-value">${cotizacionData?.agencia || ''}</span>
                   </div>
                   <div class="info-row">
-                    <span class="info-label">Fecha de viaje:</span>
+                    <span class="info-label">Fecha de Inicio del servicio:</span>
                     <span class="info-value">${cotizacionData?.fechaViaje ? formatFecha(new Date(cotizacionData.fechaViaje)) : ''}</span>
                   </div>
                 </div>
@@ -904,11 +904,11 @@ const ConfirmacionReserva = ({ cotizacionId, cotizacionData }) => {
                     <span className="info-value">{cotizacionData?.cliente?.nombre || ''}</span>
                   </div>
                   <div className="info-row">
-                    <span className="info-label">Agencia:</span>
+                    <span className="info-label">Origen:</span>
                     <span className="info-value">{cotizacionData?.agencia || ''}</span>
                   </div>
                   <div className="info-row">
-                    <span className="info-label">Fecha de viaje:</span>
+                    <span className="info-label">Fecha de Inicio del servicio:</span>
                     <span className="info-value">{cotizacionData?.fechaViaje ? formatFecha(new Date(cotizacionData.fechaViaje)) : ''}</span>
                   </div>
                 </div>

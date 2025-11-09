@@ -1239,7 +1239,7 @@ export default function CotizacionForm() {
 
                   />
 
-                  <label htmlFor="fechaViaje">Fecha de viaje</label>
+                  <label htmlFor="fechaViaje">Fecha de Inicio del servicio</label>
 
                 </FloatLabel>
 
@@ -1267,54 +1267,6 @@ export default function CotizacionForm() {
 
                 <FloatLabel>
 
-                  <Calendar
-
-                    inputId="fechaLlegada"
-
-                    value={form.fechaLlegada ? fromLocalDateStringToDate(form.fechaLlegada) : null}
-
-                    onChange={e => setForm(f => ({ ...f, fechaLlegada: e.value ? toLocalDateString(e.value) : '' }))}
-
-                    dateFormat="D dd M y"
-
-                    locale="es"
-
-                  />
-
-                  <label htmlFor="fechaLlegada">Fecha de llegada</label>
-
-                </FloatLabel>
-
-              </div>
-
-              <div>
-
-                <FloatLabel>
-
-                  <Calendar
-
-                    inputId="fechaSalida"
-
-                    value={form.fechaSalida ? fromLocalDateStringToDate(form.fechaSalida) : null}
-
-                    onChange={e => setForm(f => ({ ...f, fechaSalida: e.value ? toLocalDateString(e.value) : '' }))}
-
-                    dateFormat="D dd M y"
-
-                    locale="es"
-
-                  />
-
-                  <label htmlFor="fechaSalida">Fecha de salida</label>
-
-                </FloatLabel>
-
-              </div>
-
-              <div>
-
-                <FloatLabel>
-
                   <InputText id="nombreCotizacion" value={form.nombreCotizacion} onChange={e => setForm(f => ({ ...f, nombreCotizacion: e.target.value }))} />
 
                   <label htmlFor="nombreCotizacion">Nombre de cotización</label>
@@ -1329,7 +1281,7 @@ export default function CotizacionForm() {
 
                   <Dropdown inputId="agencia" value={form.agencia} options={agencias} onChange={e => setForm(f => ({ ...f, agencia: e.value }))} />
 
-                  <label htmlFor="agencia">Agencia</label>
+                  <label htmlFor="agencia">Origen</label>
 
                 </FloatLabel>
 
@@ -1371,7 +1323,7 @@ export default function CotizacionForm() {
 
                   <Dropdown filter inputId="pais" value={form.pais} options={paises} onChange={e => setForm(f => ({ ...f, pais: e.value }))} />
 
-                  <label htmlFor="pais">País</label>
+                  <label htmlFor="pais">Nacionalidad</label>
 
                 </FloatLabel>
 
@@ -1383,7 +1335,7 @@ export default function CotizacionForm() {
 
                   <Dropdown inputId="idioma" value={form.idioma} options={idiomas} onChange={e => setForm(f => ({ ...f, idioma: e.value }))} />
 
-                  <label htmlFor="idioma">Idioma</label>
+                  <label htmlFor="idioma">Idioma del tour</label>
 
                 </FloatLabel>
 
