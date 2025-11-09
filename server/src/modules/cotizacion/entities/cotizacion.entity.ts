@@ -19,7 +19,7 @@ export class Cotizacion {
   @Column({ type: 'varchar', length: 100, nullable: true })
   nombreCotizacion: string;
 
-  @Column({ type: 'enum', enum: ['Privado', 'Compartido', 'Priv'] })
+  @Column({ type: 'enum', enum: ['Privado', 'Compartido', 'Priv', 'Privado/compartido'] })
   categoria: string;
 
   @Column({ type: 'decimal', precision: 5, scale: 2 })
@@ -40,7 +40,7 @@ export class Cotizacion {
   @Column({ type: 'enum', enum: ['Iniciado', 'Proceso', 'Cotización enviada', 'Finalizado'] })
   estado: string;
 
-  @Column({ type: 'enum', enum: ['Viator', 'Civitatis', 'GetYourGuide', 'TourRadar', 'TripAdvisor', 'Peru Hop', 'Inca Rail', 'PeruRail', 'Lima Tours', 'Condor Travel'] })
+  @Column({ type: 'enum', enum: ['PeruAndesTop', 'Instagram', 'Facebook', 'Whatsapp', 'Tiktok'] })
   agencia: string;
 
   @Column({ type: 'text' })

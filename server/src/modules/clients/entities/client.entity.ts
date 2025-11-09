@@ -45,9 +45,10 @@ export class Client {
 
   @Column({
     type: 'date',
+    nullable: true,
     comment: 'Fecha de nacimiento del cliente',
   })
-  fechaNacimiento: Date;
+  fechaNacimiento: Date | null;
 
   @Column({
     type: 'text',
@@ -57,15 +58,17 @@ export class Client {
 
   @Column({
     type: 'text',
+    nullable: true,
     comment: 'Tipo de documento del cliente',
   })
-  tipoDocumento: string;
+  tipoDocumento: string | null;
 
   @Column({
     type: 'text',
+    nullable: true,
     comment: 'Número de documento del cliente',
   })
-  numeroDocumento: string;
+  numeroDocumento: string | null;
 
   @Column({
     type: 'text',

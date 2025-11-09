@@ -22,6 +22,23 @@ const ConfirmacionReserva = ({ cotizacionId, cotizacionData }) => {
   const [loadingPdf, setLoadingPdf] = useState(false);
   const [loadingTranslate, setLoadingTranslate] = useState(false);
   
+  // Función helper para obtener el estado del booking según el estado de la cotización
+  const getEstadoBooking = (estado) => {
+    if (!estado) return '';
+    const estadoTrim = estado.trim();
+    if (estadoTrim === 'Finalizado') {
+      return 'Confirmado';
+    } else if (estadoTrim === 'Cotización enviada') {
+      return 'Cotizando';
+    }
+    return estado;
+  };
+  
+  // Función helper para verificar si el estado es "Cotización enviada"
+  const isCotizacionEnviada = (estado) => {
+    return estado && estado.trim() === 'Cotización enviada';
+  };
+  
   // Sistema de páginas: la primera es fija (confirmación), las demás son editables
   const [editablePages, setEditablePages] = useState([]);
   const [currentPageIndex, setCurrentPageIndex] = useState(0);
@@ -524,11 +541,11 @@ const ConfirmacionReserva = ({ cotizacionId, cotizacionData }) => {
                   <img src="/logo_grande.png" alt="Logo" class="confirmacion-logo" />
                 </div>
                 <div class="confirmacion-titulo-container">
-                  <h2>${cotizacionData?.estado === 'Cotización enviada' ? `Cotización para ${cotizacionData?.cliente?.nombre}` : 'Confirmación de Reserva'}</h2>
+                  <h2>${(cotizacionData?.estado && cotizacionData.estado.trim() === 'Cotización enviada') ? `Cotización para ${cotizacionData?.cliente?.nombre || ''}` : 'Confirmación de Reserva'}</h2>
                 </div>
                 <div class="confirmacion-estado-container">
                   <div class="estado-label">Estado del booking</div>
-                  <div class="estado-value">${cotizacionData?.estado || ''}</div>
+                  <div class="estado-value">${cotizacionData?.estado ? (cotizacionData.estado.trim() === 'Finalizado' ? 'Confirmado' : cotizacionData.estado.trim() === 'Cotización enviada' ? 'Cotizando' : cotizacionData.estado) : ''}</div>
                 </div>
               </div>
               
@@ -539,11 +556,11 @@ const ConfirmacionReserva = ({ cotizacionId, cotizacionData }) => {
                     <span class="info-value">${cotizacionData?.cliente?.nombre || ''}</span>
                   </div>
                   <div class="info-row">
-                    <span class="info-label">Agencia:</span>
+                    <span class="info-label">Origen:</span>
                     <span class="info-value">${cotizacionData?.agencia || ''}</span>
                   </div>
                   <div class="info-row">
-                    <span class="info-label">Fecha de viaje:</span>
+                    <span class="info-label">Fecha de Inicio del servicio:</span>
                     <span class="info-value">${cotizacionData?.fechaViaje ? formatFecha(new Date(cotizacionData.fechaViaje)) : ''}</span>
                   </div>
                 </div>
@@ -788,7 +805,7 @@ const ConfirmacionReserva = ({ cotizacionId, cotizacionData }) => {
     closeTemplateModal();
   };
 
-  if (loadingData) {
+  if (loadingData || !cotizacionData) {
     return (
       <div className="confirmacion-loading">
         <ProgressSpinner />
@@ -871,11 +888,11 @@ const ConfirmacionReserva = ({ cotizacionId, cotizacionData }) => {
                   <img src="/logo_grande.png" alt="Logo" className="confirmacion-logo" />
                 </div>
                 <div className="confirmacion-titulo-container">
-                  <h2>{cotizacionData.estado === "Cotización enviada" ? `Cotización para ${cotizacionData?.cliente?.nombre}` : 'Confirmación de Reserva'}</h2>
+                  <h2>{isCotizacionEnviada(cotizacionData?.estado) ? `Cotización para ${cotizacionData?.cliente?.nombre || ''}` : 'Confirmación de Reserva'}</h2>
                 </div>
                 <div className="confirmacion-estado-container">
                   <div className="estado-label">Estado del booking</div>
-                  <div className="estado-value">{cotizacionData?.estado || ''}</div>
+                  <div className="estado-value">{getEstadoBooking(cotizacionData?.estado)}</div>
                 </div>
               </div>
 
@@ -887,11 +904,11 @@ const ConfirmacionReserva = ({ cotizacionId, cotizacionData }) => {
                     <span className="info-value">{cotizacionData?.cliente?.nombre || ''}</span>
                   </div>
                   <div className="info-row">
-                    <span className="info-label">Agencia:</span>
+                    <span className="info-label">Origen:</span>
                     <span className="info-value">{cotizacionData?.agencia || ''}</span>
                   </div>
                   <div className="info-row">
-                    <span className="info-label">Fecha de viaje:</span>
+                    <span className="info-label">Fecha de Inicio del servicio:</span>
                     <span className="info-value">{cotizacionData?.fechaViaje ? formatFecha(new Date(cotizacionData.fechaViaje)) : ''}</span>
                   </div>
                 </div>
