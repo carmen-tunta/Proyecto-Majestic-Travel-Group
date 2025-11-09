@@ -25,7 +25,7 @@ const FormProveedor = ({proveedor, setProveedorState, setActiveIndex}) => {
     const { showNotification } = useNotification();
     const [loading, setLoading] = useState(false);
 
-    const peruCities = ["Lima", "Cusco", "Arequipa", "Trujillo", "Iquitos", "Puno", "Chiclayo", "Piura", "Huaraz", "Nazca"];
+    const peruCities = ["Lima", "Cusco", "Arequipa", "Trujillo", "Iquitos", "Puno", "Chiclayo", "Piura", "Huaraz", "Nazca", "Aguas calientes"];
     
     const parseLocalDate = (dateString) => {
         if (!dateString) return null;
