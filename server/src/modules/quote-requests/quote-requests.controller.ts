@@ -35,6 +35,11 @@ export class QuoteRequestsController {
     return this.service.update(Number(id), dto);
   }
 
+  @Get('by-agent/:agentId')
+  findByAgent(@Param('agentId') agentId: string) {
+    return this.service.findByAgent(Number(agentId));
+  }
+
   // ===== ENDPOINTS DE ASIGNACIÓN =====
 
   @Post(':id/assign')
