@@ -1,4 +1,4 @@
-export const categorias = ['Privado', 'Compartido'];
+export const categorias = ['Privado', 'Compartido', 'Privado/compartido'];
 export const estados = ['Iniciado', 'Proceso', 'Cotización enviada', 'Finalizado'];
 export const agencias = ['Viator', 'Civitatis', 'GetYourGuide', 'TourRadar', 'TripAdvisor', 'Peru Hop', 'Inca Rail', 'PeruRail', 'Lima Tours', 'Condor Travel'];
 export const paises = [

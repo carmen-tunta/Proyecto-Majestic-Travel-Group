@@ -10,7 +10,7 @@ export class CreateCotizacionDto {
   nombreCotizacion?: string;
 
   @IsNotEmpty()
-  @IsEnum(['Privado', 'Compartido', 'Priv'])
+  @IsEnum(['Privado', 'Compartido', 'Priv', 'Privado/compartido'])
   categoria: string;
 
   @IsNotEmpty()

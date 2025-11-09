@@ -19,7 +19,7 @@ export class Cotizacion {
   @Column({ type: 'varchar', length: 100, nullable: true })
   nombreCotizacion: string;
 
-  @Column({ type: 'enum', enum: ['Privado', 'Compartido', 'Priv'] })
+  @Column({ type: 'enum', enum: ['Privado', 'Compartido', 'Priv', 'Privado/compartido'] })
   categoria: string;
 
   @Column({ type: 'decimal', precision: 5, scale: 2 })
