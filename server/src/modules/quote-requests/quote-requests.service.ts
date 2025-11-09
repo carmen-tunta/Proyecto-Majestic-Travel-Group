@@ -109,6 +109,16 @@ export class QuoteRequestsService {
     };
   }
 
+  async findByAgent(agentId: number): Promise<QuoteRequest[]> {
+    return this.qrRepo.find({
+      where: [
+        { agentId: agentId },
+        { status: 'liberado' }
+      ],
+      relations: ['client', 'services', 'services.service']
+    });
+  }
+
   async update(id: number, dto: UpdateQuoteRequestDto): Promise<QuoteRequest> {
     // 1) Verificar que existe la solicitud
     const existingRequest = await this.qrRepo.findOne({ 
