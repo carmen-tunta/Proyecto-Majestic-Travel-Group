@@ -9,7 +9,7 @@ import { usePermissions } from '../../../contexts/PermissionsContext';
 
 const Menu = () => {
     const navigate = useNavigate();
-    const { logout } = useAuth();
+    const { logout, user } = useAuth();
     const { isModalOpen } = useModal();
     const { has, isAdmin } = usePermissions();
     // Debug en montaje
@@ -27,6 +27,9 @@ const Menu = () => {
         <div className={`menu-app ${isModalOpen ? 'menu-app-modal' : ''}`}>
             <div className="menu-logo">
                 <img src="logo_mtg.png" alt="Logo" />
+                {user?.username && (
+                    <div className="menu-user-name">{user.username}</div>
+                )}
             </div>
             <div className="menu-links">
                 {has('BANDEJA_SOLICITUD','VIEW') && <Button label="Bandeja de solicitud" text size="small" icon="pi pi-home" onClick={() => navigate('/bandeja-solicitud')} title="Bandeja de solicitud" />}
