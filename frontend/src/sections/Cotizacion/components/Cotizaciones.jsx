@@ -135,7 +135,12 @@ export default function Cotizaciones() {
           paginatorClassName="custom-paginator"
         >
           <Column expander className="cotz-expander-col" />
-          <Column header="Nombre del cliente" body={(r) => <span className="client-name" data-label="Cliente">{r?.cliente?.nombre}</span>} sortable />
+          <Column 
+            header="Nombre del cliente" 
+            body={(r) => <span className="client-name" data-label="Cliente">{r?.cliente?.nombre}</span>} 
+            sortable 
+            sortField="cliente.nombre" 
+          />
           <Column header="Categoría" body={(r) => <span data-label="Categoría">{r?.categoria === 'Priv' ? 'Privado' : r?.categoria}</span>} />
           <Column header="% Utilidad" body={(r) => <span data-label="% Utilidad">{r?.utilidad != null ? `${Number(r.utilidad).toFixed(0)}%` : ''}</span>} />
           <Column header="Código reserva" body={(r) => <span data-label="Código">{r?.codigoReserva || r?.codigo || ''}</span>} />

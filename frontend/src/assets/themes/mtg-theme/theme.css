@@ -3210,16 +3210,29 @@
   .p-datatable .p-sortable-column:not(.p-highlight):not(.p-sortable-disabled):hover .p-sortable-column-icon {
     color: #374151;
   }
-  /* Override para tabla de cotizaciones - azul más fuerte en hover */
+  /* Override Cotizaciones: mantener fondo oscuro; solo icono cambia */
   .cotizaciones-table.p-datatable .p-sortable-column:not(.p-highlight):not(.p-sortable-disabled):hover,
   .cotizaciones-table .p-datatable .p-sortable-column:not(.p-highlight):not(.p-sortable-disabled):hover {
-    background: #0B329E !important;
+    background: var(--primary-color) !important;
     color: #ffffff !important;
   }
+  /* Color por defecto gris para iconos de orden en cotizaciones */
+  .cotizaciones-table.p-datatable .p-sortable-column .p-sortable-column-icon,
+  .cotizaciones-table .p-datatable .p-sortable-column .p-sortable-column-icon {
+    color: #94a3b8 !important; /* slate-400 */
+  }
   .cotizaciones-table.p-datatable .p-sortable-column:not(.p-highlight):not(.p-sortable-disabled):hover .p-sortable-column-icon,
-  .cotizaciones-table .p-datatable .p-sortable-column:not(.p-highlight):not(.p-sortable-disabled):hover .p-sortable-column-icon,
-  .cotizaciones-table.p-datatable .p-sortable-column:not(.p-highlight):not(.p-sortable-disabled):hover *,
-  .cotizaciones-table .p-datatable .p-sortable-column:not(.p-highlight):not(.p-sortable-disabled):hover * {
+  .cotizaciones-table .p-datatable .p-sortable-column:not(.p-highlight):not(.p-sortable-disabled):hover .p-sortable-column-icon {
+    color: #ffffff !important;
+  }
+  /* Icono de filtro: gris por defecto y blanco en hover */
+  .cotizaciones-table .p-column-filter-menu-button,
+  .cotizaciones-table .p-column-filter-menu-button .pi {
+    color: #94a3b8 !important;
+  }
+  .cotizaciones-table .p-column-filter-menu-button:hover,
+  .cotizaciones-table th.p-sortable-column:hover .p-column-filter-menu-button,
+  .cotizaciones-table .p-column-filter-menu-button:hover .pi {
     color: #ffffff !important;
   }
   .p-datatable .p-sortable-column.p-highlight {
@@ -3235,6 +3248,15 @@
   }
   .p-datatable .p-sortable-column.p-highlight:not(.p-sortable-disabled):hover .p-sortable-column-icon {
     color: #1d4ed8;
+  }
+  /* Icono blanco también cuando la columna está ordenada (Cotizaciones) */
+  .cotizaciones-table.p-datatable .p-sortable-column.p-highlight .p-sortable-column-icon,
+  .cotizaciones-table .p-datatable .p-sortable-column.p-highlight .p-sortable-column-icon {
+    color: #ffffff !important;
+  }
+  .cotizaciones-table.p-datatable .p-sortable-column.p-highlight:not(.p-sortable-disabled):hover .p-sortable-column-icon,
+  .cotizaciones-table .p-datatable .p-sortable-column.p-highlight:not(.p-sortable-disabled):hover .p-sortable-column-icon {
+    color: #ffffff !important;
   }
   .p-datatable .p-sortable-column:focus-visible {
     box-shadow: inset 0 0 0 0.15rem #bfdbfe;
