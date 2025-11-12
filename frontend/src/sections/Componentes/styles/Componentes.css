@@ -82,6 +82,13 @@
     color: rgb(175, 175, 175);
 }
 
+/* Ocultar elementos innecesarios del filtro */
+.componentes-table .p-column-filter-operator,
+.componentes-table .p-column-filter-add-rule,
+.componentes-table .p-column-filter-matchmode-dropdown {
+    display: none !important;
+}
+
 /* Estilos para paginación personalizada */
 .custom-paginator {
     background: transparent !important;
