@@ -245,6 +245,7 @@ const Clientes = () => {
             filterField="pais"
             filter
             filterPlaceholder="Filtrar por país"
+            filterMenuClassName="clientes-filter-overlay"
             filterElement={(
               <InputText
                 value={filters?.pais?.value || ''}

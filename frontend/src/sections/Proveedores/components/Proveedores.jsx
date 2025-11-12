@@ -5,8 +5,9 @@ import { apiService } from '../../../services/apiService';
 import { Button } from 'primereact/button';
 import { Column } from 'primereact/column';
 import { ProgressSpinner } from 'primereact/progressspinner';
+import { Dropdown } from 'primereact/dropdown';
 import GetAllProveedores from '../../../modules/Proveedores/application/GetAllProveedores';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import ProveedoresRepository from '../../../modules/Proveedores/repository/ProveedoresRepository';
 import "../styles/Proveedores.css"
 import { useNavigate } from 'react-router-dom';
@@ -121,6 +122,27 @@ const Proveedores = () => {
     // Buscador universal para proveedores
     const { search, setSearch, results, loading: searchLoading } = useSearch((q) => apiService.universalSearch('proveedores', q));
 
+    // Opciones de ciudades (mismas que al crear proveedor) + "Todos"
+    const cityOptions = useMemo(() => (
+        ['Todos', 'Lima', 'Cusco', 'Arequipa', 'Trujillo', 'Iquitos', 'Puno', 'Chiclayo', 'Piura', 'Huaraz', 'Nazca', 'Aguas calientes']
+    ), []);
+
+    // Opciones de Tipo de servicio (mismas que al crear proveedor) + "Todos"
+    const serviceTypeOptions = useMemo(() => (
+        ['Todos', 'Alojamiento', 'Transporte', 'Tours', 'Guías turísticos', 'Restaurantes', 'Agencias de viajes', 'Otros']
+    ), []);
+
+    // Reordenar por tipo de servicio (separado para mantener memoización de opciones)
+    const sortedProveedores = useMemo(() => {
+        const data = search ? (Array.isArray(results) ? results : []) : proveedores;
+        if (!Array.isArray(data)) return [];
+        
+        return [...data].sort((a, b) => {
+            const typeA = a.serviceType || '';
+            const typeB = b.serviceType || '';
+            return typeA.localeCompare(typeB);
+        });
+    }, [search, results, proveedores]);
 
     return (
         <div className="proveedores">
@@ -144,7 +166,7 @@ const Proveedores = () => {
                 <DataTable 
                     className="proveedores-table" 
                     size="small" 
-                    value={search ? results : proveedores} 
+                    value={sortedProveedores} 
                     tableStyle={{ minWidth: '60%' }}
                     emptyMessage="No se encontraron proveedores"
                     paginator
@@ -163,7 +185,22 @@ const Proveedores = () => {
                     <Column 
                         field="serviceType" 
                         header={isMobile ? "Servicio" : "Tipo de servicio"}
-                        style={{ width: '20%' }}>
+                        style={{ width: '20%' }}
+                        filterField='serviceType'
+                        filter
+                        filterMatchMode='equals'
+                        filterElement={(options) => (
+                            <Dropdown
+                                value={options.value ?? 'Todos'}
+                                options={serviceTypeOptions}
+                                onChange={(e) => {
+                                    const val = e.value === 'Todos' ? null : e.value;
+                                    options.filterApplyCallback(val);
+                                }}
+                                placeholder="Todos"
+                                className="p-column-filter"
+                            />
+                        )}>
                     </Column>
                     <Column 
                         field="validityTo" 
@@ -190,7 +227,19 @@ const Proveedores = () => {
                         style={{ width: '10%' }}
                         filterField='city'
                         filter
-                        filterPlaceholder='Filtrar por ciudad'>
+                        filterMatchMode='equals'
+                        filterElement={(options) => (
+                            <Dropdown
+                                value={options.value ?? 'Todos'}
+                                options={cityOptions}
+                                onChange={(e) => {
+                                    const val = e.value === 'Todos' ? null : e.value;
+                                    options.filterApplyCallback(val);
+                                }}
+                                placeholder="Todos"
+                                className="p-column-filter"
+                            />
+                        )}>
                     </Column>
                     <Column 
                         field="whatsapp" 
