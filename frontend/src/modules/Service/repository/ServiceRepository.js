@@ -10,11 +10,11 @@ const getAuthHeaders = () => {
 };
 
 class ServiceRepository {
-    async getAllServices({ page = 0, limit = 10 } = {}) {
-        const response = await fetch(`${apiUrl}?page=${page}&limit=${limit}`, {
+    async getAllServices() {
+        const response = await fetch(`${apiUrl}`, {
             headers: getAuthHeaders()
         });
-        return await response.json(); // { data, total, page, limit }
+        return await response.json();
     }
 
     // Para páginas públicas como PlanYourTrip - sin autenticación

@@ -1,7 +1,8 @@
 import { Button } from "primereact/button";
-import { use, useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
+import { Paginator } from "primereact/paginator";
 import useSearch from "../../../hooks/useSearch";
 import SearchBar from "../../../components/SearchBar";
 import { apiService } from "../../../services/apiService";
@@ -23,8 +24,7 @@ const RegistroPagos = () => {
     const [showModal, setShowModal] = useState(false);
     const { setIsModalOpen } = useModal();
     const [first, setFirst] = useState(0);
-    const [rows, setRows] = useState(10);
-    const [totalRecords, setTotalRecords] = useState(0);
+    const [rows, setRows] = useState(15);
     const navigate = useNavigate();
     const [isMobile, setIsMobile] = useState(false);
 
@@ -39,22 +39,23 @@ const RegistroPagos = () => {
         return () => window.removeEventListener('resize', checkIfMobile);
     }, []);
 
-    const fetchData = async (page, pageSize) => {
+    // Cargar todas las cotizaciones finalizadas (sin paginación del backend)
+    const fetchData = async () => {
         try {
             setLoading(true);
-            const data = await getAllCotizaciones.execute({ page, pageSize });
-            const finalizedData = data.filter(cotizacion => cotizacion.estado === 'Finalizado');
+            const data = await getAllCotizaciones.execute();
+            const finalizedData = Array.isArray(data) ? data.filter(cotizacion => cotizacion.estado === 'Finalizado') : [];
             setCotizaciones(finalizedData);
-
         } catch (error) {
             console.error("Error fetching data:", error);
+            setCotizaciones([]);
         } finally {
             setLoading(false);
         }
     }
 
     useEffect(() => {
-        fetchData(0, rows);
+        fetchData();
     }, []);
 
     const handleModalOpen = (cotizacion) => {
@@ -69,13 +70,36 @@ const RegistroPagos = () => {
         fetchData();
     };
 
+    const { search, setSearch, results, loading: searchLoading } = useSearch((q) => apiService.universalSearch('itinerary-templates', q));
+
+    // Obtener los datos a mostrar (búsqueda o todos)
+    const baseData = useMemo(() => {
+        const data = search ? (Array.isArray(results) ? results : []) : cotizaciones;
+        return Array.isArray(data) ? data : [];
+    }, [search, results, cotizaciones]);
+
+    // Paginar los datos
+    const paginatedData = useMemo(() => {
+        const start = first;
+        const end = start + rows;
+        return baseData.slice(start, end);
+    }, [baseData, first, rows]);
+
+    // Total de registros
+    const totalRecords = useMemo(() => {
+        return baseData.length;
+    }, [baseData]);
+
+    // Función para manejar el cambio de página
     const onPageChange = (event) => {
-        const page = Math.floor(event.first / event.rows);
         setFirst(event.first);
         setRows(event.rows);
-        // loadItineraryTemplates(page, event.rows);
     };
-    const { search, setSearch, results, loading: searchLoading } = useSearch((q) => apiService.universalSearch('itinerary-templates', q));
+
+    // Resetear paginación cuando cambia la búsqueda
+    useEffect(() => {
+        setFirst(0);
+    }, [search]);
 
 
     return (
@@ -98,14 +122,10 @@ const RegistroPagos = () => {
             <DataTable 
                 className="registro-pagos-table" 
                 size="small" 
-                value={search ? results : cotizaciones} 
+                value={paginatedData} 
                 tableStyle={{ minWidth: '100%' }}
                 emptyMessage="No hay registros"
-                paginator
-                first={first}
-                rows={rows}
-                totalRecords={totalRecords}
-                onPage={onPageChange}
+                paginator={false}
                 loading={loading || searchLoading}
             >
                 <Column 
@@ -171,6 +191,19 @@ const RegistroPagos = () => {
                     )}
                 />
             </DataTable>
+        </div>
+
+        {/* Footer con paginación */}
+        <div className='registro-pagos-footer'>
+            <Paginator
+                first={first}
+                rows={rows}
+                totalRecords={totalRecords}
+                onPageChange={onPageChange}
+                rowsPerPageOptions={[15]}
+                template="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink"
+                className="custom-paginator"
+            />
         </div>
 
         {showModal && (

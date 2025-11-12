@@ -46,13 +46,19 @@ export class ServicesController {
   @Get()
     @RequirePermissions('SERVICIOS:VIEW')
     async findAll(
-      @Query('page') page: string,
-      @Query('limit') limit: string
+      @Query('page') page?: string,
+      @Query('limit') limit?: string
     ) {
-    const pageNum = parseInt(page || '0') || 0;
-    const limitNum = parseInt(limit || '10') || 10;
-
       const services = await this.servicesService.findAll();
+      
+      // Si no se especifican page y limit, devolver todos los servicios directamente
+      if (!page && !limit) {
+        return services;
+      }
+      
+      // Si se especifica paginación, devolver con estructura paginada
+      const pageNum = parseInt(page || '0') || 0;
+      const limitNum = parseInt(limit || '10') || 10;
       return {
         data: services,
         total: services.length,

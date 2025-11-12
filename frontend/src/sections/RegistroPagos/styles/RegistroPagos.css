@@ -39,7 +39,18 @@
     margin-top: 1rem;
     display: flex;
     justify-content: center;
-    color: rgb(175, 175, 175);
+    align-items: center;
+}
+
+.registro-pagos-footer .custom-paginator {
+    background: transparent;
+    border: none;
+}
+
+.registro-pagos-footer .custom-paginator .p-paginator-pages .p-paginator-page {
+    min-width: 2rem;
+    height: 2rem;
+    margin: 0 0.125rem;
 }
 
 /* Responsividad para tablets */

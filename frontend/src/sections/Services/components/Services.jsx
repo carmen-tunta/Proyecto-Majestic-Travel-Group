@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import SearchBar from '../../../components/SearchBar';
 import useSearch from '../../../hooks/useSearch';
 import { apiService } from '../../../services/apiService';
@@ -6,6 +6,7 @@ import { Button } from 'primereact/button';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Dropdown } from 'primereact/dropdown';
+import { Paginator } from 'primereact/paginator';
 import ServiceRepository from '../../../modules/Service/repository/ServiceRepository';
 import GetAllServices from '../../../modules/Service/application/GetAllServices';
 import { ProgressSpinner } from 'primereact/progressspinner';
@@ -26,8 +27,8 @@ const Services = () => {
     const [showModal, setShowModal] = useState(false);
     const [selectedService, setSelectedService] = useState(null);
     const [first, setFirst] = useState(0);
-    const [rows, setRows] = useState(10);
-    const [totalRecords, setTotalRecords] = useState(0);
+    const [rows, setRows] = useState(15);
+    const [filters, setFilters] = useState({ city: { value: null } });
     const [expandedRows, setExpandedRows] = useState(null);
 
     const { has } = usePermissions();
@@ -42,24 +43,17 @@ const Services = () => {
         setShowModal(true);
     }
 
-    const onPageChange = (event) => {
-        const page = Math.floor(event.first / event.rows);
-        setFirst(event.first);
-        setRows(event.rows);
-        loadServices(page, event.rows);
-    };
-
-    const loadServices = async (page = 0, pageSize = 10) => {
+    // Cargar todos los servicios (sin paginación del backend)
+    const loadServices = async () => {
         setLoading(true);
         try {
-            const serviceData = await getAllServices.execute(`?page=${page}&limit=${pageSize}`);
-            // Asegurar que serviceData.data es un array
-            setServices(Array.isArray(serviceData.data) ? serviceData.data : (Array.isArray(serviceData) ? serviceData : []));
-            setTotalRecords(serviceData.total || (Array.isArray(serviceData) ? serviceData.length : 0));
+            const serviceData = await getAllServices.execute();
+            // Asegurar que serviceData es un array
+            const data = Array.isArray(serviceData) ? serviceData : [];
+            setServices(data);
         } catch (error) {
             console.error('Error al obtener los servicios:', error);
             setServices([]);
-            setTotalRecords(0);
         } finally {
             setLoading(false);
         }
@@ -127,6 +121,41 @@ const Services = () => {
         });
     }, [search, results, services]);
 
+    // Aplicar filtros sobre los datos ordenados
+    const filteredServices = useMemo(() => {
+        let data = sortedServices;
+        
+        // Filtrar por ciudad si hay un filtro activo
+        if (filters.city?.value) {
+            data = data.filter(service => service.city === filters.city.value);
+        }
+        
+        return data;
+    }, [sortedServices, filters]);
+
+    // Paginar los datos filtrados
+    const paginatedServices = useMemo(() => {
+        const start = first;
+        const end = start + rows;
+        return filteredServices.slice(start, end);
+    }, [filteredServices, first, rows]);
+
+    // Total de registros filtrados
+    const filteredTotalRecords = useMemo(() => {
+        return filteredServices.length;
+    }, [filteredServices]);
+
+    // Función para manejar el cambio de página
+    const onPageChange = (event) => {
+        setFirst(event.first);
+        setRows(event.rows);
+    };
+
+    // Resetear paginación cuando cambian los filtros o búsqueda
+    useEffect(() => {
+        setFirst(0);
+    }, [filters, search]);
+
     return (
         <div className="service">
             <div className='service-header'>
@@ -149,18 +178,16 @@ const Services = () => {
                 <DataTable
                     className="service-table"
                     size="small"
-                    value={sortedServices}
+                    value={paginatedServices}
                     tableStyle={{ minWidth: '60%' }}
                     emptyMessage="No se encontraron servicios"
                     expandedRows={expandedRows}
                     onRowToggle={e => setExpandedRows(e.data)}
                     rowExpansionTemplate={rowExpansionTemplate}
                     loading={loading || searchLoading}
-                    paginator
-                    first={first}
-                    rows={rows}
-                    totalRecords={totalRecords}
-                    onPage={onPageChange}
+                    paginator={false}
+                    filters={filters}
+                    onFilter={(e) => setFilters(e.filters)}
                     filterDisplay='menu'
                 >
                     <Column
@@ -217,6 +244,19 @@ const Services = () => {
                         )}
                     />
                 </DataTable>
+            </div>
+
+            {/* Footer con paginación */}
+            <div className='service-footer'>
+                <Paginator
+                    first={first}
+                    rows={rows}
+                    totalRecords={filteredTotalRecords}
+                    onPageChange={onPageChange}
+                    rowsPerPageOptions={[15]}
+                    template="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink"
+                    className="custom-paginator"
+                />
             </div>
 
             {showModal && (
