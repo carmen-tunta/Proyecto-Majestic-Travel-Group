@@ -3210,6 +3210,18 @@
   .p-datatable .p-sortable-column:not(.p-highlight):not(.p-sortable-disabled):hover .p-sortable-column-icon {
     color: #374151;
   }
+  /* Override para tabla de cotizaciones - azul más fuerte en hover */
+  .cotizaciones-table.p-datatable .p-sortable-column:not(.p-highlight):not(.p-sortable-disabled):hover,
+  .cotizaciones-table .p-datatable .p-sortable-column:not(.p-highlight):not(.p-sortable-disabled):hover {
+    background: #0B329E !important;
+    color: #ffffff !important;
+  }
+  .cotizaciones-table.p-datatable .p-sortable-column:not(.p-highlight):not(.p-sortable-disabled):hover .p-sortable-column-icon,
+  .cotizaciones-table .p-datatable .p-sortable-column:not(.p-highlight):not(.p-sortable-disabled):hover .p-sortable-column-icon,
+  .cotizaciones-table.p-datatable .p-sortable-column:not(.p-highlight):not(.p-sortable-disabled):hover *,
+  .cotizaciones-table .p-datatable .p-sortable-column:not(.p-highlight):not(.p-sortable-disabled):hover * {
+    color: #ffffff !important;
+  }
   .p-datatable .p-sortable-column.p-highlight {
     background: #eff6ff;
     color: #1d4ed8;

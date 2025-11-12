@@ -53,6 +53,46 @@
 .cotizaciones-search { margin-bottom: 2rem; }
 .cotizaciones-table { width: 100%; }
 .cotizaciones-table .p-datatable-thead > tr > th { color: #ffffff; font-weight: normal; border: none; }
+/* Estilos para columnas ordenables - azul más fuerte en hover - selectores más específicos */
+.cotizaciones-table.p-datatable .p-datatable-thead > tr > th.p-sortable-column:hover,
+.cotizaciones-table .p-datatable .p-datatable-thead > tr > th.p-sortable-column:hover {
+    background-color: #0B329E !important; 
+    color: #ffffff !important; 
+}
+.cotizaciones-table.p-datatable .p-datatable-thead > tr > th.p-sortable-column:hover *,
+.cotizaciones-table.p-datatable .p-datatable-thead > tr > th.p-sortable-column:hover .p-sortable-column-icon,
+.cotizaciones-table.p-datatable .p-datatable-thead > tr > th.p-sortable-column:hover span,
+.cotizaciones-table .p-datatable .p-datatable-thead > tr > th.p-sortable-column:hover *,
+.cotizaciones-table .p-datatable .p-datatable-thead > tr > th.p-sortable-column:hover .p-sortable-column-icon,
+.cotizaciones-table .p-datatable .p-datatable-thead > tr > th.p-sortable-column:hover span {
+    color: #ffffff !important;
+}
+.cotizaciones-table.p-datatable .p-datatable-thead > tr > th.p-sortable-column.p-highlight,
+.cotizaciones-table .p-datatable .p-datatable-thead > tr > th.p-sortable-column.p-highlight {
+    background-color: #1E88E5 !important;
+    color: #ffffff !important;
+}
+.cotizaciones-table.p-datatable .p-datatable-thead > tr > th.p-sortable-column.p-highlight *,
+.cotizaciones-table.p-datatable .p-datatable-thead > tr > th.p-sortable-column.p-highlight .p-sortable-column-icon,
+.cotizaciones-table.p-datatable .p-datatable-thead > tr > th.p-sortable-column.p-highlight span,
+.cotizaciones-table .p-datatable .p-datatable-thead > tr > th.p-sortable-column.p-highlight *,
+.cotizaciones-table .p-datatable .p-datatable-thead > tr > th.p-sortable-column.p-highlight .p-sortable-column-icon,
+.cotizaciones-table .p-datatable .p-datatable-thead > tr > th.p-sortable-column.p-highlight span {
+    color: #ffffff !important;
+}
+.cotizaciones-table.p-datatable .p-datatable-thead > tr > th.p-sortable-column.p-highlight:hover,
+.cotizaciones-table .p-datatable .p-datatable-thead > tr > th.p-sortable-column.p-highlight:hover {
+    background-color: #0B329E !important;
+    color: #ffffff !important;
+}
+.cotizaciones-table.p-datatable .p-datatable-thead > tr > th.p-sortable-column.p-highlight:hover *,
+.cotizaciones-table.p-datatable .p-datatable-thead > tr > th.p-sortable-column.p-highlight:hover .p-sortable-column-icon,
+.cotizaciones-table.p-datatable .p-datatable-thead > tr > th.p-sortable-column.p-highlight:hover span,
+.cotizaciones-table .p-datatable .p-datatable-thead > tr > th.p-sortable-column.p-highlight:hover *,
+.cotizaciones-table .p-datatable .p-datatable-thead > tr > th.p-sortable-column.p-highlight:hover .p-sortable-column-icon,
+.cotizaciones-table .p-datatable .p-datatable-thead > tr > th.p-sortable-column.p-highlight:hover span {
+    color: #ffffff !important;
+}
 .cotizaciones-table .p-datatable-tbody > tr > td { border: none; padding: 15px; }
 .cotizaciones-table .p-datatable-tbody > tr:nth-child(even) > td { border-bottom: 1px solid #e6e9ef; padding: 0rem 0rem 0.5rem 2.5rem; }
 
@@ -153,4 +193,21 @@
   .cotizaciones .custom-paginator .p-paginator-next,
   .cotizaciones .custom-paginator .p-paginator-last { padding: 4px 6px !important; font-size: 10px !important; margin: 0 1px !important; min-width: 24px !important; height: 24px !important; }
   .cotizaciones .custom-paginator .p-paginator-current { font-size: 9px !important; }
+}
+
+/* Regla adicional para asegurar hover azul más fuerte - máxima especificidad con contenedor padre */
+.cotizaciones .card .cotizaciones-table.p-datatable .p-sortable-column:hover,
+.cotizaciones .card .cotizaciones-table.p-datatable .p-sortable-column:hover *,
+.cotizaciones .card .cotizaciones-table.p-datatable .p-sortable-column:hover .p-sortable-column-icon,
+.cotizaciones .card .cotizaciones-table .p-datatable .p-sortable-column:hover,
+.cotizaciones .card .cotizaciones-table .p-datatable .p-sortable-column:hover *,
+.cotizaciones .card .cotizaciones-table .p-datatable .p-sortable-column:hover .p-sortable-column-icon,
+.cotizaciones .card .cotizaciones-table.p-datatable .p-datatable-thead > tr > th.p-sortable-column:hover,
+.cotizaciones .card .cotizaciones-table.p-datatable .p-datatable-thead > tr > th.p-sortable-column:hover *,
+.cotizaciones .card .cotizaciones-table.p-datatable .p-datatable-thead > tr > th.p-sortable-column:hover .p-sortable-column-icon,
+.cotizaciones .card .cotizaciones-table .p-datatable .p-datatable-thead > tr > th.p-sortable-column:hover,
+.cotizaciones .card .cotizaciones-table .p-datatable .p-datatable-thead > tr > th.p-sortable-column:hover *,
+.cotizaciones .card .cotizaciones-table .p-datatable .p-datatable-thead > tr > th.p-sortable-column:hover .p-sortable-column-icon {
+  background-color: #0B329E !important;
+  color: #ffffff !important;
 }
