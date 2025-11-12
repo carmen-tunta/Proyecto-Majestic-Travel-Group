@@ -41,6 +41,20 @@
     color: rgb(175, 175, 175);
 }
 
+/* Ocultar operadores y opciones avanzadas del filtro */
+.service-table .p-column-filter-operator,
+.service-table .p-column-filter-add-rule,
+.service-table .p-column-filter-matchmode-dropdown.p-dropdown.p-component.p-inputwrapper.p-inputwrapper-filled {
+    display: none;
+}
+
+/* Ocultar dropdown y elementos no necesarios del filtro en Servicios */
+.p-column-filter-overlay .p-column-filter-matchmode-dropdown,
+.p-column-filter-overlay .p-column-filter-operator,
+.p-column-filter-overlay .p-column-filter-add-rule {
+    display: none !important;
+}
+
 /* ========== RESPONSIVE DESIGN ========== */
 
 /* Tablets y pantallas medianas (768px - 1024px) */

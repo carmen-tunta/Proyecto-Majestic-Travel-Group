@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import SearchBar from '../../../components/SearchBar';
 import useSearch from '../../../hooks/useSearch';
 import { apiService } from '../../../services/apiService';
 import { Button } from 'primereact/button';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
-import { Paginator } from 'primereact/paginator';
+import { Dropdown } from 'primereact/dropdown';
 import ServiceRepository from '../../../modules/Service/repository/ServiceRepository';
 import GetAllServices from '../../../modules/Service/application/GetAllServices';
 import { ProgressSpinner } from 'primereact/progressspinner';
@@ -13,6 +13,7 @@ import ServiceModal from './ServicesModal';
 import { usePermissions } from '../../../contexts/PermissionsContext';
 import "../styles/Services.css"
 import { useNavigate } from 'react-router-dom';
+import { addLocale, locale } from 'primereact/api';
 
 
 const Services = () => {
@@ -68,6 +69,24 @@ const Services = () => {
         loadServices();
     }, []);
 
+    // Configurar localización en español
+    useEffect(() => {
+        addLocale('es', {
+            apply: 'Aplicar',
+            clear: 'Limpiar',
+            matchAll: 'Coincidir todo',
+            matchAny: 'Coincidir cualquiera',
+            addRule: 'Agregar regla',
+            removeRule: 'Quitar regla',
+            accept: 'Sí',
+            reject: 'No',
+            choose: 'Elegir',
+            upload: 'Subir',
+            cancel: 'Cancelar'
+        });
+        locale('es');
+    }, []);
+
     const handleModalClose = (shouldReload = false) => {
         // Cerrar modal inmediatamente
         setShowModal(false);
@@ -91,6 +110,22 @@ const Services = () => {
     // Buscador universal para servicios
     const { search, setSearch, results, loading: searchLoading } = useSearch((q) => apiService.universalSearch('services', q));
 
+    // Opciones de ciudades (mismas que al crear servicio) + "Todos"
+    const cityOptions = useMemo(() => (
+        ['Todos', 'Lima', 'Cusco', 'Arequipa', 'Trujillo', 'Iquitos', 'Puno', 'Chiclayo', 'Piura', 'Huaraz', 'Nazca']
+    ), []);
+
+    // Ordenar datos por ciudad
+    const sortedServices = useMemo(() => {
+        const data = search ? (Array.isArray(results) ? results : []) : services;
+        if (!Array.isArray(data)) return [];
+        
+        return [...data].sort((a, b) => {
+            const cityA = a.city || '';
+            const cityB = b.city || '';
+            return cityA.localeCompare(cityB);
+        });
+    }, [search, results, services]);
 
     return (
         <div className="service">
@@ -114,13 +149,19 @@ const Services = () => {
                 <DataTable
                     className="service-table"
                     size="small"
-                    value={search ? results : services}
+                    value={sortedServices}
                     tableStyle={{ minWidth: '60%' }}
                     emptyMessage="No se encontraron servicios"
                     expandedRows={expandedRows}
                     onRowToggle={e => setExpandedRows(e.data)}
                     rowExpansionTemplate={rowExpansionTemplate}
                     loading={loading || searchLoading}
+                    paginator
+                    first={first}
+                    rows={rows}
+                    totalRecords={totalRecords}
+                    onPage={onPageChange}
+                    filterDisplay='menu'
                 >
                     <Column
                         expander
@@ -134,7 +175,22 @@ const Services = () => {
                     <Column
                         field="city"
                         header="Ciudad"
-                        style={{ width: '28%' }}>
+                        style={{ width: '28%' }}
+                        filterField='city'
+                        filter
+                        filterMatchMode='equals'
+                        filterElement={(options) => (
+                            <Dropdown
+                                value={options.value ?? 'Todos'}
+                                options={cityOptions}
+                                onChange={(e) => {
+                                    const val = e.value === 'Todos' ? null : e.value;
+                                    options.filterApplyCallback(val);
+                                }}
+                                placeholder="Todos"
+                                className="p-column-filter"
+                            />
+                        )}>
                     </Column>
                     <Column
                         header="Acción"
@@ -161,19 +217,6 @@ const Services = () => {
                         )}
                     />
                 </DataTable>
-            </div>
-
-            {/* Footer con paginación */}
-            <div className='services-footer'>
-                <Paginator
-                    first={first}
-                    rows={rows}
-                    totalRecords={totalRecords}
-                    rowsPerPageOptions={[10]}
-                    onPageChange={onPageChange}
-                    template="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink"
-                    className="custom-paginator"
-                />
             </div>
 
             {showModal && (
