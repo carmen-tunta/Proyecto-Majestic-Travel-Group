@@ -211,6 +211,13 @@
     
 }
 
+/* Ocultar operadores y opciones avanzadas del filtro */
+.p-column-filter-operator,
+.p-column-filter-add-rule,
+.p-column-filter-matchmode-dropdown.p-dropdown.p-component.p-inputwrapper.p-inputwrapper-filled {
+    display: none;
+}
+
 /* Ajustes adicionales para mejorar la experiencia móvil */
 @media (max-width: 768px) {
     /* Hacer el SearchBar más responsivo */
@@ -244,4 +251,12 @@
     }
   
     
+}
+
+/* Ocultar dropdown y elementos no necesarios del filtro en Clientes */
+.p-column-filter-overlay.clientes-filter-overlay .p-dropdown,
+.p-column-filter-overlay.clientes-filter-overlay .p-column-filter-matchmode-dropdown,
+.p-column-filter-overlay.clientes-filter-overlay .p-column-filter-operator,
+.p-column-filter-overlay.clientes-filter-overlay .p-column-filter-add-rule {
+	display: none !important;
 }

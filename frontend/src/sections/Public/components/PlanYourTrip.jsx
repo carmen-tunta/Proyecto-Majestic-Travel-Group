@@ -351,7 +351,7 @@ export default function PlanYourTrip() {
           <img src="/logo_mtg.png" alt="Majestic Travel Group" className="pyt-logo" />
           <div className="pyt-title">
             <h1>Plan your trip</h1>
-            <a href="/" className="pyt-home-link">Return to home</a>
+            <a href="https://peruandestop.com/" className="pyt-home-link">Return to home</a>
           </div>
         </div>
       </header>

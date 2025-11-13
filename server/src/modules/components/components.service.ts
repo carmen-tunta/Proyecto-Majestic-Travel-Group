@@ -44,7 +44,7 @@ export class ComponentsService {
     limit: number;
   }> {
     const [data, total] = await this.componentsRepository.findAndCount({
-      order: { id: 'ASC' },
+      order: { serviceType: 'ASC', componentName: 'ASC' },
       skip: page * limit,
       take: limit
     });

@@ -3,8 +3,8 @@ class GetAllServices {
         this.serviceRepository = serviceRepository;
     }
 
-    async execute(params = { page: 0, limit: 6 }) {
-        return await this.serviceRepository.getAllServices(params);
+    async execute() {
+        return await this.serviceRepository.getAllServices();
     }
 }
 

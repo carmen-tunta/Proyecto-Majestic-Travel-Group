@@ -1,9 +1,11 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from 'primereact/button';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Paginator } from 'primereact/paginator';
+import { InputText } from 'primereact/inputtext';
+import { addLocale, locale } from 'primereact/api';
 import SearchBar from '../../../components/SearchBar';
 import useSearch from '../../../hooks/useSearch';
 import { apiService } from '../../../services/apiService';
@@ -17,9 +19,40 @@ const Clientes = () => {
   const [clientes, setClientes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [first, setFirst] = useState(0);
-  const [rows, setRows] = useState(10);
-  const [totalRecords, setTotalRecords] = useState(0);
+  const [rows, setRows] = useState(15);
   const [isMobile, setIsMobile] = useState(false);
+  const [filters, setFilters] = useState({ pais: { value: '' } });
+
+  // Configurar localización en español
+  useEffect(() => {
+    addLocale('es', {
+      apply: 'Aplicar',
+      clear: 'Limpiar',
+      matchAll: 'Coincidir todo',
+      matchAny: 'Coincidir cualquiera',
+      addRule: 'Agregar regla',
+      removeRule: 'Quitar regla',
+      accept: 'Sí',
+      reject: 'No',
+      choose: 'Elegir',
+      upload: 'Subir',
+      cancel: 'Cancelar',
+      dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+      dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+      dayNamesMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa'],
+      monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+      monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+      today: 'Hoy',
+      weekHeader: 'Sem',
+      firstDayOfWeek: 1,
+      dateFormat: 'dd/mm/yy',
+      weak: 'Débil',
+      medium: 'Medio',
+      strong: 'Fuerte',
+      passwordPrompt: 'Ingrese una contraseña'
+    });
+    locale('es');
+  }, []);
 
   useEffect(() => {
   const checkScreenSize = () => {
@@ -42,11 +75,9 @@ const Clientes = () => {
       const response = await getAllClients.execute();
       // El backend devuelve un array directo
       setClientes(Array.isArray(response) ? response : []);
-      setTotalRecords(Array.isArray(response) ? response.length : 0);
     } catch (error) {
       console.error('Error al obtener clientes:', error);
       setClientes([]);
-      setTotalRecords(0);
     } finally {
       setLoading(false);
     }
@@ -85,11 +116,64 @@ const Clientes = () => {
     () => fetchClientes()
   );
 
+  // Obtener los datos a mostrar (búsqueda o todos) - ordenados por país
+  const baseData = useMemo(() => {
+    const data = search ? (Array.isArray(results) ? results : []) : clientes;
+    if (!Array.isArray(data)) return [];
+    
+    // Ordenar por país
+    return [...data].sort((a, b) => {
+      const paisA = a.pais || '';
+      const paisB = b.pais || '';
+      return paisA.localeCompare(paisB);
+    });
+  }, [search, results, clientes]);
+
+  // Aplicar filtro de país
+  const filteredData = useMemo(() => {
+    if (!Array.isArray(baseData)) return [];
+    
+    let filtered = [...baseData];
+
+    // Aplicar filtro de país si existe
+    if (filters.pais && filters.pais.value && filters.pais.value.trim() !== '') {
+      const filterValue = filters.pais.value.toLowerCase().trim();
+      filtered = filtered.filter(cliente => {
+        const pais = (cliente.pais || '').toLowerCase().trim();
+        return pais.includes(filterValue);
+      });
+    }
+
+    return filtered;
+  }, [baseData, filters]);
+
+  // Paginar los datos filtrados
+  const paginatedData = useMemo(() => {
+    if (!Array.isArray(filteredData)) return [];
+    const start = first;
+    const end = first + rows;
+    return filteredData.slice(start, end);
+  }, [filteredData, first, rows]);
+
+  // Calcular total de registros después del filtro
+  const totalRecords = useMemo(() => {
+    return Array.isArray(filteredData) ? filteredData.length : 0;
+  }, [filteredData]);
+
+  // Resetear a la primera página cuando cambia la búsqueda o los filtros
+  useEffect(() => {
+    setFirst(0);
+  }, [search, filters]);
+
   // Función para manejar el cambio de página
   const onPageChange = (event) => {
     setFirst(event.first);
     setRows(event.rows);
-    // Por ahora no hay paginación en el backend, solo actualizamos el estado local
+  };
+
+  // Función para manejar cambios en los filtros del DataTable
+  const handleFilter = (event) => {
+    setFilters(event.filters);
   };
 
   const { has } = usePermissions();
@@ -129,13 +213,14 @@ const Clientes = () => {
         <DataTable 
           className="clientes-table" 
           size="small" 
-          value={search ? results : clientes} 
+          value={paginatedData} 
           loading={loading || searchLoading}
           emptyMessage="No se encontraron clientes"
           tableStyle={{ minWidth: '60%' }}
           paginator={false}
-          first={first}
-          rows={rows}
+          onFilter={handleFilter}
+          filters={filters}
+          filterDisplay="menu"
         >
           <Column
             field="nombre"
@@ -157,6 +242,18 @@ const Clientes = () => {
             field="pais"
             header="País"
             style={{ width: '15%', textAlign: 'center' }}
+            filterField="pais"
+            filter
+            filterPlaceholder="Filtrar por país"
+            filterMenuClassName="clientes-filter-overlay"
+            filterElement={(
+              <InputText
+                value={filters?.pais?.value || ''}
+                onChange={(e) => setFilters(prev => ({ ...prev, pais: { value: e.target.value } }))}
+                placeholder="Filtrar por país"
+                className="p-column-filter"
+              />
+            )}
             body={(rowData) => (
               <div style={{ 
                 textAlign: 'center', 
@@ -277,7 +374,6 @@ const Clientes = () => {
           first={first}
           rows={rows}
           totalRecords={totalRecords}
-          rowsPerPageOptions={[10]}
           onPageChange={onPageChange}
           template="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink"
           className="custom-paginator"

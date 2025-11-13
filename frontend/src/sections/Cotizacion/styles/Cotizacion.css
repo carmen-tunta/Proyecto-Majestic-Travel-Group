@@ -53,6 +53,19 @@
 .cotizaciones-search { margin-bottom: 2rem; }
 .cotizaciones-table { width: 100%; }
 .cotizaciones-table .p-datatable-thead > tr > th { color: #ffffff; font-weight: normal; border: none; }
+/* Unificar con Clientes: mantener fondo oscuro y texto blanco; solo icono cambia */
+.cotizaciones-table .p-datatable-thead > tr > th.p-sortable-column {
+    background: var(--primary-color) !important;
+    color: #ffffff !important;
+}
+.cotizaciones-table .p-datatable-thead > tr > th.p-sortable-column:hover,
+.cotizaciones-table .p-datatable-thead > tr > th.p-sortable-column.p-highlight,
+.cotizaciones-table .p-datatable-thead > tr > th.p-sortable-column.p-highlight:hover {
+    background: var(--primary-color) !important;
+    color: #ffffff !important;
+}
+
+/* Color del icono se controla desde theme.css para default gris y hover blanco */
 .cotizaciones-table .p-datatable-tbody > tr > td { border: none; padding: 15px; }
 .cotizaciones-table .p-datatable-tbody > tr:nth-child(even) > td { border-bottom: 1px solid #e6e9ef; padding: 0rem 0rem 0.5rem 2.5rem; }
 
@@ -153,4 +166,13 @@
   .cotizaciones .custom-paginator .p-paginator-next,
   .cotizaciones .custom-paginator .p-paginator-last { padding: 4px 6px !important; font-size: 10px !important; margin: 0 1px !important; min-width: 24px !important; height: 24px !important; }
   .cotizaciones .custom-paginator .p-paginator-current { font-size: 9px !important; }
+}
+
+/* Sin fondo azul: mantener oscuro; solo el icono cambia (ya se controla arriba) */
+.cotizaciones .card .cotizaciones-table.p-datatable .p-sortable-column:hover,
+.cotizaciones .card .cotizaciones-table .p-datatable .p-sortable-column:hover,
+.cotizaciones .card .cotizaciones-table.p-datatable .p-datatable-thead > tr > th.p-sortable-column:hover,
+.cotizaciones .card .cotizaciones-table .p-datatable .p-datatable-thead > tr > th.p-sortable-column:hover {
+  background-color: var(--primary-color) !important;
+  color: #ffffff !important;
 }

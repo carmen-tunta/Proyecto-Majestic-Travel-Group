@@ -5,8 +5,10 @@ import { apiService } from '../../../services/apiService';
 import { Button } from 'primereact/button';
 import { Column } from 'primereact/column';
 import { ProgressSpinner } from 'primereact/progressspinner';
+import { Dropdown } from 'primereact/dropdown';
+import { Paginator } from 'primereact/paginator';
 import GetAllProveedores from '../../../modules/Proveedores/application/GetAllProveedores';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import ProveedoresRepository from '../../../modules/Proveedores/repository/ProveedoresRepository';
 import "../styles/Proveedores.css"
 import { useNavigate } from 'react-router-dom';
@@ -70,8 +72,8 @@ const Proveedores = () => {
     const [proveedores, setProveedores] = useState([]);
     const [loading, setLoading] = useState(true);
     const [first, setFirst] = useState(0);
-    const [rows, setRows] = useState(10);
-    const [totalRecords, setTotalRecords] = useState(0);
+    const [rows, setRows] = useState(15);
+    const [filters, setFilters] = useState({ serviceType: { value: null }, city: { value: null } });
     const navigate = useNavigate();
     const { has } = usePermissions();
 
@@ -88,25 +90,18 @@ const Proveedores = () => {
         navigate('/proveedores/detalles');
     }
 
-    const onPageChange = (event) => {
-        const page = Math.floor(event.first / event.rows);
-        setFirst(event.first);
-        setRows(event.rows);
-    };
-
     const getAllTarifario = new GetAllTarifario(tarifarioRepository);
 
-    const loadProveedores = async (page = 0, pageSize = 10) => {
+    // Cargar todos los proveedores (sin paginación del backend)
+    const loadProveedores = async () => {
         setLoading(true);
         try {
-            const proveedorData = await getAllProveedores.execute(`?page=${page}&limit=${pageSize}`);
-            const proveedoresList = Array.isArray(proveedorData.data) ? proveedorData.data : (Array.isArray(proveedorData) ? proveedorData : []);
+            const proveedorData = await getAllProveedores.execute();
+            const proveedoresList = Array.isArray(proveedorData) ? proveedorData : [];
             setProveedores(proveedoresList);
-            setTotalRecords(proveedorData.total || (Array.isArray(proveedorData) ? proveedorData.length : 0));
         } catch (error) {
             console.error('Error al obtener los proveedores:', error);
             setProveedores([]);
-            setTotalRecords(0);
         } finally {
             setLoading(false);
         }
@@ -121,6 +116,67 @@ const Proveedores = () => {
     // Buscador universal para proveedores
     const { search, setSearch, results, loading: searchLoading } = useSearch((q) => apiService.universalSearch('proveedores', q));
 
+    // Opciones de ciudades (mismas que al crear proveedor) + "Todos"
+    const cityOptions = useMemo(() => (
+        ['Todos', 'Lima', 'Cusco', 'Arequipa', 'Trujillo', 'Iquitos', 'Puno', 'Chiclayo', 'Piura', 'Huaraz', 'Nazca', 'Aguas calientes']
+    ), []);
+
+    // Opciones de Tipo de servicio (mismas que al crear proveedor) + "Todos"
+    const serviceTypeOptions = useMemo(() => (
+        ['Todos', 'Alojamiento', 'Transporte', 'Tours', 'Guías turísticos', 'Restaurantes', 'Agencias de viajes', 'Otros']
+    ), []);
+
+    // Reordenar por tipo de servicio
+    const sortedProveedores = useMemo(() => {
+        const data = search ? (Array.isArray(results) ? results : []) : proveedores;
+        if (!Array.isArray(data)) return [];
+        
+        return [...data].sort((a, b) => {
+            const typeA = a.serviceType || '';
+            const typeB = b.serviceType || '';
+            return typeA.localeCompare(typeB);
+        });
+    }, [search, results, proveedores]);
+
+    // Aplicar filtros sobre los datos ordenados
+    const filteredProveedores = useMemo(() => {
+        let data = sortedProveedores;
+        
+        // Filtrar por tipo de servicio si hay un filtro activo
+        if (filters.serviceType?.value) {
+            data = data.filter(prov => prov.serviceType === filters.serviceType.value);
+        }
+        
+        // Filtrar por ciudad si hay un filtro activo
+        if (filters.city?.value) {
+            data = data.filter(prov => prov.city === filters.city.value);
+        }
+        
+        return data;
+    }, [sortedProveedores, filters]);
+
+    // Paginar los datos filtrados
+    const paginatedProveedores = useMemo(() => {
+        const start = first;
+        const end = start + rows;
+        return filteredProveedores.slice(start, end);
+    }, [filteredProveedores, first, rows]);
+
+    // Total de registros filtrados
+    const filteredTotalRecords = useMemo(() => {
+        return filteredProveedores.length;
+    }, [filteredProveedores]);
+
+    // Función para manejar el cambio de página
+    const onPageChange = (event) => {
+        setFirst(event.first);
+        setRows(event.rows);
+    };
+
+    // Resetear paginación cuando cambian los filtros o búsqueda
+    useEffect(() => {
+        setFirst(0);
+    }, [filters, search]);
 
     return (
         <div className="proveedores">
@@ -144,14 +200,12 @@ const Proveedores = () => {
                 <DataTable 
                     className="proveedores-table" 
                     size="small" 
-                    value={search ? results : proveedores} 
+                    value={paginatedProveedores} 
                     tableStyle={{ minWidth: '60%' }}
                     emptyMessage="No se encontraron proveedores"
-                    paginator
-                    first={first}
-                    rows={rows}
-                    totalRecords={totalRecords}
-                    onPage={onPageChange}
+                    paginator={false}
+                    filters={filters}
+                    onFilter={(e) => setFilters(e.filters)}
                     loading={loading || searchLoading}
                     filterDisplay='menu'
                 >
@@ -163,7 +217,22 @@ const Proveedores = () => {
                     <Column 
                         field="serviceType" 
                         header={isMobile ? "Servicio" : "Tipo de servicio"}
-                        style={{ width: '20%' }}>
+                        style={{ width: '20%' }}
+                        filterField='serviceType'
+                        filter
+                        filterMatchMode='equals'
+                        filterElement={(options) => (
+                            <Dropdown
+                                value={options.value ?? 'Todos'}
+                                options={serviceTypeOptions}
+                                onChange={(e) => {
+                                    const val = e.value === 'Todos' ? null : e.value;
+                                    options.filterApplyCallback(val);
+                                }}
+                                placeholder="Todos"
+                                className="p-column-filter"
+                            />
+                        )}>
                     </Column>
                     <Column 
                         field="validityTo" 
@@ -190,7 +259,19 @@ const Proveedores = () => {
                         style={{ width: '10%' }}
                         filterField='city'
                         filter
-                        filterPlaceholder='Filtrar por ciudad'>
+                        filterMatchMode='equals'
+                        filterElement={(options) => (
+                            <Dropdown
+                                value={options.value ?? 'Todos'}
+                                options={cityOptions}
+                                onChange={(e) => {
+                                    const val = e.value === 'Todos' ? null : e.value;
+                                    options.filterApplyCallback(val);
+                                }}
+                                placeholder="Todos"
+                                className="p-column-filter"
+                            />
+                        )}>
                     </Column>
                     <Column 
                         field="whatsapp" 
@@ -229,7 +310,18 @@ const Proveedores = () => {
                 </DataTable>
             </div>
 
-            
+            {/* Footer con paginación */}
+            <div className='proveedores-footer'>
+                <Paginator
+                    first={first}
+                    rows={rows}
+                    totalRecords={filteredTotalRecords}
+                    onPageChange={onPageChange}
+                    rowsPerPageOptions={[15]}
+                    template="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink"
+                    className="custom-paginator"
+                />
+            </div>
     
         </div>
     )

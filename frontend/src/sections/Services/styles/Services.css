@@ -38,7 +38,32 @@
     margin-top: 1rem;
     display: flex;
     justify-content: center;
-    color: rgb(175, 175, 175);
+    align-items: center;
+}
+
+.service-footer .custom-paginator {
+    background: transparent;
+    border: none;
+}
+
+.service-footer .custom-paginator .p-paginator-pages .p-paginator-page {
+    min-width: 2rem;
+    height: 2rem;
+    margin: 0 0.125rem;
+}
+
+/* Ocultar operadores y opciones avanzadas del filtro */
+.service-table .p-column-filter-operator,
+.service-table .p-column-filter-add-rule,
+.service-table .p-column-filter-matchmode-dropdown.p-dropdown.p-component.p-inputwrapper.p-inputwrapper-filled {
+    display: none;
+}
+
+/* Ocultar dropdown y elementos no necesarios del filtro en Servicios */
+.p-column-filter-overlay .p-column-filter-matchmode-dropdown,
+.p-column-filter-overlay .p-column-filter-operator,
+.p-column-filter-overlay .p-column-filter-add-rule {
+    display: none !important;
 }
 
 /* ========== RESPONSIVE DESIGN ========== */
