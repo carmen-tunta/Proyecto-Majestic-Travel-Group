@@ -19,7 +19,7 @@ const ReportesHome = () => {
           label="Cotización"
           icon="pi pi-money-bill"
           outlined
-          onClick={() => navigate('/cotizaciones')}
+          onClick={() => navigate('/reportes/cotizacion')}
         />
       </div>
     </div>

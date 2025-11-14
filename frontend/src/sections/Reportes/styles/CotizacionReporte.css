@@ -1,0 +1,96 @@
+/* Overrides specific to Reportes > Cotización to avoid horizontal scroll
+   while keeping the original Cotización look & feel. */
+
+/* El contenedor no debe permitir scroll horizontal */
+.cotizaciones .card { overflow-x: hidden; }
+.cotizaciones-table.cotz-report .p-datatable-wrapper { overflow-x: hidden !important; }
+
+/* Forzar encabezado con el mismo fondo primario que la vista original */
+.cotizaciones-table.cotz-report .p-datatable-thead > tr > th {
+  background: var(--primary-color) !important;
+  color: #ffffff !important;
+}
+
+/* Permitir que todo el contenido de celdas y cabeceras haga wrap */
+/* Encabezados: una sola línea; Celdas: permitido el wrap */
+.cotizaciones-table.cotz-report .p-datatable-thead > tr > th {
+  white-space: nowrap !important;
+  line-height: 1.25;
+}
+.cotizaciones-table.cotz-report .p-datatable-tbody > tr > td {
+  white-space: normal !important;
+  word-break: break-word !important;
+  line-height: 1.25;
+}
+
+/* Filtros ocupan el ancho disponible del header */
+.cotizaciones-table.cotz-report .p-column-filter,
+.cotizaciones-table.cotz-report .p-dropdown {
+  width: 100% !important;
+  min-width: 0 !important;
+}
+
+/* Compactar un poco para que quepa sin scroll */
+.cotizaciones-table.cotz-report .p-datatable-thead > tr > th,
+.cotizaciones-table.cotz-report .p-datatable-tbody > tr > td {
+  padding: 10px 8px;
+}
+
+/* Anchos proporcionales para alinear mejor columnas (sin romper en una línea) */
+/* 1: expander | 2: Nombre | 3: Categoría | 4: % Utilidad | 5: Código | 6: Año | 7: Mes | 8: Estado | 9: Origen */
+.cotizaciones-table.cotz-report .p-datatable-thead > tr > th:nth-child(1),
+.cotizaciones-table.cotz-report .p-datatable-tbody > tr > td:nth-child(1) { width: 32px; max-width: 36px; }
+.cotizaciones-table.cotz-report .p-datatable-thead > tr > th:nth-child(2),
+.cotizaciones-table.cotz-report .p-datatable-tbody > tr > td:nth-child(2) { width: 26%; }
+.cotizaciones-table.cotz-report .p-datatable-thead > tr > th:nth-child(3),
+.cotizaciones-table.cotz-report .p-datatable-tbody > tr > td:nth-child(3) { width: 12%; }
+.cotizaciones-table.cotz-report .p-datatable-thead > tr > th:nth-child(4),
+.cotizaciones-table.cotz-report .p-datatable-tbody > tr > td:nth-child(4) { width: 10%; text-align: center; }
+.cotizaciones-table.cotz-report .p-datatable-thead > tr > th:nth-child(5),
+.cotizaciones-table.cotz-report .p-datatable-tbody > tr > td:nth-child(5) { width: 16%; }
+.cotizaciones-table.cotz-report .p-datatable-thead > tr > th:nth-child(6),
+.cotizaciones-table.cotz-report .p-datatable-tbody > tr > td:nth-child(6) { width: 8%; min-width: 72px; text-align: center; }
+.cotizaciones-table.cotz-report .p-datatable-thead > tr > th:nth-child(7),
+.cotizaciones-table.cotz-report .p-datatable-tbody > tr > td:nth-child(7) { width: 8%; min-width: 72px; text-align: center; }
+.cotizaciones-table.cotz-report .p-datatable-thead > tr > th:nth-child(8),
+.cotizaciones-table.cotz-report .p-datatable-tbody > tr > td:nth-child(8) { width: 12%; min-width: 92px; }
+.cotizaciones-table.cotz-report .p-datatable-thead > tr > th:nth-child(9),
+.cotizaciones-table.cotz-report .p-datatable-tbody > tr > td:nth-child(9) { width: 12%; min-width: 92px; }
+
+/* Mantener título y el ícono de filtro en la misma línea */
+.cotizaciones-table.cotz-report .p-column-header-content { display: flex; align-items: center; gap: 6px; }
+.cotizaciones-table.cotz-report .p-column-header-content .p-column-title { white-space: nowrap; }
+
+/* Header de grupo (Categoría) más visual y consistente */
+.cotizaciones-table.cotz-report .p-rowgroup-header {
+  background: #f7f9fc;
+  border-left: 3px solid var(--primary-color);
+  color: #2c3e50;
+  font-weight: 600;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+}
+
+/* Responsive: priorizar columnas clave y ocultar otras en pantallas pequeñas */
+@media (max-width: 1024px) {
+  /* Compactar paddings y mantener visibles Año, Mes, Estado, Origen */
+  .cotizaciones-table.cotz-report .p-datatable-thead > tr > th,
+  .cotizaciones-table.cotz-report .p-datatable-tbody > tr > td { padding: 8px 6px; }
+}
+
+@media (max-width: 768px) {
+  /* Mantener 4-6 columnas clave visibles sin scroll */
+  .cotizaciones-table.cotz-report .p-datatable-thead > tr > th,
+  .cotizaciones-table.cotz-report .p-datatable-tbody > tr > td { padding: 8px 6px; font-size: 12px; }
+
+  /* En tablets, mantener todas las nuevas columnas pero compactas */
+}
+
+@media (max-width: 480px) {
+  /* Aún más compacto en móviles pequeños */
+  .cotizaciones-table.cotz-report .p-datatable-thead > tr > th,
+  .cotizaciones-table.cotz-report .p-datatable-tbody > tr > td { padding: 6px 4px; font-size: 11px; }
+  /* En móviles pequeños, Prime mantendrá scroll-x si fuera necesario, pero forzamos wrap */
+}

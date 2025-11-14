@@ -29,6 +29,7 @@ import PortadaMenu from './sections/Services/components/Portada/PortadaMenu';
 import BandejaSolicitud from './sections/BandejaSolicitud/components/BandejaSolicitud';
 import ReportesHome from './sections/Reportes/components/ReportesHome';
 import BandejaSolicitudReporte from './sections/Reportes/components/BandejaSolicitudReporte';
+import CotizacionReporte from './sections/Reportes/components/CotizacionReporte';
 import Permisos from './sections/Permisos/components/Permisos';
 
 function AppContent() {
@@ -78,6 +79,7 @@ function AppContent() {
           <Route path="/registro-pagos/reporte" element={<ProtectedRoute><Reporte /></ProtectedRoute>} />
           <Route path="/reportes" element={<ProtectedRoute><RequirePermission moduleCode={'REPORTES'}><ReportesHome /></RequirePermission></ProtectedRoute>} />
           <Route path="/reportes/bandeja-solicitud" element={<ProtectedRoute><RequirePermission moduleCode={'REPORTES'}><BandejaSolicitudReporte /></RequirePermission></ProtectedRoute>} />
+          <Route path="/reportes/cotizacion" element={<ProtectedRoute><RequirePermission moduleCode={'REPORTES'}><CotizacionReporte /></RequirePermission></ProtectedRoute>} />
           <Route path="/permisos" element={<ProtectedRoute><RequirePermission moduleCode={'PERMISOS'}><Permisos /></RequirePermission></ProtectedRoute>} />
           <Route path="/servicios/portada" element={<ProtectedRoute><PortadaMenu /></ProtectedRoute>} />
         </Routes>

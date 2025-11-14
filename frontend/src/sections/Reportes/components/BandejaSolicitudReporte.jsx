@@ -84,11 +84,7 @@ const BandejaSolicitudReporte = () => {
       });
   }, [requests, filters, searchTerm]);
 
-  const groupCounts = useMemo(() => {
-    const m = new Map();
-    filtered.forEach((r) => m.set(r.agente, (m.get(r.agente) || 0) + 1));
-    return m;
-  }, [filtered]);
+  // Agrupación visual removida por solicitud; mantenemos orden por agente
 
   const paginated = useMemo(() => filtered.slice(first, first + rowsPerPage), [filtered, first, rowsPerPage]);
   const totalRecords = filtered.length;
@@ -96,16 +92,7 @@ const BandejaSolicitudReporte = () => {
   const onPageChange = (e) => { setFirst(e.first); setRowsPerPage(e.rows); };
   const handleFilterChange = (field, value) => setFilters(prev => ({ ...prev, [field]: { value } }));
 
-  const groupHeaderTemplate = (data) => {
-    const name = data.agente || UNASSIGNED_LABEL;
-    const count = groupCounts.get(name) || 0;
-    return (
-      <div className="grupo-agente-header">
-        <span className="grupo-agente-nombre">Agente: {name}</span>
-        <span className="grupo-agente-total">{count} {count === 1 ? 'solicitud' : 'solicitudes'}</span>
-      </div>
-    );
-  };
+  // Sin cabecera de grupo
 
   const clienteTemplate = (row) => (
     <div className="cliente-info">
@@ -173,11 +160,8 @@ const BandejaSolicitudReporte = () => {
               className="requests-table"
               responsiveLayout="scroll"
               emptyMessage="No hay solicitudes"
-              rowGroupMode="subheader"
-              groupRows
               sortField="agente"
               sortOrder={1}
-              rowGroupHeaderTemplate={groupHeaderTemplate}
             >
               <Column
                 field="agente"
