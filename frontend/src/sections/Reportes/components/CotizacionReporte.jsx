@@ -139,6 +139,13 @@ const CotizacionReporte = () => {
     </div>
   );
 
+  // Ocultar "Compartido" en la celda de Categoría
+  const categoriaBody = (r) => {
+    const val = r?.categoriaNormalized || r?.categoria || '';
+    const hide = (val || '').toLowerCase().startsWith('compart');
+    return <span data-label="Categoría">{hide ? '' : val}</span>;
+  };
+
   return (
     <div className="cotizaciones">
       <div className="cotizaciones-header">
@@ -168,6 +175,21 @@ const CotizacionReporte = () => {
           expandedRows={expandedRows}
           onRowToggle={(e) => setExpandedRows(e.data)}
           rowExpansionTemplate={rowExpansionTemplate}
+          rowGroupMode="subheader"
+          groupRows
+          sortField="categoria"
+          sortOrder={1}
+          rowGroupHeaderTemplate={(data) => {
+            const name = (data.categoriaNormalized || data.categoria || '').trim();
+            const hide = name.toLowerCase().startsWith('compart');
+            return hide ? (
+              <div className="rowgroup-hidden" />
+            ) : (
+              <div className="grupo-agente-header">
+                <span className="grupo-agente-nombre">{name || 'Sin categoría'}</span>
+              </div>
+            );
+          }}
         >
           <Column expander className="cotz-expander-col" />
           <Column 
@@ -176,7 +198,7 @@ const CotizacionReporte = () => {
           />
           <Column 
             header="Categoría"
-            body={(r) => <span data-label="Categoría">{r?.categoriaNormalized}</span>}
+            body={categoriaBody}
             filter
             filterElement={
               <Dropdown value={filters.categoria.value} options={categoriaOptions} onChange={(e) => handleFilterChange('categoria', e.value)} placeholder="Todos" showClear className="p-column-filter" />

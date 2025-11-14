@@ -61,6 +61,11 @@
 .cotizaciones-table.cotz-report .p-column-header-content { display: flex; align-items: center; gap: 6px; }
 .cotizaciones-table.cotz-report .p-column-header-content .p-column-title { white-space: nowrap; }
 
+/* Ocultar completamente el subheader de grupo cuando se marque como hidden */
+.cotizaciones-table.cotz-report .p-datatable-tbody tr.p-rowgroup-header:has(.rowgroup-hidden) {
+  display: none !important;
+}
+
 /* Header de grupo (Categoría) más visual y consistente */
 .cotizaciones-table.cotz-report .p-rowgroup-header {
   background: #f7f9fc;

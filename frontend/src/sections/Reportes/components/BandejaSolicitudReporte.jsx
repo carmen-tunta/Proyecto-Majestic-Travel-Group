@@ -160,8 +160,15 @@ const BandejaSolicitudReporte = () => {
               className="requests-table"
               responsiveLayout="scroll"
               emptyMessage="No hay solicitudes"
+              rowGroupMode="subheader"
+              groupRows
               sortField="agente"
               sortOrder={1}
+              rowGroupHeaderTemplate={(data) => (
+                <div className="grupo-agente-header">
+                  <span className="grupo-agente-nombre">{data.agente || UNASSIGNED_LABEL}</span>
+                </div>
+              )}
             >
               <Column
                 field="agente"
