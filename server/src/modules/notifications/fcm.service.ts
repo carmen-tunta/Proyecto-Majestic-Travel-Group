@@ -31,19 +31,17 @@ export class FCMService {
   }
 
   async saveDeviceToken(userId: number, token: string, platform: string = 'android'): Promise<void> {
-    const existing = await this.deviceTokenRepo.findOne({
-      where: { user: { id: userId }, token },
+    // Primero eliminar el token de CUALQUIER otro usuario (un dispositivo solo puede tener un usuario activo)
+    await this.deviceTokenRepo.delete({ token });
+    
+    // Ahora crear el token para el usuario actual
+    const deviceToken = this.deviceTokenRepo.create({
+      user: { id: userId },
+      token,
+      platform,
     });
-
-    if (!existing) {
-      const deviceToken = this.deviceTokenRepo.create({
-        user: { id: userId },
-        token,
-        platform,
-      });
-      await this.deviceTokenRepo.save(deviceToken);
-      this.logger.log(`Token guardado para usuario ${userId}`);
-    }
+    await this.deviceTokenRepo.save(deviceToken);
+    this.logger.log(`Token guardado para usuario ${userId}`);
   }
 
   async removeDeviceToken(userId: number, token: string): Promise<void> {
