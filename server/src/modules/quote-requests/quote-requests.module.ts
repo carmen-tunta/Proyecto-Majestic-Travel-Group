@@ -9,9 +9,13 @@ import { TimeoutService } from './services/timeout.service';
 import { Client } from '../clients/entities/client.entity';
 import { Service } from '../services/entities/service.entity';
 import { User } from '../users/entities/user.entity';
+import { NotificationsModule } from '../notifications/notifications.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([QuoteRequest, QrServiceEntity, Client, Service, User])],
+  imports: [
+    TypeOrmModule.forFeature([QuoteRequest, QrServiceEntity, Client, Service, User]),
+    NotificationsModule
+  ],
   providers: [QuoteRequestsService, AssignmentService, TimeoutService],
   controllers: [QuoteRequestsController],
   exports: [QuoteRequestsService, AssignmentService],
