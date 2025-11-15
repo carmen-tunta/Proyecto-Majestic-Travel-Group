@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, DataSource } from 'typeorm';
 import { QuoteRequest } from '../entities/quote-request.entity';
 import { User } from '../../users/entities/user.entity';
+import { FCMService } from '../../notifications/fcm.service';
 
 @Injectable()
 export class AssignmentService {
@@ -12,6 +13,7 @@ export class AssignmentService {
     @InjectRepository(User)
     private usersRepo: Repository<User>,
     private dataSource: DataSource,
+    private fcmService: FCMService,
   ) {}
 
   /**
@@ -61,7 +63,19 @@ export class AssignmentService {
     await this.usersRepo.save(assignedAgent);
     await this.qrRepo.save(request);
 
-    // 8. Retornar la solicitud actualizada con relación del agente
+    // 8. Enviar notificación push al agente
+    try {
+      await this.fcmService.sendNewClientNotification(
+        assignedAgent.id,
+        request.client.nombre || request.passengerName || 'Cliente',
+        requestId
+      );
+    } catch (error) {
+      console.error('Error al enviar notificación push:', error);
+      // No lanzar error, la asignación ya se completó
+    }
+
+    // 9. Retornar la solicitud actualizada con relación del agente
     const updatedRequest = await this.qrRepo.findOne({
       where: { id: requestId },
       relations: ['client', 'services', 'services.service', 'agent']

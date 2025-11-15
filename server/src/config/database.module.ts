@@ -34,6 +34,7 @@ import { AppModuleEntity } from '../modules/permissions/entities/app-module.enti
 import { ModuleAction } from '../modules/permissions/entities/module-action.entity';
 import { UserPermission } from '../modules/permissions/entities/user-permission.entity';
 import { DatosViaje } from 'src/modules/cotizacion/entities/datos-viaje.entity';
+import { DeviceToken } from '../modules/users/entities/device-token.entity';
 
 
 @Module({
@@ -75,7 +76,8 @@ import { DatosViaje } from 'src/modules/cotizacion/entities/datos-viaje.entity';
                   AppModuleEntity,
                   ModuleAction,
                   UserPermission,
-                  DatosViaje
+                  DatosViaje,
+                  DeviceToken
                 ], // Aquí se agregarán las entidades
 
       synchronize: true, // Cambia a true solo en desarrollo

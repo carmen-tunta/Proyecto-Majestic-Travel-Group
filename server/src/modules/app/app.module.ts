@@ -30,6 +30,7 @@ import { QuoteRequestsModule } from '../quote-requests/quote-requests.module';
 import { PortadaModule } from '../services/portada/portada.module';
 import { TranslationModule } from '../translation/translation.module';
 import { DatosViajeModule } from '../cotizacion/datos-viaje/datos-viaje.module';
+import { NotificationsModule } from '../notifications/notifications.module';
 
 @Module({
  
@@ -61,6 +62,7 @@ import { DatosViajeModule } from '../cotizacion/datos-viaje/datos-viaje.module';
             PermissionsModule,
             TranslationModule,
             DatosViajeModule,
+            NotificationsModule,
           ],
 
   controllers: [AppController],
