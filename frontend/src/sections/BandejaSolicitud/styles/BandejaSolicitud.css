@@ -45,11 +45,16 @@
   background: white;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
+  overflow: hidden; /* evita scroll horizontal del contenedor */
 }
 
 .requests-table {
   width: 100%;
+}
+
+/* Evitar scroll horizontal dentro del wrapper del DataTable */
+.requests-table .p-datatable-wrapper {
+  overflow-x: hidden !important;
 }
 
 .requests-table .p-datatable-thead > tr > th {
@@ -58,12 +63,15 @@
   font-weight: 600;
   padding: 15px 12px;
   border-bottom: 2px solid #dee2e6;
+  white-space: normal; /* permite que el encabezado haga wrap si es necesario */
 }
 
 .requests-table .p-datatable-tbody > tr > td {
   padding: 12px;
   border-bottom: 1px solid #dee2e6;
   vertical-align: top;
+  white-space: normal; /* wrap del contenido para evitar overflow */
+  word-break: break-word; /* cortar palabras largas (p.ej. correos) */
 }
 
 .requests-table .p-datatable-tbody > tr:hover {
@@ -97,12 +105,14 @@
   font-weight: 500;
   color: #2c3e50;
   font-size: 14px;
+  word-break: break-word;
 }
 
 .email-mensaje {
   color: #6c757d;
   font-size: 12px;
   font-style: italic;
+  word-break: break-word;
 }
 
 .servicios-info {
