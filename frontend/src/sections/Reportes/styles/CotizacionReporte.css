@@ -99,3 +99,25 @@
   .cotizaciones-table.cotz-report .p-datatable-tbody > tr > td { padding: 6px 4px; font-size: 11px; }
   /* En móviles pequeños, Prime mantendrá scroll-x si fuera necesario, pero forzamos wrap */
 }
+  /* Ocultar columnas de menor importancia en pantallas muy pequeñas
+     (4: % Utilidad, 5: Código reserva, 9: Origen) */
+  .cotizaciones-table.cotz-report .p-datatable-thead > tr > th:nth-child(4),
+  .cotizaciones-table.cotz-report .p-datatable-tbody > tr > td:nth-child(4),
+  .cotizaciones-table.cotz-report .p-datatable-thead > tr > th:nth-child(5),
+  .cotizaciones-table.cotz-report .p-datatable-tbody > tr > td:nth-child(5),
+  .cotizaciones-table.cotz-report .p-datatable-thead > tr > th:nth-child(9),
+  .cotizaciones-table.cotz-report .p-datatable-tbody > tr > td:nth-child(9) {
+    display: none !important;
+  }
+
+  /* Mostrar solo columnas clave en móviles muy pequeños: Expander | Nombre | Categoría | Año/Mes | Estado */
+  .cotizaciones-table.cotz-report .p-datatable-thead > tr > th:nth-child(1),
+  .cotizaciones-table.cotz-report .p-datatable-tbody > tr > td:nth-child(1) { width: 36px; }
+  .cotizaciones-table.cotz-report .p-datatable-thead > tr > th:nth-child(2),
+  .cotizaciones-table.cotz-report .p-datatable-tbody > tr > td:nth-child(2) { width: 44%; }
+  .cotizaciones-table.cotz-report .p-datatable-thead > tr > th:nth-child(3),
+  .cotizaciones-table.cotz-report .p-datatable-tbody > tr > td:nth-child(3) { width: 28%; }
+  .cotizaciones-table.cotz-report .p-datatable-thead > tr > th:nth-child(6),
+  .cotizaciones-table.cotz-report .p-datatable-tbody > tr > td:nth-child(6),
+  .cotizaciones-table.cotz-report .p-datatable-thead > tr > th:nth-child(7),
+  .cotizaciones-table.cotz-report .p-datatable-tbody > tr > td:nth-child(7) { width: 14%; text-align: center; }

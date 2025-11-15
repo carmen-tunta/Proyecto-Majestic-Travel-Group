@@ -9,6 +9,7 @@ import SearchBar from '../../../components/SearchBar';
 import QuoteRequestRepository from '../../../modules/QuoteRequest/repository/QuoteRequestRepository';
 import GetAllQuoteRequests from '../../../modules/QuoteRequest/application/GetAllQuoteRequests';
 import '../../BandejaSolicitud/styles/BandejaSolicitud.css';
+import '../styles/BandejaSolicitudReporte.css';
 
 const UNASSIGNED_LABEL = 'Sin asignar';
 const FETCH_LIMIT = 200;
@@ -157,7 +158,7 @@ const BandejaSolicitudReporte = () => {
 
             <DataTable
               value={paginated}
-              className="requests-table"
+              className="requests-table bandeja-report-table"
               responsiveLayout="scroll"
               emptyMessage="No hay solicitudes"
               rowGroupMode="subheader"
