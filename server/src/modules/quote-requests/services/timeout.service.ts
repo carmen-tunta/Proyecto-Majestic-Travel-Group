@@ -5,6 +5,7 @@ import { Repository, LessThan, DataSource } from 'typeorm';
 import { QuoteRequest } from '../entities/quote-request.entity';
 import { User } from '../../users/entities/user.entity';
 import { AssignmentService } from './assignment.service';
+import { FCMService } from 'src/modules/notifications/fcm.service';
 
 @Injectable()
 export class TimeoutService {
@@ -17,6 +18,7 @@ export class TimeoutService {
     private usersRepo: Repository<User>,
     private assignmentService: AssignmentService,
     private dataSource: DataSource,
+    private fcmService: FCMService,
   ) {}
 
   /**
@@ -145,7 +147,18 @@ export class TimeoutService {
           `Solicitud ${requestId} actualizada en base de datos`,
         );
 
-        // 5. Actualizar contador del nuevo agente
+        // 5. Enviar notificación push al agente
+      try {
+        await this.fcmService.sendNewClientNotification(
+          nextAgent.id,
+          request.client.nombre || request.passengerName || 'Cliente',
+          requestId
+        );
+      } catch (error) {
+        console.error('Error al enviar notificación push:', error);
+      }
+
+        // 6. Actualizar contador del nuevo agente
         await manager
           .createQueryBuilder()
           .update('users')
