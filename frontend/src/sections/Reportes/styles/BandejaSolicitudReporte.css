@@ -1,0 +1,48 @@
+/* Responsive overrides for Bandeja de solicitud - Reportes */
+
+.bandeja-solicitud .bandeja-report-table .p-datatable-thead > tr > th,
+.bandeja-solicitud .bandeja-report-table .p-datatable-tbody > tr > td {
+  padding: 10px 8px;
+}
+
+/* Cliente info compact */
+.bandeja-solicitud .cliente-info .cliente-nombre { font-weight: 600; }
+.bandeja-solicitud .cliente-info .cliente-datos { color: #6b6b6b; font-size: 0.9em; }
+
+/* Estado badge sizing */
+.bandeja-solicitud .estado-badge { padding: 4px 8px; font-size: 0.85em; }
+
+/* At widths under 768px make things tighter */
+@media (max-width: 768px) {
+  .bandeja-solicitud .bandeja-report-table .p-datatable-thead > tr > th,
+  .bandeja-solicitud .bandeja-report-table .p-datatable-tbody > tr > td { padding: 8px 6px; font-size: 13px; }
+}
+
+/* Mobile: hide less important columns and keep Agente, Cliente, Fecha solicitada, Estado */
+@media (max-width: 480px) {
+  .bandeja-solicitud .bandeja-report-table .p-datatable-thead > tr > th:nth-child(3),
+  .bandeja-solicitud .bandeja-report-table .p-datatable-tbody > tr > td:nth-child(3),
+  .bandeja-solicitud .bandeja-report-table .p-datatable-thead > tr > th:nth-child(4),
+  .bandeja-solicitud .bandeja-report-table .p-datatable-tbody > tr > td:nth-child(4),
+  .bandeja-solicitud .bandeja-report-table .p-datatable-thead > tr > th:nth-child(5),
+  .bandeja-solicitud .bandeja-report-table .p-datatable-tbody > tr > td:nth-child(5),
+  .bandeja-solicitud .bandeja-report-table .p-datatable-thead > tr > th:nth-child(6),
+  .bandeja-solicitud .bandeja-report-table .p-datatable-tbody > tr > td:nth-child(6) {
+    display: none !important;
+  }
+
+  .bandeja-solicitud .bandeja-report-table .p-datatable-thead > tr > th:nth-child(1),
+  .bandeja-solicitud .bandeja-report-table .p-datatable-tbody > tr > td:nth-child(1) { width: 20%; }
+
+  .bandeja-solicitud .bandeja-report-table .p-datatable-thead > tr > th:nth-child(2),
+  .bandeja-solicitud .bandeja-report-table .p-datatable-tbody > tr > td:nth-child(2) { width: 60%; }
+
+  .bandeja-solicitud .bandeja-report-table .p-datatable-thead > tr > th:nth-child(7),
+  .bandeja-solicitud .bandeja-report-table .p-datatable-tbody > tr > td:nth-child(7),
+  .bandeja-solicitud .bandeja-report-table .p-datatable-thead > tr > th:nth-child(8),
+  .bandeja-solicitud .bandeja-report-table .p-datatable-tbody > tr > td:nth-child(8) { width: 20%; text-align: right; }
+
+  /* Cliente info stack slightly */
+  .bandeja-solicitud .cliente-info { display: block; }
+  .bandeja-solicitud .cliente-info .cliente-datos { display: block; }
+}
