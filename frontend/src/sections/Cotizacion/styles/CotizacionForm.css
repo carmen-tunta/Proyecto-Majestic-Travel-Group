@@ -429,12 +429,12 @@
 /* Estilos para el modal de fecha y hora */
 .date-time-modal {
     width: auto !important;
-    max-width: 500px !important;
+    max-width: 420px !important;
 }
 
 .date-time-modal .p-dialog-content {
-    padding: 0.75rem !important;
-    overflow: visible !important;
+    padding: 0.5rem !important;
+    overflow: hidden !important;
 }
 
 .date-time-modal .p-calendar {
@@ -448,27 +448,40 @@
 }
 
 .date-time-modal .p-datepicker-header {
-    padding: 0.5rem 0 !important;
+    padding: 0.4rem 0 !important;
     background: transparent !important;
     border-bottom: 1px solid #e0e0e0 !important;
-    margin-bottom: 0.25rem !important;
+    margin-bottom: 0.2rem !important;
+}
+
+.date-time-modal .p-datepicker-header .p-datepicker-title {
+    font-size: 0.9rem !important;
+}
+
+.date-time-modal .p-datepicker-prev,
+.date-time-modal .p-datepicker-next {
+    width: 1.5rem !important;
+    height: 1.5rem !important;
 }
 
 .date-time-modal .p-datepicker-calendar {
-    padding: 0.25rem 0 !important;
+    padding: 0.2rem 0 !important;
 }
 
 .date-time-modal .p-datepicker-calendar th {
-    padding: 0.4rem !important;
+    padding: 0.3rem !important;
     font-weight: 600 !important;
     color: #424242 !important;
-    font-size: 0.85rem !important;
+    font-size: 0.75rem !important;
 }
 
 .date-time-modal .p-datepicker-day {
-    padding: 0.4rem !important;
+    padding: 0.3rem !important;
     border-radius: 4px !important;
     transition: all 0.2s !important;
+    font-size: 0.8rem !important;
+    width: 2rem !important;
+    height: 2rem !important;
 }
 
 .date-time-modal .p-datepicker-day:not(.p-disabled):not(.p-highlight):hover {
@@ -486,17 +499,17 @@
 
 .date-time-modal .p-timepicker {
     border-top: 1px solid #e0e0e0 !important;
-    padding: 0.75rem 0 0.5rem 0 !important;
-    margin-top: 0.25rem !important;
+    padding: 0.5rem 0 0.4rem 0 !important;
+    margin-top: 0.2rem !important;
 }
 
 .date-time-modal .p-timepicker > div {
-    padding: 0.15rem !important;
+    padding: 0.1rem !important;
 }
 
 .date-time-modal .p-timepicker-button {
-    width: 1.75rem !important;
-    height: 1.75rem !important;
+    width: 1.5rem !important;
+    height: 1.5rem !important;
     border-radius: 4px !important;
 }
 
@@ -505,7 +518,7 @@
 }
 
 .date-time-modal .p-timepicker span {
-    font-size: 1rem !important;
+    font-size: 0.9rem !important;
     font-weight: 500 !important;
 }
 
