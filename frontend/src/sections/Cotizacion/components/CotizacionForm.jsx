@@ -981,9 +981,16 @@ export default function CotizacionForm() {
 
     setDateTimeTarget({ cscId: ci.id, value: ci.scheduledAt || null });
 
-    const initialDate = ci.scheduledAt ? new Date(ci.scheduledAt) : new Date();
-    setDateTimeDraft(initialDate);
-    setManualDateTimeInput(formatDateTimeToString(initialDate));
+    // Solo establecer fecha/hora si ya existe una fecha programada
+    if (ci.scheduledAt) {
+      const initialDate = new Date(ci.scheduledAt);
+      setDateTimeDraft(initialDate);
+      setManualDateTimeInput(formatDateTimeToString(initialDate));
+    } else {
+      // Si no hay fecha, dejar vacío
+      setDateTimeDraft(null);
+      setManualDateTimeInput('');
+    }
 
     setDateTimeModalOpen(true);
 
