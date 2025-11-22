@@ -429,12 +429,38 @@
 /* Estilos para el modal de fecha y hora */
 .date-time-modal {
     width: auto !important;
-    max-width: 420px !important;
+    max-width: 450px !important;
+}
+
+.date-time-modal.p-dialog {
+    margin-top: 0.5rem !important;
+    margin-bottom: auto !important;
+    top: 0 !important;
+    transform: translateY(0) !important;
+    position: fixed !important;
+}
+
+.date-time-modal .p-dialog {
+    margin-top: 0.5rem !important;
+    top: 0 !important;
 }
 
 .date-time-modal .p-dialog-content {
-    padding: 0.5rem !important;
-    overflow: hidden !important;
+    padding: 0.4rem !important;
+    overflow: visible !important;
+}
+
+.date-time-modal .p-inputtext {
+    border: 1px solid #d1d5db !important;
+    border-radius: 6px !important;
+    padding: 0.35rem !important;
+    font-size: 0.8rem !important;
+}
+
+.date-time-modal .p-inputtext:focus {
+    border-color: #1976d2 !important;
+    box-shadow: 0 0 0 0.2rem rgba(25, 118, 210, 0.2) !important;
+    outline: none !important;
 }
 
 .date-time-modal .p-calendar {
@@ -447,41 +473,51 @@
     padding: 0 !important;
 }
 
+.date-time-modal .p-datepicker-inline .p-timepicker {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    height: auto !important;
+    min-height: 60px !important;
+}
+
 .date-time-modal .p-datepicker-header {
-    padding: 0.4rem 0 !important;
+    padding: 0.15rem 0 !important;
     background: transparent !important;
     border-bottom: 1px solid #e0e0e0 !important;
-    margin-bottom: 0.2rem !important;
+    margin-bottom: 0.05rem !important;
 }
 
 .date-time-modal .p-datepicker-header .p-datepicker-title {
-    font-size: 0.9rem !important;
+    font-size: 0.7rem !important;
 }
 
 .date-time-modal .p-datepicker-prev,
 .date-time-modal .p-datepicker-next {
-    width: 1.5rem !important;
-    height: 1.5rem !important;
+    width: 1rem !important;
+    height: 1rem !important;
+    font-size: 0.6rem !important;
 }
 
 .date-time-modal .p-datepicker-calendar {
-    padding: 0.2rem 0 !important;
+    padding: 0.05rem 0 !important;
 }
 
 .date-time-modal .p-datepicker-calendar th {
-    padding: 0.3rem !important;
+    padding: 0.1rem 0.15rem !important;
     font-weight: 600 !important;
     color: #424242 !important;
-    font-size: 0.75rem !important;
+    font-size: 0.6rem !important;
 }
 
 .date-time-modal .p-datepicker-day {
-    padding: 0.3rem !important;
-    border-radius: 4px !important;
+    padding: 0.1rem 0.15rem !important;
+    border-radius: 3px !important;
     transition: all 0.2s !important;
-    font-size: 0.8rem !important;
-    width: 2rem !important;
-    height: 2rem !important;
+    font-size: 0.6rem !important;
+    width: 1.5rem !important;
+    height: 1.1rem !important;
+    line-height: 0.9rem !important;
 }
 
 .date-time-modal .p-datepicker-day:not(.p-disabled):not(.p-highlight):hover {
@@ -499,18 +535,31 @@
 
 .date-time-modal .p-timepicker {
     border-top: 1px solid #e0e0e0 !important;
-    padding: 0.5rem 0 0.4rem 0 !important;
-    margin-top: 0.2rem !important;
+    padding: 0.2rem 0 0.15rem 0 !important;
+    margin-top: 0.05rem !important;
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    height: auto !important;
+    min-height: 28px !important;
+    width: 100% !important;
+}
+
+.date-time-modal .p-datepicker-inline .p-timepicker {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
 }
 
 .date-time-modal .p-timepicker > div {
-    padding: 0.1rem !important;
+    padding: 0.03rem !important;
 }
 
 .date-time-modal .p-timepicker-button {
-    width: 1.5rem !important;
-    height: 1.5rem !important;
-    border-radius: 4px !important;
+    width: 1rem !important;
+    height: 1rem !important;
+    border-radius: 3px !important;
+    font-size: 0.5rem !important;
 }
 
 .date-time-modal .p-timepicker-button:hover {
@@ -518,12 +567,41 @@
 }
 
 .date-time-modal .p-timepicker span {
-    font-size: 0.9rem !important;
+    font-size: 0.7rem !important;
     font-weight: 500 !important;
 }
 
 .date-time-modal .p-timepicker .p-link {
     color: #1976d2 !important;
+}
+
+/* Forzar visualización del timepicker en modo inline */
+.date-time-modal .p-datepicker-inline .p-timepicker-wrapper,
+.date-time-modal .p-datepicker .p-timepicker,
+.date-time-modal .p-datepicker-inline .p-timepicker {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    height: auto !important;
+    min-height: 60px !important;
+    max-height: none !important;
+    overflow: visible !important;
+    width: 100% !important;
+}
+
+.date-time-modal .p-datepicker-inline .p-timepicker-wrapper {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    padding: 0.5rem 0 !important;
+    border-top: 1px solid #e0e0e0 !important;
+    margin-top: 0.5rem !important;
+}
+
+/* Asegurar que todos los elementos del timepicker sean visibles */
+.date-time-modal .p-timepicker * {
+    visibility: visible !important;
+    display: block !important;
 }
 
 /* ========== RESPONSIVE DESIGN ========== */

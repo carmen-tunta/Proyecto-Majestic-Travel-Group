@@ -174,6 +174,8 @@ export default function CotizacionForm() {
 
   const [dateTimeDraft, setDateTimeDraft] = useState(null);
 
+  const [manualDateTimeInput, setManualDateTimeInput] = useState('');
+
 
 
   const [loading, setLoading] = useState(false);
@@ -743,11 +745,162 @@ export default function CotizacionForm() {
 
 
 
+  // Formatear fecha/hora a string legible (dd/mm/yyyy HH:mm)
+  function formatDateTimeToString(date) {
+    if (!date) return '';
+    const d = new Date(date);
+    const day = String(d.getDate()).padStart(2, '0');
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const year = d.getFullYear();
+    const hours = String(d.getHours()).padStart(2, '0');
+    const minutes = String(d.getMinutes()).padStart(2, '0');
+    return `${day}/${month}/${year} ${hours}:${minutes}`;
+  }
+
+  // Formatear automáticamente mientras el usuario escribe solo números
+  // Siempre muestra las barras "/" y los dos puntos ":"
+  function formatDateTimeInput(value) {
+    // Remover todo excepto números
+    const numbers = value.replace(/\D/g, '');
+    
+    // Construir el formato completo siempre
+    let formatted = '';
+    
+    // Día (2 dígitos)
+    if (numbers.length >= 2) {
+      formatted += numbers.substring(0, 2);
+    } else if (numbers.length > 0) {
+      formatted += numbers.substring(0, 1) + '_';
+    } else {
+      formatted += '__';
+    }
+    formatted += '/';
+    
+    // Mes (2 dígitos)
+    if (numbers.length >= 4) {
+      formatted += numbers.substring(2, 4);
+    } else if (numbers.length > 2) {
+      formatted += numbers.substring(2, 3) + '_';
+    } else {
+      formatted += '__';
+    }
+    formatted += '/';
+    
+    // Año (4 dígitos)
+    if (numbers.length >= 8) {
+      formatted += numbers.substring(4, 8);
+    } else if (numbers.length > 4) {
+      formatted += numbers.substring(4) + '_'.repeat(8 - numbers.length);
+    } else {
+      formatted += '____';
+    }
+    formatted += ' ';
+    
+    // Hora (2 dígitos)
+    if (numbers.length >= 10) {
+      formatted += numbers.substring(8, 10);
+    } else if (numbers.length > 8) {
+      formatted += numbers.substring(8, 9) + '_';
+    } else {
+      formatted += '__';
+    }
+    formatted += ':';
+    
+    // Minutos (2 dígitos)
+    if (numbers.length >= 12) {
+      formatted += numbers.substring(10, 12);
+    } else if (numbers.length > 10) {
+      formatted += numbers.substring(10, 11) + '_';
+    } else {
+      formatted += '__';
+    }
+    
+    return formatted;
+  }
+
+  // Parsear el input formateado automáticamente a Date
+  function parseFormattedDateTimeInput(value) {
+    if (!value || !value.trim()) return null;
+    
+    // Remover espacios, guiones bajos y obtener solo números
+    const numbers = value.replace(/[^\d]/g, '');
+    
+    if (numbers.length < 8) return null; // Necesitamos al menos día, mes y año
+    
+    const day = parseInt(numbers.substring(0, 2), 10);
+    const month = parseInt(numbers.substring(2, 4), 10);
+    const year = parseInt(numbers.substring(4, 8), 10);
+    const hours = numbers.length >= 10 ? parseInt(numbers.substring(8, 10), 10) : 0;
+    const minutes = numbers.length >= 12 ? parseInt(numbers.substring(10, 12), 10) : 0;
+    
+    // Validar valores
+    if (isNaN(day) || day < 1 || day > 31) return null;
+    if (isNaN(month) || month < 1 || month > 12) return null;
+    if (isNaN(year) || year < 1900 || year > 2100) return null;
+    if (isNaN(hours) || hours > 23) return null;
+    if (isNaN(minutes) || minutes > 59) return null;
+    
+    return new Date(year, month - 1, day, hours, minutes);
+  }
+
+  // Parsear string manual a Date (acepta formatos: dd/mm/yyyy HH:mm, dd/mm/yyyy, etc.)
+  function parseDateTimeString(value) {
+    if (!value || !value.trim()) return null;
+    
+    const trimmed = value.trim();
+    
+    // Formato: dd/mm/yyyy HH:mm
+    const match1 = trimmed.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})\s+(\d{1,2}):(\d{1,2})$/);
+    if (match1) {
+      const [, day, month, year, hours, minutes] = match1.map(Number);
+      if (day >= 1 && day <= 31 && month >= 1 && month <= 12) {
+        return new Date(year, month - 1, day, hours || 0, minutes || 0);
+      }
+    }
+    
+    // Formato: dd/mm/yyyy
+    const match2 = trimmed.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+    if (match2) {
+      const [, day, month, year] = match2.map(Number);
+      if (day >= 1 && day <= 31 && month >= 1 && month <= 12) {
+        return new Date(year, month - 1, day, 0, 0);
+      }
+    }
+    
+    // Formato: yyyy-mm-dd HH:mm
+    const match3 = trimmed.match(/^(\d{4})-(\d{1,2})-(\d{1,2})\s+(\d{1,2}):(\d{1,2})$/);
+    if (match3) {
+      const [, year, month, day, hours, minutes] = match3.map(Number);
+      if (day >= 1 && day <= 31 && month >= 1 && month <= 12) {
+        return new Date(year, month - 1, day, hours || 0, minutes || 0);
+      }
+    }
+    
+    // Formato: yyyy-mm-dd
+    const match4 = trimmed.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
+    if (match4) {
+      const [, year, month, day] = match4.map(Number);
+      if (day >= 1 && day <= 31 && month >= 1 && month <= 12) {
+        return new Date(year, month - 1, day, 0, 0);
+      }
+    }
+    
+    // Intentar parsear como Date nativo
+    const parsed = new Date(trimmed);
+    if (!isNaN(parsed.getTime())) {
+      return parsed;
+    }
+    
+    return null;
+  }
+
   async function openDateTimePicker(ci) {
 
     setDateTimeTarget({ cscId: ci.id, value: ci.scheduledAt || null });
 
-    setDateTimeDraft(ci.scheduledAt ? new Date(ci.scheduledAt) : new Date());
+    const initialDate = ci.scheduledAt ? new Date(ci.scheduledAt) : new Date();
+    setDateTimeDraft(initialDate);
+    setManualDateTimeInput(formatDateTimeToString(initialDate));
 
     setDateTimeModalOpen(true);
 
@@ -1921,23 +2074,84 @@ export default function CotizacionForm() {
 
       >
 
-        <Calendar
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
 
-          value={dateTimeDraft}
+          {/* Input manual para fecha y hora */}
+          <div>
+            <label htmlFor="manualDateTime" style={{ display: 'block', marginBottom: '0.25rem', fontSize: '0.75rem', fontWeight: 500, color: '#424242' }}>
+              Escribir fecha y hora manualmente
+            </label>
+            <InputText
+              id="manualDateTime"
+              value={manualDateTimeInput}
+              onChange={(e) => {
+                // Formatear automáticamente mientras escribe solo números
+                const formatted = formatDateTimeInput(e.target.value);
+                setManualDateTimeInput(formatted);
+                
+                // Intentar parsear y actualizar el calendario
+                const parsed = parseFormattedDateTimeInput(formatted);
+                if (parsed) {
+                  setDateTimeDraft(parsed);
+                }
+              }}
+              onBlur={(e) => {
+                // Si el input no es válido al perder el foco, restaurar el valor formateado
+                const parsed = parseFormattedDateTimeInput(e.target.value);
+                if (!parsed && dateTimeDraft) {
+                  setManualDateTimeInput(formatDateTimeToString(dateTimeDraft));
+                } else if (parsed) {
+                  // Asegurar que el formato esté completo
+                  setManualDateTimeInput(formatDateTimeToString(parsed));
+                }
+              }}
+              placeholder="dd/mm/yyyy HH:mm"
+              style={{ width: '100%', padding: '0.5rem' }}
+            />
+            <small style={{ display: 'block', marginTop: '0.15rem', color: '#6b7280', fontSize: '0.65rem' }}>
+              Formato: dd/mm/yyyy HH:mm
+            </small>
+          </div>
 
-          onChange={(e) => setDateTimeDraft(e.value)}
+          {/* Separador */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', margin: '0.3rem 0' }}>
+            <div style={{ flex: 1, height: '1px', background: '#e0e0e0' }}></div>
+            <span style={{ color: '#6b7280', fontSize: '0.65rem' }}>O</span>
+            <div style={{ flex: 1, height: '1px', background: '#e0e0e0' }}></div>
+          </div>
 
-          showTime
+          {/* Calendario */}
+          <div>
+            <label style={{ display: 'block', marginBottom: '0.25rem', fontSize: '0.75rem', fontWeight: 500, color: '#424242' }}>
+              Seleccionar del calendario
+            </label>
+            <Calendar
 
-          hourFormat="24"
+              value={dateTimeDraft}
 
-          inline
+              onChange={(e) => {
+                setDateTimeDraft(e.value);
+                if (e.value) {
+                  setManualDateTimeInput(formatDateTimeToString(e.value));
+                }
+              }}
 
-          locale="es"
+              showTime={true}
 
-          dateFormat="dd/mm/yy"
+              hourFormat="24"
 
-        />
+              inline={true}
+
+              locale="es"
+
+              dateFormat="dd/mm/yy"
+
+              timeOnly={false}
+
+            />
+          </div>
+
+        </div>
 
       </Dialog>
 
