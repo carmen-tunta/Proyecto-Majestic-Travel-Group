@@ -758,61 +758,67 @@ export default function CotizacionForm() {
   }
 
   // Formatear automáticamente mientras el usuario escribe solo números
-  // Siempre muestra las barras "/" y los dos puntos ":"
-  function formatDateTimeInput(value) {
+  // Maneja mejor el cursor y permite borrar carácter por carácter
+  function formatDateTimeInput(value, previousValue, cursorPosition) {
+    // Si el usuario está borrando (valor anterior es más largo), permitir borrar
+    if (previousValue && value.length < previousValue.length) {
+      // Remover caracteres no numéricos del valor actual
+      const currentNumbers = value.replace(/\D/g, '');
+      const previousNumbers = previousValue.replace(/\D/g, '');
+      
+      // Si se borró un número, mantener el formato pero sin ese número
+      if (currentNumbers.length < previousNumbers.length) {
+        return formatNumbersToDate(currentNumbers);
+      }
+    }
+    
     // Remover todo excepto números
     const numbers = value.replace(/\D/g, '');
     
-    // Construir el formato completo siempre
+    return formatNumbersToDate(numbers);
+  }
+
+  // Función auxiliar para formatear números a fecha
+  function formatNumbersToDate(numbers) {
     let formatted = '';
     
     // Día (2 dígitos)
     if (numbers.length >= 2) {
       formatted += numbers.substring(0, 2);
     } else if (numbers.length > 0) {
-      formatted += numbers.substring(0, 1) + '_';
-    } else {
-      formatted += '__';
+      formatted += numbers.substring(0, 1);
     }
-    formatted += '/';
+    if (numbers.length > 0) formatted += '/';
     
     // Mes (2 dígitos)
     if (numbers.length >= 4) {
       formatted += numbers.substring(2, 4);
     } else if (numbers.length > 2) {
-      formatted += numbers.substring(2, 3) + '_';
-    } else {
-      formatted += '__';
+      formatted += numbers.substring(2, 3);
     }
-    formatted += '/';
+    if (numbers.length > 2) formatted += '/';
     
     // Año (4 dígitos)
     if (numbers.length >= 8) {
       formatted += numbers.substring(4, 8);
     } else if (numbers.length > 4) {
-      formatted += numbers.substring(4) + '_'.repeat(8 - numbers.length);
-    } else {
-      formatted += '____';
+      formatted += numbers.substring(4);
     }
-    formatted += ' ';
+    if (numbers.length > 4) formatted += ' ';
     
     // Hora (2 dígitos)
     if (numbers.length >= 10) {
       formatted += numbers.substring(8, 10);
     } else if (numbers.length > 8) {
-      formatted += numbers.substring(8, 9) + '_';
-    } else {
-      formatted += '__';
+      formatted += numbers.substring(8, 9);
     }
-    formatted += ':';
+    if (numbers.length > 8) formatted += ':';
     
     // Minutos (2 dígitos)
     if (numbers.length >= 12) {
       formatted += numbers.substring(10, 12);
     } else if (numbers.length > 10) {
-      formatted += numbers.substring(10, 11) + '_';
-    } else {
-      formatted += '__';
+      formatted += numbers.substring(10, 11);
     }
     
     return formatted;
@@ -822,8 +828,8 @@ export default function CotizacionForm() {
   function parseFormattedDateTimeInput(value) {
     if (!value || !value.trim()) return null;
     
-    // Remover espacios, guiones bajos y obtener solo números
-    const numbers = value.replace(/[^\d]/g, '');
+    // Remover espacios y obtener solo números
+    const numbers = value.replace(/\D/g, '');
     
     if (numbers.length < 8) return null; // Necesitamos al menos día, mes y año
     
@@ -2085,9 +2091,46 @@ export default function CotizacionForm() {
               id="manualDateTime"
               value={manualDateTimeInput}
               onChange={(e) => {
+                const input = e.target;
+                const previousValue = manualDateTimeInput;
+                const cursorPosition = input.selectionStart;
+                const inputValue = e.target.value;
+                
+                // Contar números antes del cursor
+                const beforeCursor = inputValue.substring(0, cursorPosition);
+                const numbersBeforeCursor = beforeCursor.replace(/\D/g, '').length;
+                
                 // Formatear automáticamente mientras escribe solo números
-                const formatted = formatDateTimeInput(e.target.value);
+                const formatted = formatDateTimeInput(inputValue, previousValue, cursorPosition);
                 setManualDateTimeInput(formatted);
+                
+                // Calcular nueva posición del cursor basada en números escritos
+                setTimeout(() => {
+                  let newCursorPos = 0;
+                  let numbersCount = 0;
+                  
+                  for (let i = 0; i < formatted.length; i++) {
+                    if (/\d/.test(formatted[i])) {
+                      numbersCount++;
+                      if (numbersCount > numbersBeforeCursor) {
+                        newCursorPos = i;
+                        break;
+                      }
+                    }
+                    if (numbersCount === numbersBeforeCursor && !/\d/.test(formatted[i + 1])) {
+                      newCursorPos = i + 1;
+                      break;
+                    }
+                  }
+                  
+                  if (newCursorPos === 0 && numbersBeforeCursor === 0) {
+                    newCursorPos = 0;
+                  } else if (newCursorPos === 0) {
+                    newCursorPos = formatted.length;
+                  }
+                  
+                  input.setSelectionRange(newCursorPos, newCursorPos);
+                }, 0);
                 
                 // Intentar parsear y actualizar el calendario
                 const parsed = parseFormattedDateTimeInput(formatted);
@@ -2106,11 +2149,9 @@ export default function CotizacionForm() {
                 }
               }}
               placeholder="dd/mm/yyyy HH:mm"
-              style={{ width: '100%', padding: '0.5rem' }}
+              style={{ width: '100%', padding: '0.35rem', textAlign: 'left' }}
             />
-            <small style={{ display: 'block', marginTop: '0.15rem', color: '#6b7280', fontSize: '0.65rem' }}>
-              Formato: dd/mm/yyyy HH:mm
-            </small>
+          
           </div>
 
           {/* Separador */}
