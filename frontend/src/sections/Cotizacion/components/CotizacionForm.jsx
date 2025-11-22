@@ -759,6 +759,7 @@ export default function CotizacionForm() {
 
   // Formatear automáticamente mientras el usuario escribe solo números
   // Maneja mejor el cursor y permite borrar carácter por carácter
+  // Valida límites: días <= 31, meses <= 12, horas <= 23, minutos <= 59
   function formatDateTimeInput(value, previousValue, cursorPosition) {
     // Si el usuario está borrando (valor anterior es más largo), permitir borrar
     if (previousValue && value.length < previousValue.length) {
@@ -773,9 +774,85 @@ export default function CotizacionForm() {
     }
     
     // Remover todo excepto números
-    const numbers = value.replace(/\D/g, '');
+    let numbers = value.replace(/\D/g, '');
+    
+    // Validar y limitar valores mientras se escribe
+    numbers = validateAndLimitNumbers(numbers);
     
     return formatNumbersToDate(numbers);
+  }
+
+  // Validar y limitar números según su posición
+  function validateAndLimitNumbers(numbers) {
+    if (numbers.length === 0) return '';
+    
+    let validated = numbers.split('');
+    
+    // Día (primeros 2 dígitos) - máximo 31
+    if (validated.length >= 1) {
+      const day1 = parseInt(validated[0]);
+      if (day1 > 3) {
+        validated[0] = '3';
+      }
+    }
+    
+    if (validated.length >= 2) {
+      const day = parseInt(validated[0] + validated[1]);
+      if (day > 31) {
+        validated[0] = '3';
+        validated[1] = '1';
+      }
+    }
+    
+    // Mes (dígitos 3-4) - máximo 12
+    if (validated.length >= 3) {
+      const month1 = parseInt(validated[2]);
+      if (month1 > 1) {
+        validated[2] = '1';
+      }
+    }
+    
+    if (validated.length >= 4) {
+      const month = parseInt(validated[2] + validated[3]);
+      if (month > 12) {
+        validated[2] = '1';
+        validated[3] = '2';
+      }
+    }
+    
+    // Hora (dígitos 9-10) - máximo 23
+    if (validated.length >= 9) {
+      const hour1 = parseInt(validated[8]);
+      if (hour1 > 2) {
+        validated[8] = '2';
+      }
+    }
+    
+    if (validated.length >= 10) {
+      const hour = parseInt(validated[8] + validated[9]);
+      if (hour > 23) {
+        validated[8] = '2';
+        validated[9] = '3';
+      }
+    }
+    
+    // Minutos (dígitos 11-12) - máximo 59
+    if (validated.length >= 11) {
+      const minute1 = parseInt(validated[10]);
+      if (minute1 > 5) {
+        validated[10] = '5';
+      }
+    }
+    
+    if (validated.length >= 12) {
+      const minutes = parseInt(validated[10] + validated[11]);
+      if (minutes > 59) {
+        validated[10] = '5';
+        validated[11] = '9';
+      }
+    }
+    
+    return validated.join('');
   }
 
   // Función auxiliar para formatear números a fecha
