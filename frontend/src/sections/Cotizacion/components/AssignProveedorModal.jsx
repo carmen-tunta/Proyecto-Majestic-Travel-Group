@@ -72,13 +72,13 @@ export default function AssignProveedorModal({
           // Mostrar solo porcentaje o solo monto
           const incrementoLabel = incPercent > 0
             ? `${incPercent}%`
-            : (incMoney ? incMoney.toFixed(2) : '0.00');
+            : (incMoney ? Number(incMoney).toFixed(2).replace(',', '.') : '0.00');
           return {
             proveedorId: proveedor.id,
             nombre: proveedor.name || proveedor.nombre || '-',
-            costo: baseTotal.toFixed(2),
+            costo: Number(baseTotal).toFixed(2).replace(',', '.'),
             incrementoLabel,
-            total: total.toFixed(2),
+            total: Number(total).toFixed(2).replace(',', '.'),
             totalNumber: total,
             descripcion: row.columnDescription || '-'
           };

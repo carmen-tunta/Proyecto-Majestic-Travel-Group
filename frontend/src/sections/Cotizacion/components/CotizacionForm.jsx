@@ -757,6 +757,12 @@ export default function CotizacionForm() {
     return `${day}/${month}/${year} ${hours}:${minutes}`;
   }
 
+  // Formatear número con punto como separador decimal
+  function formatNumberWithDot(value, decimals = 2) {
+    if (value === null || value === undefined || isNaN(value)) return '0.00';
+    return Number(value).toFixed(decimals).replace(',', '.');
+  }
+
   // Formatear automáticamente mientras el usuario escribe solo números
   // Maneja mejor el cursor y permite borrar carácter por carácter
   // Valida límites: días <= 31, meses <= 12, horas <= 23, minutos <= 59
@@ -1867,7 +1873,7 @@ export default function CotizacionForm() {
 
                               <div>
 
-                                <InputNumber inputClassName="price-input" value={priceDrafts[rowData.id] ?? Number(rowData.precio || 0)} mode="decimal" minFractionDigits={2} maxFractionDigits={2}
+                                <InputNumber inputClassName="price-input" value={priceDrafts[rowData.id] ?? Number(rowData.precio || 0)} mode="decimal" minFractionDigits={2} maxFractionDigits={2} locale="en-US"
 
                                   onValueChange={(e) => setPriceDrafts(d => ({ ...d, [rowData.id]: e.value }))}
 
@@ -2011,19 +2017,19 @@ export default function CotizacionForm() {
 
                   <div className="totals-row">
 
-                    <span>Costo por pasajero</span><span>{costoPorPasajero.toFixed(2)}</span>
+                    <span>Costo por pasajero</span><span>{formatNumberWithDot(costoPorPasajero, 2)}</span>
 
                   </div>
 
                   <div className="totals-row">
 
-                    <span>Utilidad {Number(form.utilidad || 0)}%</span><span>{Number(precioUtilidad).toFixed(2)}</span>
+                    <span>Utilidad {Number(form.utilidad || 0)}%</span><span>{formatNumberWithDot(precioUtilidad, 2)}</span>
 
                   </div>
 
                   <div className="totals-row bold">
 
-                    <span>Precio de venta</span><span>{precioVenta.toFixed(2)}</span>
+                    <span>Precio de venta</span><span>{formatNumberWithDot(precioVenta, 2)}</span>
 
                   </div>
 
