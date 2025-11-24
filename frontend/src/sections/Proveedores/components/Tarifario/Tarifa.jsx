@@ -3,6 +3,7 @@ import { InputText } from "primereact/inputtext";
 import { FloatLabel } from "primereact/floatlabel";
 import { Button } from "primereact/button";
 import { Calendar } from "primereact/calendar";
+import { SelectButton } from "primereact/selectbutton";
 import { addLocale } from "primereact/api";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
@@ -39,6 +40,20 @@ const TarifaMenu = ({ proveedor, tarifa, setTarifa }) => {
     const { showNotification } = useNotification();
     const [selectedComponents, setSelectedComponents] = useState([]);
     const [tarifaComponents, setTarifaComponents] = useState([]);
+    const COLUMN_MODE = {
+        SHARED: 'shared',
+        PRIVATE: 'private'
+    };
+    const columnModeOptions = [
+        { label: 'Compartido', value: COLUMN_MODE.SHARED },
+        { label: 'Privado', value: COLUMN_MODE.PRIVATE }
+    ];
+    const resolveColumnMode = (value) => (
+        value === false || value === 0 || value === '0' || value === 'false'
+            ? COLUMN_MODE.PRIVATE
+            : COLUMN_MODE.SHARED
+    );
+    const [columnMode, setColumnMode] = useState(COLUMN_MODE.SHARED);
     
     const [columns, setColumns] = useState([]);
     const [modalColumn, setModalColumn] = useState(false);
@@ -158,7 +173,8 @@ const TarifaMenu = ({ proveedor, tarifa, setTarifa }) => {
                 tarifa_id: tarifa.id,
                 description: columnDescription,
                 paxMin: paxMin,
-                paxMax: paxMax
+                paxMax: paxMax,
+                isShared: columnMode === COLUMN_MODE.SHARED
             });
 
             // 2. Crear las celdas (precios) para cada componente existente
@@ -190,6 +206,7 @@ const TarifaMenu = ({ proveedor, tarifa, setTarifa }) => {
             setColumnDescription('');
             setPaxMin('');
             setPaxMax('');
+            setColumnMode(COLUMN_MODE.SHARED);
         }
     };
 
@@ -228,6 +245,7 @@ const TarifaMenu = ({ proveedor, tarifa, setTarifa }) => {
         setColumnDescription(col.description);
         setPaxMin(col.paxMin);
         setPaxMax(col.paxMax);
+        setColumnMode(resolveColumnMode(col.isShared));
         setModalColumn(true);
     };
 
@@ -240,7 +258,8 @@ const TarifaMenu = ({ proveedor, tarifa, setTarifa }) => {
                 id: editingColumn.id,
                 description: columnDescription,
                 paxMin: paxMin,
-                paxMax: paxMax
+                paxMax: paxMax,
+                isShared: columnMode === COLUMN_MODE.SHARED
             });
             const tarifaColumnData = await getTarifaColumnByTarifaId.execute(tarifa.id);
             setColumns(tarifaColumnData);
@@ -254,6 +273,7 @@ const TarifaMenu = ({ proveedor, tarifa, setTarifa }) => {
         setColumnDescription('');
         setPaxMin('');
         setPaxMax('');
+        setColumnMode(COLUMN_MODE.SHARED);
     };
 
 
@@ -281,6 +301,7 @@ const TarifaMenu = ({ proveedor, tarifa, setTarifa }) => {
                     }}>
                         <div style={{ fontWeight: 500 }}>{col.description}</div>
                         <div style={{ fontSize: '0.95em', color: '#555' }}>{col.paxMin}-{col.paxMax}</div>
+                        <div style={{ fontSize: '0.8em', color: '#304152', marginTop: 4 }}>{col.isShared ? 'Compartido' : 'Privado'}</div>
                     </div>
                     <div style={{
                         display: 'flex',
@@ -395,7 +416,7 @@ const TarifaMenu = ({ proveedor, tarifa, setTarifa }) => {
                     ...tarifa,
                     validityFrom,
                     validityTo,
-                    observation
+                        observation
                 });
                 console.log(tarifarioActualizado);
                 setTarifa(tarifarioActualizado);
@@ -683,6 +704,11 @@ const TarifaMenu = ({ proveedor, tarifa, setTarifa }) => {
                         {has('PROVEEDORES','CREATE') && (
                         <i className="pi pi-plus-circle tarifa-add-column-button" 
                             onClick={modalColumn ? undefined : (e) => {
+                                setEditingColumn(null);
+                                setColumnDescription('');
+                                setPaxMin('');
+                                setPaxMax('');
+                                setColumnMode(COLUMN_MODE.SHARED);
                                 setModalColumn(true);
                                 setModalColumnX(e.pageX);
                                 setModalColumnY(e.pageY);
@@ -733,6 +759,7 @@ const TarifaMenu = ({ proveedor, tarifa, setTarifa }) => {
                         setColumnDescription('');
                         setPaxMin('');
                         setPaxMax('');
+                        setColumnMode(COLUMN_MODE.SHARED);
                     }}
                 >
                     <div
@@ -748,6 +775,7 @@ const TarifaMenu = ({ proveedor, tarifa, setTarifa }) => {
                                 setColumnDescription('');
                                 setPaxMin('');
                                 setPaxMax('');
+                                setColumnMode(COLUMN_MODE.SHARED);
                             }}></i>
                         </div>
                         <div className="modal-column-body">
@@ -780,6 +808,15 @@ const TarifaMenu = ({ proveedor, tarifa, setTarifa }) => {
                                     />
                                     <label htmlFor="paxMax">Pax máximo</label>
                                 </FloatLabel>
+                            </div>
+                            <div className="modal-column-mode">
+                                <span>Modalidad</span>
+                                <SelectButton
+                                    value={columnMode}
+                                    options={columnModeOptions}
+                                    onChange={(e) => setColumnMode(e.value)}
+                                    allowEmpty={false}
+                                />
                             </div>
                         </div>
                         <div>

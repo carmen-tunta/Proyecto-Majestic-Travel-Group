@@ -1,11 +1,14 @@
 .tarifa-header {
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     gap: 1rem;
+    width: 100%;
+    flex-wrap: nowrap;
 }
 
 .tarifa-validity {
-  width: 20%;
+    flex: 0 0 18%;
+    min-width: 160px;
 }
 
 .tarifa-validity .p-calendar {
@@ -13,7 +16,8 @@
 }
 
 .tarifa-observation {
-  width: 40%;
+    flex: 1 1 40%;
+    min-width: 220px;
 }
 
 .tarifa-observation input {
@@ -21,7 +25,13 @@
 }
 
 .tarifa-save-button {
-  width: 20%; 
+    margin-left: auto;
+    flex: 0 0 auto;
+    align-self: center;
+}
+
+.tarifa-header .tarifa-save-button .p-button-label {
+        white-space: nowrap;
 }
 
 .tarifa-save-button .p-button-label {
@@ -110,6 +120,32 @@
     width: 7rem;
 }
 
+.modal-column-body .modal-column-mode {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 1rem;
+    width: 100%;
+}
+
+.modal-column-body .modal-column-mode span {
+    font-size: 0.85rem;
+    color: #4f5765;
+    white-space: nowrap;
+}
+
+.modal-column-body .modal-column-mode .p-selectbutton {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.modal-column-body .modal-column-mode .p-button {
+    min-height: 36px;
+    padding: 0 0.75rem;
+}
+
 .p-editable-column, .p-cell-editing {
     padding: 0 !important;
     width: 10vw;
@@ -188,7 +224,7 @@ input[type="number"] {
         justify-content: center;
         font-size: 0.9rem;
     }
-    
+
     .tarifa-body {
         padding: 0.5rem;
     }

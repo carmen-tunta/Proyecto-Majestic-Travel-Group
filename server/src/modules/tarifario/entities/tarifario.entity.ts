@@ -29,6 +29,13 @@ export class Tarifario {
   })
   proveedorId: number;
 
+  @Column({
+    type: 'boolean',
+    default: true,
+    comment: 'Define si la tarifa se cobra por pasajero (compartido) o por servicio (privado)'
+  })
+  isShared: boolean;
+
   @OneToOne(() => Proveedores, { nullable: false, onDelete: 'CASCADE' })
   @JoinColumn({ name: 'proveedorId' })
   proveedor: Proveedores;

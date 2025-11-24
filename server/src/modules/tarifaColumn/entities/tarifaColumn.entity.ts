@@ -19,6 +19,13 @@ export class TarifaColumn {
   @Column()
   paxMax: number;
 
+  @Column({
+    type: 'boolean',
+    default: true,
+    comment: 'Indica si el precio de la columna se cobra por pasajero (compartido) o por servicio (privado)'
+  })
+  isShared: boolean;
+
   @ManyToOne(() => Tarifario, tc => tc.columns, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'tarifa_id' })
   tarifa: Tarifario;

@@ -651,19 +651,45 @@ export default function CotizacionForm() {
 
 
 
-  // Nota: totalServicios es la suma de precios de todos los componentes seleccionados.
+  // Nota: separamos componentes compartidos (precio por pasajero) y privados (precio por servicio)
 
-  // El costo por pasajero se calcula en base a nroPax (adultos), pero para asignación de proveedor
+  // para calcular correctamente el costo base y su distribución por pasajero.
 
-  // multiplicamos el costo unitario por el total de pasajeros (adultos + niños).
+  const totalesComponentes = (detalle?.servicios || []).reduce((acc, servicio) => {
 
-  const costoPorPasajero = (detalle?.servicios || []).reduce((acc, s) => acc + (s.componentes || []).reduce((a, c) => a + (Number(c.precio) || 0), 0), 0);
+    (servicio.componentes || []).forEach((comp) => {
+
+      const precio = Number(comp.precio) || 0;
+
+      if (comp.isShared === false || comp.isShared === 0 || comp.isShared === '0') {
+
+        acc.privados += precio;
+
+      } else {
+
+        acc.compartidos += precio;
+
+      }
+
+    });
+
+    return acc;
+
+  }, { compartidos: 0, privados: 0 });
 
   const totalPaxResumen = (Number(form.nroPax) || 0) + (Number(form.nroNinos) || 0);
 
-  const precioUtilidad = totalPaxResumen * costoPorPasajero * (Number(form.utilidad || 0) / 100);
+  const costoBase = (totalesComponentes.compartidos * totalPaxResumen) + totalesComponentes.privados;
 
-  const costoFinal = totalPaxResumen * costoPorPasajero;
+  const costoPorPasajero = totalPaxResumen > 0
+
+    ? costoBase / totalPaxResumen
+
+    : totalesComponentes.compartidos + totalesComponentes.privados;
+
+  const precioUtilidad = costoBase * (Number(form.utilidad || 0) / 100);
+
+  const costoFinal = costoBase;
 
   const precioVenta = costoFinal + precioUtilidad;
 
@@ -2084,7 +2110,7 @@ export default function CotizacionForm() {
 
         date={provDate}
 
-        onAssigned={({ cscId, proveedor, precio }) => setDetalle(prev => {
+        onAssigned={({ cscId, proveedor, precio, isShared }) => setDetalle(prev => {
 
           if (!prev) return prev;
 
@@ -2092,7 +2118,7 @@ export default function CotizacionForm() {
 
             ...s,
 
-            componentes: (s.componentes || []).map(c => c.id === cscId ? { ...c, proveedor, precio } : c)
+            componentes: (s.componentes || []).map(c => c.id === cscId ? { ...c, proveedor, precio, isShared } : c)
 
           }));
 

@@ -49,7 +49,8 @@ export default function AssignProveedorModal({
         const mapped = (data || []).map((row) => {
           const proveedor = row.proveedor || {};
           // costoPerPax: costo unitario por pasajero devuelto por la tarifa del proveedor
-          const costoPerPax = Number(row.price || row.costo || 0) || 0;
+          const costoUnitario = Number(row.price || row.costo || 0) || 0;
+          const isShared = !(row.isShared === false || row.isShared === 0 || row.isShared === '0' || row.isShared === 'false');
           const totalPax = Number(pax) || 1;
           let incPercent = 0;
           let incMoney = 0;
@@ -64,10 +65,10 @@ export default function AssignProveedorModal({
             else incMoney += Number(inc.incrementValue) || 0;
           });
           // Regla solicitada:
-          // 1) El costo base es por pasajero y debe multiplicarse por el total de pasajeros (adultos + niños)
-          // 2) Si el incremento es porcentaje, se aplica sobre el TOTAL (base x pax)
-          // 3) Si el incremento es monto fijo, se suma tal cual al TOTAL
-          const baseTotal = costoPerPax * totalPax;
+          // 1) Si la tarifa es compartida, el precio se multiplica por el total de pax
+          // 2) Si es privada, el precio ya representa el total del servicio
+          // 3) Los incrementos de porcentaje se aplican sobre el total calculado
+          const baseTotal = isShared ? costoUnitario * totalPax : costoUnitario;
           const total = baseTotal * (1 + incPercent / 100) + incMoney;
           // Mostrar solo porcentaje o solo monto
           const incrementoLabel = incPercent > 0
@@ -80,7 +81,9 @@ export default function AssignProveedorModal({
             incrementoLabel,
             total: Number(total).toFixed(2).replace(',', '.'),
             totalNumber: total,
-            descripcion: row.columnDescription || '-'
+            descripcion: row.columnDescription || '-',
+            sharedLabel: isShared ? 'Compartido' : 'Privado',
+            isShared
           };
         });
         console.log('Proveedores mapeados:', mapped);
@@ -99,8 +102,8 @@ export default function AssignProveedorModal({
     if (!cscId || !row?.proveedorId) return;
     try {
       setLoading(true);
-      await apiService.assignProviderToComponent(cscId, row.proveedorId, row.totalNumber);
-      if (onAssigned) onAssigned({ cscId, proveedor: { id: row.proveedorId, name: row.nombre }, precio: row.totalNumber });
+      await apiService.assignProviderToComponent(cscId, row.proveedorId, row.totalNumber, row.isShared);
+      if (onAssigned) onAssigned({ cscId, proveedor: { id: row.proveedorId, name: row.nombre }, precio: row.totalNumber, isShared: row.isShared });
       onHide && onHide();
     } catch (e) {
       // opcional: mostrar notificación si está disponible en contexto superior
@@ -156,7 +159,7 @@ export default function AssignProveedorModal({
               body={(r) => 
                   <div> 
                     <div>{r.nombre}</div>
-                    <div style={{ fontSize: 12, color: '#8891a6' }}>{r.descripcion}</div>
+                    <div style={{ fontSize: 12, color: '#8891a6' }}>{r.descripcion}{r.sharedLabel ? ` · ${r.sharedLabel}` : ''}</div>
                   </div>
               }
             ></Column>

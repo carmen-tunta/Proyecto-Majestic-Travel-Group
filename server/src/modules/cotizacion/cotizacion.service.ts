@@ -217,7 +217,7 @@ export class CotizacionService {
   }
 
   // Asignar proveedor a un componente del servicio y opcionalmente guardar el precio total calculado
-  async assignProviderToComponent(cscId: number, proveedorId: number, precioTotal?: number) {
+  async assignProviderToComponent(cscId: number, proveedorId: number, precioTotal?: number, isShared?: boolean) {
     const csc = await this.cotizacionServicioCompRepo.findOne({ where: { id: cscId } });
     if (!csc) throw new NotFoundException('Componente de servicio de cotización no encontrado');
     const proveedor = await this.proveedoresRepo.findOne({ where: { id: proveedorId } });
@@ -225,6 +225,9 @@ export class CotizacionService {
     (csc as any).proveedor = proveedor;
     if (typeof precioTotal !== 'undefined') {
       csc.precio = Number(precioTotal) as any;
+    }
+    if (typeof isShared !== 'undefined') {
+      csc.isShared = !!isShared;
     }
     return this.cotizacionServicioCompRepo.save(csc);
   }

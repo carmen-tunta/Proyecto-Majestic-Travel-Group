@@ -362,12 +362,12 @@ export const apiService = {
     } catch (error) { throw new Error(error.message || 'Error al actualizar componente del servicio'); }
   },
 
-  async assignProviderToComponent(cscId, proveedorId, precioTotal) {
+  async assignProviderToComponent(cscId, proveedorId, precioTotal, isShared) {
     try {
       const response = await fetch(`${API_BASE_URL}/cotizacion/servicios/componentes/${cscId}/proveedor`, {
         method: 'PUT',
         headers: getAuthHeaders(),
-        body: JSON.stringify({ proveedorId, precioTotal })
+        body: JSON.stringify({ proveedorId, precioTotal, isShared })
       });
       if (!response.ok) throw new Error('Error al asignar proveedor');
       return await response.json();
