@@ -138,7 +138,12 @@ const ServicesModal = ({ onHide, service }) => {
     function handleDeleteAccept() {
         if (!deleteTarget) return;
         if (deleteTarget.type === 'component') {
-            setServiceComponents(prevComponents => prevComponents.filter(c => c.id !== deleteTarget.data.id));
+            // Usar _uniqueKey si existe, sino usar id
+            const keyToMatch = deleteTarget.data._uniqueKey || deleteTarget.data.id;
+            setServiceComponents(prevComponents => prevComponents.filter(c => {
+                const currentKey = c._uniqueKey || c.id;
+                return currentKey !== keyToMatch;
+            }));
         } else if (deleteTarget.type === 'image') {
             const image = deleteTarget.data;
             if (image.id) { setDeletedImages(prevDeleted => [...prevDeleted, image]); }
@@ -167,9 +172,14 @@ const ServicesModal = ({ onHide, service }) => {
             comp = results.find(r => (r.componentName || '').toLowerCase() === q);
         }
         if (!comp) return; // no hay nada que agregar
-        if (!serviceComponents.find(c => c.id === comp.id)) {
-            setServiceComponents(prevComponents => [...prevComponents, comp]);
-        }
+        
+        // Crear un nuevo objeto con un identificador único temporal para permitir duplicados
+        const componentWithUniqueKey = {
+            ...comp,
+            _uniqueKey: `${comp.id}_${Date.now()}_${Math.random()}`
+        };
+        
+        setServiceComponents(prevComponents => [...prevComponents, componentWithUniqueKey]);
         setSearch('');
         setSelectedComponent(null);
     }
@@ -302,7 +312,7 @@ const ServicesModal = ({ onHide, service }) => {
                                                 }}
                                             >
                                                 {results
-                                                    .filter(comp => !serviceComponents.some(sc => sc.id === comp.id))
+                                                    
                                                     .map(comp => (
                                                         <div
                                                             key={comp.id}
@@ -321,7 +331,14 @@ const ServicesModal = ({ onHide, service }) => {
                 </div>
 
                 <div className="card">
-                    <DataTable  className="components-table" size="small" value={serviceComponents} tableStyle={{ minWidth: '60%' }} emptyMessage="Este servicio aun no cuenta con componentes">
+                    <DataTable  
+                        className="components-table" 
+                        size="small" 
+                        value={serviceComponents} 
+                        tableStyle={{ minWidth: '60%' }} 
+                        emptyMessage="Este servicio aun no cuenta con componentes"
+                        rowKey={(rowData) => rowData._uniqueKey || rowData.id}
+                    >
                         <Column 
                             field="componentName" 
                             header="Nombre del componente" 
