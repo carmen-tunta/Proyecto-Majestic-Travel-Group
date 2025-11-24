@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { In, Repository } from 'typeorm';
+import { In, Repository, DataSource } from 'typeorm';
 import { Cotizacion } from './entities/cotizacion.entity';
 import { CreateCotizacionDto } from './dto/create-cotizacion.dto';
 import { Client } from '../clients/entities/client.entity';
@@ -30,6 +30,7 @@ export class CotizacionService {
     private readonly proveedoresRepo: Repository<Proveedores>,
     @InjectRepository(User)
     private readonly userRepo: Repository<User>,
+    private readonly dataSource: DataSource,
   ) {}
 
   async create(createCotizacionDto: CreateCotizacionDto, userId?: number): Promise<Cotizacion> {
@@ -128,14 +129,24 @@ export class CotizacionService {
   // Agregar un servicio a una cotización
   async addService(cotizacionId: number, serviceId: number, _nota?: string, precio?: number): Promise<CotizacionServicio> {
     const cot = await this.findOne(cotizacionId);
-    const service = await this.serviceRepo.findOne({ where: { id: serviceId }, relations: ['components'] });
+    const service = await this.serviceRepo.findOne({ where: { id: serviceId } });
     if (!service) throw new NotFoundException('Servicio no encontrado');
-  const cs = this.cotizacionServicioRepo.create({ cotizacion: cot, service, precio: precio ?? 0 });
+    
+    // Cargar componentes manualmente con duplicados permitidos usando SQL directo
+    const componentsRows = await this.dataSource.query(
+      `SELECT c.* FROM service_components sc 
+       INNER JOIN components c ON sc.componentsId = c.id 
+       WHERE sc.servicesId = ? 
+       ORDER BY sc.id`,
+      [serviceId]
+    );
+    
+    const cs = this.cotizacionServicioRepo.create({ cotizacion: cot, service, precio: precio ?? 0 });
     const csSaved = await this.cotizacionServicioRepo.save(cs);
 
-    // Si el servicio tiene componentes base, agregarlos automáticamente
-    if (Array.isArray(service.components) && service.components.length > 0) {
-      const items = service.components.map((c) =>
+    // Si el servicio tiene componentes base, agregarlos automáticamente (incluyendo duplicados)
+    if (Array.isArray(componentsRows) && componentsRows.length > 0) {
+      const items = componentsRows.map((c) =>
         this.cotizacionServicioCompRepo.create({ cotizacionServicio: csSaved, component: c })
       );
       await this.cotizacionServicioCompRepo.save(items);

@@ -1082,6 +1082,80 @@
   }
 }
 
+/* Contenedor HTML editable para plantillas con estilos */
+.confirmacion-contenido-html {
+  min-height: 80px;
+  padding: 0.75rem;
+  border: 1px solid #ced4da;
+  border-radius: 6px;
+  background: white;
+  font-family: inherit;
+  font-size: 1rem;
+  line-height: 1.5;
+  outline: none;
+  transition: border-color 0.2s;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.confirmacion-contenido-html:focus {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 0.2rem rgba(99, 102, 241, 0.25);
+}
+
+.confirmacion-contenido-html p {
+  margin: 0 0 0.5rem 0;
+}
+
+.confirmacion-contenido-html p:last-child {
+  margin-bottom: 0;
+}
+
+.confirmacion-contenido-html ul,
+.confirmacion-contenido-html ol {
+  margin: 0.5rem 0;
+  padding-left: 1.5rem;
+}
+
+.confirmacion-contenido-html li {
+  margin-bottom: 0.25rem;
+}
+
+.confirmacion-contenido-html strong {
+  font-weight: 600;
+}
+
+.confirmacion-contenido-html em {
+  font-style: italic;
+}
+
+/* Ocultar el HTML editable en modo export (para PDF) */
+.confirmacion-export .confirmacion-contenido-html {
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  outline: none !important;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+/* Estilos responsive para HTML editable */
+@media (max-width: 768px) {
+  .confirmacion-contenido-html {
+    min-height: 70px;
+    padding: 0.5rem;
+    font-size: 0.875rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .confirmacion-contenido-html {
+    min-height: 70px;
+    padding: 0.45rem;
+    font-size: 0.8rem;
+  }
+}
+
 /* Print styles */
 @media print {
   .confirmacion-editor-header,
@@ -1115,5 +1189,62 @@
 @page {
   size: letter;
   margin: 0;
+}
+
+/* Contenedor HTML editable para plantillas con estilos */
+.confirmacion-contenido-html {
+  min-height: 80px;
+  padding: 0.75rem;
+  border: 1px solid #ced4da;
+  border-radius: 6px;
+  background: white;
+  font-family: inherit;
+  font-size: 1rem;
+  line-height: 1.5;
+  outline: none;
+  transition: border-color 0.2s;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.confirmacion-contenido-html:focus {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 0.2rem rgba(99, 102, 241, 0.25);
+}
+
+.confirmacion-contenido-html p {
+  margin: 0 0 0.5rem 0;
+}
+
+.confirmacion-contenido-html p:last-child {
+  margin-bottom: 0;
+}
+
+.confirmacion-contenido-html ul,
+.confirmacion-contenido-html ol {
+  margin: 0.5rem 0;
+  padding-left: 1.5rem;
+}
+
+.confirmacion-contenido-html li {
+  margin-bottom: 0.25rem;
+}
+
+.confirmacion-contenido-html strong {
+  font-weight: 600;
+}
+
+.confirmacion-contenido-html em {
+  font-style: italic;
+}
+
+/* Ocultar el HTML editable en modo export (para PDF) */
+.confirmacion-export .confirmacion-contenido-html {
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  outline: none !important;
+  padding-left: 0;
+  padding-right: 0;
 }
 

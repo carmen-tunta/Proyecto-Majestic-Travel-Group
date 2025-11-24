@@ -636,10 +636,12 @@ const ConfirmacionReserva = ({ cotizacionId, cotizacionData }) => {
               </div>
               ${editablePage.blocks.map(block => {
                 if (block.type === 'row') {
+                  // Si es HTML, renderizar directamente; si no, usar como texto plano
+                  const contenidoHTML = block.isHtml ? block.contenido : `<div class="confirmacion-text-export">${block.contenido}</div>`;
                   return `
                     <div class="confirmacion-block-row">
                       <div class="confirmacion-title-export">${block.titulo}</div>
-                      <div class="confirmacion-text-export">${block.contenido}</div>
+                      ${block.isHtml ? `<div class="confirmacion-contenido-html">${block.contenido}</div>` : `<div class="confirmacion-text-export">${block.contenido}</div>`}
                     </div>
                   `;
                 } else if (block.type === 'double') {
@@ -647,11 +649,11 @@ const ConfirmacionReserva = ({ cotizacionId, cotizacionData }) => {
                     <div class="confirmacion-block-double">
                       <div class="confirmacion-block-column">
                         <div class="confirmacion-title-export">${block.col1.titulo}</div>
-                        <div class="confirmacion-text-export">${block.col1.contenido}</div>
+                        ${block.col1.isHtml ? `<div class="confirmacion-contenido-html">${block.col1.contenido}</div>` : `<div class="confirmacion-text-export">${block.col1.contenido}</div>`}
                       </div>
                       <div class="confirmacion-block-column">
                         <div class="confirmacion-title-export">${block.col2.titulo}</div>
-                        <div class="confirmacion-text-export">${block.col2.contenido}</div>
+                        ${block.col2.isHtml ? `<div class="confirmacion-contenido-html">${block.col2.contenido}</div>` : `<div class="confirmacion-text-export">${block.col2.contenido}</div>`}
                       </div>
                     </div>
                   `;
@@ -789,14 +791,19 @@ const ConfirmacionReserva = ({ cotizacionId, cotizacionData }) => {
     const block = updatedPages[currentPageIndex - 1].blocks.find(b => b.id === currentBlockId);
     
     if (block) {
+      // Mantener el HTML con sus estilos
+      const htmlContent = template.description || '';
+      
       if (currentColumn) {
         // Para bloques dobles
-        block[currentColumn].titulo = template.templateTitle || '';
-        block[currentColumn].contenido = template.description || '';
+        block[currentColumn].titulo = template.itineraryTitle || '';
+        block[currentColumn].contenido = htmlContent;
+        block[currentColumn].isHtml = true; // Marcar como contenido HTML
       } else {
         // Para bloques simples
-        block.titulo = template.templateTitle || '';
-        block.contenido = template.description || '';
+        block.titulo = template.itineraryTitle || '';
+        block.contenido = htmlContent;
+        block.isHtml = true; // Marcar como contenido HTML
       }
       setEditablePages(updatedPages);
       showNotification('Plantilla cargada correctamente', 'success');
@@ -1003,13 +1010,23 @@ const ConfirmacionReserva = ({ cotizacionId, cotizacionData }) => {
                         tooltipOptions={{ position: 'top' }}
                       />
                     </div>
-                    <InputTextarea
-                      value={block.contenido}
-                      onChange={(e) => updateBlock(block.id, 'contenido', e.target.value)}
-                      className="confirmacion-contenido-input"
-                      rows={3}
-                      autoResize
-                    />
+                    {block.isHtml ? (
+                      <div 
+                        className="confirmacion-contenido-html"
+                        dangerouslySetInnerHTML={{ __html: block.contenido }}
+                        contentEditable
+                        suppressContentEditableWarning
+                        onBlur={(e) => updateBlock(block.id, 'contenido', e.currentTarget.innerHTML)}
+                      />
+                    ) : (
+                      <InputTextarea
+                        value={block.contenido}
+                        onChange={(e) => updateBlock(block.id, 'contenido', e.target.value)}
+                        className="confirmacion-contenido-input"
+                        rows={3}
+                        autoResize
+                      />
+                    )}
                   </div>
                 )}
 
@@ -1037,13 +1054,23 @@ const ConfirmacionReserva = ({ cotizacionId, cotizacionData }) => {
                           tooltipOptions={{ position: 'top' }}
                         />
                       </div>
-                      <InputTextarea
-                        value={block.col1.contenido}
-                        onChange={(e) => updateBlock(block.id, 'contenido', e.target.value, 'col1')}
-                        className="confirmacion-contenido-input"
-                        rows={3}
-                        autoResize
-                      />
+                      {block.col1.isHtml ? (
+                        <div 
+                          className="confirmacion-contenido-html"
+                          dangerouslySetInnerHTML={{ __html: block.col1.contenido }}
+                          contentEditable
+                          suppressContentEditableWarning
+                          onBlur={(e) => updateBlock(block.id, 'contenido', e.currentTarget.innerHTML, 'col1')}
+                        />
+                      ) : (
+                        <InputTextarea
+                          value={block.col1.contenido}
+                          onChange={(e) => updateBlock(block.id, 'contenido', e.target.value, 'col1')}
+                          className="confirmacion-contenido-input"
+                          rows={3}
+                          autoResize
+                        />
+                      )}
                     </div>
                     <div className="confirmacion-block-column">
                       <div className="confirmacion-titulo-container">
@@ -1067,13 +1094,23 @@ const ConfirmacionReserva = ({ cotizacionId, cotizacionData }) => {
                           tooltipOptions={{ position: 'top' }}
                         />
                       </div>
-                      <InputTextarea
-                        value={block.col2.contenido}
-                        onChange={(e) => updateBlock(block.id, 'contenido', e.target.value, 'col2')}
-                        className="confirmacion-contenido-input"
-                        rows={3}
-                        autoResize
-                      />
+                      {block.col2.isHtml ? (
+                        <div 
+                          className="confirmacion-contenido-html"
+                          dangerouslySetInnerHTML={{ __html: block.col2.contenido }}
+                          contentEditable
+                          suppressContentEditableWarning
+                          onBlur={(e) => updateBlock(block.id, 'contenido', e.currentTarget.innerHTML, 'col2')}
+                        />
+                      ) : (
+                        <InputTextarea
+                          value={block.col2.contenido}
+                          onChange={(e) => updateBlock(block.id, 'contenido', e.target.value, 'col2')}
+                          className="confirmacion-contenido-input"
+                          rows={3}
+                          autoResize
+                        />
+                      )}
                     </div>
                   </div>
                 )}
