@@ -109,6 +109,7 @@ export class ProveedoresService {
         'proveedor.birthdate',
         'proveedor.gender',
         'proveedor.registrationDate',
+        'col.isShared',
         'price.price',
         'col.paxMin',
         'col.paxMax',
@@ -150,6 +151,9 @@ export class ProveedoresService {
           paxMin: row['col_paxMin'],
           paxMax: row['col_paxMax'],
           columnDescription: row['col_description'],
+          isShared: row['col_isShared'] === null || typeof row['col_isShared'] === 'undefined'
+            ? true
+            : !!row['col_isShared'],
           increments: [],
         };
       }

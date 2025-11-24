@@ -28,6 +28,9 @@ export class CotizacionServicioComponente {
   @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
   precio?: number;
 
+  @Column({ type: 'boolean', default: true })
+  isShared: boolean;
+
   // Fecha y hora programada para realizar el componente
   @Column({ type: 'datetime', nullable: true })
   scheduledAt?: Date | null;
