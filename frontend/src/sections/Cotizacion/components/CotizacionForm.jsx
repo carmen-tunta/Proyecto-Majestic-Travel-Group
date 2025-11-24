@@ -174,6 +174,8 @@ export default function CotizacionForm() {
 
   const [dateTimeDraft, setDateTimeDraft] = useState(null);
 
+  const [manualDateTimeInput, setManualDateTimeInput] = useState('');
+
 
 
   const [loading, setLoading] = useState(false);
@@ -743,11 +745,258 @@ export default function CotizacionForm() {
 
 
 
+  // Formatear fecha/hora a string legible (dd/mm/yyyy HH:mm)
+  function formatDateTimeToString(date) {
+    if (!date) return '';
+    const d = new Date(date);
+    const day = String(d.getDate()).padStart(2, '0');
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const year = d.getFullYear();
+    const hours = String(d.getHours()).padStart(2, '0');
+    const minutes = String(d.getMinutes()).padStart(2, '0');
+    return `${day}/${month}/${year} ${hours}:${minutes}`;
+  }
+
+  // Formatear número con punto como separador decimal
+  function formatNumberWithDot(value, decimals = 2) {
+    if (value === null || value === undefined || isNaN(value)) return '0.00';
+    return Number(value).toFixed(decimals).replace(',', '.');
+  }
+
+  // Formatear automáticamente mientras el usuario escribe solo números
+  // Maneja mejor el cursor y permite borrar carácter por carácter
+  // Valida límites: días <= 31, meses <= 12, horas <= 23, minutos <= 59
+  function formatDateTimeInput(value, previousValue, cursorPosition) {
+    // Si el usuario está borrando (valor anterior es más largo), permitir borrar
+    if (previousValue && value.length < previousValue.length) {
+      // Remover caracteres no numéricos del valor actual
+      const currentNumbers = value.replace(/\D/g, '');
+      const previousNumbers = previousValue.replace(/\D/g, '');
+      
+      // Si se borró un número, mantener el formato pero sin ese número
+      if (currentNumbers.length < previousNumbers.length) {
+        return formatNumbersToDate(currentNumbers);
+      }
+    }
+    
+    // Remover todo excepto números
+    let numbers = value.replace(/\D/g, '');
+    
+    // Validar y limitar valores mientras se escribe
+    numbers = validateAndLimitNumbers(numbers);
+    
+    return formatNumbersToDate(numbers);
+  }
+
+  // Validar y limitar números según su posición
+  function validateAndLimitNumbers(numbers) {
+    if (numbers.length === 0) return '';
+    
+    let validated = numbers.split('');
+    
+    // Día (primeros 2 dígitos) - máximo 31
+    if (validated.length >= 1) {
+      const day1 = parseInt(validated[0]);
+      if (day1 > 3) {
+        validated[0] = '3';
+      }
+    }
+    
+    if (validated.length >= 2) {
+      const day = parseInt(validated[0] + validated[1]);
+      if (day > 31) {
+        validated[0] = '3';
+        validated[1] = '1';
+      }
+    }
+    
+    // Mes (dígitos 3-4) - máximo 12
+    if (validated.length >= 3) {
+      const month1 = parseInt(validated[2]);
+      if (month1 > 1) {
+        validated[2] = '1';
+      }
+    }
+    
+    if (validated.length >= 4) {
+      const month = parseInt(validated[2] + validated[3]);
+      if (month > 12) {
+        validated[2] = '1';
+        validated[3] = '2';
+      }
+    }
+    
+    // Hora (dígitos 9-10) - máximo 23
+    if (validated.length >= 9) {
+      const hour1 = parseInt(validated[8]);
+      if (hour1 > 2) {
+        validated[8] = '2';
+      }
+    }
+    
+    if (validated.length >= 10) {
+      const hour = parseInt(validated[8] + validated[9]);
+      if (hour > 23) {
+        validated[8] = '2';
+        validated[9] = '3';
+      }
+    }
+    
+    // Minutos (dígitos 11-12) - máximo 59
+    if (validated.length >= 11) {
+      const minute1 = parseInt(validated[10]);
+      if (minute1 > 5) {
+        validated[10] = '5';
+      }
+    }
+    
+    if (validated.length >= 12) {
+      const minutes = parseInt(validated[10] + validated[11]);
+      if (minutes > 59) {
+        validated[10] = '5';
+        validated[11] = '9';
+      }
+    }
+    
+    return validated.join('');
+  }
+
+  // Función auxiliar para formatear números a fecha
+  function formatNumbersToDate(numbers) {
+    let formatted = '';
+    
+    // Día (2 dígitos)
+    if (numbers.length >= 2) {
+      formatted += numbers.substring(0, 2);
+    } else if (numbers.length > 0) {
+      formatted += numbers.substring(0, 1);
+    }
+    if (numbers.length > 0) formatted += '/';
+    
+    // Mes (2 dígitos)
+    if (numbers.length >= 4) {
+      formatted += numbers.substring(2, 4);
+    } else if (numbers.length > 2) {
+      formatted += numbers.substring(2, 3);
+    }
+    if (numbers.length > 2) formatted += '/';
+    
+    // Año (4 dígitos)
+    if (numbers.length >= 8) {
+      formatted += numbers.substring(4, 8);
+    } else if (numbers.length > 4) {
+      formatted += numbers.substring(4);
+    }
+    if (numbers.length > 4) formatted += ' ';
+    
+    // Hora (2 dígitos)
+    if (numbers.length >= 10) {
+      formatted += numbers.substring(8, 10);
+    } else if (numbers.length > 8) {
+      formatted += numbers.substring(8, 9);
+    }
+    if (numbers.length > 8) formatted += ':';
+    
+    // Minutos (2 dígitos)
+    if (numbers.length >= 12) {
+      formatted += numbers.substring(10, 12);
+    } else if (numbers.length > 10) {
+      formatted += numbers.substring(10, 11);
+    }
+    
+    return formatted;
+  }
+
+  // Parsear el input formateado automáticamente a Date
+  function parseFormattedDateTimeInput(value) {
+    if (!value || !value.trim()) return null;
+    
+    // Remover espacios y obtener solo números
+    const numbers = value.replace(/\D/g, '');
+    
+    if (numbers.length < 8) return null; // Necesitamos al menos día, mes y año
+    
+    const day = parseInt(numbers.substring(0, 2), 10);
+    const month = parseInt(numbers.substring(2, 4), 10);
+    const year = parseInt(numbers.substring(4, 8), 10);
+    const hours = numbers.length >= 10 ? parseInt(numbers.substring(8, 10), 10) : 0;
+    const minutes = numbers.length >= 12 ? parseInt(numbers.substring(10, 12), 10) : 0;
+    
+    // Validar valores
+    if (isNaN(day) || day < 1 || day > 31) return null;
+    if (isNaN(month) || month < 1 || month > 12) return null;
+    if (isNaN(year) || year < 1900 || year > 2100) return null;
+    if (isNaN(hours) || hours > 23) return null;
+    if (isNaN(minutes) || minutes > 59) return null;
+    
+    return new Date(year, month - 1, day, hours, minutes);
+  }
+
+  // Parsear string manual a Date (acepta formatos: dd/mm/yyyy HH:mm, dd/mm/yyyy, etc.)
+  function parseDateTimeString(value) {
+    if (!value || !value.trim()) return null;
+    
+    const trimmed = value.trim();
+    
+    // Formato: dd/mm/yyyy HH:mm
+    const match1 = trimmed.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})\s+(\d{1,2}):(\d{1,2})$/);
+    if (match1) {
+      const [, day, month, year, hours, minutes] = match1.map(Number);
+      if (day >= 1 && day <= 31 && month >= 1 && month <= 12) {
+        return new Date(year, month - 1, day, hours || 0, minutes || 0);
+      }
+    }
+    
+    // Formato: dd/mm/yyyy
+    const match2 = trimmed.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+    if (match2) {
+      const [, day, month, year] = match2.map(Number);
+      if (day >= 1 && day <= 31 && month >= 1 && month <= 12) {
+        return new Date(year, month - 1, day, 0, 0);
+      }
+    }
+    
+    // Formato: yyyy-mm-dd HH:mm
+    const match3 = trimmed.match(/^(\d{4})-(\d{1,2})-(\d{1,2})\s+(\d{1,2}):(\d{1,2})$/);
+    if (match3) {
+      const [, year, month, day, hours, minutes] = match3.map(Number);
+      if (day >= 1 && day <= 31 && month >= 1 && month <= 12) {
+        return new Date(year, month - 1, day, hours || 0, minutes || 0);
+      }
+    }
+    
+    // Formato: yyyy-mm-dd
+    const match4 = trimmed.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
+    if (match4) {
+      const [, year, month, day] = match4.map(Number);
+      if (day >= 1 && day <= 31 && month >= 1 && month <= 12) {
+        return new Date(year, month - 1, day, 0, 0);
+      }
+    }
+    
+    // Intentar parsear como Date nativo
+    const parsed = new Date(trimmed);
+    if (!isNaN(parsed.getTime())) {
+      return parsed;
+    }
+    
+    return null;
+  }
+
   async function openDateTimePicker(ci) {
 
     setDateTimeTarget({ cscId: ci.id, value: ci.scheduledAt || null });
 
-    setDateTimeDraft(ci.scheduledAt ? new Date(ci.scheduledAt) : new Date());
+    // Solo establecer fecha/hora si ya existe una fecha programada
+    if (ci.scheduledAt) {
+      const initialDate = new Date(ci.scheduledAt);
+      setDateTimeDraft(initialDate);
+      setManualDateTimeInput(formatDateTimeToString(initialDate));
+    } else {
+      // Si no hay fecha, dejar vacío
+      setDateTimeDraft(null);
+      setManualDateTimeInput('');
+    }
 
     setDateTimeModalOpen(true);
 
@@ -1624,7 +1873,7 @@ export default function CotizacionForm() {
 
                               <div>
 
-                                <InputNumber inputClassName="price-input" value={priceDrafts[rowData.id] ?? Number(rowData.precio || 0)} mode="decimal" minFractionDigits={2} maxFractionDigits={2}
+                                <InputNumber inputClassName="price-input" value={priceDrafts[rowData.id] ?? Number(rowData.precio || 0)} mode="decimal" minFractionDigits={2} maxFractionDigits={2} locale="en-US"
 
                                   onValueChange={(e) => setPriceDrafts(d => ({ ...d, [rowData.id]: e.value }))}
 
@@ -1768,19 +2017,19 @@ export default function CotizacionForm() {
 
                   <div className="totals-row">
 
-                    <span>Costo por pasajero</span><span>{costoPorPasajero.toFixed(2)}</span>
+                    <span>Costo por pasajero</span><span>{formatNumberWithDot(costoPorPasajero, 2)}</span>
 
                   </div>
 
                   <div className="totals-row">
 
-                    <span>Utilidad {Number(form.utilidad || 0)}%</span><span>{Number(precioUtilidad).toFixed(2)}</span>
+                    <span>Utilidad {Number(form.utilidad || 0)}%</span><span>{formatNumberWithDot(precioUtilidad, 2)}</span>
 
                   </div>
 
                   <div className="totals-row bold">
 
-                    <span>Precio de venta</span><span>{precioVenta.toFixed(2)}</span>
+                    <span>Precio de venta</span><span>{formatNumberWithDot(precioVenta, 2)}</span>
 
                   </div>
 
@@ -1921,23 +2170,119 @@ export default function CotizacionForm() {
 
       >
 
-        <Calendar
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
 
-          value={dateTimeDraft}
+          {/* Input manual para fecha y hora */}
+          <div>
+            <label htmlFor="manualDateTime" style={{ display: 'block', marginBottom: '0.25rem', fontSize: '0.75rem', fontWeight: 500, color: '#424242' }}>
+              Escribir fecha y hora manualmente
+            </label>
+            <InputText
+              id="manualDateTime"
+              value={manualDateTimeInput}
+              onChange={(e) => {
+                const input = e.target;
+                const previousValue = manualDateTimeInput;
+                const cursorPosition = input.selectionStart;
+                const inputValue = e.target.value;
+                
+                // Contar números antes del cursor
+                const beforeCursor = inputValue.substring(0, cursorPosition);
+                const numbersBeforeCursor = beforeCursor.replace(/\D/g, '').length;
+                
+                // Formatear automáticamente mientras escribe solo números
+                const formatted = formatDateTimeInput(inputValue, previousValue, cursorPosition);
+                setManualDateTimeInput(formatted);
+                
+                // Calcular nueva posición del cursor basada en números escritos
+                setTimeout(() => {
+                  let newCursorPos = 0;
+                  let numbersCount = 0;
+                  
+                  for (let i = 0; i < formatted.length; i++) {
+                    if (/\d/.test(formatted[i])) {
+                      numbersCount++;
+                      if (numbersCount > numbersBeforeCursor) {
+                        newCursorPos = i;
+                        break;
+                      }
+                    }
+                    if (numbersCount === numbersBeforeCursor && !/\d/.test(formatted[i + 1])) {
+                      newCursorPos = i + 1;
+                      break;
+                    }
+                  }
+                  
+                  if (newCursorPos === 0 && numbersBeforeCursor === 0) {
+                    newCursorPos = 0;
+                  } else if (newCursorPos === 0) {
+                    newCursorPos = formatted.length;
+                  }
+                  
+                  input.setSelectionRange(newCursorPos, newCursorPos);
+                }, 0);
+                
+                // Intentar parsear y actualizar el calendario
+                const parsed = parseFormattedDateTimeInput(formatted);
+                if (parsed) {
+                  setDateTimeDraft(parsed);
+                }
+              }}
+              onBlur={(e) => {
+                // Si el input no es válido al perder el foco, restaurar el valor formateado
+                const parsed = parseFormattedDateTimeInput(e.target.value);
+                if (!parsed && dateTimeDraft) {
+                  setManualDateTimeInput(formatDateTimeToString(dateTimeDraft));
+                } else if (parsed) {
+                  // Asegurar que el formato esté completo
+                  setManualDateTimeInput(formatDateTimeToString(parsed));
+                }
+              }}
+              placeholder="dd/mm/yyyy HH:mm"
+              style={{ width: '100%', padding: '0.35rem', textAlign: 'left' }}
+            />
+          
+          </div>
 
-          onChange={(e) => setDateTimeDraft(e.value)}
+          {/* Separador */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', margin: '0.3rem 0' }}>
+            <div style={{ flex: 1, height: '1px', background: '#e0e0e0' }}></div>
+            <span style={{ color: '#6b7280', fontSize: '0.65rem' }}>O</span>
+            <div style={{ flex: 1, height: '1px', background: '#e0e0e0' }}></div>
+          </div>
 
-          showTime
+          {/* Calendario */}
+          <div>
+            <label style={{ display: 'block', marginBottom: '0.25rem', fontSize: '0.75rem', fontWeight: 500, color: '#424242' }}>
+              Seleccionar del calendario
+            </label>
+            <Calendar
 
-          hourFormat="24"
+              value={dateTimeDraft}
 
-          inline
+              onChange={(e) => {
+                setDateTimeDraft(e.value);
+                if (e.value) {
+                  setManualDateTimeInput(formatDateTimeToString(e.value));
+                }
+              }}
 
-          locale="es"
+              showTime={true}
 
-          dateFormat="dd/mm/yy"
+              hourFormat="24"
 
-        />
+              inline={true}
+
+              locale="es"
+
+              dateFormat="dd/mm/yy"
+
+              timeOnly={false}
+
+            />
+          </div>
+
+        </div>
 
       </Dialog>
 
