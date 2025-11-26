@@ -1,12 +1,13 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { In, Repository, DataSource } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { Cotizacion } from './entities/cotizacion.entity';
 import { CreateCotizacionDto } from './dto/create-cotizacion.dto';
 import { Client } from '../clients/entities/client.entity';
 import { CotizacionServicio } from './entities/cotizacion-servicio.entity';
 import { CotizacionServicioComponente } from './entities/cotizacion-servicio-componente.entity';
 import { Service } from '../services/entities/service.entity';
+import { ServiceComponent } from '../services/entities/service-component.entity';
 import { Component } from '../components/entities/component.entity';
 import { Proveedores } from '../proveedores/entities/proveedores.entity';
 import { User } from '../users/entities/user.entity';
@@ -24,13 +25,14 @@ export class CotizacionService {
     private readonly cotizacionServicioCompRepo: Repository<CotizacionServicioComponente>,
     @InjectRepository(Service)
     private readonly serviceRepo: Repository<Service>,
+    @InjectRepository(ServiceComponent)
+    private readonly serviceComponentRepo: Repository<ServiceComponent>,
     @InjectRepository(Component)
     private readonly componentRepo: Repository<Component>,
     @InjectRepository(Proveedores)
     private readonly proveedoresRepo: Repository<Proveedores>,
     @InjectRepository(User)
     private readonly userRepo: Repository<User>,
-    private readonly dataSource: DataSource,
   ) {}
 
   async create(createCotizacionDto: CreateCotizacionDto, userId?: number): Promise<Cotizacion> {
@@ -132,22 +134,20 @@ export class CotizacionService {
     const service = await this.serviceRepo.findOne({ where: { id: serviceId } });
     if (!service) throw new NotFoundException('Servicio no encontrado');
     
-    // Cargar componentes manualmente con duplicados permitidos usando SQL directo
-    const componentsRows = await this.dataSource.query(
-      `SELECT c.* FROM service_components sc 
-       INNER JOIN components c ON sc.componentsId = c.id 
-       WHERE sc.servicesId = ? 
-       ORDER BY sc.id`,
-      [serviceId]
-    );
+    // Cargar componentes manualmente con duplicados permitidos usando la entidad intermedia
+    const serviceComponents = await this.serviceComponentRepo.find({
+      where: { servicesId: serviceId },
+      relations: ['component'],
+      order: { id: 'ASC' }
+    });
     
     const cs = this.cotizacionServicioRepo.create({ cotizacion: cot, service, precio: precio ?? 0 });
     const csSaved = await this.cotizacionServicioRepo.save(cs);
 
     // Si el servicio tiene componentes base, agregarlos automáticamente (incluyendo duplicados)
-    if (Array.isArray(componentsRows) && componentsRows.length > 0) {
-      const items = componentsRows.map((c) =>
-        this.cotizacionServicioCompRepo.create({ cotizacionServicio: csSaved, component: c })
+    if (serviceComponents.length > 0) {
+      const items = serviceComponents.map((sc) =>
+        this.cotizacionServicioCompRepo.create({ cotizacionServicio: csSaved, component: sc.component })
       );
       await this.cotizacionServicioCompRepo.save(items);
     }

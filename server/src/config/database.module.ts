@@ -30,6 +30,7 @@ import { RegistroPago } from 'src/modules/registroPago/entities/registroPago.ent
 import { QuoteRequest } from 'src/modules/quote-requests/entities/quote-request.entity';
 import { QuoteRequestService } from 'src/modules/quote-requests/entities/quote-request-service.entity';
 import { Portada } from 'src/modules/services/entities/portada.entity';
+import { ServiceComponent } from 'src/modules/services/entities/service-component.entity';
 import { AppModuleEntity } from '../modules/permissions/entities/app-module.entity';
 import { ModuleAction } from '../modules/permissions/entities/module-action.entity';
 import { UserPermission } from '../modules/permissions/entities/user-permission.entity';
@@ -52,7 +53,8 @@ import { DeviceToken } from '../modules/users/entities/device-token.entity';
       entities: [User, 
                   ItineraryTemplate, 
                   Component, 
-                  Service, 
+                  Service,
+                  ServiceComponent, 
                   Client, 
                   clientesContact,        
                   Proveedores, 

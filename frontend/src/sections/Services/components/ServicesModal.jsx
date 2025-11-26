@@ -138,10 +138,16 @@ const ServicesModal = ({ onHide, service }) => {
     function handleDeleteAccept() {
         if (!deleteTarget) return;
         if (deleteTarget.type === 'component') {
-            // Usar _uniqueKey si existe, sino usar id
-            const keyToMatch = deleteTarget.data._uniqueKey || deleteTarget.data.id;
+            const component = deleteTarget.data;
+            
+            // Si tiene _serviceComponentId (viene del backend), usar ese como clave única
+            // Si tiene _uniqueKey (recién agregado en frontend), usar ese
+            // Sino, usar id (fallback)
+            const keyToMatch = component._serviceComponentId || component._uniqueKey || component.id;
+            const keyField = component._serviceComponentId ? '_serviceComponentId' : (component._uniqueKey ? '_uniqueKey' : 'id');
+            
             setServiceComponents(prevComponents => prevComponents.filter(c => {
-                const currentKey = c._uniqueKey || c.id;
+                const currentKey = c[keyField] || c.id;
                 return currentKey !== keyToMatch;
             }));
         } else if (deleteTarget.type === 'image') {
@@ -337,7 +343,7 @@ const ServicesModal = ({ onHide, service }) => {
                         value={serviceComponents} 
                         tableStyle={{ minWidth: '60%' }} 
                         emptyMessage="Este servicio aun no cuenta con componentes"
-                        rowKey={(rowData) => rowData._uniqueKey || rowData.id}
+                        rowKey={(rowData) => rowData._serviceComponentId || rowData._uniqueKey || rowData.id}
                     >
                         <Column 
                             field="componentName" 

@@ -96,8 +96,18 @@ export class ServicesController {
 
   @Delete(':serviceId/component/:componentId')
     @RequirePermissions('SERVICIOS:EDIT')
-    async removeComponentFromService(@Param('serviceId') serviceId: number, @Param('componentId') componentId: number): Promise<void> {
-      await this.servicesService.removeComponentFromService(serviceId, componentId);
+    async removeComponentFromService(
+      @Param('serviceId') serviceId: number, 
+      @Param('componentId') componentId: number,
+      @Query('serviceComponentId') serviceComponentId?: string
+    ): Promise<void> {
+      // Si se proporciona serviceComponentId, eliminar esa ocurrencia específica
+      if (serviceComponentId) {
+        await this.servicesService.removeServiceComponentById(Number(serviceComponentId));
+      } else {
+        // Mantener compatibilidad: eliminar la primera ocurrencia
+        await this.servicesService.removeComponentFromService(serviceId, componentId);
+      }
     }
 
   @Put(':serviceId/component')

@@ -1,7 +1,7 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToMany, JoinTable, OneToOne } from 'typeorm';
-import { Component } from '../../components/entities/component.entity';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, OneToOne } from 'typeorm';
 import { ServiceImage } from 'src/modules/serviceImages/entities/serviceImages.entity';
 import { Portada } from './portada.entity';
+import { ServiceComponent } from './service-component.entity';
 
 @Entity('services')
 export class Service {
@@ -17,9 +17,11 @@ export class Service {
   @Column({ default: true, comment: 'Estado activo/inactivo del servicio' })
   isActive: boolean;
 
-  @ManyToMany(() => Component, (component) => component.services, { cascade: false })
-  @JoinTable({ name: 'service_components' })
-  components: Component[];
+  @OneToMany(() => ServiceComponent, serviceComponent => serviceComponent.service, { cascade: true })
+  serviceComponents: ServiceComponent[];
+
+  // Propiedad virtual para mantener compatibilidad con código existente
+  components: any[];
 
   @OneToMany(() => ServiceImage, image => image.service, { cascade: true })
   images: ServiceImage[];
