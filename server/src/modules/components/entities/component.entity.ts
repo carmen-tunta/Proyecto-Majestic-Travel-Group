@@ -43,10 +43,6 @@ export class Component {
   })
   isActive: boolean;
 
-  // Relación ManyToMany: un componente puede pertenecer a muchos servicios
-  @ManyToMany(() => Service, (service) => service.components)
-  services: Service[];
-
   @OneToMany(() => TarifaComponent, tc => tc.component)
   tarifas: TarifaComponent[];
 }

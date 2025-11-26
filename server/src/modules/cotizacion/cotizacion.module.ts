@@ -7,6 +7,7 @@ import { Client } from '../clients/entities/client.entity';
 import { CotizacionServicio } from './entities/cotizacion-servicio.entity';
 import { CotizacionServicioComponente } from './entities/cotizacion-servicio-componente.entity';
 import { Service } from '../services/entities/service.entity';
+import { ServiceComponent } from '../services/entities/service-component.entity';
 import { Component } from '../components/entities/component.entity';
 import { Proveedores } from '../proveedores/entities/proveedores.entity';
 import { ConfirmacionReserva } from './entities/confirmacion-reserva.entity';
@@ -15,7 +16,7 @@ import { ConfirmacionReservaController } from './confirmacion-reserva/confirmaci
 import { User } from '../users/entities/user.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Cotizacion, Client, CotizacionServicio, CotizacionServicioComponente, Service, Component, Proveedores, ConfirmacionReserva, User])],
+  imports: [TypeOrmModule.forFeature([Cotizacion, Client, CotizacionServicio, CotizacionServicioComponente, Service, ServiceComponent, Component, Proveedores, ConfirmacionReserva, User])],
   providers: [CotizacionService, ConfirmacionReservaService],
   controllers: [CotizacionController, ConfirmacionReservaController],
   exports: [CotizacionService],

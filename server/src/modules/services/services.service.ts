@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { In, Repository, DataSource } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { Service } from './entities/service.entity';
+import { ServiceComponent } from './entities/service-component.entity';
 import { Component } from '../components/entities/component.entity';
 import { Portada } from './entities/portada.entity';
 
@@ -10,11 +11,12 @@ export class ServicesService {
   constructor(
     @InjectRepository(Service)
     private serviceRepository: Repository<Service>,
+    @InjectRepository(ServiceComponent)
+    private serviceComponentRepository: Repository<ServiceComponent>,
     @InjectRepository(Component)
     private componentRepository: Repository<Component>,
     @InjectRepository(Portada)
     private portadaRepository: Repository<Portada>,
-    private dataSource: DataSource,
   ) { }
 
   async create(data: Partial<Service> & { componentIds?: number[] }): Promise<Service> {
@@ -34,13 +36,14 @@ export class ServicesService {
       console.warn(`Error al crear portada automática para servicio ${saved.id}:`, error);
       // No fallar el proceso si la portada no se puede crear
     }
-    // 2) asignar componentes permitiendo duplicados mediante INSERT directo
+    // 2) asignar componentes permitiendo duplicados usando la entidad intermedia
     if (componentIds && componentIds.length > 0) {
       for (const componentId of componentIds) {
-        await this.dataSource.query(
-          'INSERT INTO service_components (servicesId, componentsId) VALUES (?, ?)',
-          [saved.id, componentId]
-        );
+        const serviceComponent = this.serviceComponentRepository.create({
+          servicesId: saved.id,
+          componentsId: componentId
+        });
+        await this.serviceComponentRepository.save(serviceComponent);
       }
     }
     // 3) devolver con relaciones
@@ -50,16 +53,18 @@ export class ServicesService {
   async findAll(): Promise<Service[]> {
     const services = await this.serviceRepository.find({ relations: ['images'] });
     
-    // Cargar componentes manualmente con duplicados permitidos
+    // Cargar componentes manualmente con duplicados permitidos usando la entidad intermedia
     for (const service of services) {
-      const rows = await this.dataSource.query(
-        `SELECT c.* FROM service_components sc 
-         INNER JOIN components c ON sc.componentsId = c.id 
-         WHERE sc.servicesId = ? 
-         ORDER BY sc.id`,
-        [service.id]
-      );
-      service.components = rows;
+      const serviceComponents = await this.serviceComponentRepository.find({
+        where: { servicesId: service.id },
+        relations: ['component'],
+        order: { id: 'ASC' }
+      });
+      // Incluir el serviceComponentId en cada componente para poder eliminarlo específicamente
+      service.components = serviceComponents.map(sc => ({
+        ...sc.component,
+        _serviceComponentId: sc.id
+      }));
     }
     
     return services;
@@ -73,15 +78,17 @@ export class ServicesService {
     
     if (!service) return null;
     
-    // Cargar componentes manualmente con duplicados permitidos
-    const rows = await this.dataSource.query(
-      `SELECT c.* FROM service_components sc 
-       INNER JOIN components c ON sc.componentsId = c.id 
-       WHERE sc.servicesId = ? 
-       ORDER BY sc.id`,
-      [id]
-    );
-    service.components = rows;
+    // Cargar componentes manualmente con duplicados permitidos usando la entidad intermedia
+    const serviceComponents = await this.serviceComponentRepository.find({
+      where: { servicesId: id },
+      relations: ['component'],
+      order: { id: 'ASC' }
+    });
+    // Incluir el serviceComponentId en cada componente para poder eliminarlo específicamente
+    service.components = serviceComponents.map(sc => ({
+      ...sc.component,
+      _serviceComponentId: sc.id
+    }));
     
     return service;
   }
@@ -99,18 +106,16 @@ export class ServicesService {
     // Actualizar componentes si se envía componentIds (permitiendo duplicados)
     if (componentIds !== undefined) {
       // Eliminar todas las relaciones existentes
-      await this.dataSource.query(
-        'DELETE FROM service_components WHERE servicesId = ?',
-        [id]
-      );
+      await this.serviceComponentRepository.delete({ servicesId: id });
       
       // Crear nuevas relaciones permitiendo duplicados
       if (componentIds.length > 0) {
         for (const componentId of componentIds) {
-          await this.dataSource.query(
-            'INSERT INTO service_components (servicesId, componentsId) VALUES (?, ?)',
-            [id, componentId]
-          );
+          const serviceComponent = this.serviceComponentRepository.create({
+            servicesId: id,
+            componentsId: componentId
+          });
+          await this.serviceComponentRepository.save(serviceComponent);
         }
       }
     }
@@ -120,43 +125,63 @@ export class ServicesService {
 
 
   async remove(id: number): Promise<void> {
-    // Desasociar los componentes (ManyToMany) antes de eliminar el servicio
-    const service = await this.serviceRepository.findOne({ where: { id }, relations: ['components'] });
-    if (service) {
-      service.components = [];
-      await this.serviceRepository.save(service);
-      await this.serviceRepository.delete(id);
-    } else {
-      await this.serviceRepository.delete(id);
-    }
+    // Las relaciones se eliminarán automáticamente por CASCADE
+    await this.serviceRepository.delete(id);
   }
 
   // SEARCH - Buscar servicios por nombre
   async searchByName(name: string): Promise<Service[]> {
     const cleanName = name.trim().toLowerCase();
-    return await this.serviceRepository.createQueryBuilder('service')
+    const services = await this.serviceRepository.createQueryBuilder('service')
       .where('LOWER(TRIM(service.name)) LIKE :name', { name: `%${cleanName}%` })
-      .leftJoinAndSelect('service.components', 'component')
       .leftJoinAndSelect('service.images', 'images')
       .getMany();
+    
+    // Cargar componentes manualmente con duplicados
+    for (const service of services) {
+      const serviceComponents = await this.serviceComponentRepository.find({
+        where: { servicesId: service.id },
+        relations: ['component'],
+        order: { id: 'ASC' }
+      });
+      // Incluir el serviceComponentId en cada componente para poder eliminarlo específicamente
+      service.components = serviceComponents.map(sc => ({
+        ...sc.component,
+        _serviceComponentId: sc.id
+      }));
+    }
+    
+    return services;
   }
 
   async removeComponentFromService(serviceId: number, componentId: number): Promise<void> {
-    const service = await this.serviceRepository.findOne({ where: { id: serviceId }, relations: ['components'] });
-    if (!service) return;
-    service.components = (service.components || []).filter(c => c.id !== componentId);
-    await this.serviceRepository.save(service);
+    // Eliminar solo la primera ocurrencia del componente
+    const serviceComponent = await this.serviceComponentRepository.findOne({
+      where: { servicesId: serviceId, componentsId: componentId }
+    });
+    if (serviceComponent) {
+      await this.serviceComponentRepository.remove(serviceComponent);
+    }
+  }
+
+  async removeServiceComponentById(serviceComponentId: number): Promise<void> {
+    // Eliminar una ocurrencia específica por su ID único
+    await this.serviceComponentRepository.delete(serviceComponentId);
   }
 
   async addComponentsToService(serviceId: number, componentIds: number[]): Promise<Service | null> {
-    const service = await this.serviceRepository.findOne({ where: { id: serviceId }, relations: ['components'] });
+    const service = await this.serviceRepository.findOne({ where: { id: serviceId } });
     if (!service) return null;
-    const components = await this.componentRepository.findBy({ id: In(componentIds) });
-    const existing = service.components || [];
-    const map = new Map<number, Component>(existing.map(c => [c.id, c]));
-    for (const c of components) map.set(c.id, c);
-    service.components = Array.from(map.values());
-    await this.serviceRepository.save(service);
+    
+    // Agregar componentes permitiendo duplicados
+    for (const componentId of componentIds) {
+      const serviceComponent = this.serviceComponentRepository.create({
+        servicesId: serviceId,
+        componentsId: componentId
+      });
+      await this.serviceComponentRepository.save(serviceComponent);
+    }
+    
     return this.findOne(serviceId);
   }
 }
