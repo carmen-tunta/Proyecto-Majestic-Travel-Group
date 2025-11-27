@@ -10,8 +10,17 @@ const getAuthHeaders = () => {
 };
 
 class ItineraryTemplateRepository {
-    async getAllTemplates(limit = '') {
-        const response = await fetch(`${apiUrl}${limit}`, {
+    async getAllTemplates(page = 0, limit = 15) {
+        // Si se pasa un string (query params), usarlo directamente (compatibilidad)
+        if (typeof page === 'string' && page.startsWith('?')) {
+            const response = await fetch(`${apiUrl}${page}`, {
+                headers: getAuthHeaders()
+            });
+            return await response.json();
+        }
+
+        // Si no, usar page y limit
+        const response = await fetch(`${apiUrl}?page=${page}&limit=${limit}`, {
             headers: getAuthHeaders()
         });
         return await response.json();
