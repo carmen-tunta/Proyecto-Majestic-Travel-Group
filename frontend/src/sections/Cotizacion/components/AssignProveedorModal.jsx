@@ -70,12 +70,16 @@ export default function AssignProveedorModal({
           // 3) Si la tarifa es compartida (isShared), aplica la lógica anterior solo si costType es per_pax
           // 4) Si es privada, el precio representa el total del servicio (sin importar costType)
           let baseTotal;
+          let costoAMostrar; // Precio unitario a mostrar en la columna "Costo"
+          
           if (costType === 'per_service') {
             // Precio fijo por servicio, no se multiplica
             baseTotal = costoUnitario;
+            costoAMostrar = costoUnitario;
           } else {
             // per_pax: se multiplica por pax si es compartido, o es el total si es privado
             baseTotal = isShared ? costoUnitario * totalPax : costoUnitario;
+            costoAMostrar = costoUnitario; // Mostrar precio unitario
           }
           const total = baseTotal * (1 + incPercent / 100) + incMoney;
           // Mostrar solo porcentaje o solo monto
@@ -94,7 +98,7 @@ export default function AssignProveedorModal({
           return {
             proveedorId: proveedor.id,
             nombre: proveedor.name || proveedor.nombre || '-',
-            costo: Number(baseTotal).toFixed(2).replace(',', '.'),
+            costo: Number(costoAMostrar).toFixed(2).replace(',', '.'),
             incrementoLabel,
             total: Number(total).toFixed(2).replace(',', '.'),
             totalNumber: total,
