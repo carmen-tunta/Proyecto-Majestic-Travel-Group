@@ -31,6 +31,9 @@ export class CotizacionServicioComponente {
   @Column({ type: 'boolean', default: true })
   isShared: boolean;
 
+  @Column({ type: 'varchar', length: 20, default: 'per_pax', comment: 'Tipo de costo: per_pax o per_service' })
+  costType: string;
+
   // Fecha y hora programada para realizar el componente
   @Column({ type: 'datetime', nullable: true })
   scheduledAt?: Date | null;

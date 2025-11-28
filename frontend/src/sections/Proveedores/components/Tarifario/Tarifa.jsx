@@ -563,7 +563,7 @@ const TarifaMenu = ({ proveedor, tarifa, setTarifa }) => {
                     <span>{rowData.componentName}</span>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-                     {isPerService && <span style={{fontSize: '0.6rem', color: '#d32f2f', fontWeight: 'bold'}}>SERV</span>}
+                     {isPerService && <span style={{fontSize: '0.6rem', color: '#2e7d32', fontWeight: 'bold'}}>SERV</span>}
                      {has('PROVEEDORES','EDIT') && (
                         <i 
                             className="pi pi-pencil" 

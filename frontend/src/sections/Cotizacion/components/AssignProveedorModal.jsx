@@ -45,12 +45,12 @@ export default function AssignProveedorModal({
       try {
   // Obtenemos proveedores por componente y pax (pax ya debe incluir adultos + niños)
   const data = await apiService.getProveedoresByComponentAndPax(componentId, pax);
-  console.log('Proveedores recibidos:', data);
         const mapped = (data || []).map((row) => {
           const proveedor = row.proveedor || {};
           // costoPerPax: costo unitario por pasajero devuelto por la tarifa del proveedor
           const costoUnitario = Number(row.price || row.costo || 0) || 0;
           const isShared = !(row.isShared === false || row.isShared === 0 || row.isShared === '0' || row.isShared === 'false');
+          const costType = row.tarifaComponent_costType || row.costType || 'per_pax'; // Nuevo: obtener tipo de costo
           const totalPax = Number(pax) || 1;
           let incPercent = 0;
           let incMoney = 0;
@@ -64,16 +64,33 @@ export default function AssignProveedorModal({
             if (inc?.percentage) incPercent += Number(inc.incrementValue) || 0;
             else incMoney += Number(inc.incrementValue) || 0;
           });
-          // Regla solicitada:
-          // 1) Si la tarifa es compartida, el precio se multiplica por el total de pax
-          // 2) Si es privada, el precio ya representa el total del servicio
-          // 3) Los incrementos de porcentaje se aplican sobre el total calculado
-          const baseTotal = isShared ? costoUnitario * totalPax : costoUnitario;
+          // Regla actualizada:
+          // 1) Si costType es 'per_service', el precio NO se multiplica por pax (es precio fijo por servicio)
+          // 2) Si costType es 'per_pax', el precio se multiplica por el total de pax
+          // 3) Si la tarifa es compartida (isShared), aplica la lógica anterior solo si costType es per_pax
+          // 4) Si es privada, el precio representa el total del servicio (sin importar costType)
+          let baseTotal;
+          if (costType === 'per_service') {
+            // Precio fijo por servicio, no se multiplica
+            baseTotal = costoUnitario;
+          } else {
+            // per_pax: se multiplica por pax si es compartido, o es el total si es privado
+            baseTotal = isShared ? costoUnitario * totalPax : costoUnitario;
+          }
           const total = baseTotal * (1 + incPercent / 100) + incMoney;
           // Mostrar solo porcentaje o solo monto
           const incrementoLabel = incPercent > 0
             ? `${incPercent}%`
             : (incMoney ? Number(incMoney).toFixed(2).replace(',', '.') : '0.00');
+          
+          // Determinar el label de modalidad
+          let modalidadLabel = isShared ? 'Compartido' : 'Privado';
+          if (costType === 'per_service') {
+            modalidadLabel += ' · Servicio';
+          } else {
+            modalidadLabel += ' · Pasajero';
+          }
+          
           return {
             proveedorId: proveedor.id,
             nombre: proveedor.name || proveedor.nombre || '-',
@@ -82,11 +99,11 @@ export default function AssignProveedorModal({
             total: Number(total).toFixed(2).replace(',', '.'),
             totalNumber: total,
             descripcion: row.columnDescription || '-',
-            sharedLabel: isShared ? 'Compartido' : 'Privado',
-            isShared
+            sharedLabel: modalidadLabel,
+            isShared,
+            costType
           };
         });
-        console.log('Proveedores mapeados:', mapped);
         if (active) setRows(mapped);
       } catch (e) {
         if (active) setRows([]);
@@ -102,8 +119,8 @@ export default function AssignProveedorModal({
     if (!cscId || !row?.proveedorId) return;
     try {
       setLoading(true);
-      await apiService.assignProviderToComponent(cscId, row.proveedorId, row.totalNumber, row.isShared);
-      if (onAssigned) onAssigned({ cscId, proveedor: { id: row.proveedorId, name: row.nombre }, precio: row.totalNumber, isShared: row.isShared });
+      await apiService.assignProviderToComponent(cscId, row.proveedorId, row.totalNumber, row.isShared, row.costType);
+      if (onAssigned) onAssigned({ cscId, proveedor: { id: row.proveedorId, name: row.nombre }, precio: row.totalNumber, isShared: row.isShared, costType: row.costType });
       onHide && onHide();
     } catch (e) {
       // opcional: mostrar notificación si está disponible en contexto superior

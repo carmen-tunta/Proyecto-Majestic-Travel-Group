@@ -114,6 +114,7 @@ export class ProveedoresService {
         'col.paxMin',
         'col.paxMax',
         'col.description',
+        'tarifaComponent.costType',
         'increment.id',
         'increment.incrementDate',
         'increment.percentage',
@@ -154,6 +155,7 @@ export class ProveedoresService {
           isShared: row['col_isShared'] === null || typeof row['col_isShared'] === 'undefined'
             ? true
             : !!row['col_isShared'],
+          costType: row['tarifaComponent_costType'] || 'per_pax',
           increments: [],
         };
       }
