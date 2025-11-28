@@ -97,9 +97,9 @@ export class CotizacionController {
   @Put('servicios/componentes/:cscId/proveedor')
   async assignProvider(
     @Param('cscId') cscId: string,
-    @ReqBody() body: { proveedorId: number; precioTotal?: number; isShared?: boolean }
+    @ReqBody() body: { proveedorId: number; precioTotal?: number; isShared?: boolean; costType?: string }
   ) {
-    return this.cotizacionService.assignProviderToComponent(Number(cscId), body.proveedorId, body.precioTotal, body.isShared);
+    return this.cotizacionService.assignProviderToComponent(Number(cscId), body.proveedorId, body.precioTotal, body.isShared, body.costType);
   }
 
   // Eliminar un servicio agregado en la cotización (y sus componentes)

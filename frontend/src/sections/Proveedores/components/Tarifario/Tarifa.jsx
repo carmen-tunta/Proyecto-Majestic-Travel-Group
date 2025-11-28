@@ -55,6 +55,20 @@ const TarifaMenu = ({ proveedor, tarifa, setTarifa }) => {
     );
     const [columnMode, setColumnMode] = useState(COLUMN_MODE.SHARED);
     
+    const COST_TYPE = {
+        PER_PAX: 'per_pax',
+        PER_SERVICE: 'per_service'
+    };
+    const costTypeOptions = [
+        { label: 'Por Pasajero', value: COST_TYPE.PER_PAX },
+        { label: 'Por Servicio', value: COST_TYPE.PER_SERVICE }
+    ];
+    const [modalCostType, setModalCostType] = useState(false);
+    const [selectedComponentRow, setSelectedComponentRow] = useState(null);
+    const [costType, setCostType] = useState(COST_TYPE.PER_PAX);
+    const [modalCostX, setModalCostX] = useState(null);
+    const [modalCostY, setModalCostY] = useState(null);
+
     const [columns, setColumns] = useState([]);
     const [modalColumn, setModalColumn] = useState(false);
     const [columnDescription, setColumnDescription] = useState('');
@@ -355,6 +369,8 @@ const TarifaMenu = ({ proveedor, tarifa, setTarifa }) => {
 
         return tarifaComponents.map(tc => {
             const row = { ...tc.component };
+            row.tarifaComponentId = tc.id;
+            row.costType = tc.costType || COST_TYPE.PER_PAX;
             columns.forEach(col => {
                 const cell = getCell(tc.id, col.id);
                 row[col.id] = cell ? Number(cell.price) : 0;
@@ -488,6 +504,79 @@ const TarifaMenu = ({ proveedor, tarifa, setTarifa }) => {
         }
     };
 
+    const handleEditCostType = (e, rowData) => {
+        e.stopPropagation();
+        setSelectedComponentRow(rowData);
+        setCostType(rowData.costType || COST_TYPE.PER_PAX);
+        setModalCostType(true);
+        setModalCostX(e.pageX);
+        setModalCostY(e.pageY);
+    };
+
+    const handleSaveCostType = async () => {
+        if (!selectedComponentRow || !selectedComponentRow.tarifaComponentId) return;
+        setModalCostType(false);
+        setLoading(true);
+        try {
+            await tarifaComponentRepo.update({
+                id: selectedComponentRow.tarifaComponentId,
+                costType: costType
+            });
+            
+            setTarifaComponents(prev => prev.map(tc => 
+                tc.id === selectedComponentRow.tarifaComponentId 
+                ? { ...tc, costType: costType } 
+                : tc
+            ));
+
+            setSelectedComponents(prevRows =>
+                prevRows.map(row =>
+                    row.tarifaComponentId === selectedComponentRow.tarifaComponentId
+                        ? { ...row, costType: costType }
+                        : row
+                )
+            );
+            
+            showNotification('Modalidad actualizada', 'success');
+        } catch (error) {
+            console.error(error);
+            showNotification('Error al actualizar modalidad', 'error');
+        } finally {
+            setLoading(false);
+            setSelectedComponentRow(null);
+        }
+    };
+
+    const componentBodyTemplate = (rowData) => {
+        const isPerService = rowData.costType === COST_TYPE.PER_SERVICE;
+        return (
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                    {has('PROVEEDORES','DELETE') && (
+                    <i
+                        className="pi pi-trash"
+                        style={{ cursor: 'pointer', marginRight: 8 }}
+                        title="Eliminar componente"
+                        onClick={() => handleDeleteIconComponentClick(rowData)}
+                    />
+                    )}
+                    <span>{rowData.componentName}</span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                     {isPerService && <span style={{fontSize: '0.6rem', color: '#2e7d32', fontWeight: 'bold'}}>SERV</span>}
+                     {has('PROVEEDORES','EDIT') && (
+                        <i 
+                            className="pi pi-pencil" 
+                            style={{fontSize: '0.8rem', color: '#aaa', cursor: 'pointer'}}
+                            onClick={(e) => handleEditCostType(e, rowData)}
+                            title="Editar modalidad de costo"
+                        />
+                     )}
+                </div>
+            </div>
+        );
+    };
+
     // Editor para celdas numéricas
     const cellEditor = (options) => {
         const displayValue = options.value === 0 ? '' : options.value;
@@ -539,20 +628,6 @@ const TarifaMenu = ({ proveedor, tarifa, setTarifa }) => {
             console.error(error);
         }
     };
-
-    const componentBodyTemplate = (rowData) => (
-        <div style={{ display: 'flex', alignItems: 'center' }}>
-            {has('PROVEEDORES','DELETE') && (
-            <i
-                className="pi pi-trash"
-                style={{ cursor: 'pointer', marginRight: 8 }}
-                title="Eliminar componente"
-                onClick={() => handleDeleteIconComponentClick(rowData)}
-            />
-            )}
-            <span>{rowData.componentName}</span>
-        </div>
-    );
 
 
     const MODAL_WIDTH = isMobile ? window.innerWidth * 0.9 : window.innerWidth * 0.27;
@@ -740,6 +815,62 @@ const TarifaMenu = ({ proveedor, tarifa, setTarifa }) => {
                 acceptLabel="Sí"
                 rejectLabel="No"
             />
+
+            {modalCostType && (
+                <div
+                    className="modal-add-column-backdrop"
+                    style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                        zIndex: 9999,
+                    }}
+                    onClick={() => {
+                        setModalCostType(false);
+                        setSelectedComponentRow(null);
+                    }}
+                >
+                    <div
+                        className="modal-add-column"
+                        style={{
+                            position: 'absolute',
+                            top: modalCostY ? modalCostY + 10 : '50%',
+                            left: modalCostX ? modalCostX - 150 : '50%', // Ajuste para centrar respecto al clic
+                            width: '300px',
+                            backgroundColor: 'white',
+                            padding: '1rem',
+                            borderRadius: '8px',
+                            boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                            transform: (!modalCostX) ? 'translate(-50%, -50%)' : 'none'
+                        }}
+                        onClick={e => e.stopPropagation()}
+                    >
+                        <div className="modal-column-header" style={{marginBottom: '1rem'}}>
+                            <h3 style={{margin: 0, fontSize: '1.1rem'}}>Modalidad de costo</h3>
+                            <i className="pi pi-times" onClick={() => {
+                                setModalCostType(false);
+                                setSelectedComponentRow(null);
+                            }} style={{cursor: 'pointer'}}></i>
+                        </div>
+                        <div className="modal-column-body" style={{display: 'flex', flexDirection: 'column', gap: '1rem'}}>
+                            <div style={{display: 'flex', flexDirection: 'column', gap: '0.5rem'}}>
+                                <span style={{fontSize: '0.9rem', color: '#666'}}>Seleccione cómo se aplica este costo:</span>
+                                <SelectButton
+                                    value={costType}
+                                    options={costTypeOptions}
+                                    onChange={(e) => setCostType(e.value)}
+                                    allowEmpty={false}
+                                />
+                            </div>
+                            <div style={{display: 'flex', justifyContent: 'flex-end', marginTop: '0.5rem'}}>
+                                <Button label="Guardar" size="small" onClick={handleSaveCostType} />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
 
 
             {modalColumn && (

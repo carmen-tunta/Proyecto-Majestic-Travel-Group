@@ -19,8 +19,19 @@ export class ItineraryTemplateService {
         return await this.itineraryTemplateRepository.save(template);
     }
 
-    async findAll(): Promise<ItineraryTemplate[]> {
-        return await this.itineraryTemplateRepository.find();
+    async findAll(page: number = 0, limit: number = 15): Promise<{ data: ItineraryTemplate[], total: number, page: number, limit: number }> {
+        const [data, total] = await this.itineraryTemplateRepository.findAndCount({
+            skip: page * limit,
+            take: limit,
+            order: { id: 'DESC' } // Opcional: ordenar por ID descendente
+        });
+
+        return {
+            data,
+            total,
+            page,
+            limit
+        };
     }
 
     async findById(id: number): Promise<ItineraryTemplate | null> {

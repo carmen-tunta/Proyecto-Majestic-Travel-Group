@@ -106,7 +106,13 @@ const Services = () => {
 
     // Opciones de ciudades (mismas que al crear servicio) + "Todos"
     const cityOptions = useMemo(() => (
-        ['Todos', 'Lima', 'Cusco', 'Arequipa', 'Trujillo', 'Iquitos', 'Puno', 'Chiclayo', 'Piura', 'Huaraz', 'Nazca']
+        [
+            'Todos', 
+            'Lima', 'Cusco', 'Arequipa', 'Trujillo', 'Iquitos', 'Puno', 'Chiclayo', 'Piura', 'Huaraz', 'Nazca',
+            'ACTIVIDADES EN CUSCO', 'AMAZONIA & IQUITOS', 'AREQUIPA & CAÑON DEL COLCA', 'NAZCA, ICA & PARACAS',
+            'PUNO & LAGO TITICACA', 'MACHU PICCHU LUXURY', 'MACHU PICCHU TOURS', 'PAQUETES DESDE CUSCO',
+            'PAQUETES DESDE LIMA', 'CAMINO INCA SERVICIOS COMPARTIDOS', 'TREK ALTERNATIVOS COMPARTIDOS'
+        ]
     ), []);
 
     // Ordenar datos por ciudad

@@ -14,6 +14,9 @@ export class TarifaComponent {
   @Column({ type: 'int', comment: 'ID del componente asociado' })
   componente_id: number;
 
+  @Column({ type: 'varchar', length: 20, default: 'per_pax', comment: 'Tipo de costo: per_pax o per_service' })
+  costType: string;
+
   @ManyToOne(() => Tarifario, t => t.components, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'tarifa_id' })
   tarifa: Tarifario;

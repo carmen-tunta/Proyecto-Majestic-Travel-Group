@@ -12,8 +12,10 @@ export class ItineraryTemplateController {
     }
 
     @Get()
-    async getAllTemplates(): Promise<ItineraryTemplate[]> {
-        return await this.itineraryTemplateService.findAll();
+    async getAllTemplates(@Query('page') page: string, @Query('limit') limit: string) {
+        const pageNum = parseInt(page || '0') || 0;
+        const limitNum = parseInt(limit || '15') || 15;
+        return await this.itineraryTemplateService.findAll(pageNum, limitNum);
     }
 
     @Get('search')
