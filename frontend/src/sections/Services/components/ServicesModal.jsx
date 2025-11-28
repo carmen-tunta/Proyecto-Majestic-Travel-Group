@@ -25,7 +25,12 @@ import { usePermissions } from '../../../contexts/PermissionsContext';
 
 const ServicesModal = ({ onHide, service }) => {
     const baseUrl = process.env.REACT_APP_API_URL;
-    const peruCities = ["Lima", "Cusco", "Arequipa", "Trujillo", "Iquitos", "Puno", "Chiclayo", "Piura", "Huaraz", "Nazca"];
+    const peruCities = [
+        "Lima", "Cusco", "Arequipa", "Trujillo", "Iquitos", "Puno", "Chiclayo", "Piura", "Huaraz", "Nazca",
+        "ACTIVIDADES EN CUSCO", "AMAZONIA & IQUITOS", "AREQUIPA & CAÑON DEL COLCA", "NAZCA, ICA & PARACAS",
+        "PUNO & LAGO TITICACA", "MACHU PICCHU LUXURY", "MACHU PICCHU TOURS", "PAQUETES DESDE CUSCO",
+        "PAQUETES DESDE LIMA", "CAMINO INCA SERVICIOS COMPARTIDOS", "TREK ALTERNATIVOS COMPARTIDOS"
+    ];
     const serviceRepository = new ServiceRepository();
     const updateService = new UpdateService(serviceRepository);
     const createService = new CreateService(serviceRepository);
