@@ -677,7 +677,7 @@ export default function CotizacionForm() {
 
   }, { compartidos: 0, privados: 0 });
 
-  const totalPaxResumen = (Number(form.nroPax) || 0) + (Number(form.nroNinos) || 0);
+  const totalPaxResumen = Number(form.nroPax) || 0;
 
   const costoBase = (totalesComponentes.compartidos * totalPaxResumen) + totalesComponentes.privados;
 
@@ -2106,9 +2106,9 @@ export default function CotizacionForm() {
 
         componentId={provComponentId}
 
-  // Total de pasajeros para costos de proveedor: adultos + niños
+  // Total de pasajeros para costos de proveedor
 
-  pax={(Number(form.nroPax) || 0) + (Number(form.nroNinos) || 0) || 1}
+  pax={Number(form.nroPax) || 1}
 
         serviceType={provServiceType}
 
