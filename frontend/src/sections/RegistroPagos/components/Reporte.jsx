@@ -3,6 +3,7 @@ import GetAllRegistroPago from "../../../modules/RegistroPagos/application/GetAl
 import RegistroPagoRepository from "../../../modules/RegistroPagos/repository/RegistroPagoRepository";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
+import { ProgressSpinner } from 'primereact/progressspinner';
 import "../styles/Reporte.css"
 import { Calendar } from "primereact/calendar";
 import { FloatLabel } from "primereact/floatlabel";
@@ -172,13 +173,19 @@ const Reporte = () => {
             </div>
 
             <div className="card">
+                {loading && (
+                    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '300px', flexDirection: 'column' }}>
+                        <ProgressSpinner />
+                        <p>Cargando reporte de registro de pagos...</p>
+                    </div>
+                )}
+                {!loading && (
                 <DataTable 
                     className="reporte-table" 
                     size="small" 
                     value={reporteFiltrado} 
                     tableStyle={{ minWidth: '60%' }}
                     emptyMessage="No hay registros"
-                    loading={loading}
                 >
                     <Column 
                         field="cliente.nombre" 
@@ -229,6 +236,7 @@ const Reporte = () => {
                         style={{ width: '7%' }}>
                     </Column>
                 </DataTable>
+                )}
             </div>  
 
             <div className="reporte-footer">

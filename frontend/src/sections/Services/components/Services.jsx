@@ -181,6 +181,13 @@ const Services = () => {
             </div>
 
             <div className="card">
+                {(loading || searchLoading) && (
+                    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '300px', flexDirection: 'column' }}>
+                        <ProgressSpinner />
+                        <p>Cargando servicios...</p>
+                    </div>
+                )}
+                {!(loading || searchLoading) && (
                 <DataTable
                     className="service-table"
                     size="small"
@@ -190,7 +197,6 @@ const Services = () => {
                     expandedRows={expandedRows}
                     onRowToggle={e => setExpandedRows(e.data)}
                     rowExpansionTemplate={rowExpansionTemplate}
-                    loading={loading || searchLoading}
                     paginator={false}
                     filters={filters}
                     onFilter={(e) => setFilters(e.filters)}
@@ -250,6 +256,7 @@ const Services = () => {
                         )}
                     />
                 </DataTable>
+                )}
             </div>
 
             {/* Footer con paginación */}

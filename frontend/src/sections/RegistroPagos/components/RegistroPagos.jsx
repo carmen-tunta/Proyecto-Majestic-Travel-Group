@@ -3,6 +3,7 @@ import { useEffect, useState, useMemo } from "react";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { Paginator } from "primereact/paginator";
+import { ProgressSpinner } from 'primereact/progressspinner';
 import useSearch from "../../../hooks/useSearch";
 import SearchBar from "../../../components/SearchBar";
 import { apiService } from "../../../services/apiService";
@@ -119,6 +120,13 @@ const RegistroPagos = () => {
         </div>
 
         <div className="card">
+            {(loading || searchLoading) && (
+                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '300px', flexDirection: 'column' }}>
+                    <ProgressSpinner />
+                    <p>Cargando registros de pago...</p>
+                </div>
+            )}
+            {!(loading || searchLoading) && (
             <DataTable 
                 className="registro-pagos-table" 
                 size="small" 
@@ -126,7 +134,6 @@ const RegistroPagos = () => {
                 tableStyle={{ minWidth: '100%' }}
                 emptyMessage="No hay registros"
                 paginator={false}
-                loading={loading || searchLoading}
             >
                 <Column 
                     field="cliente.nombre" 
@@ -191,6 +198,7 @@ const RegistroPagos = () => {
                     )}
                 />
             </DataTable>
+            )}
         </div>
 
         {/* Footer con paginación */}

@@ -4,6 +4,7 @@ import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Paginator } from 'primereact/paginator';
 import { Dropdown } from 'primereact/dropdown';
+import { ProgressSpinner } from 'primereact/progressspinner';
 import ComponentModal from './ComponentModal';
 import { usePermissions } from '../../../contexts/PermissionsContext';
 import "../styles/Componentes.css";
@@ -219,11 +220,17 @@ const Componentes = () => {
 
       {/* Tabla de componentes */}
       <div className="card">
+        {(loading || searchLoading) && (
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '300px', flexDirection: 'column' }}>
+            <ProgressSpinner />
+            <p>Cargando componentes...</p>
+          </div>
+        )}
+        {!(loading || searchLoading) && (
         <DataTable 
           className="componentes-table" 
           size="small" 
           value={paginatedComponentes} 
-          loading={loading || searchLoading}
           emptyMessage="No se encontraron componentes"
           tableStyle={{ minWidth: '60%' }}
           paginator={false}
@@ -317,6 +324,7 @@ const Componentes = () => {
             )}
           />
         </DataTable>
+        )}
       </div>
 
       {/* Footer con paginación */}

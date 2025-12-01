@@ -197,6 +197,13 @@ const Proveedores = () => {
             </div>
 
             <div className="card">
+                {(loading || searchLoading) && (
+                    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '300px', flexDirection: 'column' }}>
+                        <ProgressSpinner />
+                        <p>Cargando proveedores...</p>
+                    </div>
+                )}
+                {!(loading || searchLoading) && (
                 <DataTable 
                     className="proveedores-table" 
                     size="small" 
@@ -206,7 +213,6 @@ const Proveedores = () => {
                     paginator={false}
                     filters={filters}
                     onFilter={(e) => setFilters(e.filters)}
-                    loading={loading || searchLoading}
                     filterDisplay='menu'
                 >
                     <Column 
@@ -308,6 +314,7 @@ const Proveedores = () => {
                         )}
                     />
                 </DataTable>
+                )}
             </div>
 
             {/* Footer con paginación */}

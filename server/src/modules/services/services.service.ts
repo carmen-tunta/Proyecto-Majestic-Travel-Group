@@ -53,18 +53,29 @@ export class ServicesService {
   async findAll(): Promise<Service[]> {
     const services = await this.serviceRepository.find({ relations: ['images'] });
     
-    // Cargar componentes manualmente con duplicados permitidos usando la entidad intermedia
-    for (const service of services) {
-      const serviceComponents = await this.serviceComponentRepository.find({
-        where: { servicesId: service.id },
-        relations: ['component'],
-        order: { id: 'ASC' }
-      });
-      // Incluir el serviceComponentId en cada componente para poder eliminarlo específicamente
-      service.components = serviceComponents.map(sc => ({
+    if (services.length === 0) return services;
+    
+    // Obtener todos los service_components en una sola consulta
+    const serviceIds = services.map(s => s.id);
+    const allServiceComponents = await this.serviceComponentRepository.find({
+      where: { servicesId: In(serviceIds) },
+      relations: ['component'],
+      order: { servicesId: 'ASC', id: 'ASC' }
+    });
+    
+    // Agrupar componentes por servicio
+    const componentsByService = allServiceComponents.reduce((acc, sc) => {
+      if (!acc[sc.servicesId]) acc[sc.servicesId] = [];
+      acc[sc.servicesId].push({
         ...sc.component,
         _serviceComponentId: sc.id
-      }));
+      });
+      return acc;
+    }, {} as Record<number, any[]>);
+    
+    // Asignar componentes a cada servicio
+    for (const service of services) {
+      service.components = componentsByService[service.id] || [];
     }
     
     return services;
@@ -137,18 +148,29 @@ export class ServicesService {
       .leftJoinAndSelect('service.images', 'images')
       .getMany();
     
-    // Cargar componentes manualmente con duplicados
-    for (const service of services) {
-      const serviceComponents = await this.serviceComponentRepository.find({
-        where: { servicesId: service.id },
-        relations: ['component'],
-        order: { id: 'ASC' }
-      });
-      // Incluir el serviceComponentId en cada componente para poder eliminarlo específicamente
-      service.components = serviceComponents.map(sc => ({
+    if (services.length === 0) return services;
+    
+    // Obtener todos los service_components en una sola consulta
+    const serviceIds = services.map(s => s.id);
+    const allServiceComponents = await this.serviceComponentRepository.find({
+      where: { servicesId: In(serviceIds) },
+      relations: ['component'],
+      order: { servicesId: 'ASC', id: 'ASC' }
+    });
+    
+    // Agrupar componentes por servicio
+    const componentsByService = allServiceComponents.reduce((acc, sc) => {
+      if (!acc[sc.servicesId]) acc[sc.servicesId] = [];
+      acc[sc.servicesId].push({
         ...sc.component,
         _serviceComponentId: sc.id
-      }));
+      });
+      return acc;
+    }, {} as Record<number, any[]>);
+    
+    // Asignar componentes a cada servicio
+    for (const service of services) {
+      service.components = componentsByService[service.id] || [];
     }
     
     return services;
