@@ -677,7 +677,7 @@ export default function CotizacionForm() {
 
   }, { compartidos: 0, privados: 0 });
 
-  const totalPaxResumen = (Number(form.nroPax) || 0) + (Number(form.nroNinos) || 0);
+  const totalPaxResumen = Number(form.nroPax) || 0;
 
   const costoBase = (totalesComponentes.compartidos * totalPaxResumen) + totalesComponentes.privados;
 
@@ -687,11 +687,15 @@ export default function CotizacionForm() {
 
     : totalesComponentes.compartidos + totalesComponentes.privados;
 
-  const precioUtilidad = costoBase * (Number(form.utilidad || 0) / 100);
-
-  const costoFinal = costoBase;
-
-  const precioVenta = costoFinal + precioUtilidad;
+  // Cálculo simplificado: costo total es la suma de todos los precios de componentes
+  const costoTotal = (detalle?.servicios || []).reduce((acc, servicio) => {
+    (servicio.componentes || []).forEach((comp) => {
+      acc += Number(comp.precio) || 0;
+    });
+    return acc;
+  }, 0);
+  const precioUtilidad = costoTotal * (Number(form.utilidad || 0) / 100);
+  const precioVenta = costoTotal + precioUtilidad;
 
 
 
@@ -1220,7 +1224,7 @@ export default function CotizacionForm() {
 
       const payload = { 
 
-        costo: costoFinal, 
+        costo: costoTotal, 
 
         precioUtilidad: precioUtilidad, 
 
@@ -1234,7 +1238,7 @@ export default function CotizacionForm() {
 
     }
 
-  }, [costoFinal, precioUtilidad, precioVenta]);
+  }, [costoTotal, precioUtilidad, precioVenta]);
 
 
 
@@ -2043,7 +2047,7 @@ export default function CotizacionForm() {
 
                   <div className="totals-row">
 
-                    <span>Costo por pasajero</span><span>{formatNumberWithDot(costoPorPasajero, 2)}</span>
+                    <span>Costo total</span><span>{formatNumberWithDot(costoTotal, 2)}</span>
 
                   </div>
 
@@ -2102,9 +2106,9 @@ export default function CotizacionForm() {
 
         componentId={provComponentId}
 
-  // Total de pasajeros para costos de proveedor: adultos + niños
+  // Total de pasajeros para costos de proveedor
 
-  pax={(Number(form.nroPax) || 0) + (Number(form.nroNinos) || 0) || 1}
+  pax={Number(form.nroPax) || 1}
 
         serviceType={provServiceType}
 

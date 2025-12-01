@@ -107,13 +107,19 @@ const Itinerario = () => {
             </div>
 
             <div className="card">
+                {(loading || searchLoading) && (
+                    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '300px', flexDirection: 'column' }}>
+                        <ProgressSpinner />
+                        <p>Cargando plantillas de itinerario...</p>
+                    </div>
+                )}
+                {!(loading || searchLoading) && (
                 <DataTable 
                     className="itinerario-table" 
                     size="small" 
                     value={search ? results : template} 
                     tableStyle={{ minWidth: '60%' }}
                     emptyMessage="No se encontraron plantillas"
-                    loading={loading || searchLoading}
                     scrollable={window.innerWidth <= 768}
                     scrollHeight={window.innerWidth <= 768 ? "400px" : undefined}
                 >
@@ -158,6 +164,7 @@ const Itinerario = () => {
                         )}
                     />
                 </DataTable>
+                )}
             </div>
 
             {/* Footer con paginación */}

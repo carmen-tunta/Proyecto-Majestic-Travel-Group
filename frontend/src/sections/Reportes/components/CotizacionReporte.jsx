@@ -3,6 +3,7 @@ import { Button } from 'primereact/button';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Dropdown } from 'primereact/dropdown';
+import { ProgressSpinner } from 'primereact/progressspinner';
 import SearchBar from '../../../components/SearchBar';
 import GetAllCotizaciones from '../../../modules/Cotizacion/application/GetAllCotizaciones';
 import '../../Cotizacion/styles/Cotizacion.css';
@@ -159,12 +160,18 @@ const CotizacionReporte = () => {
       {/* Filtros integrados en cabecera de la tabla (como Clientes/Bandeja) */}
 
       <div className="card">
+        {loading && (
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '300px', flexDirection: 'column' }}>
+            <ProgressSpinner />
+            <p>Cargando reporte de cotizaciones...</p>
+          </div>
+        )}
+        {!loading && (
         <DataTable
           className="cotizaciones-table cotz-report"
           size="small"
           value={filtered}
           emptyMessage="No hay registros"
-          loading={loading}
           paginator
           first={first}
           rows={rowsPerPage}
@@ -239,6 +246,7 @@ const CotizacionReporte = () => {
             }
           />
         </DataTable>
+        )}
       </div>
     </div>
   );

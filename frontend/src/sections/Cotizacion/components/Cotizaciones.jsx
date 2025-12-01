@@ -7,6 +7,7 @@ import '../styles/Cotizacion.css';
 import SearchBar from '../../../components/SearchBar';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
+import { ProgressSpinner } from 'primereact/progressspinner';
 
 export default function Cotizaciones() {
   const navigate = useNavigate();
@@ -116,13 +117,19 @@ export default function Cotizaciones() {
         <SearchBar value={q} onChange={setQ} placeholder="Buscar cliente" />
       </div>
 
-      <div className="card">
+      <div className="card" style={{ position: 'relative' }}>
+        {loading && (
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '300px', flexDirection: 'column' }}>
+            <ProgressSpinner />
+            <p>Cargando cotizaciones...</p>
+          </div>
+        )}
+        {!loading && (
         <DataTable
           className="cotizaciones-table"
           size="small"
           value={filtered}
           emptyMessage="Sin resultados"
-          loading={loading}
           paginator
           first={first}
           rows={rowsPerPage}
@@ -148,6 +155,7 @@ export default function Cotizaciones() {
           <Column header="Estado" body={(r) => <span data-label="Estado">{r?.estado || ''}</span>} />
           <Column header="Acción" body={(r) => <span data-label="Acción">{actionTemplate(r)}</span>} />
         </DataTable>
+        )}
       </div>
 
       

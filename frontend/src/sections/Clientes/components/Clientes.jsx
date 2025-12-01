@@ -5,6 +5,7 @@ import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Paginator } from 'primereact/paginator';
 import { InputText } from 'primereact/inputtext';
+import { ProgressSpinner } from 'primereact/progressspinner';
 import { addLocale, locale } from 'primereact/api';
 import SearchBar from '../../../components/SearchBar';
 import useSearch from '../../../hooks/useSearch';
@@ -209,19 +210,25 @@ const Clientes = () => {
       </div>
 
       {/* Tabla de clientes */}
-      <div className="card">
-        <DataTable 
-          className="clientes-table" 
-          size="small" 
-          value={paginatedData} 
-          loading={loading || searchLoading}
-          emptyMessage="No se encontraron clientes"
-          tableStyle={{ minWidth: '60%' }}
-          paginator={false}
-          onFilter={handleFilter}
-          filters={filters}
-          filterDisplay="menu"
-        >
+      <div className="card" style={{ position: 'relative' }}>
+        {(loading || searchLoading) && (
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '300px', flexDirection: 'column' }}>
+            <ProgressSpinner />
+            <p>Cargando clientes...</p>
+          </div>
+        )}
+        {!loading && !searchLoading && (
+          <DataTable 
+            className="clientes-table" 
+            size="small" 
+            value={paginatedData} 
+            emptyMessage="No se encontraron clientes"
+            tableStyle={{ minWidth: '60%' }}
+            paginator={false}
+            onFilter={handleFilter}
+            filters={filters}
+            filterDisplay="menu"
+          >
           <Column
             field="nombre"
             header={isMobile ? "Cliente" : "Nombre del cliente"}
@@ -366,6 +373,7 @@ const Clientes = () => {
             )}
           />
         </DataTable>
+        )}
       </div>
 
       {/* Footer con paginación */}
