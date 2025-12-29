@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Get, Param, Post, Put, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, Param, Post, Put, UploadedFile, UseInterceptors, Res } from '@nestjs/common';
 import { ConfirmacionReservaService } from './confirmacion-reserva.service';
 import { ConfirmacionReserva as ConfirmacionReservaEntity } from '../entities/confirmacion-reserva.entity';
 import { FileInterceptor } from '@nestjs/platform-express/multer/interceptors/file.interceptor';
@@ -6,10 +6,18 @@ import { File as MulterFile } from 'multer';
 import * as fs from 'fs';
 import * as path from 'path';
 import { RequirePermissions } from 'src/modules/auth/decorators/require-permissions.decorator';
+import type { Response } from 'express';
 
 const imageFileFilter = (req, file, callback) => {
   if (!file.mimetype.startsWith('image/')) {
     return callback(new BadRequestException('Solo se permiten archivos de imagen'), false);
+  }
+  callback(null, true);
+};
+
+const pdfFileFilter = (req, file, callback) => {
+  if (file.mimetype !== 'application/pdf') {
+    return callback(new BadRequestException('Solo se permiten archivos PDF'), false);
   }
   callback(null, true);
 };
@@ -155,6 +163,42 @@ export class ConfirmacionReservaController {
     return this.confirmacionReservaService.update(existing.id.toString(), {
       imagenLogo
     });
+  }
+
+  @Post('pdf/:cotizacionId/:usuario')
+  @RequirePermissions('COTIZACION:VIEW')
+  @UseInterceptors(FileInterceptor('attachmentPdf', {
+    fileFilter: pdfFileFilter,
+    limits: { fileSize: 10 * 1024 * 1024 }
+  }))
+  async confirmacionReservaGenerarPDF(
+    @Param('cotizacionId') cotizacionId: string,
+    @Param('usuario') usuario: string,
+    @Res() res: Response,
+    @UploadedFile() attachmentPdf?: MulterFile,
+  ): Promise<void> {
+    const cotizacionIdNum = Number(cotizacionId);
+    console.log('Generando PDF de confirmación de reserva para cotización ID:', cotizacionIdNum, 'Usuario:', usuario);
+    if (Number.isNaN(cotizacionIdNum)) {
+      throw new BadRequestException('El parámetro idCotizacion es inválido');
+    }
+    if (!usuario?.trim()) {
+      throw new BadRequestException('El parámetro usuario es obligatorio');
+    }
+    const attachmentBuffer = attachmentPdf?.buffer;
+
+    const pdfBuffer = await this.confirmacionReservaService.confirmacionReservaGenerarPDF(
+      cotizacionIdNum,
+      usuario.trim(),
+      attachmentBuffer,
+    );
+
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader(
+      'Content-Disposition',
+      `attachment; filename="confirmacion-reserva-${cotizacionIdNum}.pdf"`,
+    );
+    res.send(pdfBuffer);
   }
 }
 
