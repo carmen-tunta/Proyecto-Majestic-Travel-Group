@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Button } from 'primereact/button';
 import { InputText } from 'primereact/inputtext';
 import { InputTextarea } from 'primereact/inputtextarea';
@@ -21,6 +21,9 @@ const ConfirmacionReserva = ({ cotizacionId, cotizacionData }) => {
   const [loadingData, setLoadingData] = useState(true);
   const [loadingPdf, setLoadingPdf] = useState(false);
   const [loadingTranslate, setLoadingTranslate] = useState(false);
+  const [loadingBackendPdf, setLoadingBackendPdf] = useState(false);
+  const [attachedFile, setAttachedFile] = useState(null);
+  const fileInputRef = useRef(null);
   
   // Función helper para obtener el estado del booking según el estado de la cotización
   const getEstadoBooking = (estado) => {
@@ -427,6 +430,72 @@ const ConfirmacionReserva = ({ cotizacionId, cotizacionData }) => {
     }
   };
 
+  const handleDownloadServerPdf = async () => {
+    if (!cotizacionId) return;
+    
+    // Primero guardamos para asegurar que el servidor tenga la última versión de las páginas editables
+    setLoadingBackendPdf(true);
+    try {
+      const authToken = localStorage.getItem('authToken') || sessionStorage.getItem('authToken');
+      
+      // Guardar cambios primero
+      const dataToSave = {
+        cotizacionId,
+        paginasEditables: JSON.stringify(editablePages)
+      };
+
+      await fetch(
+        `${process.env.REACT_APP_API_URL}/cotizacion/${cotizacionId}/confirmacion-reserva`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${authToken}`
+          },
+          body: JSON.stringify(dataToSave)
+        }
+      );
+
+      // Ahora generar el PDF con el adjunto si existe
+      const usuario = cotizacionData?.creadoPor?.username || 'admin';
+      const formData = new FormData();
+      if (attachedFile) {
+        formData.append('attachmentPdf', attachedFile);
+      }
+
+      const response = await fetch(
+        `${process.env.REACT_APP_API_URL}/cotizacion/${cotizacionId}/confirmacion-reserva/pdf/${cotizacionId}/${usuario}`,
+        {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${authToken}`
+          },
+          body: formData
+        }
+      );
+
+      if (response.ok) {
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `confirmacion-reserva-${cotizacionData?.cliente?.nombre || 'documento'}.pdf`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+        showNotification('PDF generado y descargado', 'success');
+      } else {
+        throw new Error('Error al generar PDF en el servidor');
+      }
+    } catch (error) {
+      console.error(error);
+      showNotification('Error al generar PDF', 'error');
+    } finally {
+      setLoadingBackendPdf(false);
+    }
+  };
+
   // Función para traducir texto dentro de HTML (igual que Portada)
   const replaceTextInHTML = async (html, sourceLanguage, targetLanguage, translateInstance) => {
     const tempDiv = document.createElement('div');
@@ -829,15 +898,47 @@ const ConfirmacionReserva = ({ cotizacionId, cotizacionData }) => {
     <div className="confirmacion-editor-container">
       {/* Header con controles */}
       <div className="confirmacion-editor-header">
-        <Button
-          label="Descargar pdf"
-          icon="pi pi-file-pdf"
-          className="p-button-outlined"
-          size="small"
-          onClick={handleDownloadPdf}
-          loading={loadingPdf}
-          disabled={loadingPdf || loadingTranslate}
-        />
+        <div className="confirmacion-download-container">
+          <Button
+            label={attachedFile ? "Descargar con adjunto" : "Descargar pdf"}
+            icon={attachedFile ? "pi pi-file-export" : "pi pi-file-pdf"}
+            className={attachedFile ? "p-button-primary" : "p-button-outlined"}
+            size="small"
+            onClick={attachedFile ? handleDownloadServerPdf : handleDownloadPdf}
+            loading={loadingPdf || loadingBackendPdf}
+            disabled={loadingPdf || loadingTranslate || loadingBackendPdf}
+          />
+          <div className="confirmacion-attachment-section">
+            <input
+              type="file"
+              accept=".pdf"
+              style={{ display: 'none' }}
+              ref={fileInputRef}
+              onChange={(e) => setAttachedFile(e.target.files[0])}
+            />
+            {!attachedFile ? (
+              <Button
+                icon="pi pi-paperclip"
+                label="Adjuntar PDF"
+                className="p-button-text p-button-sm p-0"
+                style={{ fontSize: '0.75rem' }}
+                onClick={() => fileInputRef.current.click()}
+              />
+            ) : (
+              <>
+                <span className="confirmacion-attachment-name" title={attachedFile.name}>
+                  {attachedFile.name}
+                </span>
+                <Button
+                  icon="pi pi-times"
+                  className="p-button-text p-button-danger p-button-sm p-0"
+                  style={{ width: '1.5rem', height: '1.5rem' }}
+                  onClick={() => setAttachedFile(null)}
+                />
+              </>
+            )}
+          </div>
+        </div>
         
         <div className="confirmacion-language-selector">
           <label className="language-label">Idioma origen</label>
