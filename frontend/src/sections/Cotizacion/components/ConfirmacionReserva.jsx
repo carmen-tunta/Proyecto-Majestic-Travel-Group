@@ -43,6 +43,7 @@ const ConfirmacionReserva = ({ cotizacionId, cotizacionData }) => {
   };
   
   // Sistema de páginas: la primera es fija (confirmación), las demás son editables
+  // Sistema de páginas: la primera es fija (confirmación), las demás son editables
   const [editablePages, setEditablePages] = useState([]);
   const [currentPageIndex, setCurrentPageIndex] = useState(0);
   const [confirmacionId, setConfirmacionId] = useState(null);
@@ -305,6 +306,8 @@ const ConfirmacionReserva = ({ cotizacionId, cotizacionData }) => {
     setLoadingPdf(true);
     const originalIndex = currentPageIndex;
     const total = 1 + editablePages.length;
+    // Si hay un archivo adjunto, solo procesamos la primera página (resumen)
+    const pagesToProcess = attachedFile ? 1 : total;
     const hiddenElements = [];
 
     const hideElement = (selector) => {
@@ -329,7 +332,7 @@ const ConfirmacionReserva = ({ cotizacionId, cotizacionData }) => {
 
       const pdfBlobs = [];
 
-      for (let i = 0; i < total; i++) {
+      for (let i = 0; i < pagesToProcess; i++) {
         setCurrentPageIndex(i);
         // esperar render
         // eslint-disable-next-line no-await-in-loop
@@ -401,6 +404,20 @@ const ConfirmacionReserva = ({ cotizacionId, cotizacionData }) => {
         // eslint-disable-next-line no-await-in-loop
         const [page] = await mergedPdf.copyPages(src, [indices[0] || 0]);
         mergedPdf.addPage(page);
+      }
+
+      // Si hay un archivo adjunto, agregarlo al final del PDF generado
+      if (attachedFile) {
+        try {
+          const attachedBytes = await attachedFile.arrayBuffer();
+          const attachedSrc = await PDFDocument.load(attachedBytes);
+          const attachedIndices = attachedSrc.getPageIndices();
+          const copiedPages = await mergedPdf.copyPages(attachedSrc, attachedIndices);
+          copiedPages.forEach((page) => mergedPdf.addPage(page));
+        } catch (err) {
+          console.error('Error al adjuntar el PDF al documento generado:', err);
+          showNotification('El PDF se generó, pero no se pudo unir el adjunto', 'warn');
+        }
       }
 
       const mergedBytes = await mergedPdf.save();
@@ -534,13 +551,13 @@ const ConfirmacionReserva = ({ cotizacionId, cotizacionData }) => {
       if (text.length <= 2) return false;
       
       // No traducir si son solo números, fechas o caracteres especiales
-      if (/^[\d\s\-\/\.\:]+$/.test(text)) return false;
+      if (/^[\d\s\-/.:]+$/.test(text)) return false;
       
       // No traducir si son solo símbolos o caracteres especiales
       if (/^[^\w\s]+$/.test(text)) return false;
       
       // No traducir URLs, emails, teléfonos
-      if (/^(https?:\/\/|www\.|@|\+?\d+[\s\-\(\)]*\d+)/.test(text)) return false;
+      if (/^(https?:\/\/|www\.|@|\+?\d+[\s\-()]*\d+)/.test(text)) return false;
       
       return true;
     };
@@ -576,6 +593,8 @@ const ConfirmacionReserva = ({ cotizacionId, cotizacionData }) => {
     setLoadingTranslate(true);
     const originalIndex = currentPageIndex;
     const total = 1 + editablePages.length;
+    // Si hay un archivo adjunto, solo procesamos la primera página (resumen)
+    const pagesToProcess = attachedFile ? 1 : total;
     const hiddenElements = [];
 
     const hideElement = (selector) => {
@@ -596,7 +615,7 @@ const ConfirmacionReserva = ({ cotizacionId, cotizacionData }) => {
       const pdfBlobs = [];
 
       // Procesar cada página individualmente
-      for (let i = 0; i < total; i++) {
+      for (let i = 0; i < pagesToProcess; i++) {
         
         // Crear HTML de la página específica manualmente
         let pageHTML = '';
@@ -706,7 +725,6 @@ const ConfirmacionReserva = ({ cotizacionId, cotizacionData }) => {
               ${editablePage.blocks.map(block => {
                 if (block.type === 'row') {
                   // Si es HTML, renderizar directamente; si no, usar como texto plano
-                  const contenidoHTML = block.isHtml ? block.contenido : `<div class="confirmacion-text-export">${block.contenido}</div>`;
                   return `
                     <div class="confirmacion-block-row">
                       <div class="confirmacion-title-export">${block.titulo}</div>
@@ -808,6 +826,20 @@ const ConfirmacionReserva = ({ cotizacionId, cotizacionData }) => {
         // eslint-disable-next-line no-await-in-loop
         const [pageCopied] = await mergedPdf.copyPages(src, [indices[0] || 0]);
         mergedPdf.addPage(pageCopied);
+      }
+
+      // Si hay un archivo adjunto, agregarlo al final del PDF traducido
+      if (attachedFile) {
+        try {
+          const attachedBytes = await attachedFile.arrayBuffer();
+          const attachedSrc = await PDFDocument.load(attachedBytes);
+          const attachedIndices = attachedSrc.getPageIndices();
+          const copiedPages = await mergedPdf.copyPages(attachedSrc, attachedIndices);
+          copiedPages.forEach((page) => mergedPdf.addPage(page));
+        } catch (err) {
+          console.error('Error al adjuntar el PDF al documento traducido:', err);
+          showNotification('El PDF traducido se generó, pero no se pudo unir el adjunto', 'warn');
+        }
       }
 
       const mergedBytes = await mergedPdf.save();
